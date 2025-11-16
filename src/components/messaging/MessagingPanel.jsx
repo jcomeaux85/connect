@@ -1,24 +1,36 @@
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   MessageSquare,
   Send,
   Search,
-  X
+  X,
+  User,
+  Users,
+  Paperclip,
+  Phone
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { format } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function MessagingPanel({ user, isOpen, onClose }) {
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedPhone, setSelectedPhone] = useState(null);
   const [messageText, setMessageText] = useState("");
+  const [smsText, setSmsText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("team");
 
   // Fetch all team members
   const { data: teamMembers = [] } = useQuery({
@@ -27,7 +39,7 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
     enabled: isOpen,
   });
 
-  // Fetch conversations
+  // Fetch team messages
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', user?.email],
     queryFn: async () => {
@@ -37,14 +49,28 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
       return [...sent, ...received].sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
     enabled: !!user?.email && isOpen,
-    refetchInterval: 5000, // Refresh every 5 seconds
+    refetchInterval: 5000,
+  });
+
+  // Fetch SMS messages
+  const { data: smsMessages = [] } = useQuery({
+    queryKey: ['sms-messages'],
+    queryFn: () => base44.entities.SMS.list('-created_date', 200),
+    enabled: isOpen,
+    refetchInterval: 5000,
+  });
+
+  // Fetch customers for SMS display
+  const { data: customers = [] } = useQuery({
+    queryKey: ['customers-sms'],
+    queryFn: () => base44.entities.Customer.list('-updated_date', 100),
+    enabled: isOpen && activeTab === 'sms',
   });
 
   const sendMessageMutation = useMutation({
     mutationFn: (messageData) => base44.entities.Message.create(messageData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages'] });
-      // Create notification for recipient
       if (selectedUser) {
         base44.entities.Notification.create({
           user_email: selectedUser.email,
@@ -55,6 +81,14 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
         });
       }
       setMessageText("");
+    },
+  });
+
+  const sendSmsMutation = useMutation({
+    mutationFn: (smsData) => base44.entities.SMS.create(smsData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sms-messages'] });
+      setSmsText("");
     },
   });
 
@@ -81,6 +115,21 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
     });
   };
 
+  const handleSendSms = () => {
+    if (!smsText.trim() || !selectedPhone) return;
+
+    const smsThread = smsThreads.find(t => t.phone === selectedPhone);
+    
+    sendSmsMutation.mutate({
+      case_id: smsThread?.case_id || null,
+      customer_phone: selectedPhone,
+      message: smsText,
+      direction: 'sent',
+      status: 'sent',
+      sent_at: new Date().toISOString()
+    });
+  };
+
   // Get conversation with selected user
   const conversation = selectedUser 
     ? messages.filter(m => 
@@ -88,6 +137,45 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
         (m.sender_email === selectedUser.email && m.recipient_email === user.email)
       ).sort((a, b) => new Date(a.created_date) - new Date(b.created_date))
     : [];
+
+  // Get SMS conversation with selected phone
+  const smsConversation = selectedPhone
+    ? smsMessages
+        .filter(m => m.customer_phone === selectedPhone)
+        .sort((a, b) => new Date(a.created_date || a.sent_at) - new Date(b.created_date || b.sent_at))
+    : [];
+
+  // Group SMS by phone number
+  const smsThreads = {};
+  smsMessages.forEach(sms => {
+    const phone = sms.customer_phone;
+    if (!smsThreads[phone]) {
+      smsThreads[phone] = {
+        phone,
+        messages: [],
+        lastMessage: null,
+        case_id: sms.case_id,
+        customer: customers.find(c => c.primary_phone === phone)
+      };
+    }
+    smsThreads[phone].messages.push(sms);
+    if (!smsThreads[phone].lastMessage || 
+        new Date(sms.created_date || sms.sent_at) > new Date(smsThreads[phone].lastMessage.created_date || smsThreads[phone].lastMessage.sent_at)) {
+      smsThreads[phone].lastMessage = sms;
+    }
+  });
+
+  const smsThreadList = Object.values(smsThreads)
+    .filter(thread => 
+      !searchQuery || 
+      thread.phone.includes(searchQuery) ||
+      thread.customer?.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      thread.customer?.last_name?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => 
+      new Date(b.lastMessage.created_date || b.lastMessage.sent_at) - 
+      new Date(a.lastMessage.created_date || a.lastMessage.sent_at)
+    );
 
   // Get list of conversations (unique users)
   const conversations = teamMembers
@@ -161,9 +249,26 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                 <X className="w-5 h-5" />
               </Button>
             </div>
+
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
+              <TabsList className="grid w-full grid-cols-2 rounded-xl" style={{
+                background: '#E0E5EC',
+                boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
+              }}>
+                <TabsTrigger value="team" className="rounded-xl">
+                  <Users className="w-4 h-4 mr-2" />
+                  Team
+                </TabsTrigger>
+                <TabsTrigger value="sms" className="rounded-xl">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Customer SMS
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </CardHeader>
 
-          <div className="flex h-[calc(100%-80px)]">
+          <div className="flex h-[calc(100%-160px)]">
             {/* Conversations List */}
             <div className="w-1/3 border-r overflow-y-auto" style={{ borderColor: '#D1D9E6' }}>
               <div className="p-3">
@@ -182,60 +287,115 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                 </div>
               </div>
 
-              <div className="divide-y" style={{ borderColor: '#D1D9E6' }}>
-                {conversations.map((conv) => (
-                  <button
-                    key={conv.user.email}
-                    onClick={() => {
-                      setSelectedUser(conv.user);
-                      // Mark unread messages as read
-                      messages
-                        .filter(m => m.sender_email === conv.user.email && m.recipient_email === user.email && !m.is_read)
-                        .forEach(m => markAsReadMutation.mutate({ id: m.id }));
-                    }}
-                    className={`w-full p-3 text-left hover:bg-gray-50 transition-colors ${
-                      selectedUser?.email === conv.user.email ? 'bg-blue-50/30' : ''
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div 
-                        className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{
-                          background: 'linear-gradient(145deg, #dbeafe, #bfdbfe)',
-                          boxShadow: '3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff'
-                        }}
-                      >
-                        <span className="font-semibold text-sm" style={{ color: '#3b82f6' }}>
-                          {conv.user.full_name?.charAt(0) || 'U'}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="font-semibold text-sm truncate" style={{ color: '#374151' }}>
-                            {conv.user.full_name}
-                          </p>
-                          {conv.unreadCount > 0 && (
-                            <span className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
-                              {conv.unreadCount}
-                            </span>
+              {activeTab === 'team' && (
+                <div className="divide-y" style={{ borderColor: '#D1D9E6' }}>
+                  {conversations.map((conv) => (
+                    <button
+                      key={conv.user.email}
+                      onClick={() => {
+                        setSelectedUser(conv.user);
+                        setSelectedPhone(null);
+                        messages
+                          .filter(m => m.sender_email === conv.user.email && m.recipient_email === user.email && !m.is_read)
+                          .forEach(m => markAsReadMutation.mutate({ id: m.id }));
+                      }}
+                      className={`w-full p-3 text-left hover:bg-gray-50 transition-colors ${
+                        selectedUser?.email === conv.user.email ? 'bg-blue-50/30' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={{
+                            background: 'linear-gradient(145deg, #dbeafe, #bfdbfe)',
+                            boxShadow: '3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff'
+                          }}
+                        >
+                          <span className="font-semibold text-sm" style={{ color: '#3b82f6' }}>
+                            {conv.user.full_name?.charAt(0) || 'U'}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="font-semibold text-sm truncate" style={{ color: '#374151' }}>
+                              {conv.user.full_name}
+                            </p>
+                            {conv.unreadCount > 0 && (
+                              <span className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                {conv.unreadCount}
+                              </span>
+                            )}
+                          </div>
+                          {conv.lastMessage && (
+                            <p className="text-xs truncate" style={{ color: '#9CA3AF' }}>
+                              {conv.lastMessage.sender_email === user.email ? 'You: ' : ''}
+                              {conv.lastMessage.content}
+                            </p>
                           )}
                         </div>
-                        {conv.lastMessage && (
-                          <p className="text-xs truncate" style={{ color: '#9CA3AF' }}>
-                            {conv.lastMessage.sender_email === user.email ? 'You: ' : ''}
-                            {conv.lastMessage.content}
-                          </p>
-                        )}
                       </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {activeTab === 'sms' && (
+                <div className="divide-y" style={{ borderColor: '#D1D9E6' }}>
+                  {smsThreadList.map((thread) => (
+                    <button
+                      key={thread.phone}
+                      onClick={() => {
+                        setSelectedPhone(thread.phone);
+                        setSelectedUser(null);
+                      }}
+                      className={`w-full p-3 text-left hover:bg-gray-50 transition-colors ${
+                        selectedPhone === thread.phone ? 'bg-blue-50/30' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={{
+                            background: 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
+                            boxShadow: '3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff'
+                          }}
+                        >
+                          <Phone className="w-4 h-4" style={{ color: '#16a34a' }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm truncate" style={{ color: '#374151' }}>
+                            {thread.customer 
+                              ? `${thread.customer.first_name} ${thread.customer.last_name}`
+                              : thread.phone
+                            }
+                          </p>
+                          {thread.customer && (
+                            <p className="text-xs" style={{ color: '#6B7280' }}>
+                              {thread.phone}
+                            </p>
+                          )}
+                          {thread.lastMessage && (
+                            <p className="text-xs truncate mt-1" style={{ color: '#9CA3AF' }}>
+                              {thread.lastMessage.direction === 'sent' ? 'You: ' : ''}
+                              {thread.lastMessage.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  {smsThreadList.length === 0 && (
+                    <div className="p-4 text-center">
+                      <p className="text-sm" style={{ color: '#9CA3AF' }}>No SMS conversations</p>
                     </div>
-                  </button>
-                ))}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Conversation View */}
             <div className="flex-1 flex flex-col">
-              {selectedUser ? (
+              {activeTab === 'team' && selectedUser ? (
                 <>
                   {/* Conversation Header */}
                   <div className="p-4 border-b" style={{ borderColor: '#D1D9E6' }}>
@@ -330,11 +490,137 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                     </div>
                   </div>
                 </>
+              ) : activeTab === 'sms' && selectedPhone ? (
+                <>
+                  {/* SMS Conversation Header */}
+                  <div className="p-4 border-b" style={{ borderColor: '#D1D9E6' }}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-12 h-12 rounded-full flex items-center justify-center"
+                          style={{
+                            background: 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
+                            boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
+                          }}
+                        >
+                          <Phone className="w-5 h-5" style={{ color: '#16a34a' }} />
+                        </div>
+                        <div>
+                          {(() => {
+                            const customer = customers.find(c => c.primary_phone === selectedPhone);
+                            return customer ? (
+                              <>
+                                <h3 className="font-semibold" style={{ color: '#374151' }}>
+                                  {customer.first_name} {customer.last_name}
+                                </h3>
+                                <p className="text-xs" style={{ color: '#6B7280' }}>
+                                  {selectedPhone}
+                                </p>
+                              </>
+                            ) : (
+                              <h3 className="font-semibold" style={{ color: '#374151' }}>
+                                {selectedPhone}
+                              </h3>
+                            );
+                          })()}
+                        </div>
+                      </div>
+                      {(() => {
+                        const smsThread = smsThreads[selectedPhone];
+                        return smsThread?.case_id && (
+                          <Link to={createPageUrl(`Case?id=${smsThread.case_id}`)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="rounded-xl"
+                              onClick={onClose}
+                            >
+                              View Case
+                            </Button>
+                          </Link>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* SMS Messages */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {smsConversation.length === 0 ? (
+                      <div className="text-center py-12">
+                        <p style={{ color: '#9CA3AF' }}>No messages yet.</p>
+                      </div>
+                    ) : (
+                      smsConversation.map((sms) => (
+                        <motion.div
+                          key={sms.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`flex ${sms.direction === 'sent' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-[70%] p-3 rounded-2xl ${
+                              sms.direction === 'sent'
+                                ? 'bg-green-500 text-white'
+                                : 'bg-white'
+                            }`}
+                            style={sms.direction !== 'sent' ? {
+                              boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
+                            } : {}}
+                          >
+                            <p className="text-sm">{sms.message}</p>
+                            <p 
+                              className="text-xs mt-1"
+                              style={{ 
+                                color: sms.direction === 'sent' ? '#dcfce7' : '#9CA3AF' 
+                              }}
+                            >
+                              {format(new Date(sms.created_date || sms.sent_at), 'h:mm a')}
+                            </p>
+                          </div>
+                        </motion.div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* SMS Input */}
+                  <div className="p-4 border-t" style={{ borderColor: '#D1D9E6' }}>
+                    <div className="flex gap-2">
+                      <Input
+                        value={smsText}
+                        onChange={(e) => setSmsText(e.target.value)}
+                        placeholder="Type an SMS..."
+                        onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendSms()}
+                        className="rounded-2xl border-0"
+                        style={{
+                          background: '#E0E5EC',
+                          boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
+                        }}
+                      />
+                      <Button
+                        onClick={handleSendSms}
+                        disabled={!smsText.trim()}
+                        className="rounded-2xl px-6 border-0"
+                        style={{
+                          background: 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
+                          boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                          color: '#16a34a'
+                        }}
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </>
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
                     <MessageSquare className="w-16 h-16 mx-auto mb-4" style={{ color: '#D1D9E6' }} />
-                    <p style={{ color: '#9CA3AF' }}>Select a conversation to start messaging</p>
+                    <p style={{ color: '#9CA3AF' }}>
+                      {activeTab === 'team' 
+                        ? 'Select a conversation to start messaging'
+                        : 'Select an SMS conversation'
+                      }
+                    </p>
                   </div>
                 </div>
               )}
