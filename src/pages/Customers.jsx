@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -12,14 +12,17 @@ import {
   Users,
   Search,
   Plus,
+  ArrowRight,
   Phone,
   Mail,
+  Briefcase,
   List,
   LayoutGrid,
   Filter,
   Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { format, formatDistanceToNow } from "date-fns";
 
 import {
   Select,

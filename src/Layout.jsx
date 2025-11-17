@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
@@ -319,14 +319,22 @@ function LayoutContent({ children, currentPageName }) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="rounded-full h-12 w-12 p-0 border-0 flex items-center justify-center"
+                    className="rounded-full h-12 w-12 p-0 border-0 flex items-center justify-center overflow-hidden"
                     style={getButtonStyle()}
                   >
-                     <div className="w-10 h-10 rounded-full flex items-center justify-center" style={getInsetStyle()}>
-                       <span style={{ color: colors.textSecondary }} className="font-bold text-sm">
-                         {user?.full_name?.charAt(0) || 'U'}
-                       </span>
-                     </div>
+                     {user?.profile_photo_url ? (
+                       <img 
+                         src={user.profile_photo_url} 
+                         alt={user.full_name || 'User'}
+                         className="w-full h-full object-cover"
+                       />
+                     ) : (
+                       <div className="w-10 h-10 rounded-full flex items-center justify-center" style={getInsetStyle()}>
+                         <span style={{ color: colors.textSecondary }} className="font-bold text-sm">
+                           {user?.full_name?.charAt(0) || 'U'}
+                         </span>
+                       </div>
+                     )}
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48" align="end" style={{

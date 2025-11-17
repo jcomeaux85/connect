@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -40,7 +41,7 @@ export default function SlideOutMenu() {
     enabled: isOpen && searchQuery.length > 0,
   });
 
-  const filteredCustomers = customers.filter(c => 
+  const filteredCustomers = customers.filter(c =>
     `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.primary_phone?.includes(searchQuery)
   );
@@ -115,15 +116,23 @@ export default function SlideOutMenu() {
             }}
           >
             {/* User Profile */}
-            <div className="mb-6 px-2">
+            <div className="mb-8 px-2">
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto"
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto overflow-hidden"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                 }}
               >
-                <User className="w-6 h-6" style={{ color: colors.iconColor }} />
+                {user?.profile_photo_url ? (
+                  <img
+                    src={user.profile_photo_url}
+                    alt={user.full_name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-6 h-6" style={{ color: colors.iconColor }} />
+                )}
               </div>
               {isExpanded && (
                 <motion.div
@@ -146,7 +155,7 @@ export default function SlideOutMenu() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mb-4 px-2"
+                className="mb-6 px-2"
               >
                 <div className="relative">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: colors.textTertiary }} />
@@ -192,17 +201,17 @@ export default function SlideOutMenu() {
             )}
 
             {/* Navigation Items */}
-            <nav className="flex-1 space-y-2">
+            <nav className="flex-1 space-y-3">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.url;
-                
+
                 return (
                   <Link key={item.title} to={item.url}>
                     <motion.div
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="rounded-2xl h-12 flex items-center justify-center gap-3 cursor-pointer"
+                      className="rounded-2xl h-14 flex items-center justify-center gap-3 cursor-pointer"
                       style={isActive ? {
                         background: colors.bg,
                         boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
@@ -212,9 +221,9 @@ export default function SlideOutMenu() {
                       }}
                       onMouseEnter={() => setIsExpanded(true)}
                     >
-                      <Icon 
-                        className="w-5 h-5" 
-                        style={{ color: isActive ? colors.iconColor : colors.textSecondary }} 
+                      <Icon
+                        className="w-5 h-5"
+                        style={{ color: isActive ? colors.iconColor : colors.textSecondary }}
                       />
                       {isExpanded && (
                         <motion.span
@@ -234,12 +243,12 @@ export default function SlideOutMenu() {
             </nav>
 
             {/* Quick Actions */}
-            <div className="space-y-2 pt-4 border-t" style={{ borderColor: colors.border }}>
+            <div className="space-y-3 pt-6 border-t" style={{ borderColor: colors.border }}>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => window.dispatchEvent(new Event('toggle-messages'))}
-                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-14 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -263,7 +272,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => window.dispatchEvent(new Event('toggle-phone'))}
-                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-14 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -287,7 +296,7 @@ export default function SlideOutMenu() {
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="rounded-2xl h-12 flex items-center justify-center gap-3 cursor-pointer"
+                  className="rounded-2xl h-14 flex items-center justify-center gap-3 cursor-pointer"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -312,7 +321,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleLogout}
-                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-14 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`

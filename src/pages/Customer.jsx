@@ -238,6 +238,22 @@ export default function CustomerPage() {
     }
   };
 
+  const handleSMSClick = () => {
+    // Find most recent open case (new or in_progress)
+    const openCase = cases.find(c => c.status === 'new' || c.status === 'in_progress');
+    if (openCase) {
+      // Navigate to existing open case to handle SMS
+      window.location.href = createPageUrl(`Case?id=${openCase.id}`);
+    }
+    // No new case creation for SMS from here, as per typical CRM flow (SMS often part of an ongoing case)
+  };
+
+  const handleEmailClick = () => {
+    if (customer.primary_email) {
+      window.location.href = `mailto:${customer.primary_email}`;
+    }
+  };
+
   const handleCreateCase = async (caseData) => {
     try {
       await createCaseMutation.mutateAsync(caseData);
@@ -279,6 +295,13 @@ export default function CustomerPage() {
 
   const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
   const isVIP = customer.is_vip || false;
+
+  // Define colors for the sticky bar, mirroring the neuromorphic style
+  const colors = {
+    bg: '#E0E5EC',
+    shadowLight: '#ffffff',
+    shadowDark: '#a3b1c6',
+  };
 
   return (
     <div className="p-4 md:p-6 min-h-screen" style={{ background: '#E0E5EC' }}>
@@ -382,6 +405,35 @@ export default function CustomerPage() {
                     {isVIP ? <span>✨ Call VIP</span> : 'Call'}
                   </Button>
                 )}
+                {customer.primary_phone && (
+                  <Button
+                    onClick={handleSMSClick}
+                    disabled={!cases.find(c => c.status === 'new' || c.status === 'in_progress')} // Disable if no open case to link SMS to
+                    className="rounded-2xl h-10 px-4 border-0"
+                    style={{
+                      background: '#E0E5EC',
+                      boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                      color: '#3b82f6'
+                    }}
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    SMS
+                  </Button>
+                )}
+                {customer.primary_email && (
+                  <Button
+                    onClick={handleEmailClick}
+                    className="rounded-2xl h-10 px-4 border-0"
+                    style={{
+                      background: '#E0E5EC',
+                      boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                      color: '#6B7280'
+                    }}
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email
+                  </Button>
+                )}
                 <Button
                   onClick={handleToggleEscalation}
                   className="rounded-2xl h-10 px-4 border-0"
@@ -396,7 +448,7 @@ export default function CustomerPage() {
                   <AlertCircle className="w-4 h-4 mr-2" />
                   {customer.escalation_flag ? 'Remove Escalation' : 'Mark for Escalation'}
                 </Button>
-                {!isEditing ? (
+                {!isEditing && ( // Only show edit button if not editing
                   <Button
                     onClick={() => setIsEditing(true)}
                     className="rounded-2xl h-10 px-4 border-0"
@@ -409,38 +461,9 @@ export default function CustomerPage() {
                     <Edit3 className="w-4 h-4 mr-2" />
                     Edit
                   </Button>
-                ) : (
-                  <>
-                    <Button
-                      onClick={handleSave}
-                      disabled={updateCustomerMutation.isPending}
-                      className="rounded-2xl h-10 px-4 border-0"
-                      style={{
-                        background: '#E0E5EC',
-                        boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                        color: '#10b981'
-                      }}
-                    >
-                      <Save className="w-4 h-4 mr-2" />
-                      Save
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setIsEditing(false);
-                        setEditedCustomer(customer);
-                      }}
-                      className="rounded-2xl h-10 px-4 border-0"
-                      style={{
-                        background: '#E0E5EC',
-                        boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                        color: '#ef4444'
-                      }}
-                    >
-                      <X className="w-4 h-4 mr-2" />
-                      Cancel
-                    </Button>
-                  </>
                 )}
+                {/* Save and Cancel buttons removed from here as per the outline,
+                    they will be in the sticky bar at the bottom */}
               </div>
             </div>
           </div>
@@ -1617,6 +1640,50 @@ export default function CustomerPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Sticky Save/Cancel Bar when editing */}
+      {isEditing && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="fixed bottom-0 left-0 right-0 z-50 p-4"
+          style={{
+            background: colors.bg,
+            boxShadow: `0 -8px 24px ${colors.shadowDark}`
+          }}
+        >
+          <div className="max-w-7xl mx-auto flex justify-end gap-3">
+            <Button
+              onClick={() => {
+                setIsEditing(false);
+                setEditedCustomer(customer); // Revert changes
+              }}
+              className="rounded-2xl h-12 px-6 border-0"
+              style={{
+                background: '#E0E5EC',
+                boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                color: '#ef4444'
+              }}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={updateCustomerMutation.isPending}
+              className="rounded-2xl h-12 px-6 border-0"
+              style={{
+                background: '#E0E5EC',
+                boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                color: '#10b981'
+              }}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {updateCustomerMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </motion.div>
+      )}
 
       <CreateCaseModal
         isOpen={showCreateCaseModal}
