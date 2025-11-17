@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useSearchParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft,
   Phone,
@@ -20,11 +21,17 @@ import {
   Clock,
   User,
   Mail,
+  MapPin,
   Calendar,
   CheckCircle2,
   Plus,
   Trash2,
+  Edit3,
+  MoreVertical,
+  Play,
   Pause,
+  Download,
+  Pin,
   AlertCircle,
   Activity,
   TrendingUp,
@@ -36,10 +43,12 @@ import {
   Zap,
   Target,
   Users,
-  UserPlus
+  UserPlus,
+  Building2, // Added
+  Briefcase // Added
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { format } from "date-fns";
+import { format, formatDistanceToNow, differenceInDays } from "date-fns"; // Added differenceInDays
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import AiAssistant from "../components/ai/AiAssistant";
@@ -119,6 +128,17 @@ export default function CasePage() {
       return customers[0];
     },
     enabled: !!caseData?.customer_id,
+  });
+
+  // Fetch employer/company data
+  const { data: employer } = useQuery({
+    queryKey: ['customer-employer', customer?.company_id],
+    queryFn: async () => {
+      if (!customer?.company_id) return null;
+      const employers = await base44.entities.Employer.filter({ id: customer.company_id });
+      return employers[0];
+    },
+    enabled: !!customer?.company_id,
   });
 
   // Add customers list query
@@ -721,6 +741,34 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Calculate employment status notifications
+  const getEmploymentStatus = () => {
+    if (!customer?.hire_date) return null;
+    
+    const hireDate = new Date(customer.hire_date);
+    const today = new Date();
+    const daysEmployed = differenceInDays(today, hireDate);
+    
+    // Placeholder logic - will be replaced with company policy calculations
+    const notifications = [];
+    
+    if (daysEmployed >= 0 && daysEmployed <= 30) {
+      notifications.push({ label: 'New Hire', color: '#10B981', days: 30 - daysEmployed, type: 'new_hire' });
+    }
+    
+    // Placeholder for benefit eligibility (typically 60-90 days)
+    if (daysEmployed >= 0 && daysEmployed < 90) {
+      const daysUntilBenefits = 90 - daysEmployed;
+      notifications.push({ label: `Benefits Eligible in ${daysUntilBenefits} days`, color: '#3B82F6', days: daysUntilBenefits, type: 'benefits_eligibility' });
+    }
+    
+    if (daysEmployed >= 365) {
+      notifications.push({ label: 'Annual Review Due', color: '#F59E0B', days: null, type: 'annual_review' });
+    }
+    
+    return notifications;
+  };
+
   const allActivity = [
     ...calls.map(c => ({ ...c, type: 'call', timestamp: c.created_date })),
     ...smsMessages.map(s => ({ ...s, type: 'sms', timestamp: s.created_date || s.sent_at })),
@@ -756,6 +804,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
       </div>
     );
   }
+
+  const employmentStatus = getEmploymentStatus();
 
   return (
     <div className="min-h-screen p-4 md:p-6" style={{ background: colors.bg }}>
@@ -808,38 +858,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             </motion.div>
           )}
 
-          {/* Case Description Header */}
-          {caseData.description && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-6 rounded-3xl"
-              style={{
-                background: colors.bg,
-                boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
-            >
-              <div className="flex items-start gap-4">
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-                  style={{
-                    ...getButtonStyle('6px', colors.gradient) // Apply getButtonStyle with custom background
-                  }}
-                >
-                  <FileText className="w-6 h-6" style={{ color: colors.iconColor }} />
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-sm font-semibold mb-1" style={{ color: colors.textSecondary }}>
-                    Case Description
-                  </h2>
-                  <p className="text-base leading-relaxed" style={{ color: colors.text }}>
-                    {caseData.description}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
+          {/* Main Header Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
@@ -1010,28 +1029,94 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           </div>
         </div>
 
-        {/* AI Assistant Panel */}
-        {showAiPanel && aiSuggestion && ( // Only show if there's a suggestion
-          <AiAssistant
-            suggestion={aiSuggestion}
-            isLoading={aiLoading}
-            onAccept={(suggestion) => {
-              if (suggestion.priority) {
-                updateCaseMutation.mutate({
-                  id: caseId,
-                  data: { priority: suggestion.priority }
-                });
-              }
-              setAiSuggestion(null);
+        {/* Case Description with Company Logo and Status */}
+        {caseData.description && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-6 rounded-3xl"
+            style={{
+              background: colors.bg,
+              boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
             }}
-            onDismiss={() => setAiSuggestion(null)}
-            type={
-              callSummary ? "summary" :
-              qualityScore ? "quality" :
-              complianceCheck ? "compliance" :
-              "suggestion"
-            }
-          />
+          >
+            <div className="grid grid-cols-4 gap-6">
+              {/* Left 25% - Company Logo */}
+              <div className="col-span-1 flex items-center justify-center">
+                {employer?.company_logo_url ? (
+                  <img 
+                    src={employer.company_logo_url} 
+                    alt={employer.employer_name}
+                    className="max-w-full max-h-32 object-contain rounded-2xl"
+                    style={{ boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`}}
+                  />
+                ) : (
+                  <div
+                    className="w-32 h-32 rounded-2xl flex items-center justify-center"
+                    style={{
+                      background: colors.bg,
+                      boxShadow: `inset 6px 6px 12px ${colors.shadowDark}, inset -6px -6px 12px ${colors.shadowLight}`
+                    }}
+                  >
+                    <Building2 className="w-16 h-16" style={{ color: colors.iconColor }} />
+                  </div>
+                )}
+              </div>
+
+              {/* Middle 50% - Case Description */}
+              <div className="col-span-2 flex flex-col justify-center">
+                <h2 className="text-xl font-bold mb-3" style={{ color: colors.text }}>
+                  Case About: {caseData.case_type}
+                </h2>
+                <p className="text-lg font-semibold leading-relaxed" style={{ color: colors.text }}>
+                  {caseData.description}
+                </p>
+                {employer && (
+                  <p className="text-sm mt-3" style={{ color: colors.textSecondary }}>
+                    <Briefcase className="w-4 h-4 inline mr-1" />
+                    {employer.employer_name}
+                  </p>
+                )}
+              </div>
+
+              {/* Right 25% - Status Notifications */}
+              <div className="col-span-1 space-y-2">
+                {employmentStatus && employmentStatus.length > 0 ? (
+                  employmentStatus.map((status, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-xl"
+                      style={{
+                        background: colors.bg,
+                        boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                      }}
+                    >
+                      <p className="text-xs font-semibold mb-1" style={{ color: status.color }}>
+                        {status.label}
+                      </p>
+                      {status.days !== null && (
+                        <p className="text-xs" style={{ color: colors.textSecondary }}>
+                          {status.days} {status.days === 1 ? 'day' : 'days'}
+                        </p>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{
+                      background: colors.bg,
+                      boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+                    }}
+                  >
+                    <p className="text-xs" style={{ color: colors.textTertiary }}>
+                      No employment data
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
         )}
 
         {/* AI Quick Actions Bar */}
@@ -1111,6 +1196,30 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             </div>
           </CardContent>
         </Card>
+
+        {/* AI Assistant Panel */}
+        {showAiPanel && aiSuggestion && ( // Only show if there's a suggestion
+          <AiAssistant
+            suggestion={aiSuggestion}
+            isLoading={aiLoading}
+            onAccept={(suggestion) => {
+              if (suggestion.priority) {
+                updateCaseMutation.mutate({
+                  id: caseId,
+                  data: { priority: suggestion.priority }
+                });
+              }
+              setAiSuggestion(null);
+            }}
+            onDismiss={() => setAiSuggestion(null)}
+            type={
+              callSummary ? "summary" :
+              qualityScore ? "quality" :
+              complianceCheck ? "compliance" :
+              "suggestion"
+            }
+          />
+        )}
 
         {/* Main Grid */}
         <div className="grid lg:grid-cols-3 gap-6">
