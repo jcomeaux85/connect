@@ -1,568 +1,340 @@
-
-import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/ThemeProvider';
-import { base44 } from "@/api/base44Client";
-import { useQuery } from '@tanstack/react-query';
-import { Input } from "@/components/ui/input";
-import { useUser } from "@/components/hooks/useUser"; // Added this import
 import {
   LayoutGrid,
   Folder,
   Users,
   TrendingUp,
-  ChevronRight,
-  ChevronLeft,
-  LogOut,
   CheckSquare,
-  Search,
   Phone,
+  Clock,
   MessageSquare,
-  Settings, // Added for Call Log (though changing to Phone)
-  Activity, // Added for Timeline
+  Settings,
+  LogOut,
+  User,
+  Search
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function SlideOutMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [customerSearch, setCustomerSearch] = useState("");
-  
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
-  const navigate = useNavigate();
-  const { colors, isDark, getButtonStyle, getInsetStyle } = useTheme();
-  const timeoutRef = useRef(null); // Added this ref as per outline
-  const menuRef = useRef(null); 
+  const { colors } = useTheme();
 
-  const { data: user } = useUser(); // Replaced local user state and loadUser with useUser hook
-
-  const { data: searchResults = [] } = useQuery({
-    queryKey: ['customer-search', customerSearch],
-    queryFn: async () => {
-      if (!customerSearch.trim()) return [];
-      const customers = await base44.entities.Customer.list('-updated_date', 50);
-      return customers.filter(c => 
-        `${c.first_name} ${c.last_name}`.toLowerCase().includes(customerSearch.toLowerCase()) ||
-        c.primary_phone?.includes(customerSearch) ||
-        c.primary_email?.toLowerCase().includes(customerSearch.toLowerCase())
-      ).slice(0, 5);
-    },
-    enabled: customerSearch.length > 0,
+  const { data: user } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => base44.auth.me(),
   });
 
-  // Menu visibility and hover effects
-  useEffect(() => {
-    let closeTimeout;
-    let openTimeout;
+  const { data: customers = [] } = useQuery({
+    queryKey: ['customers-search'],
+    queryFn: () => base44.entities.Customer.list('-updated_date', 50),
+    enabled: isOpen && searchQuery.length > 0,
+  });
 
-    const handleMouseMove = (e) => {
-      if (e.clientX <= 10 && !isOpen) {
-        clearTimeout(closeTimeout);
-        openTimeout = setTimeout(() => {
-          setIsOpen(true);
-        }, 100);
-      }
+  const filteredCustomers = customers.filter(c => 
+    `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.primary_phone?.includes(searchQuery)
+  );
+
+  useEffect(() => {
+    let openTimer;
+    let closeTimer;
+
+    const handleMouseEnter = () => {
+      clearTimeout(closeTimer);
+      openTimer = setTimeout(() => setIsOpen(true), 100);
     };
 
     const handleMouseLeave = () => {
-      if (isOpen && !isExpanded) {
-        clearTimeout(openTimeout);
-        closeTimeout = setTimeout(() => {
-          setIsOpen(false);
-        }, 200); // Reduced from 1000ms to 200ms for faster close
-      }
+      clearTimeout(openTimer);
+      closeTimer = setTimeout(() => {
+        setIsOpen(false);
+        setIsExpanded(false);
+      }, 800); // Increased from 300ms to 800ms
     };
 
-    if (!isExpanded) {
-      window.addEventListener('mousemove', handleMouseMove);
-      const menuElement = document.getElementById('slide-out-menu');
-      if (menuElement) {
-        menuElement.addEventListener('mouseleave', handleMouseLeave);
-      }
+    const menuElement = document.getElementById('slide-out-menu');
+    if (menuElement) {
+      menuElement.addEventListener('mouseenter', handleMouseEnter);
+      menuElement.addEventListener('mouseleave', handleMouseLeave);
     }
 
     return () => {
-      clearTimeout(closeTimeout);
-      clearTimeout(openTimeout);
-      window.removeEventListener('mousemove', handleMouseMove);
-      const menuElement = document.getElementById('slide-out-menu');
+      clearTimeout(openTimer);
+      clearTimeout(closeTimer);
       if (menuElement) {
+        menuElement.removeEventListener('mouseenter', handleMouseEnter);
         menuElement.removeEventListener('mouseleave', handleMouseLeave);
       }
     };
-  }, [isOpen, isExpanded]);
+  }, []);
+
+  const navigationItems = [
+    { title: 'Dashboard', url: createPageUrl('Dashboard'), icon: LayoutGrid },
+    { title: 'Cases', url: createPageUrl('Cases'), icon: Folder },
+    { title: 'Customers', url: createPageUrl('Customers'), icon: Users },
+    { title: 'Analytics', url: createPageUrl('Analytics'), icon: TrendingUp },
+    { title: 'Tasks', url: createPageUrl('Boards'), icon: CheckSquare },
+    { title: 'Call Log', url: createPageUrl('CallLog'), icon: Phone },
+    { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock },
+  ];
 
   const handleLogout = async () => {
     await base44.auth.logout();
   };
 
-  const handleCustomerClick = (customerId) => {
-    navigate(createPageUrl(`Customer?id=${customerId}`));
-    setCustomerSearch("");
-    setIsExpanded(false);
-    setIsOpen(false);
-  };
-
-  const handlePhoneClick = () => {
-    window.dispatchEvent(new CustomEvent('toggle-phone'));
-    if (!isExpanded) {
-      setIsOpen(false);
-    }
-  };
-
-  const handleMessageClick = () => {
-    window.dispatchEvent(new CustomEvent('toggle-messages'));
-    if (!isExpanded) {
-      setIsOpen(false);
-    }
-  };
-
-  const handleProfileClick = () => {
-    navigate(createPageUrl('Profile'));
-    setIsExpanded(false);
-    setIsOpen(false);
-  };
-
   return (
-    <>
+    <div
+      id="slide-out-menu"
+      className="fixed left-0 top-0 h-full z-[60] pointer-events-auto"
+      style={{
+        width: isExpanded ? '280px' : isOpen ? '80px' : '20px',
+        transition: 'width 0.3s ease'
+      }}
+    >
       <AnimatePresence>
-        {isOpen && isExpanded && (
+        {isOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[80]"
-            onClick={() => {
-              setIsExpanded(false);
-              setIsOpen(false);
+            initial={{ x: -280, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -280, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="h-full py-6 px-3 flex flex-col"
+            style={{
+              background: colors.bg,
+              boxShadow: `12px 0 24px ${colors.shadowDark}`
             }}
-          />
-        )}
-      </AnimatePresence>
+          >
+            {/* User Profile */}
+            <div className="mb-6 px-2">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto"
+                style={{
+                  background: colors.bg,
+                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                }}
+              >
+                <User className="w-6 h-6" style={{ color: colors.iconColor }} />
+              </div>
+              {isExpanded && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-3 text-center"
+                >
+                  <p className="font-semibold text-sm" style={{ color: colors.text }}>
+                    {user?.full_name || 'User'}
+                  </p>
+                  <p className="text-xs" style={{ color: colors.textSecondary }}>
+                    {user?.role === 'admin' ? 'Administrator' : 'Agent'}
+                  </p>
+                </motion.div>
+              )}
+            </div>
 
-      <motion.div
-        id="slide-out-menu"
-        ref={menuRef}
-        initial={false}
-        animate={{ 
-          x: isOpen ? 0 : (isExpanded ? 0 : -320),
-          width: isExpanded ? 320 : 72
-        }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="fixed left-0 top-0 h-full z-[90] overflow-y-auto overflow-x-hidden scrollbar-hide"
-        style={{
-          background: isDark
-            ? 'rgba(26, 29, 41, 0.98)'
-            : 'rgba(224, 229, 236, 0.98)',
-          backdropFilter: 'blur(20px)',
-          borderRight: `1px solid ${colors.border}`,
-          boxShadow: isDark
-            ? '25px 0 70px rgba(0, 0, 0, 0.7), 15px 0 40px rgba(0, 0, 0, 0.5)'
-            : '25px 0 70px rgba(100, 100, 100, 0.25), 15px 0 40px rgba(140, 140, 140, 0.2)',
-        }}
-      >
-        {/* Logo + Profile Section */}
-        <div className="p-4 border-b flex flex-col gap-3 sticky top-0 z-10" style={{ 
-          borderColor: colors.border,
-          background: isDark ? 'rgba(26, 29, 41, 0.98)' : 'rgba(224, 229, 236, 0.98)'
-        }}>
-          {isExpanded ? (
-            <>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+            {/* Search (only when expanded) */}
+            {isExpanded && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mb-4 px-2"
+              >
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: colors.textTertiary }} />
+                  <Input
+                    placeholder="Search customers..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 rounded-xl border-0 h-10 text-sm"
                     style={{
-                      background: colors.gradient,
-                      boxShadow: isDark
-                        ? '3px 3px 6px rgba(0, 0, 0, 0.3)'
-                        : '3px 3px 6px rgba(163, 177, 198, 0.3)',
+                      background: colors.bg,
+                      boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`,
+                      color: colors.text
+                    }}
+                  />
+                </div>
+
+                {/* Search Results */}
+                {searchQuery && filteredCustomers.length > 0 && (
+                  <div
+                    className="mt-2 rounded-xl overflow-hidden max-h-48 overflow-y-auto"
+                    style={{
+                      background: colors.bg,
+                      boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                     }}
                   >
-                    <svg
-                      className="w-5 h-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      style={{ color: colors.iconColor }}
-                    >
-                      <path
-                        d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21M4 7V17L12 21"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    {filteredCustomers.map(customer => (
+                      <Link
+                        key={customer.id}
+                        to={createPageUrl(`Customer?id=${customer.id}`)}
+                        className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <p className="text-sm font-medium" style={{ color: colors.text }}>
+                          {customer.first_name} {customer.last_name}
+                        </p>
+                        <p className="text-xs" style={{ color: colors.textSecondary }}>
+                          {customer.primary_phone}
+                        </p>
+                      </Link>
+                    ))}
                   </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="font-bold text-sm whitespace-nowrap truncate" style={{ color: colors.text }}>
-                      BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px]" style={{ color: colors.textTertiary }}>™</sup>
-                    </span>
-                  </div>
-                </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Navigation Items */}
+            <nav className="flex-1 space-y-2">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.url;
                 
-                <button
-                  onClick={() => setIsExpanded(false)}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={getButtonStyle()}
-                >
-                  <ChevronLeft className="w-4 h-4" style={{ color: '#8B5CF6' }} />
-                </button>
-              </div>
-
-              {/* Profile */}
-              {user && (
-                <button
-                  onClick={handleProfileClick}
-                  className="px-3 py-2 rounded-xl text-left w-full"
-                  style={getInsetStyle()}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div 
-                      className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: 'linear-gradient(145deg, #8B5CF6, #7C3AED)' }}
-                    >
-                      <span style={{ color: '#ffffff' }} className="font-bold text-sm">
-                        {user.full_name?.charAt(0) || 'U'}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm truncate" style={{ color: colors.text }}>
-                        {user.full_name}
-                      </p>
-                      <p className="text-xs truncate" style={{ color: colors.textSecondary }}>
-                        {user.email}
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              )}
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-3 w-full">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={getInsetStyle()}
-              >
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ color: colors.iconColor }}
-                >
-                  <path
-                    d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21M4 7V17L12 21"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-
-              {user && (
-                <button
-                  onClick={handleProfileClick}
-                  className="w-9 h-9 rounded-full flex items-center justify-center"
-                  style={getInsetStyle()}
-                >
-                  <span style={{ color: colors.text }} className="font-bold text-sm">
-                    {user.full_name?.charAt(0) || 'U'}
-                  </span>
-                </button>
-              )}
-              
-              <button
-                onClick={() => setIsExpanded(true)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={getButtonStyle()}
-              >
-                <ChevronRight className="w-4 h-4" style={{ color: '#8B5CF6' }} />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="p-2">
-          
-          {/* Separator Line 1 */}
-          <div className="my-4 px-4">
-            <div style={{ 
-              height: '2px', 
-              background: '#8B5CF6',
-              opacity: 0.6,
-              borderRadius: '2px'
-            }} />
-          </div>
-
-          {/* Dashboard */}
-          <Link to={createPageUrl('Dashboard')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`flex items-center ${isExpanded ? 'gap-3 px-3 py-2' : 'justify-center py-2'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('Dashboard'))}
-              title={!isExpanded ? 'Dashboard' : undefined}
-            >
-              <LayoutGrid className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Dashboard</span>}
-            </motion.div>
-          </Link>
-
-          {/* Cases */}
-          <Link to={createPageUrl('Cases')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('Cases'))}
-              title={!isExpanded ? 'Cases' : undefined}
-            >
-              <Folder className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Cases</span>}
-            </motion.div>
-          </Link>
-
-          {/* Customers */}
-          <Link to={createPageUrl('Customers')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('Customers'))}
-              title={!isExpanded ? 'Customers' : undefined}
-            >
-              <Users className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Customers</span>}
-            </motion.div>
-          </Link>
-
-          {/* Analytics */}
-          <Link to={createPageUrl('Analytics')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('Analytics'))}
-              title={!isExpanded ? 'Analytics' : undefined}
-            >
-              <TrendingUp className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Analytics</span>}
-            </motion.div>
-          </Link>
-
-          {/* Tasks */}
-          <Link to={createPageUrl('Tasks')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('Tasks'))}
-              title={!isExpanded ? 'Tasks' : undefined}
-            >
-              <CheckSquare className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Tasks</span>}
-            </motion.div>
-          </Link>
-
-          {/* Separator Line 2 */}
-          <div className="my-4 px-4">
-            <div style={{ 
-              height: '2px', 
-              background: '#8B5CF6',
-              opacity: 0.6,
-              borderRadius: '2px'
-            }} />
-          </div>
-
-          {/* Search */}
-          {isExpanded ? (
-            <div className="px-3 py-2 mb-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: colors.iconColor }} />
-                <Input
-                  value={customerSearch}
-                  onChange={(e) => setCustomerSearch(e.target.value)}
-                  placeholder="Search customers..."
-                  className="pl-10 rounded-xl border-0 h-9 text-sm"
-                  style={{
-                    ...getInsetStyle(),
-                    color: colors.text
-                  }}
-                />
-              </div>
-              {searchResults.length > 0 && (
-                <div className="mt-2 space-y-1 max-h-48 overflow-y-auto">
-                  {searchResults.map(customer => (
-                    <button
-                      key={customer.id}
-                      onClick={() => handleCustomerClick(customer.id)}
-                      className="w-full p-2 rounded-lg text-left transition-all"
-                      style={{
-                        ...getButtonStyle(),
-                        fontSize: '13px'
+                return (
+                  <Link key={item.title} to={item.url}>
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="rounded-2xl h-12 flex items-center justify-center gap-3 cursor-pointer"
+                      style={isActive ? {
+                        background: colors.bg,
+                        boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
+                      } : {
+                        background: colors.bg,
+                        boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                       }}
+                      onMouseEnter={() => setIsExpanded(true)}
                     >
-                      <p className="font-medium truncate" style={{ color: colors.text }}>
-                        {customer.first_name} {customer.last_name}
-                      </p>
-                      <p className="text-xs truncate" style={{ color: colors.textSecondary }}>
-                        {customer.primary_phone}
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              )}
+                      <Icon 
+                        className="w-5 h-5" 
+                        style={{ color: isActive ? colors.iconColor : colors.textSecondary }} 
+                      />
+                      {isExpanded && (
+                        <motion.span
+                          initial={{ opacity: 0, width: 0 }}
+                          animate={{ opacity: 1, width: 'auto' }}
+                          exit={{ opacity: 0, width: 0 }}
+                          className="text-sm font-medium flex-1 text-left"
+                          style={{ color: isActive ? colors.text : colors.textSecondary }}
+                        >
+                          {item.title}
+                        </motion.span>
+                      )}
+                    </motion.div>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Quick Actions */}
+            <div className="space-y-2 pt-4 border-t" style={{ borderColor: colors.border }}>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => window.dispatchEvent(new Event('toggle-messages'))}
+                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                style={{
+                  background: colors.bg,
+                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                }}
+                onMouseEnter={() => setIsExpanded(true)}
+              >
+                <MessageSquare className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                {isExpanded && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 'auto' }}
+                    className="text-sm font-medium flex-1 text-left"
+                    style={{ color: colors.textSecondary }}
+                  >
+                    Messages
+                  </motion.span>
+                )}
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => window.dispatchEvent(new Event('toggle-phone'))}
+                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                style={{
+                  background: colors.bg,
+                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                }}
+                onMouseEnter={() => setIsExpanded(true)}
+              >
+                <Phone className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                {isExpanded && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 'auto' }}
+                    className="text-sm font-medium flex-1 text-left"
+                    style={{ color: colors.textSecondary }}
+                  >
+                    Phone
+                  </motion.span>
+                )}
+              </motion.button>
+
+              <Link to={createPageUrl('Settings')}>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="rounded-2xl h-12 flex items-center justify-center gap-3 cursor-pointer"
+                  style={{
+                    background: colors.bg,
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                  }}
+                  onMouseEnter={() => setIsExpanded(true)}
+                >
+                  <Settings className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                  {isExpanded && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: 'auto' }}
+                      className="text-sm font-medium flex-1 text-left"
+                      style={{ color: colors.textSecondary }}
+                    >
+                      Settings
+                    </motion.span>
+                  )}
+                </motion.div>
+              </Link>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleLogout}
+                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                style={{
+                  background: colors.bg,
+                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                }}
+                onMouseEnter={() => setIsExpanded(true)}
+              >
+                <LogOut className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                {isExpanded && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 'auto' }}
+                    className="text-sm font-medium flex-1 text-left"
+                    style={{ color: colors.textSecondary }}
+                  >
+                    Logout
+                  </motion.span>
+                )}
+              </motion.button>
             </div>
-          ) : (
-            <button
-              onClick={() => setIsExpanded(true)}
-              className="w-full flex items-center justify-center py-2 rounded-xl transition-all cursor-pointer mb-2"
-              style={getButtonStyle()}
-              title="Search Customers"
-            >
-              <Search className="w-5 h-5" style={{ color: colors.iconColor }} />
-            </button>
-          )}
-
-          {/* Call Log */}
-          <Link to={createPageUrl('CallLog')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('CallLog'))}
-              title={!isExpanded ? 'Call Log' : undefined}
-            >
-              <Phone className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Call Log</span>}
-            </motion.div>
-          </Link>
-
-          {/* Timeline */}
-          <Link to={createPageUrl('Timeline')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('Timeline'))}
-              title={!isExpanded ? 'Timeline' : undefined}
-            >
-              <Activity className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Timeline</span>}
-            </motion.div>
-          </Link>
-
-          {/* Messages (Page) */}
-          <Link to={createPageUrl('Messages')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('Messages'))}
-              title={!isExpanded ? 'Messages' : undefined}
-            >
-              <MessageSquare className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Messages</span>}
-            </motion.div>
-          </Link>
-
-          {/* Separator Line 3 */}
-          <div className="my-4 px-4">
-            <div style={{ 
-              height: '2px', 
-              background: '#8B5CF6',
-              opacity: 0.6,
-              borderRadius: '2px'
-            }} />
-          </div>
-
-          {/* Phone (button remains) */}
-          <button
-            onClick={handlePhoneClick}
-            className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-            style={getButtonStyle()}
-            title={!isExpanded ? 'Phone' : undefined}
-          >
-            <Phone className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-            {isExpanded && <span className="font-medium text-sm">Phone</span>}
-          </button>
-
-          {/* Message (button remains) */}
-          <button
-            onClick={handleMessageClick}
-            className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'} rounded-xl transition-all cursor-pointer mb-2`}
-            style={getButtonStyle()}
-            title={!isExpanded ? 'Message' : undefined}
-          >
-            <MessageSquare className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-            {isExpanded && <span className="font-medium text-sm">Message</span>}
-          </button>
-
-          {/* Separator Line 4 */}
-          <div className="my-4 px-4">
-            <div style={{ 
-              height: '2px', 
-              background: '#8B5CF6',
-              opacity: 0.6,
-              borderRadius: '2px'
-            }} />
-          </div>
-
-          {/* Settings */}
-          <Link to={createPageUrl('Settings')}>
-            <motion.div
-              whileHover={{ x: isExpanded ? 4 : 0 }}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2' : 'justify-center py-2'} rounded-xl transition-all cursor-pointer mb-2`}
-              style={getButtonStyle(location.pathname === createPageUrl('Settings'))}
-              title={!isExpanded ? 'Settings' : undefined}
-            >
-              <Settings className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-              {isExpanded && <span className="font-medium text-sm">Settings</span>}
-            </motion.div>
-          </Link>
-
-          {/* Sign Out */}
-          <button
-            onClick={handleLogout}
-            className={`w-full flex items-center ${isExpanded ? 'gap-3 px-3 py-2' : 'justify-center py-2'} rounded-xl transition-all cursor-pointer mb-2`}
-            style={getButtonStyle()}
-            title={!isExpanded ? 'Sign Out' : undefined}
-          >
-            <LogOut className="w-5 h-5 flex-shrink-0" style={{ color: colors.iconColor }} />
-            {isExpanded && <span className="font-medium text-sm">Sign Out</span>}
-          </button>
-        </div>
-      </motion.div>
-
-      <AnimatePresence>
-        {!isOpen && (
-          <motion.div
-            initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -50, opacity: 0 }}
-            className="fixed left-0 top-1/2 -translate-y-1/2 z-[85] flex items-center justify-center w-8 h-24 rounded-r-xl cursor-pointer"
-            style={{
-              background: isDark
-                ? 'rgba(255, 255, 255, 0.95)'
-                : 'rgba(0, 0, 0, 0.95)',
-              backdropFilter: 'blur(10px)',
-              boxShadow: isDark
-                ? '4px 0 12px rgba(255, 255, 255, 0.3)'
-                : '4px 0 12px rgba(0, 0, 0, 0.5)',
-            }}
-            onClick={() => setIsOpen(true)}
-          >
-            <ChevronRight className="w-4 h-4" style={{ color: isDark ? '#1a1d29' : '#E0E5EC' }} />
           </motion.div>
         )}
       </AnimatePresence>
-
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-    </>
+    </div>
   );
 }
