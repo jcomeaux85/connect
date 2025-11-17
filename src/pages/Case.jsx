@@ -51,7 +51,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format, formatDistanceToNow, differenceInDays } from "date-fns"; // Added differenceInDays
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import AiAssistant from "../components/ai/AiAssistant";
+import AiAssistant from "../components/ai/AiAssistant"; // This import can be removed if not used elsewhere, but for now, the orb replaces its usage
+import AISuggestionsOrb from "../components/assistant/AISuggestionsOrb"; // New import
 import ActiveCallPanel from "../components/phone/ActiveCallPanel";
 import {
   summarizeCall,
@@ -90,7 +91,7 @@ export default function CasePage() {
   // AI State
   const [aiSuggestion, setAiSuggestion] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
-  const [showAiPanel, setShowAiPanel] = useState(true);
+  const [showAiPanel, setShowAiPanel] = useState(true); // Kept for its usage in useEffect for smart note suggestions
   const [callSummary, setCallSummary] = useState(null);
   const [complianceCheck, setComplianceCheck] = useState(null);
   const [qualityScore, setQualityScore] = useState(null);
@@ -1047,8 +1048,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   <img 
                     src={employer.company_logo_url} 
                     alt={employer.employer_name}
-                    className="max-w-full max-h-32 object-contain rounded-2xl"
-                    style={{ boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`}}
+                    className="max-w-full max-h-32 object-contain"
                   />
                 ) : (
                   <div
@@ -1197,29 +1197,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           </CardContent>
         </Card>
 
-        {/* AI Assistant Panel */}
-        {showAiPanel && aiSuggestion && ( // Only show if there's a suggestion
-          <AiAssistant
-            suggestion={aiSuggestion}
-            isLoading={aiLoading}
-            onAccept={(suggestion) => {
-              if (suggestion.priority) {
-                updateCaseMutation.mutate({
-                  id: caseId,
-                  data: { priority: suggestion.priority }
-                });
-              }
-              setAiSuggestion(null);
-            }}
-            onDismiss={() => setAiSuggestion(null)}
-            type={
-              callSummary ? "summary" :
-              qualityScore ? "quality" :
-              complianceCheck ? "compliance" :
-              "suggestion"
-            }
-          />
-        )}
+        {/* Removed AiAssistant component from here */}
 
         {/* Main Grid */}
         <div className="grid lg:grid-cols-3 gap-6">
@@ -2217,6 +2195,28 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           </div>
         </div>
       </div>
+
+      {/* AI Suggestions Orb - Floating Button */}
+      <AISuggestionsOrb
+        suggestion={aiSuggestion}
+        isLoading={aiLoading}
+        onAccept={(suggestion) => {
+          if (suggestion.priority) {
+            updateCaseMutation.mutate({
+              id: caseId,
+              data: { priority: suggestion.priority }
+            });
+          }
+          setAiSuggestion(null);
+        }}
+        onDismiss={() => setAiSuggestion(null)}
+        type={
+          callSummary ? "summary" :
+          qualityScore ? "quality" :
+          complianceCheck ? "compliance" :
+          "suggestion"
+        }
+      />
 
       {/* Active Call Panel */}
       <ActiveCallPanel
