@@ -35,11 +35,40 @@ import {
 import CreateCustomerModal from "../components/customers/CreateCustomerModal";
 import { useTheme } from "@/components/ThemeProvider";
 
+// Fuzzy search helper
+const fuzzyMatch = (str, pattern) => {
+  if (!str || !pattern) return false;
+  str = str.toLowerCase();
+  pattern = pattern.toLowerCase();
+  
+  // Simple substring match
+  if (str.includes(pattern)) return true;
+  
+  // Character-by-character fuzzy match
+  let patternIdx = 0;
+  let strIdx = 0;
+  
+  while (strIdx < str.length && patternIdx < pattern.length) {
+    if (str[strIdx] === pattern[patternIdx]) {
+      patternIdx++;
+    }
+    strIdx++;
+  }
+  
+  return patternIdx === pattern.length;
+};
+
 export default function Customers() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState({
+    employer: 'all',
+    hasEmail: 'all',
+    hasPhone: 'all',
+  });
 
   const queryClient = useQueryClient();
   const { colors } = useTheme();
@@ -47,6 +76,11 @@ export default function Customers() {
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ['customers'],
     queryFn: () => base44.entities.Customer.list('-updated_date'),
+  });
+
+  const { data: employers = [] } = useQuery({
+    queryKey: ['employers-list'],
+    queryFn: () => base44.entities.Employer.list('employer_name'),
   });
 
   const createCustomerMutation = useMutation({
@@ -61,20 +95,35 @@ export default function Customers() {
     createCustomerMutation.mutate(customerData);
   };
 
-  const filteredCustomers = customers.filter(
-    (customer) => {
-      const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
-      const matchesSearch = !searchTerm ||
-        fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (customer.primary_phone && customer.primary_phone.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (customer.primary_email && customer.primary_email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (customer.employee_id && customer.employee_id.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredCustomers = customers.filter((customer) => {
+    const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
+    
+    // Basic fuzzy search (case insensitive, spelling forgiving)
+    const matchesSearch = !searchTerm ||
+      fuzzyMatch(fullName, searchTerm) ||
+      fuzzyMatch(customer.primary_phone, searchTerm) ||
+      fuzzyMatch(customer.primary_email, searchTerm) ||
+      fuzzyMatch(customer.employee_id, searchTerm) ||
+      (customer.company_name && fuzzyMatch(customer.company_name, searchTerm));
 
-      const matchesCategory = selectedCategory === 'all' || customer.call_category === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || customer.call_category === selectedCategory;
 
-      return matchesSearch && matchesCategory;
+    // Advanced filters
+    let matchesAdvancedFilters = true;
+    if (showAdvancedSearch) {
+      const matchesEmployer = advancedFilters.employer === 'all' || customer.company_id === advancedFilters.employer;
+      const matchesEmail = advancedFilters.hasEmail === 'all' ||
+        (advancedFilters.hasEmail === 'yes' && customer.primary_email) ||
+        (advancedFilters.hasEmail === 'no' && !customer.primary_email);
+      const matchesPhone = advancedFilters.hasPhone === 'all' ||
+        (advancedFilters.hasPhone === 'yes' && customer.primary_phone) ||
+        (advancedFilters.hasPhone === 'no' && !customer.primary_phone);
+
+      matchesAdvancedFilters = matchesEmployer && matchesEmail && matchesPhone;
     }
-  );
+
+    return matchesSearch && matchesCategory && matchesAdvancedFilters;
+  });
 
   const categories = [
     ...new Set(customers.map((c) => c.call_category).filter(Boolean)),
@@ -116,97 +165,208 @@ export default function Customers() {
           }}
         >
           <CardContent className="p-4">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-grow">
-                <div
-                  className="rounded-2xl"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: colors.neumorphicShadowInset,
-                  }}
-                >
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5" style={{ color: colors.iconMuted }} />
-                  </div>
-                  <Input
-                    id="search"
-                    name="search"
-                    className="block w-full pl-12 pr-3 py-3 border-0 rounded-2xl leading-5 placeholder-gray-400 focus:outline-none focus:ring-0 text-sm"
-                    placeholder="Search customers..."
-                    type="search"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ background: "transparent", color: colors.textPrimary }}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Category Filter */}
-                <Select
-                  value={selectedCategory}
-                  onValueChange={setSelectedCategory}
-                >
-                  <SelectTrigger
-                    className="rounded-2xl border-0 h-12 w-full md:w-48"
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-grow">
+                  <div
+                    className="rounded-2xl"
                     style={{
                       background: colors.bg,
-                      boxShadow: colors.neumorphicShadowSoft,
-                      color: colors.textPrimary,
+                      boxShadow: colors.neumorphicShadowInset,
                     }}
                   >
-                    <SelectValue>
-                      <span className="flex items-center gap-2">
-                        <Filter className="w-4 h-4" />
-                        {selectedCategory === "all"
-                          ? "All Categories"
-                          : selectedCategory}
-                      </span>
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Search className="h-5 w-5" style={{ color: colors.iconMuted }} />
+                    </div>
+                    <Input
+                      id="search"
+                      name="search"
+                      className="block w-full pl-12 pr-3 py-3 border-0 rounded-2xl leading-5 placeholder-gray-400 focus:outline-none focus:ring-0 text-sm"
+                      placeholder="Search customers (fuzzy search enabled)..."
+                      type="search"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{ background: "transparent", color: colors.textPrimary }}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Category Filter */}
+                  <Select
+                    value={selectedCategory}
+                    onValueChange={setSelectedCategory}
+                  >
+                    <SelectTrigger
+                      className="rounded-2xl border-0 h-12 w-full md:w-48"
+                      style={{
+                        background: colors.bg,
+                        boxShadow: colors.neumorphicShadowSoft,
+                        color: colors.textPrimary,
+                      }}
+                    >
+                      <SelectValue>
+                        <span className="flex items-center gap-2">
+                          <Filter className="w-4 h-4" />
+                          {selectedCategory === "all"
+                            ? "All Categories"
+                            : selectedCategory}
+                        </span>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                {/* View Mode Toggle */}
-                <div
-                  className="flex p-1 rounded-2xl"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: colors.neumorphicShadowInsetSoft,
-                  }}
-                >
+                  {/* Advanced Search Toggle */}
                   <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setViewMode("grid")}
-                    className={`rounded-xl h-10 w-10 border-0`}
+                    onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                    className="rounded-2xl h-12 px-4 border-0 text-sm"
                     style={{
-                      background: viewMode === "grid" ? colors.bg : "transparent",
-                      boxShadow: viewMode === "grid" ? colors.neumorphicShadowSoft : "none",
+                      background: colors.bg,
+                      boxShadow: showAdvancedSearch ? colors.neumorphicShadowInset : colors.neumorphicShadowSoft,
+                      color: colors.textSecondary
                     }}
                   >
-                    <LayoutGrid className="w-5 h-5" />
+                    <Filter className="w-4 h-4 mr-2" />
+                    Advanced
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setViewMode("list")}
-                    className={`rounded-xl h-10 w-10 border-0`}
+
+                  {/* View Mode Toggle */}
+                  <div
+                    className="flex p-1 rounded-2xl"
                     style={{
-                      background: viewMode === "list" ? colors.bg : "transparent",
-                      boxShadow: viewMode === "list" ? colors.neumorphicShadowSoft : "none",
+                      background: colors.bg,
+                      boxShadow: colors.neumorphicShadowInsetSoft,
                     }}
                   >
-                    <List className="w-5 h-5" />
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setViewMode("grid")}
+                      className={`rounded-xl h-10 w-10 border-0`}
+                      style={{
+                        background: viewMode === "grid" ? colors.bg : "transparent",
+                        boxShadow: viewMode === "grid" ? colors.neumorphicShadowSoft : "none",
+                      }}
+                    >
+                      <LayoutGrid className="w-5 h-5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setViewMode("list")}
+                      className={`rounded-xl h-10 w-10 border-0`}
+                      style={{
+                        background: viewMode === "list" ? colors.bg : "transparent",
+                        boxShadow: viewMode === "list" ? colors.neumorphicShadowSoft : "none",
+                      }}
+                    >
+                      <List className="w-5 h-5" />
+                    </Button>
+                  </div>
                 </div>
               </div>
+
+              {/* Advanced Search Filters */}
+              <AnimatePresence>
+                {showAdvancedSearch && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-wrap gap-3 overflow-hidden"
+                  >
+                    <Select
+                      value={advancedFilters.employer}
+                      onValueChange={(value) => setAdvancedFilters({...advancedFilters, employer: value})}
+                    >
+                      <SelectTrigger
+                        className="rounded-2xl border-0 h-10 w-48"
+                        style={{
+                          background: colors.bg,
+                          boxShadow: colors.neumorphicShadowInset,
+                          color: colors.textPrimary
+                        }}
+                      >
+                        <SelectValue placeholder="All Employers" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Employers</SelectItem>
+                        {employers.map(emp => (
+                          <SelectItem key={emp.id} value={emp.id}>
+                            {emp.employer_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select
+                      value={advancedFilters.hasEmail}
+                      onValueChange={(value) => setAdvancedFilters({...advancedFilters, hasEmail: value})}
+                    >
+                      <SelectTrigger
+                        className="rounded-2xl border-0 h-10 w-40"
+                        style={{
+                          background: colors.bg,
+                          boxShadow: colors.neumorphicShadowInset,
+                          color: colors.textPrimary
+                        }}
+                      >
+                        <SelectValue placeholder="Has Email" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Any Email</SelectItem>
+                        <SelectItem value="yes">Has Email</SelectItem>
+                        <SelectItem value="no">No Email</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <Select
+                      value={advancedFilters.hasPhone}
+                      onValueChange={(value) => setAdvancedFilters({...advancedFilters, hasPhone: value})}
+                    >
+                      <SelectTrigger
+                        className="rounded-2xl border-0 h-10 w-40"
+                        style={{
+                          background: colors.bg,
+                          boxShadow: colors.neumorphicShadowInset,
+                          color: colors.textPrimary
+                        }}
+                      >
+                        <SelectValue placeholder="Has Phone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Any Phone</SelectItem>
+                        <SelectItem value="yes">Has Phone</SelectItem>
+                        <SelectItem value="no">No Phone</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <Button
+                      onClick={() => {
+                        setAdvancedFilters({ employer: 'all', hasEmail: 'all', hasPhone: 'all' });
+                        setSearchTerm('');
+                        setSelectedCategory('all');
+                      }}
+                      className="rounded-2xl h-10 px-4 border-0 text-xs"
+                      style={{
+                        background: colors.bg,
+                        boxShadow: colors.neumorphicShadowSoft,
+                        color: colors.textTertiary
+                      }}
+                    >
+                      Clear All
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </CardContent>
         </Card>
@@ -317,6 +477,20 @@ export default function Customers() {
                                 style={{ color: colors.textPrimary }}
                               >
                                 {customer.primary_email}
+                              </span>
+                            </div>
+                          )}
+                          {customer.company_name && (
+                            <div className="flex items-center gap-3">
+                              <Briefcase
+                                className="w-4 h-4"
+                                style={{ color: colors.iconMuted }}
+                              />
+                              <span
+                                className="text-sm truncate"
+                                style={{ color: colors.textPrimary }}
+                              >
+                                {customer.company_name}
                               </span>
                             </div>
                           )}
