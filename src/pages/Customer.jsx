@@ -16,6 +16,7 @@ import {
   Phone,
   Mail,
   MapPin,
+  Calendar,
   Briefcase,
   Building2,
   AlertCircle,
@@ -24,10 +25,13 @@ import {
   Save,
   X,
   FolderOpen,
+  Clock,
+  IdCard,
   FileText,
   MessageSquare,
   PhoneIncoming,
   PhoneOutgoing,
+  Activity,
   Send,
   Star
 } from "lucide-react";
@@ -296,8 +300,31 @@ export default function CustomerPage() {
             </Button>
           </Link>
 
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
+          {/* Header with Company Logo */}
+          <div className="grid lg:grid-cols-4 gap-6 mb-6">
+            {/* Company Logo */}
+            <div className="col-span-1 flex items-center justify-center">
+              {customerEmployerEntity?.company_logo_url ? (
+                <img 
+                  src={customerEmployerEntity.company_logo_url} 
+                  alt={customerEmployerEntity.employer_name}
+                  className="max-w-full max-h-32 object-contain"
+                />
+              ) : (
+                <div
+                  className="w-32 h-32 rounded-2xl flex items-center justify-center"
+                  style={{
+                    background: '#E0E5EC',
+                    boxShadow: 'inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff'
+                  }}
+                >
+                  <Building2 className="w-16 h-16" style={{ color: '#9CA3AF' }} />
+                </div>
+              )}
+            </div>
+
+            {/* Customer Info */}
+            <div className="col-span-3 flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold" style={{ color: '#374151' }}>
                   {fullName}
@@ -329,92 +356,92 @@ export default function CustomerPage() {
                   </Badge>
                 )}
               </div>
-              <p className="text-sm" style={{ color: '#6B7280' }}>
+              <p className="text-sm mb-3" style={{ color: '#6B7280' }}>
                 {customer.job_title || 'No job title'} at {employers.find(e => e.id === customer.company_id)?.employer_name || 'Unknown Company'}
               </p>
-            </div>
 
-            <div className="flex gap-2 flex-wrap">
-              {customer.primary_phone && (
-                <Button
-                  onClick={handleCallClick}
-                  disabled={createCaseMutation.isPending} // Disable if a case is being created
-                  className="rounded-2xl h-10 px-4 border-0 font-medium flex items-center gap-2"
-                  style={isVIP ? {
-                    background: '#E0E5EC',
-                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                    border: '5px solid #F59E0B',
-                    color: '#F59E0B',
-                    fontWeight: '600'
-                  } : {
-                    background: '#E0E5EC',
-                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                    color: '#10b981'
-                  }}
-                >
-                  <Phone className="w-4 h-4" />
-                  {isVIP ? '✨ Call VIP' : 'Call'}
-                </Button>
-              )}
-              <Button
-                onClick={handleToggleEscalation}
-                className="rounded-2xl h-10 px-4 border-0"
-                style={{
-                  background: customer.escalation_flag
-                    ? 'linear-gradient(145deg, #fee2e2, #fecaca)'
-                    : '#E0E5EC',
-                  boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                  color: customer.escalation_flag ? '#dc2626' : '#6B7280'
-                }}
-              >
-                <AlertCircle className="w-4 h-4 mr-2" />
-                {customer.escalation_flag ? 'Remove Escalation' : 'Mark for Escalation'}
-              </Button>
-              {!isEditing ? (
-                <Button
-                  onClick={() => setIsEditing(true)}
-                  className="rounded-2xl h-10 px-4 border-0"
-                  style={{
-                    background: '#E0E5EC',
-                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                    color: '#4B5563'
-                  }}
-                >
-                  <Edit3 className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
-              ) : (
-                <>
+              <div className="flex gap-2 flex-wrap">
+                {customer.primary_phone && (
                   <Button
-                    onClick={handleSave}
-                    disabled={updateCustomerMutation.isPending}
-                    className="rounded-2xl h-10 px-4 border-0"
-                    style={{
+                    onClick={handleCallClick}
+                    disabled={createCaseMutation.isPending}
+                    className="rounded-2xl h-10 px-4 border-0 font-medium flex items-center gap-2"
+                    style={isVIP ? {
+                      background: '#E0E5EC',
+                      boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                      border: '5px solid #F59E0B',
+                      color: '#000000',
+                      fontWeight: '600'
+                    } : {
                       background: '#E0E5EC',
                       boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
                       color: '#10b981'
                     }}
                   >
-                    <Save className="w-4 h-4 mr-2" />
-                    Save
+                    <Phone className="w-4 h-4" />
+                    {isVIP ? <span>✨ Call VIP</span> : 'Call'}
                   </Button>
+                )}
+                <Button
+                  onClick={handleToggleEscalation}
+                  className="rounded-2xl h-10 px-4 border-0"
+                  style={{
+                    background: customer.escalation_flag
+                      ? 'linear-gradient(145deg, #fee2e2, #fecaca)'
+                      : '#E0E5EC',
+                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                    color: customer.escalation_flag ? '#dc2626' : '#6B7280'
+                  }}
+                >
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  {customer.escalation_flag ? 'Remove Escalation' : 'Mark for Escalation'}
+                </Button>
+                {!isEditing ? (
                   <Button
-                    onClick={() => {
-                      setIsEditing(false);
-                      setEditedCustomer(customer);
-                    }}
+                    onClick={() => setIsEditing(true)}
                     className="rounded-2xl h-10 px-4 border-0"
                     style={{
                       background: '#E0E5EC',
                       boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                      color: '#ef4444'
+                      color: '#4B5563'
                     }}
                   >
-                    <X className="w-4 h-4 mr-2" />
-                    Cancel
+                    <Edit3 className="w-4 h-4 mr-2" />
+                    Edit
                   </Button>
-                </>
-              )}
+                ) : (
+                  <>
+                    <Button
+                      onClick={handleSave}
+                      disabled={updateCustomerMutation.isPending}
+                      className="rounded-2xl h-10 px-4 border-0"
+                      style={{
+                        background: '#E0E5EC',
+                        boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                        color: '#10b981'
+                      }}
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Save
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsEditing(false);
+                        setEditedCustomer(customer);
+                      }}
+                      className="rounded-2xl h-10 px-4 border-0"
+                      style={{
+                        background: '#E0E5EC',
+                        boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                        color: '#ef4444'
+                      }}
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

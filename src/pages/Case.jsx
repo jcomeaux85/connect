@@ -860,7 +860,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           )}
 
           {/* Main Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Link to={createPageUrl(`Customer?id=${caseData.customer_id}`)}>
@@ -1028,96 +1028,96 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </Select>
             </div>
           </div>
-        </div>
 
-        {/* Case Description with Company Logo and Status */}
-        {caseData.description && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-6 rounded-3xl"
-            style={{
-              background: colors.bg,
-              boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-            }}
-          >
-            <div className="grid grid-cols-4 gap-6">
-              {/* Left 25% - Company Logo */}
-              <div className="col-span-1 flex items-center justify-center">
-                {employer?.company_logo_url ? (
-                  <img 
-                    src={employer.company_logo_url} 
-                    alt={employer.employer_name}
-                    className="max-w-full max-h-32 object-contain"
-                  />
-                ) : (
-                  <div
-                    className="w-32 h-32 rounded-2xl flex items-center justify-center"
-                    style={{
-                      background: colors.bg,
-                      boxShadow: `inset 6px 6px 12px ${colors.shadowDark}, inset -6px -6px 12px ${colors.shadowLight}`
-                    }}
-                  >
-                    <Building2 className="w-16 h-16" style={{ color: colors.iconColor }} />
-                  </div>
-                )}
-              </div>
-
-              {/* Middle 50% - Case Description */}
-              <div className="col-span-2 flex flex-col justify-center">
-                <h2 className="text-xl font-bold mb-3" style={{ color: colors.text }}>
-                  Case About: {caseData.case_type}
-                </h2>
-                <p className="text-lg font-semibold leading-relaxed" style={{ color: colors.text }}>
-                  {caseData.description}
-                </p>
-                {employer && (
-                  <p className="text-sm mt-3" style={{ color: colors.textSecondary }}>
-                    <Briefcase className="w-4 h-4 inline mr-1" />
-                    {employer.employer_name}
-                  </p>
-                )}
-              </div>
-
-              {/* Right 25% - Status Notifications */}
-              <div className="col-span-1 space-y-2">
-                {employmentStatus && employmentStatus.length > 0 ? (
-                  employmentStatus.map((status, idx) => (
+          {/* Case Description with Company Logo and Status */}
+          {caseData.description && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-6 rounded-3xl"
+              style={{
+                background: colors.bg,
+                boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
+              }}
+            >
+              <div className="grid grid-cols-4 gap-6">
+                {/* Left 25% - Company Logo */}
+                <div className="col-span-1 flex items-center justify-center">
+                  {employer?.company_logo_url ? (
+                    <img 
+                      src={employer.company_logo_url} 
+                      alt={employer.employer_name}
+                      className="max-w-full max-h-32 object-contain"
+                    />
+                  ) : (
                     <div
-                      key={idx}
+                      className="w-32 h-32 rounded-2xl flex items-center justify-center"
+                      style={{
+                        background: colors.bg,
+                        boxShadow: `inset 6px 6px 12px ${colors.shadowDark}, inset -6px -6px 12px ${colors.shadowLight}`
+                      }}
+                    >
+                      <Building2 className="w-16 h-16" style={{ color: colors.iconColor }} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Middle 50% - Case Description */}
+                <div className="col-span-2 flex flex-col justify-center">
+                  <h2 className="text-xl font-bold mb-3" style={{ color: colors.text }}>
+                    Case About: {caseData.case_type}
+                  </h2>
+                  <p className="text-lg font-semibold leading-relaxed" style={{ color: colors.text }}>
+                    {caseData.description}
+                  </p>
+                  {employer && (
+                    <p className="text-sm mt-3" style={{ color: colors.textSecondary }}>
+                      <Briefcase className="w-4 h-4 inline mr-1" />
+                      {employer.employer_name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Right 25% - Status Notifications */}
+                <div className="col-span-1 space-y-2">
+                  {employmentStatus && employmentStatus.length > 0 ? (
+                    employmentStatus.map((status, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-xl"
+                        style={{
+                          background: colors.bg,
+                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                        }}
+                      >
+                        <p className="text-xs font-semibold mb-1" style={{ color: status.color }}>
+                          {status.label}
+                        </p>
+                        {status.days !== null && (
+                          <p className="text-xs" style={{ color: colors.textSecondary }}>
+                            {status.days} {status.days === 1 ? 'day' : 'days'}
+                          </p>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div
                       className="p-3 rounded-xl"
                       style={{
                         background: colors.bg,
-                        boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                        boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
                       }}
                     >
-                      <p className="text-xs font-semibold mb-1" style={{ color: status.color }}>
-                        {status.label}
+                      <p className="text-xs" style={{ color: colors.textTertiary }}>
+                        No employment data
                       </p>
-                      {status.days !== null && (
-                        <p className="text-xs" style={{ color: colors.textSecondary }}>
-                          {status.days} {status.days === 1 ? 'day' : 'days'}
-                        </p>
-                      )}
                     </div>
-                  ))
-                ) : (
-                  <div
-                    className="p-3 rounded-xl"
-                    style={{
-                      background: colors.bg,
-                      boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
-                    }}
-                  >
-                    <p className="text-xs" style={{ color: colors.textTertiary }}>
-                      No employment data
-                    </p>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </div>
 
         {/* AI Quick Actions Bar */}
         <Card
@@ -1346,8 +1346,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                         onClick={handleToggleHold}
                         className="rounded-2xl h-12 border-0 flex-col gap-1"
                         style={isOnHold
-                          ? { ...getInsetStyle('4px', colors.callHoldBg), color: colors.callHoldText }
-                          : { ...getButtonStyle('4px'), color: colors.textSecondary }
+                          ? { ...getInsetStyle('4px', colors.callHoldBg), color: '#000000', fontWeight: '600' }
+                          : { ...getButtonStyle('4px'), color: '#000000', fontWeight: '600' }
                         }
                       >
                         <Pause className="w-5 h-5" />
@@ -1360,8 +1360,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                         disabled={isThreeWay} // Disable if 3-way is already active
                         className="rounded-2xl h-12 border-0 flex-col gap-1"
                         style={(isThreeWay || showThreeWayInput)
-                          ? { ...getInsetStyle('4px', colors.badgeThreeWayBg), color: colors.badgeThreeWayText }
-                          : { ...getButtonStyle('4px'), color: colors.textSecondary }
+                          ? { ...getInsetStyle('4px', colors.badgeThreeWayBg), color: '#000000', fontWeight: '600' }
+                          : { ...getButtonStyle('4px'), color: '#000000', fontWeight: '600' }
                         }
                       >
                         <Users className="w-5 h-5" />
@@ -1374,7 +1374,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                         className="rounded-2xl h-12 border-0 flex-col gap-1"
                         style={{
                           ...getButtonStyle('4px', colors.redBg), // Apply getButtonStyle with custom background
-                          color: colors.red
+                          color: '#EF4444',
+                          fontWeight: '600'
                         }}
                       >
                         <PhoneOff className="w-5 h-5" />
@@ -1393,7 +1394,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       style={customer?.is_vip ? {
                         ...getButtonStyle('6px'),
                         border: '5px solid #F59E0B',
-                        color: '#F59E0B',
+                        color: '#000000',
                         fontWeight: '600'
                       } : {
                         ...getButtonStyle('6px', colors.callActiveBg),
@@ -1401,7 +1402,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       }}
                     >
                       <PhoneCall className="w-5 h-5 mr-2" />
-                      {customer?.is_vip ? '✨ Start VIP Call' : 'Start Call'}
+                      {customer?.is_vip ? <span>✨ Start VIP Call</span> : 'Start Call'}
                     </Button>
                   </div>
                 )}
