@@ -16,7 +16,10 @@ import {
   Cloud,
   CloudRain,
   Sun,
-  CloudSnow
+  CloudSnow,
+  MessageSquare,
+  Search,
+  Settings
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, isToday, parseISO } from "date-fns";
@@ -174,8 +177,26 @@ export default function Dashboard() {
                   </div>
                 </div>
                 
+                {/* Time Zones */}
+                <div className="mb-4">
+                  <div className="flex flex-wrap gap-2 text-xs" style={{ color: colors.textSecondary }}>
+                    <div className="px-2 py-1 rounded-lg" style={{ background: colors.bg, boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}` }}>
+                      <span className="font-semibold">PST:</span> {format(new Date(), 'h:mm a')}
+                    </div>
+                    <div className="px-3 py-1.5 rounded-lg font-bold text-base" style={{ background: colors.bg, boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`, color: colors.text }}>
+                      <span className="font-semibold">MST:</span> {format(new Date(new Date().getTime() + 3600000), 'h:mm a')}
+                    </div>
+                    <div className="px-2 py-1 rounded-lg" style={{ background: colors.bg, boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}` }}>
+                      <span className="font-semibold">CST:</span> {format(new Date(new Date().getTime() + 7200000), 'h:mm a')}
+                    </div>
+                    <div className="px-2 py-1 rounded-lg" style={{ background: colors.bg, boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}` }}>
+                      <span className="font-semibold">EST:</span> {format(new Date(new Date().getTime() + 10800000), 'h:mm a')}
+                    </div>
+                  </div>
+                </div>
+
                 {weather && (
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 mb-4">
                     <div
                       className="w-20 h-20 rounded-3xl flex items-center justify-center"
                       style={{
@@ -195,6 +216,36 @@ export default function Dashboard() {
                     </div>
                   </div>
                 )}
+
+                {/* Quick Action Buttons */}
+                <div className="flex gap-2">
+                  <Link to={createPageUrl("Cases")} className="flex-1">
+                    <button
+                      className="w-full rounded-2xl h-10 px-3 border-0 text-sm flex items-center justify-center gap-2"
+                      style={{
+                        background: colors.bg,
+                        boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+                        color: colors.textSecondary
+                      }}
+                    >
+                      <Folder className="w-4 h-4" />
+                      Cases
+                    </button>
+                  </Link>
+                  <Link to={createPageUrl("Customers")} className="flex-1">
+                    <button
+                      className="w-full rounded-2xl h-10 px-3 border-0 text-sm flex items-center justify-center gap-2"
+                      style={{
+                        background: colors.bg,
+                        boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+                        color: colors.textSecondary
+                      }}
+                    >
+                      <User className="w-4 h-4" />
+                      Customers
+                    </button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
