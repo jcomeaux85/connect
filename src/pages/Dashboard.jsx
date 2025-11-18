@@ -156,6 +156,16 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
+            {/* Central Time - Above Card */}
+            <div className="mb-3 text-center">
+              <p className="text-4xl font-bold" style={{ color: colors.text }}>
+                8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
+              </p>
+              <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
+                Central Time
+              </p>
+            </div>
+
             <Card
               className="border-0 h-full"
               style={{
@@ -164,6 +174,21 @@ export default function Dashboard() {
               }}
             >
               <CardContent className="p-6">
+                {/* Other Time Zones - Small at top */}
+                <div className="mb-4 pb-3 border-b" style={{ borderColor: colors.shadowDark }}>
+                  <div className="flex flex-wrap gap-1.5 text-xs" style={{ color: colors.textTertiary }}>
+                    <div className="px-2 py-0.5 rounded" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                      PST: 6:15 AM
+                    </div>
+                    <div className="px-2 py-0.5 rounded" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                      MST: 7:15 AM
+                    </div>
+                    <div className="px-2 py-0.5 rounded" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                      EST: 9:15 AM
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h2 className="text-3xl font-bold mb-1" style={{ color: colors.text }}>
@@ -174,24 +199,6 @@ export default function Dashboard() {
                         {format(new Date(), 'EEEE, MMMM d')}
                       </p>
                     )}
-                  </div>
-                </div>
-                
-                {/* Time Zones */}
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-2 text-xs" style={{ color: colors.textSecondary }}>
-                    <div className="px-2 py-1 rounded-lg" style={{ background: colors.bg, boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}` }}>
-                      <span className="font-semibold">PST:</span> {format(new Date(), 'h:mm a')}
-                    </div>
-                    <div className="px-3 py-1.5 rounded-lg font-bold text-base" style={{ background: colors.bg, boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`, color: colors.text }}>
-                      <span className="font-semibold">MST:</span> {format(new Date(new Date().getTime() + 3600000), 'h:mm a')}
-                    </div>
-                    <div className="px-2 py-1 rounded-lg" style={{ background: colors.bg, boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}` }}>
-                      <span className="font-semibold">CST:</span> {format(new Date(new Date().getTime() + 7200000), 'h:mm a')}
-                    </div>
-                    <div className="px-2 py-1 rounded-lg" style={{ background: colors.bg, boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}` }}>
-                      <span className="font-semibold">EST:</span> {format(new Date(new Date().getTime() + 10800000), 'h:mm a')}
-                    </div>
                   </div>
                 </div>
 
