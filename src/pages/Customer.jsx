@@ -238,14 +238,30 @@ export default function CustomerPage() {
     }
   };
 
-  const handleSMSClick = () => {
-    // Find most recent open case (new or in_progress)
+  const handleSMSClick = async () => {
+    // Find most recent open case or create new one
     const openCase = cases.find(c => c.status === 'new' || c.status === 'in_progress');
+    
     if (openCase) {
-      // Navigate to existing open case to handle SMS
+      // Navigate to existing open case
       window.location.href = createPageUrl(`Case?id=${openCase.id}`);
+    } else {
+      // Create new case and navigate
+      const caseNumber = `CASE-${Date.now().toString().slice(-8)}`;
+      const newCaseData = {
+        case_number: caseNumber,
+        customer_id: customerId,
+        customer_name: `${customer.first_name} ${customer.last_name}`,
+        customer_phone: customer.primary_phone,
+        customer_email: customer.primary_email || null,
+        case_type: 'inquiry',
+        priority: customer.is_vip ? 'high' : 'medium',
+        description: `SMS conversation initiated from customer profile`,
+        status: 'new'
+      };
+      
+      await createCaseMutation.mutateAsync(newCaseData);
     }
-    // No new case creation for SMS from here, as per typical CRM flow (SMS often part of an ongoing case)
   };
 
   const handleEmailClick = () => {
@@ -408,7 +424,7 @@ export default function CustomerPage() {
                 {customer.primary_phone && (
                   <Button
                     onClick={handleSMSClick}
-                    disabled={!cases.find(c => c.status === 'new' || c.status === 'in_progress')} // Disable if no open case to link SMS to
+                    disabled={createCaseMutation.isPending}
                     className="rounded-2xl h-10 px-4 border-0"
                     style={{
                       background: '#E0E5EC',
@@ -448,7 +464,7 @@ export default function CustomerPage() {
                   <AlertCircle className="w-4 h-4 mr-2" />
                   {customer.escalation_flag ? 'Remove Escalation' : 'Mark for Escalation'}
                 </Button>
-                {!isEditing && ( // Only show edit button if not editing
+                {!isEditing && (
                   <Button
                     onClick={() => setIsEditing(true)}
                     className="rounded-2xl h-10 px-4 border-0"
@@ -462,8 +478,6 @@ export default function CustomerPage() {
                     Edit
                   </Button>
                 )}
-                {/* Save and Cancel buttons removed from here as per the outline,
-                    they will be in the sticky bar at the bottom */}
               </div>
             </div>
           </div>
@@ -704,10 +718,10 @@ export default function CustomerPage() {
                           customer.primary_email ? (
                             <a
                               href={`mailto:${customer.primary_email}`}
-                              className="font-medium hover:underline inline-flex items-center gap-2"
+                              className="font-medium hover:underline inline-flex items-center gap-2 break-all"
                               style={{ color: '#3B82F6' }}
                             >
-                              <Mail className="w-4 h-4" />
+                              <Mail className="w-4 h-4 flex-shrink-0" />
                               {customer.primary_email}
                             </a>
                           ) : (
@@ -736,10 +750,10 @@ export default function CustomerPage() {
                           customer.secondary_email ? (
                             <a
                               href={`mailto:${customer.secondary_email}`}
-                              className="font-medium hover:underline inline-flex items-center gap-2"
+                              className="font-medium hover:underline inline-flex items-center gap-2 break-all"
                               style={{ color: '#3B82F6' }}
                             >
-                              <Mail className="w-4 h-4" />
+                              <Mail className="w-4 h-4 flex-shrink-0" />
                               {customer.secondary_email}
                             </a>
                           ) : (
@@ -1411,12 +1425,17 @@ export default function CustomerPage() {
                                 {call.status}
                               </Badge>
                             </div>
-                            <p className="text-sm mb-2" style={{ color: '#6B7280' }}>
+                            <a
+                              href={`tel:${call.customer_phone}`}
+                              className="text-sm mb-2 hover:underline inline-flex items-center gap-1"
+                              style={{ color: '#3B82F6' }}
+                            >
+                              <Phone className="w-3 h-3" />
                               {call.customer_phone}
                               {call.duration && ` · ${Math.floor(call.duration / 60)}m ${call.duration % 60}s`}
-                            </p>
+                            </a>
                             {call.notes && (
-                              <p className="text-sm p-2 rounded-xl" style={{
+                              <p className="text-sm p-2 rounded-xl mt-2" style={{
                                 color: '#374151',
                                 background: '#E0E5EC',
                                 boxShadow: 'inset 2px 2px 4px #a3b1c6, inset -2px -2px 4px #ffffff'
@@ -1502,10 +1521,15 @@ export default function CustomerPage() {
                                 {sms.status}
                               </Badge>
                             </div>
-                            <p className="text-sm mb-2" style={{ color: '#6B7280' }}>
+                            <a
+                              href={`tel:${sms.customer_phone}`}
+                              className="text-sm mb-2 hover:underline inline-flex items-center gap-1"
+                              style={{ color: '#3B82F6' }}
+                            >
+                              <Phone className="w-3 h-3" />
                               {sms.customer_phone}
-                            </p>
-                            <p className="text-sm p-3 rounded-xl" style={{
+                            </a>
+                            <p className="text-sm p-3 rounded-xl mt-2" style={{
                               color: '#374151',
                               background: '#E0E5EC',
                               boxShadow: 'inset 2px 2px 4px #a3b1c6, inset -2px -2px 4px #ffffff'
@@ -1656,7 +1680,7 @@ export default function CustomerPage() {
             <Button
               onClick={() => {
                 setIsEditing(false);
-                setEditedCustomer(customer); // Revert changes
+                setEditedCustomer(customer);
               }}
               className="rounded-2xl h-12 px-6 border-0"
               style={{
