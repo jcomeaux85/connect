@@ -1080,10 +1080,228 @@ export default function CustomerPage() {
                 </Card>
               </div>
 
-              {/* Right Column - Carrier Information */}
+              {/* Right Column - Employment and Carrier Info */}
               <div className="space-y-6">
+                {/* Employment Information */}
                 <Card
-                  className="border-0 sticky top-6"
+                  className="border-0"
+                  style={{
+                    background: '#E0E5EC',
+                    boxShadow: '10px 10px 20px #a3b1c6, -10px -10px 20px #ffffff'
+                  }}
+                >
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2" style={{ color: '#374151' }}>
+                      <Briefcase className="w-5 h-5" />
+                      Employment Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          Employer
+                        </label>
+                        <div className="flex gap-2 flex-col">
+                          {isEditing ? (
+                            <select
+                              value={editedCustomer.company_id || ''}
+                              onChange={(e) => setEditedCustomer({...editedCustomer, company_id: e.target.value})}
+                              className="rounded-2xl border-0 h-10 px-3"
+                              style={{
+                                background: '#E0E5EC',
+                                boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+                                color: '#374151'
+                              }}
+                            >
+                              <option value="">Select Company...</option>
+                              {employers.map(emp => (
+                                <option key={emp.id} value={emp.id}>
+                                  {emp.employer_name}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <>
+                              <p className="font-medium" style={{ color: '#374151' }}>
+                                {employers.find(e => e.id === customer.company_id)?.employer_name || 'N/A'}
+                              </p>
+                              {customerEmployerEntity?.benefit_guide_url && (
+                                <a
+                                  href={customerEmployerEntity.benefit_guide_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm justify-center"
+                                  style={{
+                                    background: '#E0E5EC',
+                                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                                    color: '#3B82F6'
+                                  }}
+                                >
+                                  <FileText className="w-4 h-4" />
+                                  Benefit Guide
+                                </a>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          Client
+                        </label>
+                        {isEditing ? (
+                          <select
+                            value={editedCustomer.client_id || ''}
+                            onChange={(e) => setEditedCustomer({...editedCustomer, client_id: e.target.value})}
+                            className="w-full rounded-2xl border-0 h-10 px-3"
+                            style={{
+                              background: '#E0E5EC',
+                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+                              color: '#374151'
+                            }}
+                          >
+                            <option value="">Select Client...</option>
+                            {companies.map(comp => (
+                              <option key={comp.id} value={comp.id}>
+                                {comp.company_name}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <p className="font-medium" style={{ color: '#374151' }}>
+                            {customerClientCompanyEntity?.company_name || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          Job Title
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={editedCustomer.job_title || ''}
+                            onChange={(e) => setEditedCustomer({...editedCustomer, job_title: e.target.value})}
+                            className="rounded-2xl border-0 h-10"
+                            style={{
+                              background: '#E0E5EC',
+                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+                              color: '#374151'
+                            }}
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: '#374151' }}>
+                            {customer.job_title || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          Employee ID
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={editedCustomer.employee_id || ''}
+                            onChange={(e) => setEditedCustomer({...editedCustomer, employee_id: e.target.value})}
+                            className="rounded-2xl border-0 h-10"
+                            style={{
+                              background: '#E0E5EC',
+                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+                              color: '#374151'
+                            }}
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: '#374151' }}>
+                            {customer.employee_id || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          Hire Date
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            type="date"
+                            value={editedCustomer.hire_date || ''}
+                            onChange={(e) => setEditedCustomer({...editedCustomer, hire_date: e.target.value})}
+                            className="rounded-2xl border-0 h-10"
+                            style={{
+                              background: '#E0E5EC',
+                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+                              color: '#374151'
+                            }}
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: '#374151' }}>
+                            {formatDateDisplay(customer.hire_date)}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          Time Employed
+                        </label>
+                        <p className="font-medium" style={{ color: '#374151' }}>
+                          {calculateTimeEmployed(customer.hire_date)}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          Member ID
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={editedCustomer.member_id || ''}
+                            onChange={(e) => setEditedCustomer({...editedCustomer, member_id: e.target.value})}
+                            className="rounded-2xl border-0 h-10"
+                            style={{
+                              background: '#E0E5EC',
+                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+                              color: '#374151'
+                            }}
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: '#374151' }}>
+                            {customer.member_id || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          Group Number
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={editedCustomer.group_number || ''}
+                            onChange={(e) => setEditedCustomer({...editedCustomer, group_number: e.target.value})}
+                            className="rounded-2xl border-0 h-10"
+                            style={{
+                              background: '#E0E5EC',
+                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+                              color: '#374151'
+                            }}
+                          />
+                        ) : (
+                          <p className="font-medium" style={{ color: '#374151' }}>
+                            {customer.group_number || 'N/A'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Carrier Information */}
+                <Card
+                  className="border-0"
                   style={{
                     background: '#E0E5EC',
                     boxShadow: '10px 10px 20px #a3b1c6, -10px -10px 20px #ffffff'
