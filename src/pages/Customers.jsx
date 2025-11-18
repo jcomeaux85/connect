@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -135,10 +134,10 @@ export default function Customers() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: colors.textPrimary }}>
+            <h1 className="text-3xl font-bold" style={{ color: colors.text }}>
               Customers
             </h1>
-            <p className="text-base mt-1" style={{ color: colors.textMuted }}>
+            <p className="text-base mt-1" style={{ color: colors.textSecondary }}>
               Manage customer profiles and information
             </p>
           </div>
@@ -176,7 +175,7 @@ export default function Customers() {
                     }}
                   >
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Search className="h-5 w-5" style={{ color: colors.iconMuted }} />
+                      <Search className="h-5 w-5" style={{ color: colors.textTertiary }} />
                     </div>
                     <Input
                       id="search"
@@ -186,7 +185,7 @@ export default function Customers() {
                       type="search"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      style={{ background: "transparent", color: colors.textPrimary }}
+                      style={{ background: "transparent", color: colors.text }}
                     />
                   </div>
                 </div>
@@ -374,8 +373,8 @@ export default function Customers() {
         {/* Customer List */}
         {isLoading ? (
           <div className="text-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin mx-auto" style={{ color: colors.iconMuted }} />
-            <p className="mt-4" style={{ color: colors.textMuted }}>Loading customers...</p>
+            <Loader2 className="w-8 h-8 animate-spin mx-auto" style={{ color: colors.textSecondary }} />
+            <p className="mt-4" style={{ color: colors.textSecondary }}>Loading customers...</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -416,20 +415,20 @@ export default function Customers() {
                             >
                               <Users
                                 className="w-8 h-8"
-                                style={{ color: colors.iconMuted }}
+                                style={{ color: colors.textSecondary }}
                               />
                             </div>
                             <div>
                               <CardTitle
                                 className="text-xl font-bold"
-                                style={{ color: colors.textPrimary }}
+                                style={{ color: colors.text }}
                               >
                                 {`${customer.first_name || ''} ${customer.last_name || ''}`.trim() || 'Unnamed Customer'}
                               </CardTitle>
                               {customer.job_title && (
                                 <p
                                   className="text-sm"
-                                  style={{ color: colors.textMuted }}
+                                  style={{ color: colors.textSecondary }}
                                 >
                                   {customer.job_title}
                                 </p>
@@ -500,8 +499,8 @@ export default function Customers() {
                             variant="outline"
                             className="border rounded-full text-xs"
                             style={{
-                              borderColor: colors.borderColor,
-                              color: colors.textMuted,
+                              borderColor: colors.border,
+                              color: colors.textSecondary,
                             }}
                           >
                             Call Type
@@ -530,10 +529,10 @@ export default function Customers() {
 
         {filteredCustomers.length === 0 && !isLoading && (
           <div className="text-center py-16">
-            <p className="text-lg font-medium" style={{ color: colors.textMuted }}>
+            <p className="text-lg font-medium" style={{ color: colors.textSecondary }}>
               No customers found
             </p>
-            <p className="mt-2 text-sm" style={{ color: colors.textFaded }}>
+            <p className="mt-2 text-sm" style={{ color: colors.textTertiary }}>
               Try adjusting your search or filter.
             </p>
           </div>

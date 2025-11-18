@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -201,7 +200,7 @@ export default function SlideOutMenu() {
             )}
 
             {/* Navigation Items */}
-            <nav className="flex-1 space-y-3">
+            <nav className="flex-1 space-y-2">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.url;
@@ -211,7 +210,7 @@ export default function SlideOutMenu() {
                     <motion.div
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="rounded-2xl h-14 flex items-center justify-center gap-3 cursor-pointer"
+                      className="rounded-2xl h-12 flex items-center justify-center gap-3 cursor-pointer"
                       style={isActive ? {
                         background: colors.bg,
                         boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
@@ -243,12 +242,12 @@ export default function SlideOutMenu() {
             </nav>
 
             {/* Quick Actions */}
-            <div className="space-y-3 pt-6 border-t" style={{ borderColor: colors.border }}>
+            <div className="space-y-2 pt-6 border-t" style={{ borderColor: colors.border }}>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => window.dispatchEvent(new Event('toggle-messages'))}
-                className="w-full rounded-2xl h-14 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -272,7 +271,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => window.dispatchEvent(new Event('toggle-phone'))}
-                className="w-full rounded-2xl h-14 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -296,7 +295,7 @@ export default function SlideOutMenu() {
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="rounded-2xl h-14 flex items-center justify-center gap-3 cursor-pointer"
+                  className="rounded-2xl h-12 flex items-center justify-center gap-3 cursor-pointer"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -321,7 +320,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleLogout}
-                className="w-full rounded-2xl h-14 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`

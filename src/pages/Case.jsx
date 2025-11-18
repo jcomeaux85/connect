@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useSearchParams, Link } from "react-router-dom";
@@ -1064,10 +1063,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
 
                 {/* Middle 50% - Case Description */}
                 <div className="col-span-2 flex flex-col justify-center">
-                  <h2 className="text-xl font-bold mb-3" style={{ color: colors.text }}>
-                    Case About: {caseData.case_type}
-                  </h2>
-                  <p className="text-lg font-semibold leading-relaxed" style={{ color: colors.text }}>
+                  <p className="text-2xl font-bold leading-relaxed" style={{ color: colors.text }}>
                     {caseData.description}
                   </p>
                   {employer && (
@@ -1079,9 +1075,14 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </div>
 
                 {/* Right 25% - Status Notifications */}
-                <div className="col-span-1 space-y-2">
-                  {employmentStatus && employmentStatus.length > 0 ? (
-                    employmentStatus.map((status, idx) => (
+                <div className="col-span-1">
+                  {(!employmentStatus || employmentStatus.length === 0) && (
+                    <p className="text-xs mb-3" style={{ color: colors.textTertiary }}>
+                      No employment data
+                    </p>
+                  )}
+                  <div className="space-y-2">
+                    {employmentStatus && employmentStatus.length > 0 && employmentStatus.map((status, idx) => (
                       <div
                         key={idx}
                         className="p-3 rounded-xl"
@@ -1099,20 +1100,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                           </p>
                         )}
                       </div>
-                    ))
-                  ) : (
-                    <div
-                      className="p-3 rounded-xl"
-                      style={{
-                        background: colors.bg,
-                        boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
-                      }}
-                    >
-                      <p className="text-xs" style={{ color: colors.textTertiary }}>
-                        No employment data
-                      </p>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -1139,7 +1128,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6'
+                  color: '#8B5CF6',
+                  borderLeft: '3px solid #8B5CF6'
                 }}
               >
                 <Brain className="w-3 h-3 mr-1" />
@@ -1151,7 +1141,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6'
+                  color: '#8B5CF6',
+                  borderLeft: '3px solid #8B5CF6'
                 }}
               >
                 <Target className="w-3 h-3 mr-1" />
@@ -1163,7 +1154,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6'
+                  color: '#8B5CF6',
+                  borderLeft: '3px solid #8B5CF6'
                 }}
               >
                 <Zap className="w-3 h-3 mr-1" />
@@ -1175,7 +1167,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6'
+                  color: '#8B5CF6',
+                  borderLeft: '3px solid #8B5CF6'
                 }}
               >
                 <TrendingUp className="w-3 h-3 mr-1" />
@@ -1187,7 +1180,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6'
+                  color: '#8B5CF6',
+                  borderLeft: '3px solid #8B5CF6'
                 }}
               >
                 <Shield className="w-3 h-3 mr-1" />
@@ -1346,8 +1340,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                         onClick={handleToggleHold}
                         className="rounded-2xl h-12 border-0 flex-col gap-1"
                         style={isOnHold
-                          ? { ...getInsetStyle('4px', colors.callHoldBg), color: '#000000', fontWeight: '600' }
-                          : { ...getButtonStyle('4px'), color: '#000000', fontWeight: '600' }
+                          ? { ...getInsetStyle('4px', '#F59E0B'), color: '#ffffff', fontWeight: '600' }
+                          : { ...getButtonStyle('4px'), color: colors.text, fontWeight: '600' }
                         }
                       >
                         <Pause className="w-5 h-5" />
@@ -1357,11 +1351,11 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       {/* 3-Way Call Button */}
                       <Button
                         onClick={() => setShowThreeWayInput(prev => !prev)}
-                        disabled={isThreeWay} // Disable if 3-way is already active
+                        disabled={isThreeWay}
                         className="rounded-2xl h-12 border-0 flex-col gap-1"
                         style={(isThreeWay || showThreeWayInput)
-                          ? { ...getInsetStyle('4px', colors.badgeThreeWayBg), color: '#000000', fontWeight: '600' }
-                          : { ...getButtonStyle('4px'), color: '#000000', fontWeight: '600' }
+                          ? { ...getInsetStyle('4px', '#3B82F6'), color: '#ffffff', fontWeight: '600' }
+                          : { ...getButtonStyle('4px'), color: colors.text, fontWeight: '600' }
                         }
                       >
                         <Users className="w-5 h-5" />
@@ -1373,8 +1367,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                         onClick={handleEndCall}
                         className="rounded-2xl h-12 border-0 flex-col gap-1"
                         style={{
-                          ...getButtonStyle('4px', colors.redBg), // Apply getButtonStyle with custom background
-                          color: '#EF4444',
+                          ...getButtonStyle('4px', '#EF4444'),
+                          color: '#ffffff',
                           fontWeight: '600'
                         }}
                       >
@@ -1390,15 +1384,15 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     <Button
                       onClick={handleStartCall}
                       disabled={!phoneNumber}
-                      className="flex-1 rounded-2xl h-12 border-0"
+                      className="flex-1 rounded-2xl h-12 border-0 font-semibold"
                       style={customer?.is_vip ? {
-                        ...getButtonStyle('6px'),
-                        border: '5px solid #F59E0B',
-                        color: '#000000',
+                        ...getButtonStyle('6px', '#F59E0B'),
+                        color: '#ffffff',
                         fontWeight: '600'
                       } : {
-                        ...getButtonStyle('6px', colors.callActiveBg),
-                        color: colors.callActiveText
+                        ...getButtonStyle('6px', '#10B981'),
+                        color: '#ffffff',
+                        fontWeight: '600'
                       }}
                     >
                       <PhoneCall className="w-5 h-5 mr-2" />
@@ -1427,7 +1421,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     onClick={handleGenerateResponse}
                     disabled={aiLoading}
                     className="rounded-xl h-8 px-3 text-xs border-0"
-                    style={{ ...getButtonStyle('3px'), color: colors.purple }}
+                    style={{ ...getButtonStyle('3px'), color: '#8B5CF6', borderLeft: '3px solid #8B5CF6' }}
                   >
                     <Sparkles className="w-3 h-3 mr-1" />
                     AI Generate
@@ -1985,7 +1979,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     onClick={handleSmartNoteSuggestions}
                     disabled={aiLoading}
                     className="rounded-xl h-7 px-2 text-xs border-0"
-                    style={{ ...getButtonStyle('2px'), color: colors.purple }}
+                    style={{ ...getButtonStyle('2px'), color: '#8B5CF6', borderLeft: '3px solid #8B5CF6' }}
                   >
                     <Sparkles className="w-3 h-3 mr-1" />
                     AI Suggest
