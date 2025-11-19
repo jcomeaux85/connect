@@ -1028,16 +1028,64 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             </div>
           </div>
 
-          {/* Case Description with Company Logo and Status */}
-          {caseData.description &&
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }} className="mt-3 mb-6 text-xs font-medium text-right opacity-75"
+          {/* Case Description Banner with Company Logo */}
+          <div className="relative rounded-3xl overflow-hidden mb-6" style={{
+            background: colors.bg,
+            boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+          }}>
+            <div className="grid md:grid-cols-3 gap-6 p-6">
+              {/* Left: Company Logo */}
+              <div className="flex items-center justify-center">
+                {employer?.company_logo_url ? (
+                  <img 
+                    src={employer.company_logo_url} 
+                    alt={employer.employer_name}
+                    className="max-w-full max-h-24 object-contain"
+                  />
+                ) : (
+                  <div
+                    className="w-24 h-24 rounded-2xl flex items-center justify-center"
+                    style={getInsetStyle('4px')}
+                  >
+                    <Building2 className="w-12 h-12" style={{ color: colors.textTertiary }} />
+                  </div>
+                )}
+              </div>
 
-            style={{
-              background: colors.bg,
-              boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-            }}>No employment data
+              {/* Center: Case Description */}
+              <div className="md:col-span-2 flex flex-col justify-center">
+                {caseData.description && (
+                  <>
+                    <h3 className="text-sm font-semibold mb-2" style={{ color: colors.textSecondary }}>
+                      Case Description
+                    </h3>
+                    <p className="text-lg leading-relaxed" style={{ color: colors.text }}>
+                      {caseData.description}
+                    </p>
+                  </>
+                )}
+                
+                {/* Employment Status Notifications */}
+                {employmentStatus && employmentStatus.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {employmentStatus.map((status, idx) => (
+                      <Badge
+                        key={idx}
+                        className="border-0 text-xs px-3 py-1 rounded-full"
+                        style={{
+                          background: status.color + '20',
+                          color: status.color,
+                          boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                        }}
+                      >
+                        {status.label}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
 
 
