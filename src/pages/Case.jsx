@@ -927,7 +927,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 <SelectTrigger
                   className="rounded-2xl border-0 h-10 w-56"
                   style={{
-                    ...getButtonStyle('4px'), // Apply getButtonStyle
+                    ...getButtonStyle('4px'),
                     color: colors.text
                   }}
                 >
@@ -968,7 +968,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 <SelectTrigger
                   className="rounded-2xl border-0 h-10 w-48"
                   style={{
-                    ...getButtonStyle('4px'), // Apply getButtonStyle
+                    ...getButtonStyle('4px'),
                     color: colors.text
                   }}
                 >
@@ -1011,7 +1011,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 <SelectTrigger
                   className="rounded-2xl border-0 h-10 w-40"
                   style={{
-                    ...getButtonStyle('4px'), // Apply getButtonStyle
+                    ...getButtonStyle('4px'),
                     color: colors.text
                   }}
                 >
@@ -1027,6 +1027,13 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </Select>
             </div>
           </div>
+
+          {/* No Employment Data Text */}
+          {(!employmentStatus || employmentStatus.length === 0) && (
+            <p className="text-xs mb-4" style={{ color: colors.textTertiary }}>
+              No employment data
+            </p>
+          )}
 
           {/* Case Description with Company Logo and Status */}
           {caseData.description && (
@@ -1076,11 +1083,6 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
 
                 {/* Right 25% - Status Notifications */}
                 <div className="col-span-1">
-                  {(!employmentStatus || employmentStatus.length === 0) && (
-                    <p className="text-xs mb-3" style={{ color: colors.textTertiary }}>
-                      No employment data
-                    </p>
-                  )}
                   <div className="space-y-2">
                     {employmentStatus && employmentStatus.length > 0 && employmentStatus.map((status, idx) => (
                       <div
