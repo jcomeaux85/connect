@@ -1086,10 +1086,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </div>
             </div>
           </div>
-
-
-
-
+        </div>
 
 
 
