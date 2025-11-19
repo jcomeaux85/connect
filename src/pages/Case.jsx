@@ -1099,59 +1099,6 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          </motion.div>
-          }
-        </div>
-
         {/* AI Quick Actions Bar */}
         <Card
           className="border-0 mb-6"
