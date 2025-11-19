@@ -19,7 +19,8 @@ import {
   CloudSnow,
   MessageSquare,
   Search,
-  Settings
+  Settings,
+  Edit3
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, isToday, parseISO } from "date-fns";
@@ -147,6 +148,14 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
+      {/* Gold Badge Splash */}
+      <div className="fixed top-24 right-8 z-40 w-32 h-32 rounded-full opacity-20 pointer-events-none" style={{
+        backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/381316158_image.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        filter: 'brightness(1.2) contrast(1.1)',
+      }} />
+
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Top Row - Greeting and Daily Planner */}
         <div className="grid lg:grid-cols-3 gap-6">
@@ -262,9 +271,22 @@ export default function Dashboard() {
               }}
             >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-4xl font-bold" style={{ color: colors.text }}>
-                  8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
-                </CardTitle>
+                <div className="flex items-center gap-3">
+                  <CardTitle className="text-4xl font-bold" style={{ color: colors.text }}>
+                    8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
+                  </CardTitle>
+                  <Button
+                    size="icon"
+                    className="rounded-xl h-8 w-8 border-0"
+                    style={{
+                      background: colors.bg,
+                      boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`,
+                      color: colors.textSecondary
+                    }}
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </Button>
+                </div>
                 <p className="text-sm" style={{ color: colors.textSecondary }}>
                   You have {activeCases} active {activeCases === 1 ? 'case' : 'cases'} · {urgentCases} urgent
                 </p>

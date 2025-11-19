@@ -371,9 +371,12 @@ export default function CustomerPage() {
                   <Badge
                     className="border-0 text-xs px-3 py-1 rounded-full"
                     style={{
-                      background: 'linear-gradient(145deg, #FCD34D, #F59E0B)',
-                      color: '#78350F',
-                      boxShadow: '0 0 15px rgba(245, 158, 11, 0.4), 2px 2px 4px rgba(180, 83, 9, 0.3)'
+                      backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/381316158_image.png)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      color: '#000000',
+                      fontWeight: '700',
+                      boxShadow: '0 0 15px rgba(245, 158, 11, 0.5), 4px 4px 8px rgba(180, 83, 9, 0.4)'
                     }}
                   >
                     <Star className="w-3 h-3 mr-1 fill-yellow-900" />

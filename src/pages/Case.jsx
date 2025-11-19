@@ -1381,9 +1381,13 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       disabled={!phoneNumber}
                       className="flex-1 rounded-2xl h-12 border-0 font-semibold"
                       style={customer?.is_vip ? {
-                        ...getButtonStyle('6px', '#F59E0B'),
-                        color: '#ffffff',
-                        fontWeight: '600'
+                        ...getButtonStyle('6px'),
+                        backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/381316158_image.png)',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        color: '#000000',
+                        fontWeight: '700',
+                        border: '3px solid #D97706'
                       } : {
                         ...getButtonStyle('6px', '#10B981'),
                         color: '#ffffff',
