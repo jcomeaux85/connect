@@ -59,8 +59,8 @@ import {
   detectPriority,
   generateResponse,
   scoreCallQuality,
-  checkCompliance
-} from "../components/ai/aiHelpers";
+  checkCompliance } from
+"../components/ai/aiHelpers";
 import { useTheme } from "@/components/ThemeProvider";
 import { useUser } from "@/components/hooks/useUser";
 
@@ -102,12 +102,12 @@ export default function CasePage() {
   // `bgColor` parameter allows overriding the default background color (colors.bg)
   const getButtonStyle = (shadowStrength = '3px', bgColor = colors.bg) => ({
     background: bgColor,
-    boxShadow: `${shadowStrength} ${shadowStrength} ${parseInt(shadowStrength)*2}px ${colors.shadowDark}, -${shadowStrength} -${shadowStrength} ${parseInt(shadowStrength)*2}px ${colors.shadowLight}`,
+    boxShadow: `${shadowStrength} ${shadowStrength} ${parseInt(shadowStrength) * 2}px ${colors.shadowDark}, -${shadowStrength} -${shadowStrength} ${parseInt(shadowStrength) * 2}px ${colors.shadowLight}`
   });
 
   const getInsetStyle = (shadowStrength = '4px', bgColor = colors.bg) => ({
     background: bgColor,
-    boxShadow: `inset ${shadowStrength} ${shadowStrength} ${parseInt(shadowStrength)*2}px ${colors.shadowDark}, inset -${shadowStrength} -${shadowStrength} ${parseInt(shadowStrength)*2}px ${colors.shadowLight}`
+    boxShadow: `inset ${shadowStrength} ${shadowStrength} ${parseInt(shadowStrength) * 2}px ${colors.shadowDark}, inset -${shadowStrength} -${shadowStrength} ${parseInt(shadowStrength) * 2}px ${colors.shadowLight}`
   });
 
   const { data: caseData, isLoading: caseLoading } = useQuery({
@@ -116,7 +116,7 @@ export default function CasePage() {
       const cases = await base44.entities.Case.filter({ id: caseId });
       return cases[0];
     },
-    enabled: !!caseId,
+    enabled: !!caseId
   });
 
   // Add customer query
@@ -127,7 +127,7 @@ export default function CasePage() {
       const customers = await base44.entities.Customer.filter({ id: caseData.customer_id });
       return customers[0];
     },
-    enabled: !!caseData?.customer_id,
+    enabled: !!caseData?.customer_id
   });
 
   // Fetch employer/company data
@@ -138,57 +138,57 @@ export default function CasePage() {
       const employers = await base44.entities.Employer.filter({ id: customer.company_id });
       return employers[0];
     },
-    enabled: !!customer?.company_id,
+    enabled: !!customer?.company_id
   });
 
   // Add customers list query
   const { data: customers = [] } = useQuery({
     queryKey: ['customers-list'],
-    queryFn: () => base44.entities.Customer.list('-updated_date', 100),
+    queryFn: () => base44.entities.Customer.list('-updated_date', 100)
   });
 
   const { data: calls = [] } = useQuery({
     queryKey: ['case-calls', caseId],
     queryFn: () => base44.entities.Call.filter({ case_id: caseId }, '-created_date'),
-    enabled: !!caseId,
+    enabled: !!caseId
   });
 
   const { data: smsMessages = [] } = useQuery({
     queryKey: ['case-sms', caseId],
     queryFn: () => base44.entities.SMS.filter({ case_id: caseId }, '-created_date'),
-    enabled: !!caseId,
+    enabled: !!caseId
   });
 
   const { data: notes = [] } = useQuery({
     queryKey: ['case-notes', caseId],
     queryFn: () => base44.entities.Note.filter({ case_id: caseId }, '-created_date'),
-    enabled: !!caseId,
+    enabled: !!caseId
   });
 
   const { data: tasks = [] } = useQuery({
     queryKey: ['case-tasks', caseId],
     queryFn: () => base44.entities.Task.filter({ case_id: caseId }, '-created_date'),
-    enabled: !!caseId,
+    enabled: !!caseId
   });
 
   // Add text templates query
   const { data: textTemplates = [] } = useQuery({
     queryKey: ['text-templates'],
-    queryFn: () => base44.entities.TextTemplate.filter({ is_active: true }),
+    queryFn: () => base44.entities.TextTemplate.filter({ is_active: true })
   });
 
   // Add call transcripts query
   const { data: callTranscripts = [] } = useQuery({
     queryKey: ['case-transcripts', caseId],
     queryFn: () => base44.entities.CallTranscript.filter({ case_id: caseId }, '-created_date'),
-    enabled: !!caseId,
+    enabled: !!caseId
   });
 
   useEffect(() => {
     // Check for stale calls (calls marked as in_progress that are older than 1 hour)
     const checkForStaleCalls = async () => {
-      if (caseId && calls.length > 0) { // Ensure calls data is available
-        const staleCalls = calls.filter(call => {
+      if (caseId && calls.length > 0) {// Ensure calls data is available
+        const staleCalls = calls.filter((call) => {
           if (call.status === 'in_progress' && call.call_start_time) {
             const startTime = new Date(call.call_start_time);
             const hoursSinceStart = (new Date() - startTime) / (1000 * 60 * 60);
@@ -237,13 +237,13 @@ export default function CasePage() {
       queryClient.invalidateQueries({ queryKey: ['cases'] });
       // Invalidate customer specific query if customer_id was changed
       queryClient.invalidateQueries({ queryKey: ['case-customer'] });
-    },
+    }
   });
 
   // Add users query for assignment
   const { data: users = [] } = useQuery({
     queryKey: ['users'],
-    queryFn: () => base44.entities.User.list(), // Assuming 'full_name' is a valid field, or fetch all and sort/filter later
+    queryFn: () => base44.entities.User.list() // Assuming 'full_name' is a valid field, or fetch all and sort/filter later
   });
 
   const createCallMutation = useMutation({
@@ -251,7 +251,7 @@ export default function CasePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-calls', caseId] });
       queryClient.invalidateQueries({ queryKey: ['calls'] });
-    },
+    }
   });
 
   // New update call mutation for ending a call
@@ -260,7 +260,7 @@ export default function CasePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-calls', caseId] });
       queryClient.invalidateQueries({ queryKey: ['calls'] });
-    },
+    }
   });
 
   const createSmsMutation = useMutation({
@@ -268,7 +268,7 @@ export default function CasePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-sms', caseId] });
       setSmsMessage("");
-    },
+    }
   });
 
   const createNoteMutation = useMutation({
@@ -277,14 +277,14 @@ export default function CasePage() {
       queryClient.invalidateQueries({ queryKey: ['case-notes', caseId] });
       setNewNote("");
       setComplianceCheck(null);
-    },
+    }
   });
 
   const deleteNoteMutation = useMutation({
     mutationFn: (noteId) => base44.entities.Note.delete(noteId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-notes', caseId] });
-    },
+    }
   });
 
   const createTaskMutation = useMutation({
@@ -292,28 +292,28 @@ export default function CasePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-tasks', caseId] });
       setNewTaskTitle("");
-    },
+    }
   });
 
   const updateTaskMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-tasks', caseId] });
-    },
+    }
   });
 
   const deleteTaskMutation = useMutation({
     mutationFn: (taskId) => base44.entities.Task.delete(taskId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-tasks', caseId] });
-    },
+    }
   });
 
   const createTranscriptMutation = useMutation({
     mutationFn: (transcriptData) => base44.entities.CallTranscript.create(transcriptData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-transcripts', caseId] });
-    },
+    }
   });
 
   // AI Feature Handlers
@@ -325,10 +325,10 @@ export default function CasePage() {
     setAiLoading(true);
     try {
       const lastCall = calls[0]; // Assuming the most recent call is the one to summarize
-      const callNotes = notes
-        .filter(n => n.note_type === 'call_note' && new Date(n.created_date) > new Date(lastCall.call_start_time))
-        .map(n => n.content)
-        .join('\n');
+      const callNotes = notes.
+      filter((n) => n.note_type === 'call_note' && new Date(n.created_date) > new Date(lastCall.call_start_time)).
+      map((n) => n.content).
+      join('\n');
 
       const summary = await summarizeCall(
         callNotes || "No notes available",
@@ -418,7 +418,7 @@ export default function CasePage() {
 
     setAiLoading(true);
     try {
-      const allNotes = notes.map(n => n.content).join('\n\n');
+      const allNotes = notes.map((n) => n.content).join('\n\n');
       const score = await scoreCallQuality(
         allNotes,
         allNotes,
@@ -453,9 +453,9 @@ export default function CasePage() {
       setComplianceCheck(check);
       setAiSuggestion({
         ...check,
-        summary: check.compliant
-          ? `✓ Compliant (Score: ${check.compliance_score}/100)`
-          : `⚠ Compliance Issues Found (Score: ${check.compliance_score}/100)`,
+        summary: check.compliant ?
+        `✓ Compliant (Score: ${check.compliance_score}/100)` :
+        `⚠ Compliance Issues Found (Score: ${check.compliance_score}/100)`,
         key_points: check.suggestions,
         action_items: check.missing_elements
       });
@@ -473,11 +473,11 @@ export default function CasePage() {
 
     const startTime = new Date();
     const timer = setInterval(() => {
-      setCallDuration(prev => prev + 1);
+      setCallDuration((prev) => prev + 1);
 
       // Simulate transcript entries for demo
       if (Math.random() > 0.95) {
-        setCallTranscriptEntries(prev => [...prev, {
+        setCallTranscriptEntries((prev) => [...prev, {
           speaker: Math.random() > 0.5 ? 'Agent' : 'Customer',
           text: 'Sample transcript text...',
           timestamp: new Date().toISOString()
@@ -513,13 +513,13 @@ export default function CasePage() {
     setCallTranscriptEntries([]); // Clear transcript entries
 
     const endTime = new Date();
-    if (currentCallId) { // Only update if there's an active call ID
+    if (currentCallId) {// Only update if there's an active call ID
       updateCallMutation.mutate({
         id: currentCallId,
         data: {
           duration: callDuration,
           call_end_time: endTime.toISOString(),
-          status: 'completed',
+          status: 'completed'
           // recording_url remains 'transcript_enabled' from creation
         }
       });
@@ -543,11 +543,11 @@ export default function CasePage() {
     setAiLoading(true);
     try {
       // Gather ONLY call notes made during this specific call - NOT case description
-      const currentCall = calls.find(c => c.id === callId);
-      const callNotesDuringCall = notes
-        .filter(n => n.note_type === 'call_note' && currentCall && new Date(n.created_date) >= new Date(currentCall.call_start_time) && new Date(n.created_date) <= new Date())
-        .map(n => n.content)
-        .join('\n\n');
+      const currentCall = calls.find((c) => c.id === callId);
+      const callNotesDuringCall = notes.
+      filter((n) => n.note_type === 'call_note' && currentCall && new Date(n.created_date) >= new Date(currentCall.call_start_time) && new Date(n.created_date) <= new Date()).
+      map((n) => n.content).
+      join('\n\n');
 
       // ONLY analyze actual call notes, NOT the case description
       const prompt = `Analyze this call based ONLY on the notes taken during the call.
@@ -601,7 +601,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
 
       // Automatically create tasks from action items
       if (response.action_items && response.action_items.length > 0) {
-        response.action_items.forEach(item => {
+        response.action_items.forEach((item) => {
           createTaskMutation.mutate({
             case_id: caseId,
             title: item,
@@ -633,12 +633,12 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
   const handleToggleHold = () => {
     const newHoldState = !isOnHold;
     setIsOnHold(newHoldState);
-    
+
     createNoteMutation.mutate({
       case_id: caseId,
-      content: newHoldState
-        ? `Call placed on hold at ${format(new Date(), 'h:mm a')}`
-        : `Call resumed from hold at ${format(new Date(), 'h:mm a')}`,
+      content: newHoldState ?
+      `Call placed on hold at ${format(new Date(), 'h:mm a')}` :
+      `Call resumed from hold at ${format(new Date(), 'h:mm a')}`,
       note_type: 'call_note'
     });
   };
@@ -732,7 +732,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
 
   const formatCallDuration = (seconds) => {
     const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
+    const minutes = Math.floor(seconds % 3600 / 60);
     const secs = seconds % 60;
 
     if (hours > 0) {
@@ -744,37 +744,37 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
   // Calculate employment status notifications
   const getEmploymentStatus = () => {
     if (!customer?.hire_date) return null;
-    
+
     const hireDate = new Date(customer.hire_date);
     const today = new Date();
     const daysEmployed = differenceInDays(today, hireDate);
-    
+
     // Placeholder logic - will be replaced with company policy calculations
     const notifications = [];
-    
+
     if (daysEmployed >= 0 && daysEmployed <= 30) {
       notifications.push({ label: 'New Hire', color: '#10B981', days: 30 - daysEmployed, type: 'new_hire' });
     }
-    
+
     // Placeholder for benefit eligibility (typically 60-90 days)
     if (daysEmployed >= 0 && daysEmployed < 90) {
       const daysUntilBenefits = 90 - daysEmployed;
       notifications.push({ label: `Benefits Eligible in ${daysUntilBenefits} days`, color: '#3B82F6', days: daysUntilBenefits, type: 'benefits_eligibility' });
     }
-    
+
     if (daysEmployed >= 365) {
       notifications.push({ label: 'Annual Review Due', color: '#F59E0B', days: null, type: 'annual_review' });
     }
-    
+
     return notifications;
   };
 
   const allActivity = [
-    ...calls.map(c => ({ ...c, type: 'call', timestamp: c.created_date })),
-    ...smsMessages.map(s => ({ ...s, type: 'sms', timestamp: s.created_date || s.sent_at })),
-    ...notes.map(n => ({ ...n, type: 'note', timestamp: n.created_date })),
-    ...tasks.map(t => ({ ...t, type: 'task', timestamp: t.created_date }))
-  ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  ...calls.map((c) => ({ ...c, type: 'call', timestamp: c.created_date })),
+  ...smsMessages.map((s) => ({ ...s, type: 'sms', timestamp: s.created_date || s.sent_at })),
+  ...notes.map((n) => ({ ...n, type: 'note', timestamp: n.created_date })),
+  ...tasks.map((t) => ({ ...t, type: 'task', timestamp: t.created_date }))].
+  sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   if (caseLoading) {
     return (
@@ -783,8 +783,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: colors.textSecondary }}></div>
           <p className="text-lg" style={{ color: colors.textSecondary }}>Loading case...</p>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   if (!caseData) {
@@ -801,8 +801,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             </Button>
           </Link>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   const employmentStatus = getEmploymentStatus();
@@ -819,24 +819,24 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 ...getButtonStyle('4px'), // Apply getButtonStyle
                 color: colors.textSecondary
-              }}
-            >
+              }}>
+
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Cases
             </Button>
           </Link>
 
           {/* Active Call Warning Banner */}
-          {isOnCall && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-4 p-4 rounded-2xl"
-              style={{
-                background: 'linear-gradient(145deg, #10B981, #059669)',
-                boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
-              }}
-            >
+          {isOnCall &&
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 p-4 rounded-2xl"
+            style={{
+              background: 'linear-gradient(145deg, #10B981, #059669)',
+              boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
+            }}>
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
@@ -845,21 +845,21 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   </span>
                 </div>
                 <Button
-                  onClick={() => setShowActiveCallPanel(true)}
-                  className="rounded-xl h-8 px-4 border-0"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: 'white'
-                  }}
-                >
+                onClick={() => setShowActiveCallPanel(true)}
+                className="rounded-xl h-8 px-4 border-0"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white'
+                }}>
+
                   Show Call Panel
                 </Button>
               </div>
             </motion.div>
-          )}
+          }
 
           {/* Main Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div className="mb-1 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Link to={createPageUrl(`Customer?id=${caseData.customer_id}`)}>
@@ -871,39 +871,39 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   className="border-0 text-xs px-3 py-1 rounded-full"
                   style={{
                     background: caseData.priority === 'urgent' ? colors.badgeUrgentBg :
-                               caseData.priority === 'high' ? colors.badgeHighBg :
-                               colors.badgeMediumBg,
+                    caseData.priority === 'high' ? colors.badgeHighBg :
+                    colors.badgeMediumBg,
                     color: caseData.priority === 'urgent' ? colors.badgeUrgentText :
-                           caseData.priority === 'high' ? colors.badgeHighText : colors.badgeMediumText,
+                    caseData.priority === 'high' ? colors.badgeHighText : colors.badgeMediumText,
                     boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                  }}
-                >
+                  }}>
+
                   {caseData.priority}
                 </Badge>
-                {qualityScore && (
-                  <Badge
-                    className="border-0 text-xs px-3 py-1 rounded-full"
-                    style={{
-                      background: colors.badgeQualityBg,
-                      color: colors.badgeQualityText,
-                      boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                    }}
-                  >
+                {qualityScore &&
+                <Badge
+                  className="border-0 text-xs px-3 py-1 rounded-full"
+                  style={{
+                    background: colors.badgeQualityBg,
+                    color: colors.badgeQualityText,
+                    boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                  }}>
+
                     Quality: {qualityScore.overall_score}/100
                   </Badge>
-                )}
+                }
               </div>
               <div className="flex items-center gap-2">
                 <p className="text-sm" style={{ color: colors.textSecondary }}>
                   {caseData.case_number} · {caseData.case_type}
                 </p>
-                {caseData.customer_id && (
-                  <Link to={createPageUrl(`Customer?id=${caseData.customer_id}`)}>
+                {caseData.customer_id &&
+                <Link to={createPageUrl(`Customer?id=${caseData.customer_id}`)}>
                     <span className="text-xs hover:underline" style={{ color: '#3B82F6' }}>
                       View Profile →
                     </span>
                   </Link>
-                )}
+                }
               </div>
             </div>
 
@@ -912,7 +912,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               <Select
                 value={caseData.customer_id || ''}
                 onValueChange={(value) => {
-                  const selectedCustomer = customers.find(c => c.id === value);
+                  const selectedCustomer = customers.find((c) => c.id === value);
                   updateCaseMutation.mutate({
                     id: caseId,
                     data: {
@@ -922,38 +922,38 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       customer_email: selectedCustomer?.primary_email || null
                     }
                   });
-                }}
-              >
+                }}>
+
                 <SelectTrigger
                   className="rounded-2xl border-0 h-10 w-56"
                   style={{
-                    ...getButtonStyle('4px'),
+                    ...getButtonStyle('4px'), // Apply getButtonStyle
                     color: colors.text
-                  }}
-                >
+                  }}>
+
                   <SelectValue>
-                    {customer ? (
-                      <span className="flex items-center gap-2">
+                    {customer ?
+                    <span className="flex items-center gap-2">
                         <User className="w-4 h-4" />
                         {customer.first_name} {customer.last_name}
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2" style={{color: colors.textPlaceholder}}>
+                      </span> :
+
+                    <span className="flex items-center gap-2" style={{ color: colors.textPlaceholder }}>
                         <UserPlus className="w-4 h-4" />
                         Select Customer...
                       </span>
-                    )}
+                    }
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {customers.map(c => (
-                    <SelectItem key={c.id} value={c.id}>
+                  {customers.map((c) =>
+                  <SelectItem key={c.id} value={c.id}>
                       <span className="flex items-center gap-2">
                         <User className="w-4 h-4" />
                         {c.first_name} {c.last_name} - {c.primary_phone}
                       </span>
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
 
@@ -963,27 +963,27 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 onValueChange={(value) => updateCaseMutation.mutate({
                   id: caseId,
                   data: { assigned_to: value === 'unassigned' ? null : value }
-                })}
-              >
+                })}>
+
                 <SelectTrigger
                   className="rounded-2xl border-0 h-10 w-48"
                   style={{
-                    ...getButtonStyle('4px'),
+                    ...getButtonStyle('4px'), // Apply getButtonStyle
                     color: colors.text
-                  }}
-                >
+                  }}>
+
                   <SelectValue>
-                    {caseData.assigned_to ? (
-                      <span className="flex items-center gap-2">
+                    {caseData.assigned_to ?
+                    <span className="flex items-center gap-2">
                         <User className="w-4 h-4" />
-                        {users.find(u => u.email === caseData.assigned_to)?.full_name || caseData.assigned_to}
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2" style={{color: colors.textPlaceholder}}>
+                        {users.find((u) => u.email === caseData.assigned_to)?.full_name || caseData.assigned_to}
+                      </span> :
+
+                    <span className="flex items-center gap-2" style={{ color: colors.textPlaceholder }}>
                         <UserPlus className="w-4 h-4" />
                         Assign Agent...
                       </span>
-                    )}
+                    }
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -993,28 +993,28 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       Unassigned
                     </span>
                   </SelectItem>
-                  {users.map(user => (
-                    <SelectItem key={user.email} value={user.email}>
+                  {users.map((user) =>
+                  <SelectItem key={user.email} value={user.email}>
                       <span className="flex items-center gap-2">
                         <User className="w-4 h-4" />
                         {user.full_name || user.email}
                       </span>
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
 
               <Select
                 value={caseData.status}
-                onValueChange={(value) => updateCaseMutation.mutate({ id: caseId, data: { status: value }})}
-              >
+                onValueChange={(value) => updateCaseMutation.mutate({ id: caseId, data: { status: value } })}>
+
                 <SelectTrigger
                   className="rounded-2xl border-0 h-10 w-40"
                   style={{
-                    ...getButtonStyle('4px'),
+                    ...getButtonStyle('4px'), // Apply getButtonStyle
                     color: colors.text
-                  }}
-                >
+                  }}>
+
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1028,86 +1028,84 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             </div>
           </div>
 
-          {/* No Employment Data Text */}
-          {(!employmentStatus || employmentStatus.length === 0) && (
-            <p className="text-xs mb-4" style={{ color: colors.textTertiary }}>
-              No employment data
-            </p>
-          )}
-
           {/* Case Description with Company Logo and Status */}
-          {caseData.description && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-6 rounded-3xl relative"
-              style={{
-                background: colors.bg,
-                boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
-            >
-              <div className="grid grid-cols-4 gap-6">
-                {/* Left - Company Logo */}
-                <div className="col-span-1 flex items-center justify-center">
-                  {employer?.company_logo_url ? (
-                    <img 
-                      src={employer.company_logo_url} 
-                      alt={employer.employer_name}
-                      className="max-w-full max-h-32 object-contain"
-                    />
-                  ) : (
-                    <div
-                      className="w-32 h-32 rounded-2xl flex items-center justify-center"
-                      style={{
-                        background: colors.bg,
-                        boxShadow: `inset 6px 6px 12px ${colors.shadowDark}, inset -6px -6px 12px ${colors.shadowLight}`
-                      }}
-                    >
-                      <Building2 className="w-16 h-16" style={{ color: colors.iconColor }} />
-                    </div>
-                  )}
-                </div>
+          {caseData.description &&
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }} className="mt-3 mb-6 text-xs font-medium text-right opacity-75"
 
-                {/* Case Description - Fills remaining space */}
-                <div className="col-span-3 flex flex-col justify-center pr-32">
-                  <p className="text-5xl font-bold leading-tight" style={{ color: colors.text }}>
-                    {caseData.description}
-                  </p>
-                  {employer && (
-                    <p className="text-sm mt-4" style={{ color: colors.textSecondary }}>
-                      <Briefcase className="w-4 h-4 inline mr-1" />
-                      {employer.employer_name}
-                    </p>
-                  )}
-                </div>
+            style={{
+              background: colors.bg,
+              boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
+            }}>No employment data
 
-                {/* Status Notifications - Absolute positioned to right */}
-                <div className="absolute top-6 right-6 w-48">
-                  <div className="space-y-2">
-                    {employmentStatus && employmentStatus.length > 0 && employmentStatus.map((status, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl"
-                        style={{
-                          background: colors.bg,
-                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                        }}
-                      >
-                        <p className="text-xs font-semibold mb-1" style={{ color: status.color }}>
-                          {status.label}
-                        </p>
-                        {status.days !== null && (
-                          <p className="text-xs" style={{ color: colors.textSecondary }}>
-                            {status.days} {status.days === 1 ? 'day' : 'days'}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          </motion.div>
+          }
         </div>
 
         {/* AI Quick Actions Bar */}
@@ -1116,8 +1114,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           style={{
             background: colors.bg,
             boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-          }}
-        >
+          }}>
+
           <CardContent className="p-4">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-semibold flex items-center gap-2" style={{ color: colors.text }}>
@@ -1131,8 +1129,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
-                }}
-              >
+                }}>
+
                 <Brain className="w-3 h-3 mr-1" />
                 Summarize
               </Button>
@@ -1143,8 +1141,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
-                }}
-              >
+                }}>
+
                 <Target className="w-3 h-3 mr-1" />
                 Detect Priority
               </Button>
@@ -1155,8 +1153,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
-                }}
-              >
+                }}>
+
                 <Zap className="w-3 h-3 mr-1" />
                 Generate Response
               </Button>
@@ -1167,8 +1165,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
-                }}
-              >
+                }}>
+
                 <TrendingUp className="w-3 h-3 mr-1" />
                 Score Quality
               </Button>
@@ -1179,8 +1177,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
-                }}
-              >
+                }}>
+
                 <Shield className="w-3 h-3 mr-1" />
                 Check Compliance
               </Button>
@@ -1200,24 +1198,24 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 background: colors.bg,
                 boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-              }}
-            >
+              }}>
+
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                   <Phone className="w-5 h-5" />
                   Call Interface
-                  {isThreeWay && (
-                    <Badge
-                      className="ml-2 border-0 text-xs px-3 py-1 rounded-full"
-                      style={{
-                        background: colors.badgeThreeWayBg,
-                        color: colors.badgeThreeWayText,
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                      }}
-                    >
+                  {isThreeWay &&
+                  <Badge
+                    className="ml-2 border-0 text-xs px-3 py-1 rounded-full"
+                    style={{
+                      background: colors.badgeThreeWayBg,
+                      color: colors.badgeThreeWayText,
+                      boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                    }}>
+
                       3-Way Call Active
                     </Badge>
-                  )}
+                  }
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -1231,32 +1229,32 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     placeholder="+1 (555) 000-0000"
                     disabled={isOnCall}
                     className="rounded-2xl border-0 h-12"
-                    style={{ ...getInsetStyle('4px'), color: colors.text }}
-                  />
+                    style={{ ...getInsetStyle('4px'), color: colors.text }} />
+
                 </div>
 
-                {isOnCall && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="space-y-4"
-                  >
+                {isOnCall &&
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="space-y-4">
+
                     {/* Call Status Display */}
                     <div className="text-center py-6">
                       <div
-                        className={`w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center ${isOnHold ? 'animate-pulse' : ''}`}
-                        style={{
-                          background: isOnHold
-                            ? colors.callHoldBg // Orange for hold
-                            : colors.callActiveBg, // Green for active
-                          boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`
-                        }}
-                      >
-                        {isOnHold ? (
-                          <Pause className="w-12 h-12" style={{ color: colors.callHoldText }} /> // Pause icon for hold
-                        ) : (
-                          <PhoneCall className="w-12 h-12" style={{ color: colors.callActiveText }} /> // PhoneCall for active
-                        )}
+                      className={`w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center ${isOnHold ? 'animate-pulse' : ''}`}
+                      style={{
+                        background: isOnHold ?
+                        colors.callHoldBg // Orange for hold
+                        : colors.callActiveBg, // Green for active
+                        boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`
+                      }}>
+
+                        {isOnHold ?
+                      <Pause className="w-12 h-12" style={{ color: colors.callHoldText }} /> // Pause icon for hold
+                      :
+                      <PhoneCall className="w-12 h-12" style={{ color: colors.callActiveText }} /> // PhoneCall for active
+                      }
                       </div>
                       <p className="text-3xl font-bold mb-2" style={{ color: colors.text }}>
                         {formatCallDuration(callDuration)}
@@ -1265,59 +1263,59 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                         {isOnHold ? 'Call on hold...' : 'Call in progress...'}
                         {isThreeWay && <span className="ml-1">(3-Way)</span>}
                       </p>
-                      {recordTranscript && (
-                        <Badge
-                          className="border-0 text-xs px-3 py-1 rounded-full inline-flex items-center"
-                          style={{
-                            background: colors.badgeRecordingBg, // Reddish for recording
-                            color: colors.badgeRecordingText,
-                            boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                          }}
-                        >
+                      {recordTranscript &&
+                    <Badge
+                      className="border-0 text-xs px-3 py-1 rounded-full inline-flex items-center"
+                      style={{
+                        background: colors.badgeRecordingBg, // Reddish for recording
+                        color: colors.badgeRecordingText,
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                      }}>
+
                           <div className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse" />
                           Recording Transcript
                         </Badge>
-                      )}
+                    }
                     </div>
 
                     {/* 3-Way Call Section */}
                     <AnimatePresence>
-                      {showThreeWayInput && !isThreeWay && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="space-y-2"
-                        >
+                      {showThreeWayInput && !isThreeWay &&
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2">
+
                           <label className="text-sm font-medium" style={{ color: colors.textSecondary }}>
                             Add Third Party Number
                           </label>
                           <div className="flex gap-2">
                             <Input
-                              value={thirdPartyNumber}
-                              onChange={(e) => setThirdPartyNumber(e.target.value)}
-                              placeholder="+1 (555) 000-0000"
-                              className="rounded-2xl border-0 h-10"
-                              style={{ ...getInsetStyle('3px'), color: colors.text }}
-                            />
+                          value={thirdPartyNumber}
+                          onChange={(e) => setThirdPartyNumber(e.target.value)}
+                          placeholder="+1 (555) 000-0000"
+                          className="rounded-2xl border-0 h-10"
+                          style={{ ...getInsetStyle('3px'), color: colors.text }} />
+
                             <Button
-                              onClick={handleAddThirdParty}
-                              disabled={!thirdPartyNumber.trim()}
-                              className="rounded-2xl h-10 px-4 border-0"
-                              style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}
-                            >
+                          onClick={handleAddThirdParty}
+                          disabled={!thirdPartyNumber.trim()}
+                          className="rounded-2xl h-10 px-4 border-0"
+                          style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}>
+
                               Add
                             </Button>
                           </div>
                         </motion.div>
-                      )}
+                    }
                     </AnimatePresence>
 
-                    {isThreeWay && (
-                      <div className="p-3 rounded-2xl flex items-center justify-between" style={{
-                        background: colors.badgeThreeWayBg,
-                        boxShadow: `inset 2px 2px 4px ${colors.shadowDark}50, inset -2px -2px 4px ${colors.shadowLight}50`
-                      }}>
+                    {isThreeWay &&
+                  <div className="p-3 rounded-2xl flex items-center justify-between" style={{
+                    background: colors.badgeThreeWayBg,
+                    boxShadow: `inset 2px 2px 4px ${colors.shadowDark}50, inset -2px -2px 4px ${colors.shadowLight}50`
+                  }}>
                         <div>
                           <p className="text-sm font-medium" style={{ color: colors.badgeThreeWayText }}>
                             3-Way Call Active
@@ -1328,79 +1326,79 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                         </div>
                         <Users className="w-5 h-5" style={{ color: colors.blue }} />
                       </div>
-                    )}
+                  }
 
                     {/* Call Control Buttons */}
                     <div className="grid grid-cols-3 gap-3">
                       {/* Hold Button */}
                       <Button
-                        onClick={handleToggleHold}
-                        className="rounded-2xl h-12 border-0 flex-col gap-1"
-                        style={isOnHold
-                          ? { ...getInsetStyle('4px', '#F59E0B'), color: '#ffffff', fontWeight: '600' }
-                          : { ...getButtonStyle('4px'), color: colors.text, fontWeight: '600' }
-                        }
-                      >
+                      onClick={handleToggleHold}
+                      className="rounded-2xl h-12 border-0 flex-col gap-1"
+                      style={isOnHold ?
+                      { ...getInsetStyle('4px', '#F59E0B'), color: '#ffffff', fontWeight: '600' } :
+                      { ...getButtonStyle('4px'), color: colors.text, fontWeight: '600' }
+                      }>
+
                         <Pause className="w-5 h-5" />
                         <span className="text-xs">{isOnHold ? 'Resume' : 'Hold'}</span>
                       </Button>
 
                       {/* 3-Way Call Button */}
                       <Button
-                        onClick={() => setShowThreeWayInput(prev => !prev)}
-                        disabled={isThreeWay}
-                        className="rounded-2xl h-12 border-0 flex-col gap-1"
-                        style={(isThreeWay || showThreeWayInput)
-                          ? { ...getInsetStyle('4px', '#3B82F6'), color: '#ffffff', fontWeight: '600' }
-                          : { ...getButtonStyle('4px'), color: colors.text, fontWeight: '600' }
-                        }
-                      >
+                      onClick={() => setShowThreeWayInput((prev) => !prev)}
+                      disabled={isThreeWay}
+                      className="rounded-2xl h-12 border-0 flex-col gap-1"
+                      style={isThreeWay || showThreeWayInput ?
+                      { ...getInsetStyle('4px', '#3B82F6'), color: '#ffffff', fontWeight: '600' } :
+                      { ...getButtonStyle('4px'), color: colors.text, fontWeight: '600' }
+                      }>
+
                         <Users className="w-5 h-5" />
                         <span className="text-xs">3-Way</span>
                       </Button>
 
                       {/* End Call Button */}
                       <Button
-                        onClick={handleEndCall}
-                        className="rounded-2xl h-12 border-0 flex-col gap-1"
-                        style={{
-                          ...getButtonStyle('4px', '#EF4444'),
-                          color: '#ffffff',
-                          fontWeight: '600'
-                        }}
-                      >
+                      onClick={handleEndCall}
+                      className="rounded-2xl h-12 border-0 flex-col gap-1"
+                      style={{
+                        ...getButtonStyle('4px', '#EF4444'),
+                        color: '#ffffff',
+                        fontWeight: '600'
+                      }}>
+
                         <PhoneOff className="w-5 h-5" />
                         <span className="text-xs">End Call</span>
                       </Button>
                     </div>
                   </motion.div>
-                )}
+                }
 
-                {!isOnCall && (
-                  <div className="flex gap-3">
+                {!isOnCall &&
+                <div className="flex gap-3">
                     <Button
-                      onClick={handleStartCall}
-                      disabled={!phoneNumber}
-                      className="flex-1 rounded-2xl h-12 border-0 font-semibold"
-                      style={customer?.is_vip ? {
-                        ...getButtonStyle('6px'),
-                        backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/381316158_image.png)',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        color: '#000000',
-                        fontWeight: '700',
-                        border: '3px solid #D97706'
-                      } : {
-                        ...getButtonStyle('6px', '#10B981'),
-                        color: '#ffffff',
-                        fontWeight: '600'
-                      }}
-                    >
+                    onClick={handleStartCall}
+                    disabled={!phoneNumber}
+                    className="flex-1 rounded-2xl h-12 border-0 font-semibold"
+                    style={customer?.is_vip ? {
+                      ...getButtonStyle('6px'),
+                      backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/381316158_image.png)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      color: '#000000',
+                      fontWeight: '700',
+                      border: '3px solid #D97706'
+                    } : {
+                      ...getButtonStyle('6px', '#10B981'),
+                      color: '#ffffff',
+                      fontWeight: '600'
+                    }}>
+
                       <PhoneCall className="w-5 h-5 mr-2" />
                       {customer?.is_vip ? <span>✨ Start VIP Call</span> : 'Start Call'}
                     </Button>
                   </div>
-                )}
+                }
               </CardContent>
             </Card>
 
@@ -1410,8 +1408,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 background: colors.bg,
                 boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-              }}
-            >
+              }}>
+
               <CardHeader>
                 <CardTitle className="flex items-center justify-between" style={{ color: colors.text }}>
                   <span className="flex items-center gap-2">
@@ -1422,8 +1420,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     onClick={handleGenerateResponse}
                     disabled={aiLoading}
                     className="rounded-xl h-8 px-3 text-xs border-0"
-                    style={{ ...getButtonStyle('3px'), color: '#8B5CF6' }}
-                  >
+                    style={{ ...getButtonStyle('3px'), color: '#8B5CF6' }}>
+
                     <Sparkles className="w-3 h-3 mr-1" />
                     AI Generate
                   </Button>
@@ -1432,29 +1430,29 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               <CardContent>
                 <div
                   className="mb-4 max-h-64 overflow-y-auto space-y-2 p-4 rounded-2xl"
-                  style={getInsetStyle('4px')}
-                >
-                  {smsMessages.length === 0 ? (
-                    <p className="text-center text-sm" style={{ color: colors.textSecondary }}>
+                  style={getInsetStyle('4px')}>
+
+                  {smsMessages.length === 0 ?
+                  <p className="text-center text-sm" style={{ color: colors.textSecondary }}>
                       No messages yet
-                    </p>
-                  ) : (
-                    smsMessages.map((sms) => (
-                      <motion.div
-                        key={sms.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={`p-3 rounded-2xl max-w-[80%] ${
-                          sms.direction === 'sent' ? 'ml-auto' : 'mr-auto'
-                        }`}
-                        style={{
-                          background: sms.direction === 'sent'
-                            ? isDark ? '#3B82F6' : '#2563EB'
-                            : isDark ? '#374151' : '#F3F4F6',
-                          boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`,
-                          color: sms.direction === 'sent' ? '#ffffff' : colors.text
-                        }}
-                      >
+                    </p> :
+
+                  smsMessages.map((sms) =>
+                  <motion.div
+                    key={sms.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-3 rounded-2xl max-w-[80%] ${
+                    sms.direction === 'sent' ? 'ml-auto' : 'mr-auto'}`
+                    }
+                    style={{
+                      background: sms.direction === 'sent' ?
+                      isDark ? '#3B82F6' : '#2563EB' :
+                      isDark ? '#374151' : '#F3F4F6',
+                      boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`,
+                      color: sms.direction === 'sent' ? '#ffffff' : colors.text
+                    }}>
+
                         <p className="text-sm mb-1">
                           {sms.message}
                         </p>
@@ -1462,30 +1460,30 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                           {format(new Date(sms.created_date), 'h:mm a')}
                         </p>
                       </motion.div>
-                    ))
-                  )}
+                  )
+                  }
                 </div>
 
                 {/* Quick Send Templates */}
-                {textTemplates.length > 0 && (
-                  <div className="mb-4">
+                {textTemplates.length > 0 &&
+                <div className="mb-4">
                     <p className="text-xs font-medium mb-2" style={{ color: colors.textSecondary }}>
                       Quick Send:
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {textTemplates.map((template) => (
-                        <Button
-                          key={template.id}
-                          onClick={() => handleQuickSend(template)}
-                          className="rounded-xl h-8 px-3 text-xs border-0"
-                          style={{ ...getButtonStyle('3px'), color: colors.textSecondary }}
-                        >
+                      {textTemplates.map((template) =>
+                    <Button
+                      key={template.id}
+                      onClick={() => handleQuickSend(template)}
+                      className="rounded-xl h-8 px-3 text-xs border-0"
+                      style={{ ...getButtonStyle('3px'), color: colors.textSecondary }}>
+
                           {template.label}
                         </Button>
-                      ))}
+                    )}
                     </div>
                   </div>
-                )}
+                }
 
                 <div className="flex gap-2">
                   <Input
@@ -1497,14 +1495,14 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     style={{
                       ...getInsetStyle('4px'),
                       color: colors.text
-                    }}
-                  />
+                    }} />
+
                   <Button
                     onClick={handleSendSms}
                     disabled={!smsMessage.trim()}
                     className="rounded-2xl h-12 px-6 border-0"
-                    style={{ ...getButtonStyle('6px'), color: colors.textSecondary }}
-                  >
+                    style={{ ...getButtonStyle('6px'), color: colors.textSecondary }}>
+
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>
@@ -1512,14 +1510,14 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             </Card>
 
             {/* Call Transcripts */}
-            {callTranscripts.length > 0 && (
-              <Card
-                className="border-0"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-                }}
-              >
+            {callTranscripts.length > 0 &&
+            <Card
+              className="border-0"
+              style={{
+                background: colors.bg,
+                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+              }}>
+
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                     <Brain className="w-5 h-5" />
@@ -1528,53 +1526,53 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                    {callTranscripts.map((transcript, index) => (
-                      <motion.div
-                        key={transcript.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="p-4 rounded-2xl"
-                        style={{ ...getButtonStyle('4px') }}
-                      >
+                    {callTranscripts.map((transcript, index) =>
+                  <motion.div
+                    key={transcript.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="p-4 rounded-2xl"
+                    style={{ ...getButtonStyle('4px') }}>
+
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
                             <Badge
-                              className="border-0 text-xs px-2 py-0.5"
-                              style={{
-                                background: transcript.sentiment === 'positive'
-                                  ? isDark ? 'linear-gradient(145deg, #1c2b29, #0c1817)' : 'linear-gradient(145deg, #dcfce7, #bbf7d0)'
-                                  : transcript.sentiment === 'negative'
-                                  ? isDark ? 'linear-gradient(145deg, #2e1d1d, #1a0f0f)' : 'linear-gradient(145deg, #fecaca, #fca5a5)'
-                                  : isDark ? 'linear-gradient(145deg, #1e293b, #0f172a)' : 'linear-gradient(145deg, #e0f2fe, #bae6fd)',
-                                color: transcript.sentiment === 'positive'
-                                  ? (isDark ? '#6ee7b7' : '#065f46')
-                                  : transcript.sentiment === 'negative'
-                                  ? (isDark ? '#f87171' : '#991b1b')
-                                  : (isDark ? '#93c5fd' : '#075985'),
-                                boxShadow: `2px 2px 4px ${colors.shadowDark}`
-                              }}
-                            >
+                          className="border-0 text-xs px-2 py-0.5"
+                          style={{
+                            background: transcript.sentiment === 'positive' ?
+                            isDark ? 'linear-gradient(145deg, #1c2b29, #0c1817)' : 'linear-gradient(145deg, #dcfce7, #bbf7d0)' :
+                            transcript.sentiment === 'negative' ?
+                            isDark ? 'linear-gradient(145deg, #2e1d1d, #1a0f0f)' : 'linear-gradient(145deg, #fecaca, #fca5a5)' :
+                            isDark ? 'linear-gradient(145deg, #1e293b, #0f172a)' : 'linear-gradient(145deg, #e0f2fe, #bae6fd)',
+                            color: transcript.sentiment === 'positive' ?
+                            isDark ? '#6ee7b7' : '#065f46' :
+                            transcript.sentiment === 'negative' ?
+                            isDark ? '#f87171' : '#991b1b' :
+                            isDark ? '#93c5fd' : '#075985',
+                            boxShadow: `2px 2px 4px ${colors.shadowDark}`
+                          }}>
+
                               {transcript.sentiment}
                             </Badge>
                             <Badge
-                              className="border-0 text-xs px-2 py-0.5"
-                              style={{
-                                background: colors.badgeQualityBg,
-                                color: colors.badgeQualityText,
-                                boxShadow: `2px 2px 4px ${colors.shadowDark}`
-                              }}
-                            >
+                          className="border-0 text-xs px-2 py-0.5"
+                          style={{
+                            background: colors.badgeQualityBg,
+                            color: colors.badgeQualityText,
+                            boxShadow: `2px 2px 4px ${colors.shadowDark}`
+                          }}>
+
                               Quality: {transcript.quality_score}/100
                             </Badge>
                             <Badge
-                              className="border-0 text-xs px-2 py-0.5"
-                              style={{
-                                background: colors.badgeComplianceOkBg,
-                                color: colors.badgeComplianceOkText,
-                                boxShadow: `2px 2px 4px ${colors.shadowDark}`
-                              }}
-                            >
+                          className="border-0 text-xs px-2 py-0.5"
+                          style={{
+                            background: colors.badgeComplianceOkBg,
+                            color: colors.badgeComplianceOkText,
+                            boxShadow: `2px 2px 4px ${colors.shadowDark}`
+                          }}>
+
                               Compliance: {transcript.compliance_score}/100
                             </Badge>
                           </div>
@@ -1587,41 +1585,41 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                           <strong>Summary:</strong> {transcript.ai_summary}
                         </p>
 
-                        {transcript.key_points && transcript.key_points.length > 0 && (
-                          <div className="mb-3">
+                        {transcript.key_points && transcript.key_points.length > 0 &&
+                    <div className="mb-3">
                             <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Key Points:
                             </p>
                             <ul className="list-disc list-inside space-y-1">
-                              {transcript.key_points.map((point, i) => (
-                                <li key={i} className="text-xs" style={{ color: colors.textSecondary }}>
+                              {transcript.key_points.map((point, i) =>
+                        <li key={i} className="text-xs" style={{ color: colors.textSecondary }}>
                                   {point}
                                 </li>
-                              ))}
+                        )}
                             </ul>
                           </div>
-                        )}
+                    }
 
-                        {transcript.action_items && transcript.action_items.length > 0 && (
-                          <div>
+                        {transcript.action_items && transcript.action_items.length > 0 &&
+                    <div>
                             <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Action Items:
                             </p>
                             <ul className="list-disc list-inside space-y-1">
-                              {transcript.action_items.map((item, i) => (
-                                <li key={i} className="text-xs" style={{ color: colors.textSecondary }}>
+                              {transcript.action_items.map((item, i) =>
+                        <li key={i} className="text-xs" style={{ color: colors.textSecondary }}>
                                   {item}
                                 </li>
-                              ))}
+                        )}
                             </ul>
                           </div>
-                        )}
+                    }
                       </motion.div>
-                    ))}
+                  )}
                   </div>
                 </CardContent>
               </Card>
-            )}
+            }
 
             {/* Call Log */}
             <Card
@@ -1629,8 +1627,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 background: colors.bg,
                 boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-              }}
-            >
+              }}>
+
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                   <Phone className="w-5 h-5" />
@@ -1639,35 +1637,35 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                  {calls.length === 0 ? (
-                    <p className="text-center text-sm py-8" style={{ color: colors.textSecondary }}>
+                  {calls.length === 0 ?
+                  <p className="text-center text-sm py-8" style={{ color: colors.textSecondary }}>
                       No calls yet
-                    </p>
-                  ) : (
-                    calls.map((call, index) => (
-                      <motion.div
-                        key={call.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="p-4 rounded-2xl"
-                        style={{ ...getButtonStyle('4px') }}
-                      >
+                    </p> :
+
+                  calls.map((call, index) =>
+                  <motion.div
+                    key={call.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="p-4 rounded-2xl"
+                    style={{ ...getButtonStyle('4px') }}>
+
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <div
-                              className="w-10 h-10 rounded-xl flex items-center justify-center"
-                              style={{
-                                background: call.direction === 'inbound'
-                                  ? isDark ? 'linear-gradient(145deg, #1f2937, #111827)' : 'linear-gradient(145deg, #dbeafe, #bfdbfe)'
-                                  : isDark ? 'linear-gradient(145deg, #1c2b29, #0c1817)' : 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
-                                boxShadow: `inset 3px 3px 6px ${colors.shadowDark}50`
-                              }}
-                            >
+                          className="w-10 h-10 rounded-xl flex items-center justify-center"
+                          style={{
+                            background: call.direction === 'inbound' ?
+                            isDark ? 'linear-gradient(145deg, #1f2937, #111827)' : 'linear-gradient(145deg, #dbeafe, #bfdbfe)' :
+                            isDark ? 'linear-gradient(145deg, #1c2b29, #0c1817)' : 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
+                            boxShadow: `inset 3px 3px 6px ${colors.shadowDark}50`
+                          }}>
+
                               <Phone
-                                className="w-5 h-5"
-                                style={{ color: call.direction === 'inbound' ? (isDark ? '#93c5fd' : '#3b82f6') : (isDark ? '#6ee7b7' : '#10b981') }}
-                              />
+                            className="w-5 h-5"
+                            style={{ color: call.direction === 'inbound' ? isDark ? '#93c5fd' : '#3b82f6' : isDark ? '#6ee7b7' : '#10b981' }} />
+
                             </div>
                             <div>
                               <p className="font-semibold text-sm" style={{ color: colors.text }}>
@@ -1679,44 +1677,44 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                             </div>
                           </div>
                           <Badge
-                            className="border-0 text-xs px-2 py-0.5"
-                            style={{
-                              background: call.status === 'completed'
-                                ? (isDark ? 'linear-gradient(145deg, #1c2b29, #0c1817)' : 'linear-gradient(145deg, #dcfce7, #bbf7d0)')
-                                : (isDark ? 'linear-gradient(145deg, #2e1d1d, #1a0f0f)' : 'linear-gradient(145deg, #fecaca, #fca5a5)'),
-                              color: call.status === 'completed' ? (isDark ? '#6ee7b7' : '#065f46') : (isDark ? '#f87171' : '#991b1b'),
-                              boxShadow: `2px 2px 4px ${colors.shadowDark}`
-                            }}
-                          >
+                        className="border-0 text-xs px-2 py-0.5"
+                        style={{
+                          background: call.status === 'completed' ?
+                          isDark ? 'linear-gradient(145deg, #1c2b29, #0c1817)' : 'linear-gradient(145deg, #dcfce7, #bbf7d0)' :
+                          isDark ? 'linear-gradient(145deg, #2e1d1d, #1a0f0f)' : 'linear-gradient(145deg, #fecaca, #fca5a5)',
+                          color: call.status === 'completed' ? isDark ? '#6ee7b7' : '#065f46' : isDark ? '#f87171' : '#991b1b',
+                          boxShadow: `2px 2px 4px ${colors.shadowDark}`
+                        }}>
+
                             {call.status}
                           </Badge>
                         </div>
-                        {call.duration && (
-                          <p className="text-sm mb-1" style={{ color: colors.textSecondary }}>
+                        {call.duration &&
+                    <p className="text-sm mb-1" style={{ color: colors.textSecondary }}>
                             Duration: {formatCallDuration(call.duration)}
-                            {call.recording_url === 'transcript_enabled' && (
-                                <span className="ml-2 font-semibold" style={{color: colors.red}}>(Transcript Recorded)</span>
-                              )}
+                            {call.recording_url === 'transcript_enabled' &&
+                      <span className="ml-2 font-semibold" style={{ color: colors.red }}>(Transcript Recorded)</span>
+                      }
                           </p>
-                        )}
-                        {call.recording_url === 'transcript_enabled' && (
-                          <Badge
-                            className="border-0 text-xs px-2 py-0.5"
-                            style={{
-                              background: isDark ? 'linear-gradient(145deg, #2e1d1d, #1a0f0f)' : 'linear-gradient(145deg, #fee2e2, #fecaca)',
-                              color: isDark ? '#f87171' : '#991b1b',
-                              boxShadow: `2px 2px 4px ${colors.shadowDark}`
-                            }}
-                          >
+                    }
+                        {call.recording_url === 'transcript_enabled' &&
+                    <Badge
+                      className="border-0 text-xs px-2 py-0.5"
+                      style={{
+                        background: isDark ? 'linear-gradient(145deg, #2e1d1d, #1a0f0f)' : 'linear-gradient(145deg, #fee2e2, #fecaca)',
+                        color: isDark ? '#f87171' : '#991b1b',
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}`
+                      }}>
+
                             Transcript Recorded
                           </Badge>
-                        )}
+                    }
                         <p className="text-xs mt-2" style={{ color: colors.textPlaceholder }}>
                           {format(new Date(call.created_date), 'MMM d, h:mm a')}
                         </p>
                       </motion.div>
-                    ))
-                  )}
+                  )
+                  }
                 </div>
               </CardContent>
             </Card>
@@ -1727,8 +1725,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 background: colors.bg,
                 boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-              }}
-            >
+              }}>
+
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                   <Activity className="w-5 h-5" />
@@ -1737,37 +1735,37 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 max-h-[500px] overflow-y-auto"> {/* Added max-height and overflow */}
-                  {allActivity.length === 0 ? (
-                    <p className="text-center text-sm py-8" style={{ color: colors.textPlaceholder }}>
+                  {allActivity.length === 0 ?
+                  <p className="text-center text-sm py-8" style={{ color: colors.textPlaceholder }}>
                       No activity yet
-                    </p>
-                  ) : (
-                    allActivity.map((activity, index) => (
-                      <motion.div
-                        key={`${activity.type}-${activity.id}`}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="flex gap-4"
-                      >
+                    </p> :
+
+                  allActivity.map((activity, index) =>
+                  <motion.div
+                    key={`${activity.type}-${activity.id}`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="flex gap-4">
+
                         <div className="flex flex-col items-center">
                           <div
-                            className="w-10 h-10 rounded-full flex items-center justify-center"
-                            style={{ ...getButtonStyle('3px') }}
-                          >
+                        className="w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{ ...getButtonStyle('3px') }}>
+
                             {activity.type === 'call' && <Phone className="w-5 h-5" style={{ color: colors.textSecondary }} />}
                             {activity.type === 'sms' && <MessageSquare className="w-5 h-5" style={{ color: colors.textSecondary }} />}
                             {activity.type === 'note' && <FileText className="w-5 h-5" style={{ color: colors.textSecondary }} />}
                             {activity.type === 'task' && <CheckCircle2 className="w-5 h-5" style={{ color: colors.textSecondary }} />}
                           </div>
-                          {index < allActivity.length - 1 && (
-                            <div className="w-0.5 flex-1 mt-2" style={{ background: colors.timelineConnector }} />
-                          )}
+                          {index < allActivity.length - 1 &&
+                      <div className="w-0.5 flex-1 mt-2" style={{ background: colors.timelineConnector }} />
+                      }
                         </div>
                         <div
-                          className="flex-1 p-4 rounded-2xl"
-                          style={{ ...getButtonStyle('4px') }}
-                        >
+                      className="flex-1 p-4 rounded-2xl"
+                      style={{ ...getButtonStyle('4px') }}>
+
                           <div className="flex justify-between items-start mb-2">
                             <p className="font-medium" style={{ color: colors.text }}>
                               {activity.type === 'call' && `${activity.direction === 'inbound' ? 'Incoming' : 'Outgoing'} Call`}
@@ -1779,33 +1777,33 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                               {format(new Date(activity.timestamp), 'MMM d, h:mm a')}
                             </span>
                           </div>
-                          {activity.type === 'call' && activity.duration && (
-                            <p className="text-sm" style={{ color: colors.textSecondary }}>
+                          {activity.type === 'call' && activity.duration &&
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
                               Duration: {formatCallDuration(activity.duration)}
-                              {activity.recording_url === 'transcript_enabled' && (
-                                <span className="ml-2 font-semibold" style={{color: colors.red}}>(Transcript Recorded)</span>
-                              )}
+                              {activity.recording_url === 'transcript_enabled' &&
+                        <span className="ml-2 font-semibold" style={{ color: colors.red }}>(Transcript Recorded)</span>
+                        }
                             </p>
-                          )}
-                          {activity.type === 'sms' && (
-                            <p className="text-sm" style={{ color: colors.textSecondary }}>
+                      }
+                          {activity.type === 'sms' &&
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
                               {activity.message}
                             </p>
-                          )}
-                          {activity.type === 'note' && (
-                            <p className="text-sm" style={{ color: colors.textSecondary }}>
+                      }
+                          {activity.type === 'note' &&
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
                               {activity.content}
                             </p>
-                          )}
-                          {activity.type === 'task' && (
-                            <p className="text-sm" style={{ color: colors.textSecondary }}>
+                      }
+                          {activity.type === 'task' &&
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
                               Status: {activity.status}
                             </p>
-                          )}
+                      }
                         </div>
                       </motion.div>
-                    ))
-                  )}
+                  )
+                  }
                 </div>
               </CardContent>
             </Card>
@@ -1819,8 +1817,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 background: colors.bg,
                 boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
-            >
+              }}>
+
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                   <User className="w-5 h-5" />
@@ -1828,52 +1826,52 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {caseData.customer_phone && (
-                  <div className="flex items-center gap-3">
+                {caseData.customer_phone &&
+                <div className="flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
-                    >
+                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
+                  >
                       <Phone className="w-5 h-5" style={{ color: colors.textSecondary }} />
                     </div>
                     <div>
                       <p className="text-xs" style={{ color: colors.textPlaceholder }}>Phone</p>
                       <a
-                        href={`tel:${caseData.customer_phone}`}
-                        className="font-medium hover:underline"
-                        style={{ color: colors.blue }}
-                      >
+                      href={`tel:${caseData.customer_phone}`}
+                      className="font-medium hover:underline"
+                      style={{ color: colors.blue }}>
+
                         {caseData.customer_phone}
                       </a>
                     </div>
                   </div>
-                )}
-                {caseData.customer_email && (
-                  <div className="flex items-center gap-3">
+                }
+                {caseData.customer_email &&
+                <div className="flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
-                    >
+                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
+                  >
                       <Mail className="w-5 h-5" style={{ color: colors.textSecondary }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs" style={{ color: colors.textPlaceholder }}>Email</p>
                       <a
-                        href={`mailto:${caseData.customer_email}`}
-                        className="font-medium truncate hover:underline block"
-                        style={{ color: colors.blue }}
-                      >
+                      href={`mailto:${caseData.customer_email}`}
+                      className="font-medium truncate hover:underline block"
+                      style={{ color: colors.blue }}>
+
                         {caseData.customer_email}
                       </a>
                     </div>
                   </div>
-                )}
-                {caseData.policy_number && (
-                  <div className="flex items-center gap-3">
+                }
+                {caseData.policy_number &&
+                <div className="flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
-                    >
+                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
+                  >
                       <FileText className="w-5 h-5" style={{ color: colors.textSecondary }} />
                     </div>
                     <div>
@@ -1883,7 +1881,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       </p>
                     </div>
                   </div>
-                )}
+                }
                 <div className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -1907,8 +1905,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 background: colors.bg,
                 boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
-            >
+              }}>
+
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                   <Clock className="w-5 h-5" />
@@ -1917,35 +1915,35 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 max-h-[200px] overflow-y-auto"> {/* Added max-height and overflow */}
-                  {notes.filter(note => note.note_type === 'follow_up').length === 0 ? (
-                    <p className="text-sm text-center py-4" style={{ color: colors.textPlaceholder }}>
+                  {notes.filter((note) => note.note_type === 'follow_up').length === 0 ?
+                  <p className="text-sm text-center py-4" style={{ color: colors.textPlaceholder }}>
                       No follow-up notes yet
-                    </p>
-                  ) : (
-                    notes.filter(note => note.note_type === 'follow_up').map((note) => (
-                      <motion.div
-                        key={note.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="p-3 rounded-2xl"
-                        style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
-                      >
+                    </p> :
+
+                  notes.filter((note) => note.note_type === 'follow_up').map((note) =>
+                  <motion.div
+                    key={note.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 rounded-2xl"
+                    style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
+                  >
                         <div className="flex justify-between items-start mb-2">
                           <Badge
-                            className="border-0 text-xs px-2 py-0.5"
-                            style={{
-                              background: colors.badgeFollowUpBg || colors.badgeGeneralBg, // Use a specific color or default
-                              color: colors.textSecondary
-                            }}
-                          >
+                        className="border-0 text-xs px-2 py-0.5"
+                        style={{
+                          background: colors.badgeFollowUpBg || colors.badgeGeneralBg, // Use a specific color or default
+                          color: colors.textSecondary
+                        }}>
+
                             Follow Up
                           </Badge>
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={() => deleteNoteMutation.mutate(note.id)}
-                          >
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => deleteNoteMutation.mutate(note.id)}>
+
                             <Trash2 className="w-3 h-3" style={{ color: colors.red }} />
                           </Button>
                         </div>
@@ -1956,8 +1954,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                           {format(new Date(note.created_date), 'MMM d, h:mm a')}
                         </p>
                       </motion.div>
-                    ))
-                  )}
+                  )
+                  }
                 </div>
               </CardContent>
             </Card>
@@ -1968,8 +1966,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 background: colors.bg,
                 boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
-            >
+              }}>
+
               <CardHeader>
                 <CardTitle className="flex items-center justify-between" style={{ color: colors.text }}>
                   <span className="flex items-center gap-2">
@@ -1980,8 +1978,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     onClick={handleSmartNoteSuggestions}
                     disabled={aiLoading}
                     className="rounded-xl h-7 px-2 text-xs border-0"
-                    style={{ ...getButtonStyle('2px'), color: '#8B5CF6' }}
-                  >
+                    style={{ ...getButtonStyle('2px'), color: '#8B5CF6' }}>
+
                     <Sparkles className="w-3 h-3 mr-1" />
                     AI Suggest
                   </Button>
@@ -1989,35 +1987,35 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 mb-4 max-h-[250px] overflow-y-auto"> {/* Added max-height and overflow */}
-                  {notes.filter(note => note.note_type !== 'follow_up').length === 0 ? ( // Filter out follow-ups here
-                    <p className="text-sm text-center py-4" style={{ color: colors.textPlaceholder }}>
+                  {notes.filter((note) => note.note_type !== 'follow_up').length === 0 ? // Filter out follow-ups here
+                  <p className="text-sm text-center py-4" style={{ color: colors.textPlaceholder }}>
                       No general notes yet
-                    </p>
-                  ) : (
-                    notes.filter(note => note.note_type !== 'follow_up').map((note) => ( // Filter out follow-ups here
-                      <motion.div
-                        key={note.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="p-3 rounded-2xl"
-                        style={{ ...getButtonStyle('4px') }} // Apply getButtonStyle
-                      >
+                    </p> :
+
+                  notes.filter((note) => note.note_type !== 'follow_up').map((note) => // Filter out follow-ups here
+                  <motion.div
+                    key={note.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 rounded-2xl"
+                    style={{ ...getButtonStyle('4px') }} // Apply getButtonStyle
+                  >
                         <div className="flex justify-between items-start mb-2">
                           <Badge
-                            className="border-0 text-xs px-2 py-0.5"
-                            style={{
-                              background: colors.badgeGeneralBg,
-                              color: colors.textSecondary
-                            }}
-                          >
+                        className="border-0 text-xs px-2 py-0.5"
+                        style={{
+                          background: colors.badgeGeneralBg,
+                          color: colors.textSecondary
+                        }}>
+
                             {note.note_type}
                           </Badge>
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={() => deleteNoteMutation.mutate(note.id)}
-                          >
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => deleteNoteMutation.mutate(note.id)}>
+
                             <Trash2 className="w-3 h-3" style={{ color: colors.red }} />
                           </Button>
                         </div>
@@ -2028,44 +2026,44 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                           {format(new Date(note.created_date), 'MMM d, h:mm a')}
                         </p>
                       </motion.div>
-                    ))
-                  )}
+                  )
+                  }
                 </div>
 
-                {complianceCheck && (
-                  <div
-                    className="p-3 rounded-xl mb-3 text-xs"
-                    style={{
-                      background: complianceCheck.compliant
-                        ? colors.badgeComplianceOkBg
-                        : colors.badgeComplianceIssueBg,
-                      color: complianceCheck.compliant ? colors.badgeComplianceOkText : colors.badgeComplianceIssueText,
-                      boxShadow: `inset 2px 2px 4px ${colors.shadowDark}50`
-                    }}
-                  >
-                    {complianceCheck.compliant ? (
-                      <span className="flex items-center gap-1">
+                {complianceCheck &&
+                <div
+                  className="p-3 rounded-xl mb-3 text-xs"
+                  style={{
+                    background: complianceCheck.compliant ?
+                    colors.badgeComplianceOkBg :
+                    colors.badgeComplianceIssueBg,
+                    color: complianceCheck.compliant ? colors.badgeComplianceOkText : colors.badgeComplianceIssueText,
+                    boxShadow: `inset 2px 2px 4px ${colors.shadowDark}50`
+                  }}>
+
+                    {complianceCheck.compliant ?
+                  <span className="flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" />
                         Compliant ({complianceCheck.compliance_score}/100)
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1">
+                      </span> :
+
+                  <span className="flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
                         {complianceCheck.issues?.length || 0} Compliance Issues
                       </span>
-                    )}
+                  }
                   </div>
-                )}
+                }
 
                 <div className="space-y-2">
                   <Select
                     value={noteType}
-                    onValueChange={setNoteType}
-                  >
+                    onValueChange={setNoteType}>
+
                     <SelectTrigger
                       className="rounded-2xl border-0 h-10"
-                      style={{ ...getInsetStyle('3px'), color: colors.text }}
-                    >
+                      style={{ ...getInsetStyle('3px'), color: colors.text }}>
+
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -2080,15 +2078,15 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     onChange={(e) => setNewNote(e.target.value)}
                     placeholder="Add a note..."
                     className="rounded-2xl border-0 min-h-20"
-                    style={{ ...getInsetStyle('4px'), color: colors.text }}
-                  />
+                    style={{ ...getInsetStyle('4px'), color: colors.text }} />
+
                   <div className="flex gap-2">
                     <Button
                       onClick={handleCheckCompliance}
                       disabled={!newNote.trim() || aiLoading}
                       className="rounded-2xl h-10 px-4 border-0"
-                      style={{ ...getButtonStyle('4px'), color: colors.red }}
-                    >
+                      style={{ ...getButtonStyle('4px'), color: colors.red }}>
+
                       <Shield className="w-4 h-4 mr-2" />
                       Check
                     </Button>
@@ -2096,8 +2094,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       onClick={handleAddNote}
                       disabled={!newNote.trim()}
                       className="flex-1 rounded-2xl h-10 border-0"
-                      style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}
-                    >
+                      style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}>
+
                       <Plus className="w-4 h-4 mr-2" />
                       Add Note
                     </Button>
@@ -2112,8 +2110,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               style={{
                 background: colors.bg,
                 boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
-            >
+              }}>
+
               <CardHeader>
                 <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                   <CheckCircle2 className="w-5 h-5" />
@@ -2122,50 +2120,50 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 mb-4 max-h-[200px] overflow-y-auto"> {/* Added max-height and overflow */}
-                  {tasks.length === 0 ? (
-                    <p className="text-sm text-center py-4" style={{ color: colors.textPlaceholder }}>
+                  {tasks.length === 0 ?
+                  <p className="text-sm text-center py-4" style={{ color: colors.textPlaceholder }}>
                       No tasks yet
-                    </p>
-                  ) : (
-                    tasks.map((task) => (
-                      <motion.div
-                        key={task.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex items-center gap-3 p-3 rounded-2xl"
-                        style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
-                      >
+                    </p> :
+
+                  tasks.map((task) =>
+                  <motion.div
+                    key={task.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center gap-3 p-3 rounded-2xl"
+                    style={{ ...getButtonStyle('3px') }} // Apply getButtonStyle
+                  >
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={() => handleToggleTask(task)}
-                        >
-                          {task.status === 'completed' ? (
-                            <CheckSquare className="w-5 h-5" style={{ color: colors.green }} />
-                          ) : (
-                            <Square className="w-5 h-5" style={{ color: colors.textPlaceholder }} />
-                          )}
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => handleToggleTask(task)}>
+
+                          {task.status === 'completed' ?
+                      <CheckSquare className="w-5 h-5" style={{ color: colors.green }} /> :
+
+                      <Square className="w-5 h-5" style={{ color: colors.textPlaceholder }} />
+                      }
                         </Button>
                         <div className="flex-1">
                           <p
-                            className={`text-sm ${task.status === 'completed' ? 'line-through' : ''}`}
-                            style={{ color: task.status === 'completed' ? colors.textPlaceholder : colors.text }}
-                          >
+                        className={`text-sm ${task.status === 'completed' ? 'line-through' : ''}`}
+                        style={{ color: task.status === 'completed' ? colors.textPlaceholder : colors.text }}>
+
                             {task.title}
                           </p>
                         </div>
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={() => deleteTask(task.id)}
-                        >
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => deleteTask(task.id)}>
+
                           <Trash2 className="w-3 h-3" style={{ color: colors.red }} />
                         </Button>
                       </motion.div>
-                    ))
-                  )}
+                  )
+                  }
                 </div>
 
                 <div className="flex gap-2">
@@ -2175,14 +2173,14 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     placeholder="New task..."
                     onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
                     className="rounded-2xl border-0 h-10"
-                    style={{ ...getInsetStyle('3px'), color: colors.text }}
-                  />
+                    style={{ ...getInsetStyle('3px'), color: colors.text }} />
+
                   <Button
                     onClick={handleAddTask}
                     disabled={!newTaskTitle.trim()}
                     className="rounded-2xl h-10 px-4 border-0"
-                    style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}
-                  >
+                    style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}>
+
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
@@ -2207,12 +2205,12 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
         }}
         onDismiss={() => setAiSuggestion(null)}
         type={
-          callSummary ? "summary" :
-          qualityScore ? "quality" :
-          complianceCheck ? "compliance" :
-          "suggestion"
-        }
-      />
+        callSummary ? "summary" :
+        qualityScore ? "quality" :
+        complianceCheck ? "compliance" :
+        "suggestion"
+        } />
+
 
       {/* Active Call Panel */}
       <ActiveCallPanel
@@ -2227,8 +2225,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
         isVIP={customer?.is_vip}
         onToggleHold={handleToggleHold}
         onEndCall={handleEndCall}
-        onMinimize={() => setShowActiveCallPanel(false)}
-      />
-    </div>
-  );
+        onMinimize={() => setShowActiveCallPanel(false)} />
+
+    </div>);
+
 }
