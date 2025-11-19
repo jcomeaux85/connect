@@ -899,7 +899,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </p>
                 {caseData.customer_id && (
                   <Link to={createPageUrl(`Customer?id=${caseData.customer_id}`)}>
-                    <span className="text-xs hover:underline" style={{ color: '#8B5CF6' }}>
+                    <span className="text-xs hover:underline" style={{ color: '#3B82F6' }}>
                       View Profile →
                     </span>
                   </Link>
@@ -1128,8 +1128,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6',
-                  borderLeft: '3px solid #8B5CF6'
+                  color: '#8B5CF6'
                 }}
               >
                 <Brain className="w-3 h-3 mr-1" />
@@ -1141,8 +1140,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6',
-                  borderLeft: '3px solid #8B5CF6'
+                  color: '#8B5CF6'
                 }}
               >
                 <Target className="w-3 h-3 mr-1" />
@@ -1154,8 +1152,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6',
-                  borderLeft: '3px solid #8B5CF6'
+                  color: '#8B5CF6'
                 }}
               >
                 <Zap className="w-3 h-3 mr-1" />
@@ -1167,8 +1164,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6',
-                  borderLeft: '3px solid #8B5CF6'
+                  color: '#8B5CF6'
                 }}
               >
                 <TrendingUp className="w-3 h-3 mr-1" />
@@ -1180,8 +1176,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
                 style={{
                   ...getButtonStyle('3px'),
-                  color: '#8B5CF6',
-                  borderLeft: '3px solid #8B5CF6'
+                  color: '#8B5CF6'
                 }}
               >
                 <Shield className="w-3 h-3 mr-1" />
@@ -1421,7 +1416,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     onClick={handleGenerateResponse}
                     disabled={aiLoading}
                     className="rounded-xl h-8 px-3 text-xs border-0"
-                    style={{ ...getButtonStyle('3px'), color: '#8B5CF6', borderLeft: '3px solid #8B5CF6' }}
+                    style={{ ...getButtonStyle('3px'), color: '#8B5CF6' }}
                   >
                     <Sparkles className="w-3 h-3 mr-1" />
                     AI Generate
@@ -1979,7 +1974,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     onClick={handleSmartNoteSuggestions}
                     disabled={aiLoading}
                     className="rounded-xl h-7 px-2 text-xs border-0"
-                    style={{ ...getButtonStyle('2px'), color: '#8B5CF6', borderLeft: '3px solid #8B5CF6' }}
+                    style={{ ...getButtonStyle('2px'), color: '#8B5CF6' }}
                   >
                     <Sparkles className="w-3 h-3 mr-1" />
                     AI Suggest

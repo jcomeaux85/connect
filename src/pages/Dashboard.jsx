@@ -156,16 +156,6 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            {/* Central Time - Above Card */}
-            <div className="mb-3 text-center">
-              <p className="text-4xl font-bold" style={{ color: colors.text }}>
-                8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
-              </p>
-              <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
-                Central Time
-              </p>
-            </div>
-
             <Card
               className="border-0 h-full"
               style={{
@@ -174,16 +164,16 @@ export default function Dashboard() {
               }}
             >
               <CardContent className="p-6">
-                {/* Other Time Zones - Small at top */}
-                <div className="mb-4 pb-3 border-b" style={{ borderColor: colors.shadowDark }}>
-                  <div className="flex flex-wrap gap-1.5 text-xs" style={{ color: colors.textTertiary }}>
-                    <div className="px-2 py-0.5 rounded" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                {/* Other Time Zones - Right Justified */}
+                <div className="mb-4 flex justify-end">
+                  <div className="flex flex-col gap-1 text-xs text-right" style={{ color: colors.textTertiary }}>
+                    <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
                       PST: 6:15 AM
                     </div>
-                    <div className="px-2 py-0.5 rounded" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                    <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
                       MST: 7:15 AM
                     </div>
-                    <div className="px-2 py-0.5 rounded" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                    <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
                       EST: 9:15 AM
                     </div>
                   </div>
@@ -272,7 +262,9 @@ export default function Dashboard() {
               }}
             >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle style={{ color: colors.text }}>Daily Planner</CardTitle>
+                <CardTitle className="text-4xl font-bold" style={{ color: colors.text }}>
+                  8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
+                </CardTitle>
                 <p className="text-sm" style={{ color: colors.textSecondary }}>
                   You have {activeCases} active {activeCases === 1 ? 'case' : 'cases'} · {urgentCases} urgent
                 </p>

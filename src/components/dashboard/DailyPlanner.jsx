@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,9 @@ export default function DailyPlanner({ user, greeting, activeCases, urgentCases 
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventTime, setNewEventTime] = useState('');
   const [showAddEvent, setShowAddEvent] = useState(false);
+  const [isEditingDateTime, setIsEditingDateTime] = useState(false);
+  const [editDate, setEditDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [editTime, setEditTime] = useState(format(new Date(), 'HH:mm'));
 
   useEffect(() => {
     const savedEvents = localStorage.getItem('daily-planner-events');
@@ -66,20 +69,8 @@ export default function DailyPlanner({ user, greeting, activeCases, urgentCases 
   const todayEvents = getEventsForDate(selectedDate).sort((a, b) => a.time.localeCompare(b.time));
 
   return (
-    <Card
-      className="border-0 h-full"
-      style={{
-        background: colors.bg,
-        boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-      }}
-    >
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base md:text-lg" style={{ color: colors.text }}>
-          <Clock className="w-4 h-4 md:w-5 md:h-5" />
-          Daily Planner
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div>
+      <div className="space-y-4">
         {/* Mobile Greeting Section */}
         <div className="lg:hidden mb-4">
           <div
@@ -325,7 +316,7 @@ export default function DailyPlanner({ user, greeting, activeCases, urgentCases 
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -59,7 +59,7 @@ export default function SlideOutMenu() {
       closeTimer = setTimeout(() => {
         setIsOpen(false);
         setIsExpanded(false);
-      }, 800); // Increased from 300ms to 800ms
+      }, 1500); // Increased to 1.5 seconds
     };
 
     const menuElement = document.getElementById('slide-out-menu');
@@ -93,27 +93,41 @@ export default function SlideOutMenu() {
   };
 
   return (
-    <div
-      id="slide-out-menu"
-      className="fixed left-0 top-0 h-full z-[60] pointer-events-auto"
-      style={{
-        width: isExpanded ? '280px' : isOpen ? '80px' : '20px',
-        transition: 'width 0.3s ease'
-      }}
-    >
+    <>
+      {/* Backdrop */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ x: -280, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -280, opacity: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="h-full py-6 px-3 flex flex-col"
-            style={{
-              background: colors.bg,
-              boxShadow: `12px 0 24px ${colors.shadowDark}`
-            }}
-          >
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[59]"
+            style={{ pointerEvents: 'none' }}
+          />
+        )}
+      </AnimatePresence>
+
+      <div
+        id="slide-out-menu"
+        className="fixed left-0 top-0 h-full z-[60] pointer-events-auto"
+        style={{
+          width: isExpanded ? '280px' : isOpen ? '80px' : '20px',
+          transition: 'width 0.3s ease'
+        }}
+      >
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ x: -280, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -280, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="h-full py-6 px-3 flex flex-col"
+              style={{
+                background: colors.bg,
+                boxShadow: `12px 0 24px ${colors.shadowDark}`
+              }}
+            >
             {/* User Profile */}
             <div className="mb-8 px-2">
               <div
@@ -200,7 +214,7 @@ export default function SlideOutMenu() {
             )}
 
             {/* Navigation Items */}
-            <nav className="flex-1 space-y-2">
+            <nav className="flex-1 space-y-1.5">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.url;
@@ -210,7 +224,7 @@ export default function SlideOutMenu() {
                     <motion.div
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="rounded-2xl h-12 flex items-center justify-center gap-3 cursor-pointer"
+                      className="rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
                       style={isActive ? {
                         background: colors.bg,
                         boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
@@ -242,12 +256,12 @@ export default function SlideOutMenu() {
             </nav>
 
             {/* Quick Actions */}
-            <div className="space-y-2 pt-6 border-t" style={{ borderColor: colors.border }}>
+            <div className="space-y-1.5 pt-6 border-t" style={{ borderColor: colors.border }}>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => window.dispatchEvent(new Event('toggle-messages'))}
-                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-11 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -271,7 +285,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => window.dispatchEvent(new Event('toggle-phone'))}
-                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-11 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -295,7 +309,7 @@ export default function SlideOutMenu() {
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="rounded-2xl h-12 flex items-center justify-center gap-3 cursor-pointer"
+                  className="rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -320,7 +334,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleLogout}
-                className="w-full rounded-2xl h-12 flex items-center justify-center gap-3"
+                className="w-full rounded-2xl h-11 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -343,6 +357,7 @@ export default function SlideOutMenu() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </>
   );
 }
