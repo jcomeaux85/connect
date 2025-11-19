@@ -1040,14 +1040,14 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-6 rounded-3xl"
+              className="mb-6 p-6 rounded-3xl relative"
               style={{
                 background: colors.bg,
                 boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
               }}
             >
               <div className="grid grid-cols-4 gap-6">
-                {/* Left 25% - Company Logo */}
+                {/* Left - Company Logo */}
                 <div className="col-span-1 flex items-center justify-center">
                   {employer?.company_logo_url ? (
                     <img 
@@ -1068,21 +1068,21 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   )}
                 </div>
 
-                {/* Middle 50% - Case Description */}
-                <div className="col-span-2 flex flex-col justify-center">
-                  <p className="text-2xl font-bold leading-relaxed" style={{ color: colors.text }}>
+                {/* Case Description - Fills remaining space */}
+                <div className="col-span-3 flex flex-col justify-center pr-32">
+                  <p className="text-5xl font-bold leading-tight" style={{ color: colors.text }}>
                     {caseData.description}
                   </p>
                   {employer && (
-                    <p className="text-sm mt-3" style={{ color: colors.textSecondary }}>
+                    <p className="text-sm mt-4" style={{ color: colors.textSecondary }}>
                       <Briefcase className="w-4 h-4 inline mr-1" />
                       {employer.employer_name}
                     </p>
                   )}
                 </div>
 
-                {/* Right 25% - Status Notifications */}
-                <div className="col-span-1">
+                {/* Status Notifications - Absolute positioned to right */}
+                <div className="absolute top-6 right-6 w-48">
                   <div className="space-y-2">
                     {employmentStatus && employmentStatus.length > 0 && employmentStatus.map((status, idx) => (
                       <div
