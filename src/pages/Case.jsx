@@ -94,6 +94,9 @@ export default function CasePage() {
   const [callSummary, setCallSummary] = useState(null);
   const [complianceCheck, setComplianceCheck] = useState(null);
   const [qualityScore, setQualityScore] = useState(null);
+  const [isEditingCase, setIsEditingCase] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedReason, setSelectedReason] = useState(null);
 
   const { colors, isDark } = useTheme(); // Destructure isDark here
   const { data: user } = useUser();
@@ -222,6 +225,13 @@ export default function CasePage() {
       setPhoneNumber(caseData.customer_phone);
     }
   }, [caseData, customer]);
+
+  useEffect(() => {
+    if (caseData) {
+      setSelectedCategory(caseData.call_category || null);
+      setSelectedReason(caseData.call_reason || null);
+    }
+  }, [caseData?.id]);
 
   // Auto-suggest notes when case loads
   useEffect(() => {
@@ -860,6 +870,14 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
 
           {/* Main Header Section */}
           <div className="mb-1 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <button
+              onClick={() => setIsEditingCase(!isEditingCase)}
+              className="rounded-xl h-8 px-4 text-xs border-0"
+              style={{ ...getButtonStyle('3px'), color: colors.textSecondary }}
+            >
+              <Edit3 className="w-3 h-3 mr-1 inline" />
+              {isEditingCase ? 'Cancel' : 'Edit Case Details'}
+            </button>
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Link to={createPageUrl(`Customer?id=${caseData.customer_id}`)}>
@@ -1033,6 +1051,92 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             background: colors.bg,
             boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
           }}>
+            {isEditingCase && (
+              <div className="p-6 border-b" style={{ borderColor: colors.border }}>
+                <div className="mb-4">
+                  <label className="text-sm font-semibold mb-2 block" style={{ color: colors.text }}>
+                    What is this call about?
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {['General Benefits', 'HSA/FSA', 'Medical', 'Dental', 'Vision', 'Life', 'Disability', 'Other'].map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setSelectedCategory(cat)}
+                        className="px-4 py-2 rounded-xl text-sm border-0 transition-all"
+                        style={selectedCategory === cat ? {
+                          background: isDark ? '#3B82F6' : '#DBEAFE',
+                          color: isDark ? '#ffffff' : '#1E40AF',
+                          boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+                        } : {
+                          background: isDark ? '#374151' : '#F3F4F6',
+                          color: colors.textSecondary,
+                          boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
+                        }}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="text-sm font-semibold mb-2 block" style={{ color: colors.text }}>
+                    Why did they call?
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {['General Questions', 'Enrollment Assistance', 'Claim Assistance', 'Document Submissions', 'Provider Search', 'Billing Inquiry', 'Authorization Request', 'Other'].map(reason => (
+                      <button
+                        key={reason}
+                        onClick={() => setSelectedReason(reason)}
+                        className="px-4 py-2 rounded-xl text-sm border-0 transition-all"
+                        style={selectedReason === reason ? {
+                          background: isDark ? '#8B5CF6' : '#EDE9FE',
+                          color: isDark ? '#ffffff' : '#5B21B6',
+                          boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+                        } : {
+                          background: isDark ? '#4B5563' : '#E5E7EB',
+                          color: colors.textSecondary,
+                          boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
+                        }}
+                      >
+                        {reason}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => {
+                      updateCaseMutation.mutate({
+                        id: caseId,
+                        data: {
+                          call_category: selectedCategory,
+                          call_reason: selectedReason
+                        }
+                      });
+                      setIsEditingCase(false);
+                    }}
+                    className="rounded-2xl h-10 px-6 border-0"
+                    style={{ ...getButtonStyle('4px', '#10B981'), color: '#ffffff', fontWeight: '600' }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setSelectedCategory(caseData.call_category || null);
+                      setSelectedReason(caseData.call_reason || null);
+                      setIsEditingCase(false);
+                    }}
+                    className="rounded-2xl h-10 px-6 border-0"
+                    style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <div className="grid md:grid-cols-3 gap-6 p-6">
               {/* Left: Company Logo */}
               <div className="flex items-center justify-center">
@@ -1083,9 +1187,41 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     ))}
                   </div>
                 )}
-              </div>
-            </div>
-          </div>
+                </div>
+                </div>
+
+                {/* Selected Tags Display */}
+                {(caseData.call_category || caseData.call_reason) && (
+                <div className="px-6 pb-4 pt-2 border-t" style={{ borderColor: colors.border }}>
+                <div className="flex flex-wrap gap-2">
+                  {caseData.call_category && (
+                    <span
+                      className="px-3 py-1 rounded-lg text-xs font-medium"
+                      style={{
+                        background: isDark ? '#1E3A8A' : '#DBEAFE',
+                        color: isDark ? '#93C5FD' : '#1E40AF',
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                      }}
+                    >
+                      {caseData.call_category}
+                    </span>
+                  )}
+                  {caseData.call_reason && (
+                    <span
+                      className="px-3 py-1 rounded-lg text-xs font-medium"
+                      style={{
+                        background: isDark ? '#5B21B6' : '#EDE9FE',
+                        color: isDark ? '#C4B5FD' : '#5B21B6',
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                      }}
+                    >
+                      {caseData.call_reason}
+                    </span>
+                  )}
+                </div>
+                </div>
+                )}
+                </div>
         </div>
 
 
