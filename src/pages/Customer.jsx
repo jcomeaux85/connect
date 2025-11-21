@@ -326,28 +326,21 @@ export default function CustomerPage() {
             </Button>
           </Link>
 
-          {/* Header with Company Logo */}
-          <div className="flex flex-col items-center mb-6 max-w-4xl mx-auto">
-            {/* Company Logo - Centered at Top */}
-            <div className="mb-6">
-              {customerEmployerEntity?.company_logo_url ? (
-                <img 
-                  src={customerEmployerEntity.company_logo_url} 
-                  alt={customerEmployerEntity.employer_name}
-                  className="max-h-24 object-contain"
-                />
-              ) : (
-                <div
-                  className="w-24 h-24 rounded-2xl flex items-center justify-center"
-                  style={getInsetStyle()}
-                >
-                  <Building2 className="w-12 h-12" style={{ color: colors.textTertiary }} />
-                </div>
-              )}
-            </div>
-
-            {/* Customer Info - Centered Below Logo */}
-            <div className="flex flex-col items-center text-center w-full">
+          {/* Header with Company Logo Background */}
+          <div 
+            className="relative rounded-2xl overflow-hidden mb-6 p-8"
+            style={{
+              background: customerEmployerEntity?.company_logo_url 
+                ? `linear-gradient(to bottom, ${colors.bg}dd, ${colors.bg}f5), url(${customerEmployerEntity.company_logo_url})`
+                : colors.bg,
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+            }}
+          >
+            {/* Customer Info - Centered */}
+            <div className="flex flex-col items-center text-center w-full relative z-10">
               <div className="flex items-center justify-center gap-3 mb-2 flex-wrap">
                 <h1 className="text-3xl font-bold" style={{ color: colors.text }}>
                   {fullName}
