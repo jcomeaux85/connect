@@ -168,7 +168,7 @@ export default function Dashboard() {
               <CardContent className="p-6">
                 {/* Other Time Zones - Right Justified */}
                 <div className="mb-4 flex justify-end">
-                  <div className="flex flex-col gap-1 text-xs text-right" style={{ color: colors.textTertiary }}>
+                  <div className="flex flex-row gap-2 text-xs text-right" style={{ color: colors.textTertiary }}>
                     <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
                       PST: 6:15 AM
                     </div>
