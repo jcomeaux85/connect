@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -216,7 +215,7 @@ function LayoutContent({ children, currentPageName }) {
                     <Link
                       key={item.title}
                       to={item.url}
-                      className="px-6 py-3 rounded-2xl text-sm font-medium transition-all"
+                      className="px-5 py-2.5 rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5"
                       style={getButtonStyle(isActive)}
                     >
                       {item.title}

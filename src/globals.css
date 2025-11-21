@@ -1,3 +1,4 @@
+css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,4 +17,26 @@
   background-image: url('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/381316158_image.png');
   background-size: cover;
   background-position: center;
+}
+
+/* Global border-radius overrides */
+.rounded-2xl {
+  border-radius: 18px !important;
+}
+
+.rounded-xl {
+  border-radius: 12px !important;
+}
+
+.rounded-full {
+  border-radius: 9999px !important;
+}
+
+/* Section headers */
+.section-header {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-bottom: 16px;
+  letter-spacing: 0.025em;
 }
