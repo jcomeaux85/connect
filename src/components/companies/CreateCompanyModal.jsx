@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Mail, Upload } from "lucide-react";
+import { Building2, Phone, Mail, Globe, Upload } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function CreateCompanyModal({ isOpen, onClose, company }) {
@@ -24,14 +25,19 @@ export default function CreateCompanyModal({ isOpen, onClose, company }) {
     broker_contact_email: '',
     carrier_dental_name: '',
     carrier_dental_phone: '',
+    carrier_dental_logo_url: '',
     carrier_medical_name: '',
     carrier_medical_phone: '',
+    carrier_medical_logo_url: '',
     carrier_vision_name: '',
     carrier_vision_phone: '',
+    carrier_vision_logo_url: '',
     carrier_life_name: '',
     carrier_life_phone: '',
+    carrier_life_logo_url: '',
     carrier_disability_name: '',
     carrier_disability_phone: '',
+    carrier_disability_logo_url: '',
     notes: ''
   });
 
@@ -54,14 +60,19 @@ export default function CreateCompanyModal({ isOpen, onClose, company }) {
         broker_contact_email: '',
         carrier_dental_name: '',
         carrier_dental_phone: '',
+        carrier_dental_logo_url: '',
         carrier_medical_name: '',
         carrier_medical_phone: '',
+        carrier_medical_logo_url: '',
         carrier_vision_name: '',
         carrier_vision_phone: '',
+        carrier_vision_logo_url: '',
         carrier_life_name: '',
         carrier_life_phone: '',
+        carrier_life_logo_url: '',
         carrier_disability_name: '',
         carrier_disability_phone: '',
+        carrier_disability_logo_url: '',
         notes: ''
       });
     }
@@ -308,93 +319,223 @@ export default function CreateCompanyModal({ isOpen, onClose, company }) {
 
             <TabsContent value="carriers" className="space-y-4 mt-4">
               {/* Dental */}
-              <div className="grid md:grid-cols-2 gap-3">
-                <Input
-                  value={formData.carrier_dental_name}
-                  onChange={(e) => setFormData({...formData, carrier_dental_name: e.target.value})}
-                  placeholder="Dental Carrier Name"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
-                <Input
-                  value={formData.carrier_dental_phone}
-                  onChange={(e) => setFormData({...formData, carrier_dental_phone: e.target.value})}
-                  placeholder="Dental Phone"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
+              <div className="p-4 rounded-2xl space-y-3" style={getButtonStyle()}>
+                <h4 className="font-semibold text-sm" style={{ color: colors.text }}>Dental Carrier</h4>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <Input
+                    value={formData.carrier_dental_name}
+                    onChange={(e) => setFormData({...formData, carrier_dental_name: e.target.value})}
+                    placeholder="Dental Carrier Name"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                  <Input
+                    value={formData.carrier_dental_phone}
+                    onChange={(e) => setFormData({...formData, carrier_dental_phone: e.target.value})}
+                    placeholder="Dental Phone"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  {formData.carrier_dental_logo_url && (
+                    <div className="w-12 h-12 rounded-xl overflow-hidden" style={getInsetStyle()}>
+                      <img src={formData.carrier_dental_logo_url} alt="Dental logo" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className="flex-1 rounded-2xl h-10 px-4 border-0 flex items-center justify-center gap-2 cursor-pointer text-xs" style={getButtonStyle()}>
+                    <Upload className="w-3 h-3" />
+                    Upload Logo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const result = await base44.integrations.Core.UploadFile({ file });
+                          setFormData({...formData, carrier_dental_logo_url: result.file_url});
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               {/* Medical */}
-              <div className="grid md:grid-cols-2 gap-3">
-                <Input
-                  value={formData.carrier_medical_name}
-                  onChange={(e) => setFormData({...formData, carrier_medical_name: e.target.value})}
-                  placeholder="Medical Carrier Name"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
-                <Input
-                  value={formData.carrier_medical_phone}
-                  onChange={(e) => setFormData({...formData, carrier_medical_phone: e.target.value})}
-                  placeholder="Medical Phone"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
+              <div className="p-4 rounded-2xl space-y-3" style={getButtonStyle()}>
+                <h4 className="font-semibold text-sm" style={{ color: colors.text }}>Medical Carrier</h4>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <Input
+                    value={formData.carrier_medical_name}
+                    onChange={(e) => setFormData({...formData, carrier_medical_name: e.target.value})}
+                    placeholder="Medical Carrier Name"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                  <Input
+                    value={formData.carrier_medical_phone}
+                    onChange={(e) => setFormData({...formData, carrier_medical_phone: e.target.value})}
+                    placeholder="Medical Phone"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  {formData.carrier_medical_logo_url && (
+                    <div className="w-12 h-12 rounded-xl overflow-hidden" style={getInsetStyle()}>
+                      <img src={formData.carrier_medical_logo_url} alt="Medical logo" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className="flex-1 rounded-2xl h-10 px-4 border-0 flex items-center justify-center gap-2 cursor-pointer text-xs" style={getButtonStyle()}>
+                    <Upload className="w-3 h-3" />
+                    Upload Logo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const result = await base44.integrations.Core.UploadFile({ file });
+                          setFormData({...formData, carrier_medical_logo_url: result.file_url});
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               {/* Vision */}
-              <div className="grid md:grid-cols-2 gap-3">
-                <Input
-                  value={formData.carrier_vision_name}
-                  onChange={(e) => setFormData({...formData, carrier_vision_name: e.target.value})}
-                  placeholder="Vision Carrier Name"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
-                <Input
-                  value={formData.carrier_vision_phone}
-                  onChange={(e) => setFormData({...formData, carrier_vision_phone: e.target.value})}
-                  placeholder="Vision Phone"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
+              <div className="p-4 rounded-2xl space-y-3" style={getButtonStyle()}>
+                <h4 className="font-semibold text-sm" style={{ color: colors.text }}>Vision Carrier</h4>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <Input
+                    value={formData.carrier_vision_name}
+                    onChange={(e) => setFormData({...formData, carrier_vision_name: e.target.value})}
+                    placeholder="Vision Carrier Name"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                  <Input
+                    value={formData.carrier_vision_phone}
+                    onChange={(e) => setFormData({...formData, carrier_vision_phone: e.target.value})}
+                    placeholder="Vision Phone"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  {formData.carrier_vision_logo_url && (
+                    <div className="w-12 h-12 rounded-xl overflow-hidden" style={getInsetStyle()}>
+                      <img src={formData.carrier_vision_logo_url} alt="Vision logo" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className="flex-1 rounded-2xl h-10 px-4 border-0 flex items-center justify-center gap-2 cursor-pointer text-xs" style={getButtonStyle()}>
+                    <Upload className="w-3 h-3" />
+                    Upload Logo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const result = await base44.integrations.Core.UploadFile({ file });
+                          setFormData({...formData, carrier_vision_logo_url: result.file_url});
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               {/* Life */}
-              <div className="grid md:grid-cols-2 gap-3">
-                <Input
-                  value={formData.carrier_life_name}
-                  onChange={(e) => setFormData({...formData, carrier_life_name: e.target.value})}
-                  placeholder="Life Insurance Carrier Name"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
-                <Input
-                  value={formData.carrier_life_phone}
-                  onChange={(e) => setFormData({...formData, carrier_life_phone: e.target.value})}
-                  placeholder="Life Insurance Phone"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
+              <div className="p-4 rounded-2xl space-y-3" style={getButtonStyle()}>
+                <h4 className="font-semibold text-sm" style={{ color: colors.text }}>Life Insurance Carrier</h4>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <Input
+                    value={formData.carrier_life_name}
+                    onChange={(e) => setFormData({...formData, carrier_life_name: e.target.value})}
+                    placeholder="Life Insurance Carrier Name"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                  <Input
+                    value={formData.carrier_life_phone}
+                    onChange={(e) => setFormData({...formData, carrier_life_phone: e.target.value})}
+                    placeholder="Life Insurance Phone"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  {formData.carrier_life_logo_url && (
+                    <div className="w-12 h-12 rounded-xl overflow-hidden" style={getInsetStyle()}>
+                      <img src={formData.carrier_life_logo_url} alt="Life logo" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className="flex-1 rounded-2xl h-10 px-4 border-0 flex items-center justify-center gap-2 cursor-pointer text-xs" style={getButtonStyle()}>
+                    <Upload className="w-3 h-3" />
+                    Upload Logo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const result = await base44.integrations.Core.UploadFile({ file });
+                          setFormData({...formData, carrier_life_logo_url: result.file_url});
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               {/* Disability */}
-              <div className="grid md:grid-cols-2 gap-3">
-                <Input
-                  value={formData.carrier_disability_name}
-                  onChange={(e) => setFormData({...formData, carrier_disability_name: e.target.value})}
-                  placeholder="Disability Carrier Name"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
-                <Input
-                  value={formData.carrier_disability_phone}
-                  onChange={(e) => setFormData({...formData, carrier_disability_phone: e.target.value})}
-                  placeholder="Disability Phone"
-                  className="rounded-2xl border-0 h-10"
-                  style={{ ...getInsetStyle(), color: colors.text }}
-                />
+              <div className="p-4 rounded-2xl space-y-3" style={getButtonStyle()}>
+                <h4 className="font-semibold text-sm" style={{ color: colors.text }}>Disability Carrier</h4>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <Input
+                    value={formData.carrier_disability_name}
+                    onChange={(e) => setFormData({...formData, carrier_disability_name: e.target.value})}
+                    placeholder="Disability Carrier Name"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                  <Input
+                    value={formData.carrier_disability_phone}
+                    onChange={(e) => setFormData({...formData, carrier_disability_phone: e.target.value})}
+                    placeholder="Disability Phone"
+                    className="rounded-2xl border-0 h-10"
+                    style={{ ...getInsetStyle(), color: colors.text }}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  {formData.carrier_disability_logo_url && (
+                    <div className="w-12 h-12 rounded-xl overflow-hidden" style={getInsetStyle()}>
+                      <img src={formData.carrier_disability_logo_url} alt="Disability logo" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className="flex-1 rounded-2xl h-10 px-4 border-0 flex items-center justify-center gap-2 cursor-pointer text-xs" style={getButtonStyle()}>
+                    <Upload className="w-3 h-3" />
+                    Upload Logo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const result = await base44.integrations.Core.UploadFile({ file });
+                          setFormData({...formData, carrier_disability_logo_url: result.file_url});
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
             </TabsContent>
           </Tabs>

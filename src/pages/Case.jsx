@@ -2352,9 +2352,13 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   {client.carrier_medical_name && (
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{ ...getButtonStyle('3px') }}>
-                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        {client.carrier_medical_logo_url ? (
+                          <img src={client.carrier_medical_logo_url} alt="Medical" className="w-full h-full object-cover" />
+                        ) : (
+                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        )}
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Medical</p>
@@ -2372,9 +2376,13 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   {client.carrier_dental_name && (
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{ ...getButtonStyle('3px') }}>
-                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        {client.carrier_dental_logo_url ? (
+                          <img src={client.carrier_dental_logo_url} alt="Dental" className="w-full h-full object-cover" />
+                        ) : (
+                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        )}
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Dental</p>
@@ -2392,9 +2400,13 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   {client.carrier_vision_name && (
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{ ...getButtonStyle('3px') }}>
-                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        {client.carrier_vision_logo_url ? (
+                          <img src={client.carrier_vision_logo_url} alt="Vision" className="w-full h-full object-cover" />
+                        ) : (
+                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        )}
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Vision</p>
@@ -2412,9 +2424,13 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   {client.carrier_life_name && (
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{ ...getButtonStyle('3px') }}>
-                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        {client.carrier_life_logo_url ? (
+                          <img src={client.carrier_life_logo_url} alt="Life" className="w-full h-full object-cover" />
+                        ) : (
+                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        )}
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Life</p>
@@ -2432,9 +2448,13 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   {client.carrier_disability_name && (
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
                         style={{ ...getButtonStyle('3px') }}>
-                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        {client.carrier_disability_logo_url ? (
+                          <img src={client.carrier_disability_logo_url} alt="Disability" className="w-full h-full object-cover" />
+                        ) : (
+                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                        )}
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Disability</p>
