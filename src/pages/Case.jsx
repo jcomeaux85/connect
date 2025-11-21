@@ -53,6 +53,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import AiAssistant from "../components/ai/AiAssistant"; // This import can be removed if not used elsewhere, but for now, the orb replaces its usage
 import AISuggestionsOrb from "../components/assistant/AISuggestionsOrb"; // New import
 import ActiveCallPanel from "../components/phone/ActiveCallPanel";
+import CollapsibleSection from "../components/CollapsibleSection";
 import {
   summarizeCall,
   suggestNotes,
@@ -1148,21 +1149,21 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               </div>
             )}
 
-            <div className="grid md:grid-cols-3 gap-6 p-6">
+            <div className="grid md:grid-cols-3 gap-6 p-4">
               {/* Left: Company Logo */}
               <div className="flex items-center justify-center">
                 {employer?.company_logo_url ? (
                   <img 
                     src={employer.company_logo_url} 
                     alt={employer.employer_name}
-                    className="max-w-full max-h-24 object-contain"
+                    className="max-w-full max-h-20 object-contain"
                   />
                 ) : (
                   <div
-                    className="w-24 h-24 rounded-2xl flex items-center justify-center"
+                    className="w-20 h-20 rounded-xl flex items-center justify-center"
                     style={getInsetStyle('4px')}
                   >
-                    <Building2 className="w-12 h-12" style={{ color: colors.textTertiary }} />
+                    <Building2 className="w-10 h-10" style={{ color: colors.textTertiary }} />
                   </div>
                 )}
               </div>
@@ -1171,18 +1172,18 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
               <div className="md:col-span-2 flex flex-col justify-center">
                 {caseData.description && (
                   <>
-                    <h3 className="text-sm font-semibold mb-2" style={{ color: colors.textSecondary }}>
+                    <h3 className="text-sm font-semibold mb-1" style={{ color: colors.textSecondary }}>
                       Case Description
                     </h3>
-                    <p className="text-lg leading-relaxed" style={{ color: colors.text }}>
+                    <p className="text-base leading-relaxed" style={{ color: colors.text }}>
                       {caseData.description}
                     </p>
                   </>
                 )}
-                
+
                 {/* Employment Status Notifications */}
                 {employmentStatus && employmentStatus.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
+                  <div className="flex flex-wrap gap-2 mt-3">
                     {employmentStatus.map((status, idx) => (
                       <Badge
                         key={idx}
@@ -1249,73 +1250,71 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           className="border-0 mb-6"
           style={{
             background: colors.bg,
-            boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
+            boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`,
+            borderRadius: '18px'
           }}>
 
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-semibold flex items-center gap-2" style={{ color: colors.text }}>
-                <Sparkles className="w-4 h-4" style={{ color: '#8B5CF6' }} />
-                AI Tools:
-              </span>
+            <h3 className="section-header" style={{ color: colors.text }}>AI Tools</h3>
+            <div className="flex items-center gap-4 flex-wrap mt-2">
               <Button
                 onClick={handleSummarizeCall}
                 disabled={aiLoading || calls.length === 0}
-                className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
+                className="rounded-xl h-7 px-3 text-xs border-0 font-medium hover:-translate-y-0.5 transition-transform"
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
                 }}>
 
-                <Brain className="w-3 h-3 mr-1" />
+                <Brain className="w-3.5 h-3.5 mr-1.5" />
                 Summarize
               </Button>
               <Button
                 onClick={handleDetectPriority}
                 disabled={aiLoading}
-                className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
+                className="rounded-xl h-7 px-3 text-xs border-0 font-medium hover:-translate-y-0.5 transition-transform"
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
                 }}>
 
-                <Target className="w-3 h-3 mr-1" />
+                <Target className="w-3.5 h-3.5 mr-1.5" />
                 Detect Priority
               </Button>
               <Button
                 onClick={handleGenerateResponse}
                 disabled={aiLoading}
-                className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
+                className="rounded-xl h-7 px-3 text-xs border-0 font-medium hover:-translate-y-0.5 transition-transform"
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
                 }}>
 
-                <Zap className="w-3 h-3 mr-1" />
+                <Zap className="w-3.5 h-3.5 mr-1.5" />
                 Generate Response
               </Button>
               <Button
                 onClick={handleScoreQuality}
                 disabled={aiLoading || notes.length === 0}
-                className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
+                className="rounded-xl h-7 px-3 text-xs border-0 font-medium hover:-translate-y-0.5 transition-transform"
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
                 }}>
 
-                <TrendingUp className="w-3 h-3 mr-1" />
+                <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
                 Score Quality
               </Button>
               <Button
                 onClick={handleCheckCompliance}
                 disabled={aiLoading || !newNote.trim()}
-                className="rounded-xl h-8 px-3 text-xs border-0 font-medium"
+                className="rounded-xl h-7 px-3 text-xs border-0 font-medium hover:-translate-y-0.5 transition-transform"
                 style={{
                   ...getButtonStyle('3px'),
                   color: '#8B5CF6'
                 }}>
 
-                <Shield className="w-3 h-3 mr-1" />
+                <Shield className="w-3.5 h-3.5 mr-1.5" />
                 Check Compliance
               </Button>
             </div>
