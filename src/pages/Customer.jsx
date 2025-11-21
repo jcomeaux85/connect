@@ -37,6 +37,7 @@ import {
 import { motion } from "framer-motion";
 import { format, formatDistanceToNow, differenceInYears, differenceInMonths } from "date-fns";
 import CreateCaseModal from "@/components/cases/CreateCaseModal";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function CustomerPage() {
   const [searchParams] = useSearchParams();
@@ -278,12 +279,14 @@ export default function CustomerPage() {
     }
   };
 
+  const { colors, getButtonStyle, getInsetStyle } = useTheme();
+
   if (customerLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#E0E5EC' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.bg }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
-          <p className="text-lg" style={{ color: '#6B7280' }}>Loading customer...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: colors.textSecondary }}></div>
+          <p className="text-lg" style={{ color: colors.textSecondary }}>Loading customer...</p>
         </div>
       </div>
     );
@@ -291,15 +294,11 @@ export default function CustomerPage() {
 
   if (!customer) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#E0E5EC' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.bg }}>
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4" style={{ color: '#374151' }}>Customer not found</h2>
+          <h2 className="text-2xl font-bold mb-4" style={{ color: colors.text }}>Customer not found</h2>
           <Link to={createPageUrl("Customers")}>
-            <Button className="rounded-2xl border-0" style={{
-              background: '#E0E5EC',
-              boxShadow: '6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff',
-              color: '#4B5563'
-            }}>
+            <Button className="rounded-2xl border-0" style={getButtonStyle()}>
               Back to Customers
             </Button>
           </Link>
@@ -311,15 +310,10 @@ export default function CustomerPage() {
   const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
   const isVIP = customer.is_vip || false;
 
-  // Define colors for the sticky bar, mirroring the neuromorphic style
-  const colors = {
-    bg: '#E0E5EC',
-    shadowLight: '#ffffff',
-    shadowDark: '#a3b1c6',
-  };
+  const { colors, getButtonStyle, getInsetStyle } = useTheme();
 
   return (
-    <div className="p-4 md:p-6 min-h-screen" style={{ background: '#E0E5EC' }}>
+    <div className="p-4 md:p-6 min-h-screen" style={{ background: colors.bg }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -327,11 +321,7 @@ export default function CustomerPage() {
             <Button
               variant="ghost"
               className="mb-4 rounded-2xl border-0"
-              style={{
-                background: '#E0E5EC',
-                boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                color: '#6B7280'
-              }}
+              style={getButtonStyle()}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Customers
@@ -351,12 +341,9 @@ export default function CustomerPage() {
               ) : (
                 <div
                   className="w-24 h-24 rounded-2xl flex items-center justify-center"
-                  style={{
-                    background: '#E0E5EC',
-                    boxShadow: 'inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff'
-                  }}
+                  style={getInsetStyle()}
                 >
-                  <Building2 className="w-12 h-12" style={{ color: '#9CA3AF' }} />
+                  <Building2 className="w-12 h-12" style={{ color: colors.textTertiary }} />
                 </div>
               )}
             </div>
@@ -364,7 +351,7 @@ export default function CustomerPage() {
             {/* Customer Info - Centered Below Logo */}
             <div className="flex flex-col items-center text-center w-full">
               <div className="flex items-center justify-center gap-3 mb-2 flex-wrap">
-                <h1 className="text-3xl font-bold" style={{ color: '#374151' }}>
+                <h1 className="text-3xl font-bold" style={{ color: colors.text }}>
                   {fullName}
                 </h1>
                 {isVIP && (
@@ -397,7 +384,7 @@ export default function CustomerPage() {
                   </Badge>
                 )}
               </div>
-              <p className="text-sm mb-3" style={{ color: '#6B7280' }}>
+              <p className="text-sm mb-3" style={{ color: colors.textSecondary }}>
                 {customer.job_title || 'No job title'} at {employers.find(e => e.id === customer.company_id)?.employer_name || 'Unknown Company'}
               </p>
 
@@ -408,14 +395,12 @@ export default function CustomerPage() {
                     disabled={createCaseMutation.isPending}
                     className="rounded-2xl h-10 px-4 border-0 font-medium flex items-center gap-2"
                     style={isVIP ? {
-                      background: '#E0E5EC',
-                      boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                      ...getButtonStyle(),
                       border: '5px solid #F59E0B',
                       color: '#000000',
                       fontWeight: '600'
                     } : {
-                      background: '#E0E5EC',
-                      boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                      ...getButtonStyle(),
                       color: '#10b981'
                     }}
                   >
@@ -429,8 +414,7 @@ export default function CustomerPage() {
                     disabled={createCaseMutation.isPending}
                     className="rounded-2xl h-10 px-4 border-0"
                     style={{
-                      background: '#E0E5EC',
-                      boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                      ...getButtonStyle(),
                       color: '#3b82f6'
                     }}
                   >
@@ -442,11 +426,7 @@ export default function CustomerPage() {
                   <Button
                     onClick={handleEmailClick}
                     className="rounded-2xl h-10 px-4 border-0"
-                    style={{
-                      background: '#E0E5EC',
-                      boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                      color: '#6B7280'
-                    }}
+                    style={getButtonStyle()}
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     Email
@@ -456,11 +436,9 @@ export default function CustomerPage() {
                   onClick={handleToggleEscalation}
                   className="rounded-2xl h-10 px-4 border-0"
                   style={{
-                    background: customer.escalation_flag
-                      ? 'linear-gradient(145deg, #fee2e2, #fecaca)'
-                      : '#E0E5EC',
-                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                    color: customer.escalation_flag ? '#dc2626' : '#6B7280'
+                    ...getButtonStyle(),
+                    background: customer.escalation_flag ? 'linear-gradient(145deg, #fee2e2, #fecaca)' : colors.bg,
+                    color: customer.escalation_flag ? '#dc2626' : colors.textSecondary
                   }}
                 >
                   <AlertCircle className="w-4 h-4 mr-2" />
@@ -470,11 +448,7 @@ export default function CustomerPage() {
                   <Button
                     onClick={() => setIsEditing(true)}
                     className="rounded-2xl h-10 px-4 border-0"
-                    style={{
-                      background: '#E0E5EC',
-                      boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                      color: '#4B5563'
-                    }}
+                    style={getButtonStyle()}
                   >
                     <Edit3 className="w-4 h-4 mr-2" />
                     Edit
@@ -489,16 +463,13 @@ export default function CustomerPage() {
           <div className="flex justify-center">
             <TabsList
               className="rounded-2xl border-0 p-1"
-              style={{
-                background: '#E0E5EC',
-                boxShadow: 'inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff'
-              }}
+              style={getInsetStyle()}
             >
-              <TabsTrigger value="overview" className="rounded-xl" style={{color: '#6B7280'}}>Overview</TabsTrigger>
-              <TabsTrigger value="cases" className="rounded-xl" style={{color: '#6B7280'}}>Cases</TabsTrigger>
-              <TabsTrigger value="calls" className="rounded-xl" style={{color: '#6B7280'}}>Calls</TabsTrigger>
-              <TabsTrigger value="sms" className="rounded-xl" style={{color: '#6B7280'}}>Messages</TabsTrigger>
-              <TabsTrigger value="timeline" className="rounded-xl" style={{color: '#6B7280'}}>Timeline</TabsTrigger>
+              <TabsTrigger value="overview" className="rounded-xl" style={{color: colors.textSecondary}}>Overview</TabsTrigger>
+              <TabsTrigger value="cases" className="rounded-xl" style={{color: colors.textSecondary}}>Cases</TabsTrigger>
+              <TabsTrigger value="calls" className="rounded-xl" style={{color: colors.textSecondary}}>Calls</TabsTrigger>
+              <TabsTrigger value="sms" className="rounded-xl" style={{color: colors.textSecondary}}>Messages</TabsTrigger>
+              <TabsTrigger value="timeline" className="rounded-xl" style={{color: colors.textSecondary}}>Timeline</TabsTrigger>
             </TabsList>
           </div>
 
@@ -523,7 +494,7 @@ export default function CustomerPage() {
                   <CardContent className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           First Name
                         </label>
                         {isEditing ? (
@@ -532,20 +503,19 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, first_name: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.first_name || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Last Name
                         </label>
                         {isEditing ? (
@@ -554,13 +524,12 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, last_name: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.last_name || 'N/A'}
                           </p>
                         )}
@@ -575,7 +544,7 @@ export default function CustomerPage() {
                             disabled={!isEditing}
                             className="w-5 h-5 rounded border-2 border-gray-300"
                           />
-                          <span className="text-sm font-medium flex items-center gap-2" style={{ color: customer.is_vip ? '#F59E0B' : '#6B7280' }}>
+                          <span className="text-sm font-medium flex items-center gap-2" style={{ color: customer.is_vip ? '#F59E0B' : colors.textSecondary }}>
                             <Star className={`w-4 h-4 ${customer.is_vip ? 'fill-yellow-500 text-yellow-500' : ''}`} />
                             VIP / Person of Interest (shows gold call interface)
                           </span>
@@ -583,7 +552,7 @@ export default function CustomerPage() {
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Date of Birth
                         </label>
                         {isEditing ? (
@@ -593,13 +562,12 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, date_of_birth: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {formatDateDisplay(customer.date_of_birth)}
                           </p>
                         )}
@@ -607,10 +575,10 @@ export default function CustomerPage() {
 
                       {customer.date_of_birth && !isEditing && (
                         <div>
-                          <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                          <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                             Age
                           </label>
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {(() => {
                               const [year, month, day] = customer.date_of_birth.split('-').map(Number);
                               const birthDate = new Date(year, month - 1, day);
@@ -641,7 +609,7 @@ export default function CustomerPage() {
                   <CardContent className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Primary Phone
                         </label>
                         {isEditing ? (
@@ -650,9 +618,8 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, primary_phone: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
@@ -666,13 +633,13 @@ export default function CustomerPage() {
                               {customer.primary_phone}
                             </a>
                           ) : (
-                            <p className="font-medium" style={{ color: '#374151' }}>N/A</p>
+                            <p className="font-medium" style={{ color: colors.text }}>N/A</p>
                           )
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Secondary Phone
                         </label>
                         {isEditing ? (
@@ -681,9 +648,8 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, secondary_phone: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
@@ -697,13 +663,13 @@ export default function CustomerPage() {
                               {customer.secondary_phone}
                             </a>
                           ) : (
-                            <p className="font-medium" style={{ color: '#374151' }}>N/A</p>
+                            <p className="font-medium" style={{ color: colors.text }}>N/A</p>
                           )
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Primary Email
                         </label>
                         {isEditing ? (
@@ -713,9 +679,8 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, primary_email: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
@@ -729,13 +694,13 @@ export default function CustomerPage() {
                               {customer.primary_email}
                             </a>
                           ) : (
-                            <p className="font-medium" style={{ color: '#374151' }}>N/A</p>
+                            <p className="font-medium" style={{ color: colors.text }}>N/A</p>
                           )
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Secondary Email
                         </label>
                         {isEditing ? (
@@ -745,9 +710,8 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, secondary_email: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
@@ -761,7 +725,7 @@ export default function CustomerPage() {
                               {customer.secondary_email}
                             </a>
                           ) : (
-                            <p className="font-medium" style={{ color: '#374151' }}>N/A</p>
+                            <p className="font-medium" style={{ color: colors.text }}>N/A</p>
                           )
                         )}
                       </div>
@@ -780,9 +744,8 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, address_street: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                           <div className="grid grid-cols-3 gap-2">
@@ -822,7 +785,7 @@ export default function CustomerPage() {
                           </div>
                         </div>
                       ) : (
-                        <p className="font-medium" style={{ color: '#374151' }}>
+                        <p className="font-medium" style={{ color: colors.text }}>
                           {[customer.address_street, customer.address_city, customer.address_state, customer.address_zip]
                             .filter(Boolean)
                             .join(', ') || 'N/A'}
@@ -849,7 +812,7 @@ export default function CustomerPage() {
                   <CardContent className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="md:col-span-2">
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Employer
                         </label>
                         <div className="flex gap-2">
@@ -883,8 +846,7 @@ export default function CustomerPage() {
                                   rel="noopener noreferrer"
                                   className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm"
                                   style={{
-                                    background: '#E0E5EC',
-                                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                                    ...getButtonStyle(),
                                     color: '#3B82F6'
                                   }}
                                 >
@@ -898,7 +860,7 @@ export default function CustomerPage() {
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Client
                         </label>
                         {isEditing ? (
@@ -907,9 +869,8 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, client_id: e.target.value})}
                             className="w-full rounded-2xl border-0 h-10 px-3"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           >
                             <option value="">Select Client...</option>
@@ -920,14 +881,14 @@ export default function CustomerPage() {
                             ))}
                           </select>
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customerClientCompanyEntity?.company_name || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Job Title
                         </label>
                         {isEditing ? (
@@ -936,20 +897,19 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, job_title: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.job_title || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Employee ID
                         </label>
                         {isEditing ? (
@@ -958,20 +918,19 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, employee_id: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.employee_id || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Hire Date
                         </label>
                         {isEditing ? (
@@ -981,29 +940,28 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, hire_date: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {formatDateDisplay(customer.hire_date)}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Time Employed
                         </label>
-                        <p className="font-medium" style={{ color: '#374151' }}>
+                        <p className="font-medium" style={{ color: colors.text }}>
                           {calculateTimeEmployed(customer.hire_date)}
                         </p>
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Member ID
                         </label>
                         {isEditing ? (
@@ -1012,20 +970,19 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, member_id: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.member_id || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Group Number
                         </label>
                         {isEditing ? (
@@ -1034,13 +991,12 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, group_number: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.group_number || 'N/A'}
                           </p>
                         )}
@@ -1071,13 +1027,12 @@ export default function CustomerPage() {
                         placeholder="Add notes about this customer..."
                         className="rounded-2xl border-0 min-h-32"
                         style={{
-                          background: '#E0E5EC',
-                          boxShadow: 'inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff',
-                          color: '#374151'
+                          ...getInsetStyle(),
+                          color: colors.text
                         }}
                       />
                     ) : (
-                      <p style={{ color: '#374151' }}>
+                      <p style={{ color: colors.text }}>
                         {customer.notes || 'No notes'}
                       </p>
                     )}
@@ -1091,8 +1046,8 @@ export default function CustomerPage() {
                 <Card
                   className="border-0"
                   style={{
-                    background: '#E0E5EC',
-                    boxShadow: '10px 10px 20px #a3b1c6, -10px -10px 20px #ffffff'
+                    background: colors.bg,
+                    boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
                   }}
                 >
                   <CardHeader>
@@ -1104,7 +1059,7 @@ export default function CustomerPage() {
                   <CardContent className="space-y-4">
                     <div className="grid gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Employer
                         </label>
                         <div className="flex gap-2 flex-col">
@@ -1128,7 +1083,7 @@ export default function CustomerPage() {
                             </select>
                           ) : (
                             <>
-                              <p className="font-medium" style={{ color: '#374151' }}>
+                              <p className="font-medium" style={{ color: colors.text }}>
                                 {employers.find(e => e.id === customer.company_id)?.employer_name || 'N/A'}
                               </p>
                               {customerEmployerEntity?.benefit_guide_url && (
@@ -1138,8 +1093,7 @@ export default function CustomerPage() {
                                   rel="noopener noreferrer"
                                   className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm justify-center"
                                   style={{
-                                    background: '#E0E5EC',
-                                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                                    ...getButtonStyle(),
                                     color: '#3B82F6'
                                   }}
                                 >
@@ -1153,7 +1107,7 @@ export default function CustomerPage() {
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Client
                         </label>
                         {isEditing ? (
@@ -1162,9 +1116,8 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, client_id: e.target.value})}
                             className="w-full rounded-2xl border-0 h-10 px-3"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           >
                             <option value="">Select Client...</option>
@@ -1175,14 +1128,14 @@ export default function CustomerPage() {
                             ))}
                           </select>
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customerClientCompanyEntity?.company_name || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Job Title
                         </label>
                         {isEditing ? (
@@ -1191,20 +1144,19 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, job_title: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.job_title || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Employee ID
                         </label>
                         {isEditing ? (
@@ -1213,20 +1165,19 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, employee_id: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.employee_id || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Hire Date
                         </label>
                         {isEditing ? (
@@ -1236,29 +1187,28 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, hire_date: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {formatDateDisplay(customer.hire_date)}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Time Employed
                         </label>
-                        <p className="font-medium" style={{ color: '#374151' }}>
+                        <p className="font-medium" style={{ color: colors.text }}>
                           {calculateTimeEmployed(customer.hire_date)}
                         </p>
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Member ID
                         </label>
                         {isEditing ? (
@@ -1267,20 +1217,19 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, member_id: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.member_id || 'N/A'}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                           Group Number
                         </label>
                         {isEditing ? (
@@ -1289,13 +1238,12 @@ export default function CustomerPage() {
                             onChange={(e) => setEditedCustomer({...editedCustomer, group_number: e.target.value})}
                             className="rounded-2xl border-0 h-10"
                             style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                              color: '#374151'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}
                           />
                         ) : (
-                          <p className="font-medium" style={{ color: '#374151' }}>
+                          <p className="font-medium" style={{ color: colors.text }}>
                             {customer.group_number || 'N/A'}
                           </p>
                         )}
@@ -1308,8 +1256,8 @@ export default function CustomerPage() {
                 <Card
                   className="border-0"
                   style={{
-                    background: '#E0E5EC',
-                    boxShadow: '10px 10px 20px #a3b1c6, -10px -10px 20px #ffffff'
+                    background: colors.bg,
+                    boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
                   }}
                 >
                   <CardHeader>
@@ -1321,7 +1269,7 @@ export default function CustomerPage() {
                   <CardContent>
                     {!customerClientCompanyEntity ? (
                       <div className="text-center py-8">
-                        <p className="text-sm" style={{ color: '#6B7280' }}>
+                        <p className="text-sm" style={{ color: colors.textSecondary }}>
                           No company selected
                         </p>
                       </div>
@@ -1330,15 +1278,12 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_dental_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
-                            }}
+                            style={getInsetStyle()}
                           >
-                            <p className="text-xs font-semibold mb-1" style={{ color: '#6B7280' }}>
+                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Dental
                             </p>
-                            <p className="font-bold mb-1" style={{ color: '#374151' }}>
+                            <p className="font-bold mb-1" style={{ color: colors.text }}>
                               {customerClientCompanyEntity.carrier_dental_name}
                             </p>
                             <a
@@ -1355,15 +1300,12 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_medical_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
-                            }}
+                            style={getInsetStyle()}
                           >
-                            <p className="text-xs font-semibold mb-1" style={{ color: '#6B7280' }}>
+                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Medical
                             </p>
-                            <p className="font-bold mb-1" style={{ color: '#374151' }}>
+                            <p className="font-bold mb-1" style={{ color: colors.text }}>
                               {customerClientCompanyEntity.carrier_medical_name}
                             </p>
                             <a
@@ -1380,15 +1322,12 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_vision_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
-                            }}
+                            style={getInsetStyle()}
                           >
-                            <p className="text-xs font-semibold mb-1" style={{ color: '#6B7280' }}>
+                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Vision
                             </p>
-                            <p className="font-bold mb-1" style={{ color: '#374151' }}>
+                            <p className="font-bold mb-1" style={{ color: colors.text }}>
                               {customerClientCompanyEntity.carrier_vision_name}
                             </p>
                             <a
@@ -1405,15 +1344,12 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_life_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
-                            }}
+                            style={getInsetStyle()}
                           >
-                            <p className="text-xs font-semibold mb-1" style={{ color: '#6B7280' }}>
+                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Life
                             </p>
-                            <p className="font-bold mb-1" style={{ color: '#374151' }}>
+                            <p className="font-bold mb-1" style={{ color: colors.text }}>
                               {customerClientCompanyEntity.carrier_life_name}
                             </p>
                             <a
@@ -1430,15 +1366,12 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_disability_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={{
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
-                            }}
+                            style={getInsetStyle()}
                           >
-                            <p className="text-xs font-semibold mb-1" style={{ color: '#6B7280' }}>
+                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Disability
                             </p>
-                            <p className="font-bold mb-1" style={{ color: '#374151' }}>
+                            <p className="font-bold mb-1" style={{ color: colors.text }}>
                               {customerClientCompanyEntity.carrier_disability_name}
                             </p>
                             <a
@@ -1456,7 +1389,7 @@ export default function CustomerPage() {
                          !customerClientCompanyEntity.carrier_vision_name && !customerClientCompanyEntity.carrier_life_name &&
                          !customerClientCompanyEntity.carrier_disability_name && (
                           <div className="text-center py-8">
-                            <p className="text-sm" style={{ color: '#6B7280' }}>
+                            <p className="text-sm" style={{ color: colors.textSecondary }}>
                               No carrier information available
                             </p>
                           </div>
@@ -1484,11 +1417,7 @@ export default function CustomerPage() {
                   <Button
                     onClick={() => setShowCreateCaseModal(true)}
                     className="rounded-2xl h-10 px-4 border-0"
-                    style={{
-                      background: '#E0E5EC',
-                      boxShadow: '6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff',
-                      color: '#4B5563'
-                    }}
+                    style={getButtonStyle()}
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     New Case
@@ -1498,7 +1427,7 @@ export default function CustomerPage() {
               <CardContent>
                 {cases.length === 0 ? (
                   <div className="text-center py-8">
-                    <FolderOpen className="w-12 h-12 mx-auto mb-3" style={{ color: '#9CA3AF' }} />
+                    <FolderOpen className="w-12 h-12 mx-auto mb-3" style={{ color: colors.textTertiary }} />
                     <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
                       No cases yet for this customer
                     </p>
@@ -1525,16 +1454,16 @@ export default function CustomerPage() {
                           transition={{ delay: index * 0.05 }}
                           className="p-4 rounded-2xl hover:shadow-lg transition-all"
                           style={{
-                            background: '#E0E5EC',
-                            boxShadow: '6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff'
+                            background: colors.bg,
+                            boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
                           }}
                         >
                           <div className="flex justify-between items-start mb-2">
                             <div>
-                              <h4 className="font-semibold" style={{ color: '#374151' }}>
+                              <h4 className="font-semibold" style={{ color: colors.text }}>
                                 {caseItem.case_number}
                               </h4>
-                              <p className="text-sm" style={{ color: '#6B7280' }}>
+                              <p className="text-sm" style={{ color: colors.textSecondary }}>
                                 {caseItem.case_type}
                               </p>
                             </div>
@@ -1568,7 +1497,7 @@ export default function CustomerPage() {
                               {caseItem.description.length > 100 && '...'}
                             </p>
                           )}
-                          <div className="flex justify-between items-center text-xs" style={{ color: '#9CA3AF' }}>
+                          <div className="flex justify-between items-center text-xs" style={{ color: colors.textTertiary }}>
                             <span>Created {formatDistanceToNow(new Date(caseItem.created_date), { addSuffix: true })}</span>
                             {caseItem.assigned_to && (
                               <span className="flex items-center gap-1">
@@ -1591,17 +1520,17 @@ export default function CustomerPage() {
             <Card
               className="border-0 mt-4"
               style={{
-                background: '#E0E5EC',
-                boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+                background: colors.bg,
+                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
-                <CardTitle style={{ color: '#374151' }}>Call History</CardTitle>
+                <CardTitle style={{ color: colors.text }}>Call History</CardTitle>
               </CardHeader>
               <CardContent>
                 {calls.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-sm" style={{ color: '#6B7280' }}>No calls yet</p>
+                    <p className="text-sm" style={{ color: colors.textSecondary }}>No calls yet</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -1613,8 +1542,8 @@ export default function CustomerPage() {
                         transition={{ delay: index * 0.05 }}
                         className="p-4 rounded-2xl"
                         style={{
-                          background: '#E0E5EC',
-                          boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
+                          background: colors.bg,
+                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                         }}
                       >
                         <div className="flex items-start gap-3">
@@ -1633,7 +1562,7 @@ export default function CustomerPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
-                              <p className="font-medium" style={{ color: '#374151' }}>
+                              <p className="font-medium" style={{ color: colors.text }}>
                                 {call.direction === 'inbound' ? 'Incoming Call' : 'Outgoing Call'}
                               </p>
                               <Badge
@@ -1665,7 +1594,7 @@ export default function CustomerPage() {
                                 {call.notes}
                               </p>
                             )}
-                            <p className="text-xs mt-2" style={{ color: '#9CA3AF' }}>
+                            <p className="text-xs mt-2" style={{ color: colors.textTertiary }}>
                               {format(new Date(call.created_date), 'MMM d, h:mm a')}
                             </p>
                           </div>
@@ -1683,17 +1612,17 @@ export default function CustomerPage() {
             <Card
               className="border-0 mt-4"
               style={{
-                background: '#E0E5EC',
-                boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+                background: colors.bg,
+                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
-                <CardTitle style={{ color: '#374151' }}>SMS Messages</CardTitle>
+                <CardTitle style={{ color: colors.text }}>SMS Messages</CardTitle>
               </CardHeader>
               <CardContent>
                 {smsMessages.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-sm" style={{ color: '#6B7280' }}>No messages yet</p>
+                    <p className="text-sm" style={{ color: colors.textSecondary }}>No messages yet</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -1705,8 +1634,8 @@ export default function CustomerPage() {
                         transition={{ delay: index * 0.05 }}
                         className="p-4 rounded-2xl"
                         style={{
-                          background: '#E0E5EC',
-                          boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
+                          background: colors.bg,
+                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                         }}
                       >
                         <div className="flex items-start gap-3">
@@ -1727,7 +1656,7 @@ export default function CustomerPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
-                              <p className="font-medium" style={{ color: '#374151' }}>
+                              <p className="font-medium" style={{ color: colors.text }}>
                                 {sms.direction === 'sent' ? 'Sent' : 'Received'}
                               </p>
                               <Badge
@@ -1758,7 +1687,7 @@ export default function CustomerPage() {
                             }}>
                               {sms.message}
                             </p>
-                            <p className="text-xs mt-2" style={{ color: '#9CA3AF' }}>
+                            <p className="text-xs mt-2" style={{ color: colors.textTertiary }}>
                               {format(new Date(sms.created_date), 'MMM d, h:mm a')}
                             </p>
                           </div>
@@ -1776,23 +1705,23 @@ export default function CustomerPage() {
             <Card
               className="border-0 mt-4"
               style={{
-                background: '#E0E5EC',
-                boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+                background: colors.bg,
+                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
-                <CardTitle style={{ color: '#374151' }}>Activity Timeline</CardTitle>
+                <CardTitle style={{ color: colors.text }}>Activity Timeline</CardTitle>
               </CardHeader>
               <CardContent>
                 {timeline.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-sm" style={{ color: '#6B7280' }}>No activity yet</p>
+                    <p className="text-sm" style={{ color: colors.textSecondary }}>No activity yet</p>
                   </div>
                 ) : (
                   <div className="relative">
                     <div
                       className="absolute left-5 top-0 bottom-0 w-0.5"
-                      style={{ background: '#D1D9E6' }}
+                      style={{ background: colors.border }}
                     />
 
                     <div className="space-y-6">
@@ -1806,30 +1735,24 @@ export default function CustomerPage() {
                         >
                           <div
                             className="w-10 h-10 rounded-full flex items-center justify-center absolute left-0"
-                            style={{
-                              background: '#E0E5EC',
-                              boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
-                            }}
+                            style={getButtonStyle()}
                           >
                             <event.icon className="w-5 h-5" style={{ color: event.color }} />
                           </div>
 
                           <div
                             className="p-4 rounded-2xl"
-                            style={{
-                              background: '#E0E5EC',
-                              boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
-                            }}
+                            style={getButtonStyle()}
                           >
                             <div className="flex items-start justify-between mb-2">
                               <div>
-                                <p className="font-semibold" style={{ color: '#374151' }}>
+                                <p className="font-semibold" style={{ color: colors.text }}>
                                   {event.type === 'case' && `Case ${event.data.case_number}`}
                                   {event.type === 'call' && `${event.data.direction === 'inbound' ? 'Incoming' : 'Outgoing'} Call`}
                                   {event.type === 'sms' && `SMS ${event.data.direction === 'sent' ? 'Sent' : 'Received'}`}
                                   {event.type === 'note' && 'Note Added'}
                                 </p>
-                                <p className="text-xs" style={{ color: '#9CA3AF' }}>
+                                <p className="text-xs" style={{ color: colors.textTertiary }}>
                                   {format(new Date(event.date), 'MMM d, h:mm a')}
                                 </p>
                               </div>
@@ -1906,8 +1829,7 @@ export default function CustomerPage() {
               }}
               className="rounded-2xl h-12 px-6 border-0"
               style={{
-                background: '#E0E5EC',
-                boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                ...getButtonStyle(),
                 color: '#ef4444'
               }}
             >
@@ -1919,8 +1841,7 @@ export default function CustomerPage() {
               disabled={updateCustomerMutation.isPending}
               className="rounded-2xl h-12 px-6 border-0"
               style={{
-                background: '#E0E5EC',
-                boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
+                ...getButtonStyle(),
                 color: '#10b981'
               }}
             >
