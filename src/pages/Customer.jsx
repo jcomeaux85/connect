@@ -339,7 +339,8 @@ export default function CustomerPage() {
           </Link>
 
           {/* Header with Company Logo */}
-          <div className="grid lg:grid-cols-4 gap-6 mb-6">
+          <div className="flex justify-center mb-6">
+            <div className="grid lg:grid-cols-4 gap-6 max-w-5xl w-full">
             {/* Company Logo */}
             <div className="col-span-1 flex items-center justify-center">
               {customerEmployerEntity?.company_logo_url ? (
@@ -481,6 +482,7 @@ export default function CustomerPage() {
                   </Button>
                 )}
               </div>
+            </div>
             </div>
           </div>
         </div>
