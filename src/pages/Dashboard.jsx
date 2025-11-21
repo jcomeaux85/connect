@@ -181,7 +181,20 @@ export default function Dashboard() {
 
                 {weather && (
                   <div className="mb-4">
-                    <div className="flex items-center gap-4 mb-3">
+                    {/* Other Time Zones */}
+                    <div className="flex flex-row gap-2 text-xs justify-end mb-3" style={{ color: colors.textTertiary }}>
+                      <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                        PST: 6:15 AM
+                      </div>
+                      <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                        MST: 7:15 AM
+                      </div>
+                      <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                        EST: 9:15 AM
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
                       <div
                         className="w-20 h-20 rounded-3xl flex items-center justify-center"
                         style={{
@@ -198,19 +211,6 @@ export default function Dashboard() {
                         <p className="text-sm" style={{ color: colors.textSecondary }}>
                           {weather.condition}
                         </p>
-                      </div>
-                    </div>
-                    
-                    {/* Other Time Zones */}
-                    <div className="flex flex-row gap-2 text-xs justify-end" style={{ color: colors.textTertiary }}>
-                      <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                        PST: 6:15 AM
-                      </div>
-                      <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                        MST: 7:15 AM
-                      </div>
-                      <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                        EST: 9:15 AM
                       </div>
                     </div>
                   </div>
