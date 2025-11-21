@@ -144,6 +144,17 @@ export default function CasePage() {
     enabled: !!customer?.company_id
   });
 
+  // Fetch client/carrier data
+  const { data: client } = useQuery({
+    queryKey: ['customer-client', customer?.client_id],
+    queryFn: async () => {
+      if (!customer?.client_id) return null;
+      const companies = await base44.entities.Company.filter({ id: customer.client_id });
+      return companies[0];
+    },
+    enabled: !!customer?.client_id
+  });
+
   // Add customers list query
   const { data: customers = [] } = useQuery({
     queryKey: ['customers-list'],
@@ -1047,7 +1058,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           </div>
 
           {/* Case Description Banner with Company Logo */}
-          <div className="relative rounded-3xl overflow-hidden mb-6 mt-6" style={{
+          <div className="relative rounded-3xl overflow-hidden mb-6" style={{
             background: colors.bg,
             boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
           }}>
@@ -1168,56 +1179,56 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     </p>
                   </>
                 )}
-
-                {/* Selected Tags Display */}
-                {(caseData.call_category || caseData.call_reason) && (
+                
+                {/* Employment Status Notifications */}
+                {employmentStatus && employmentStatus.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-4">
-                    {caseData.call_category && (
-                      <span
-                        className="px-3 py-1 rounded-lg text-xs font-medium"
+                    {employmentStatus.map((status, idx) => (
+                      <Badge
+                        key={idx}
+                        className="border-0 text-xs px-3 py-1 rounded-full"
                         style={{
-                          background: isDark ? '#1E3A8A' : '#DBEAFE',
-                          color: isDark ? '#93C5FD' : '#1E40AF',
-                          boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                          background: status.color + '20',
+                          color: status.color,
+                          boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
                         }}
                       >
-                        {caseData.call_category}
-                      </span>
-                    )}
-                    {caseData.call_reason && (
-                      <span
-                        className="px-3 py-1 rounded-lg text-xs font-medium"
-                        style={{
-                          background: isDark ? '#5B21B6' : '#EDE9FE',
-                          color: isDark ? '#C4B5FD' : '#5B21B6',
-                          boxShadow: `2px 2px 4px ${colors.shadowDark}50`
-                        }}
-                      >
-                        {caseData.call_reason}
-                      </span>
-                    )}
+                        {status.label}
+                      </Badge>
+                    ))}
                   </div>
                 )}
                 </div>
                 </div>
 
-                {/* Employment Status Notifications */}
-                {employmentStatus && employmentStatus.length > 0 && (
+                {/* Selected Tags Display */}
+                {(caseData.call_category || caseData.call_reason) && (
                 <div className="px-6 pb-4 pt-2 border-t" style={{ borderColor: colors.border }}>
                 <div className="flex flex-wrap gap-2">
-                  {employmentStatus.map((status, idx) => (
-                    <Badge
-                      key={idx}
-                      className="border-0 text-xs px-3 py-1 rounded-full"
+                  {caseData.call_category && (
+                    <span
+                      className="px-3 py-1 rounded-lg text-xs font-medium"
                       style={{
-                        background: status.color + '20',
-                        color: status.color,
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                        background: isDark ? '#1E3A8A' : '#DBEAFE',
+                        color: isDark ? '#93C5FD' : '#1E40AF',
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
                       }}
                     >
-                      {status.label}
-                    </Badge>
-                  ))}
+                      {caseData.call_category}
+                    </span>
+                  )}
+                  {caseData.call_reason && (
+                    <span
+                      className="px-3 py-1 rounded-lg text-xs font-medium"
+                      style={{
+                        background: isDark ? '#5B21B6' : '#EDE9FE',
+                        color: isDark ? '#C4B5FD' : '#5B21B6',
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                      }}
+                    >
+                      {caseData.call_reason}
+                    </span>
+                  )}
                 </div>
                 </div>
                 )}
@@ -2309,11 +2320,131 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
+                </CardContent>
+                </Card>
+
+                {/* Carrier Information */}
+                {client && (
+                <Card
+                className="border-0"
+                style={{
+                  background: colors.bg,
+                  boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
+                }}>
+
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
+                    <Briefcase className="w-5 h-5" />
+                    Carrier Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {client.carrier_medical_name && (
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{ ...getButtonStyle('3px') }}>
+                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                      </div>
+                      <div>
+                        <p className="text-xs" style={{ color: colors.textPlaceholder }}>Medical</p>
+                        <p className="font-medium" style={{ color: colors.text }}>
+                          {client.carrier_medical_name}
+                        </p>
+                        {client.carrier_medical_phone && (
+                          <a href={`tel:${client.carrier_medical_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                            {client.carrier_medical_phone}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {client.carrier_dental_name && (
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{ ...getButtonStyle('3px') }}>
+                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                      </div>
+                      <div>
+                        <p className="text-xs" style={{ color: colors.textPlaceholder }}>Dental</p>
+                        <p className="font-medium" style={{ color: colors.text }}>
+                          {client.carrier_dental_name}
+                        </p>
+                        {client.carrier_dental_phone && (
+                          <a href={`tel:${client.carrier_dental_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                            {client.carrier_dental_phone}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {client.carrier_vision_name && (
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{ ...getButtonStyle('3px') }}>
+                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                      </div>
+                      <div>
+                        <p className="text-xs" style={{ color: colors.textPlaceholder }}>Vision</p>
+                        <p className="font-medium" style={{ color: colors.text }}>
+                          {client.carrier_vision_name}
+                        </p>
+                        {client.carrier_vision_phone && (
+                          <a href={`tel:${client.carrier_vision_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                            {client.carrier_vision_phone}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {client.carrier_life_name && (
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{ ...getButtonStyle('3px') }}>
+                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                      </div>
+                      <div>
+                        <p className="text-xs" style={{ color: colors.textPlaceholder }}>Life</p>
+                        <p className="font-medium" style={{ color: colors.text }}>
+                          {client.carrier_life_name}
+                        </p>
+                        {client.carrier_life_phone && (
+                          <a href={`tel:${client.carrier_life_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                            {client.carrier_life_phone}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {client.carrier_disability_name && (
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{ ...getButtonStyle('3px') }}>
+                        <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                      </div>
+                      <div>
+                        <p className="text-xs" style={{ color: colors.textPlaceholder }}>Disability</p>
+                        <p className="font-medium" style={{ color: colors.text }}>
+                          {client.carrier_disability_name}
+                        </p>
+                        {client.carrier_disability_phone && (
+                          <a href={`tel:${client.carrier_disability_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                            {client.carrier_disability_phone}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+                </Card>
+                )}
+                </div>
+                </div>
+                </div>
 
       {/* AI Suggestions Orb - Floating Button */}
       <AISuggestionsOrb
