@@ -482,7 +482,6 @@ export default function CustomerPage() {
                 )}
               </div>
             </div>
-            </div>
           </div>
         </div>
 
