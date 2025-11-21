@@ -288,6 +288,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
+            const hasValue = stat.value > 0;
             return (
               <motion.div
                 key={stat.title}
@@ -296,10 +297,12 @@ export default function Dashboard() {
                 transition={{ delay: 0.3 + index * 0.1 }}
               >
                 <Card
-                  className="border-0"
+                  className="border-0 cursor-pointer transition-all hover:scale-[1.02]"
                   style={{
                     background: colors.bg,
-                    boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
+                    boxShadow: hasValue 
+                      ? `0 0 30px ${stat.color}40, 0 0 60px ${stat.color}20, 10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
+                      : `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
                   }}
                 >
                   <CardContent className="p-6">
