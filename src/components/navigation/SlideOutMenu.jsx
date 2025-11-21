@@ -59,7 +59,7 @@ export default function SlideOutMenu() {
       closeTimer = setTimeout(() => {
         setIsOpen(false);
         setIsExpanded(false);
-      }, 1500); // Increased to 1.5 seconds
+      }, 0);
     };
 
     const menuElement = document.getElementById('slide-out-menu');
