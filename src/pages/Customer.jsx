@@ -339,32 +339,31 @@ export default function CustomerPage() {
           </Link>
 
           {/* Header with Company Logo */}
-          <div className="flex justify-center mb-6">
-            <div className="grid lg:grid-cols-4 gap-6 max-w-5xl w-full">
-            {/* Company Logo */}
-            <div className="col-span-1 flex items-center justify-center">
+          <div className="flex flex-col items-center mb-6 max-w-4xl mx-auto">
+            {/* Company Logo - Centered at Top */}
+            <div className="mb-6">
               {customerEmployerEntity?.company_logo_url ? (
                 <img 
                   src={customerEmployerEntity.company_logo_url} 
                   alt={customerEmployerEntity.employer_name}
-                  className="max-w-full max-h-32 object-contain"
+                  className="max-h-24 object-contain"
                 />
               ) : (
                 <div
-                  className="w-32 h-32 rounded-2xl flex items-center justify-center"
+                  className="w-24 h-24 rounded-2xl flex items-center justify-center"
                   style={{
                     background: '#E0E5EC',
                     boxShadow: 'inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff'
                   }}
                 >
-                  <Building2 className="w-16 h-16" style={{ color: '#9CA3AF' }} />
+                  <Building2 className="w-12 h-12" style={{ color: '#9CA3AF' }} />
                 </div>
               )}
             </div>
 
-            {/* Customer Info */}
-            <div className="col-span-3 flex flex-col justify-center">
-              <div className="flex items-center gap-3 mb-2">
+            {/* Customer Info - Centered Below Logo */}
+            <div className="flex flex-col items-center text-center w-full">
+              <div className="flex items-center justify-center gap-3 mb-2 flex-wrap">
                 <h1 className="text-3xl font-bold" style={{ color: '#374151' }}>
                   {fullName}
                 </h1>
@@ -402,7 +401,7 @@ export default function CustomerPage() {
                 {customer.job_title || 'No job title'} at {employers.find(e => e.id === customer.company_id)?.employer_name || 'Unknown Company'}
               </p>
 
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap justify-center">
                 {customer.primary_phone && (
                   <Button
                     onClick={handleCallClick}
