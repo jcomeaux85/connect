@@ -215,8 +215,13 @@ function LayoutContent({ children, currentPageName }) {
                     <Link
                       key={item.title}
                       to={item.url}
-                      className="px-5 py-2.5 rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5"
-                      style={getButtonStyle(isActive)}
+                      className="px-5 py-2.5 rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 relative"
+                      style={{
+                        ...getButtonStyle(isActive),
+                        ...(isActive && {
+                          boxShadow: `0 0 20px ${isDark ? '#ffffff40' : '#00000020'}, 0 0 40px ${isDark ? '#ffffff20' : '#00000010'}, ${getButtonStyle(isActive).boxShadow}`
+                        })
+                      }}
                     >
                       {item.title}
                     </Link>
