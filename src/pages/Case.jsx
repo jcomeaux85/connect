@@ -2339,6 +2339,16 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  {/* Company Logo */}
+                  {client.company_logo_url && (
+                    <div className="flex justify-center pb-3 border-b" style={{ borderColor: colors.border }}>
+                      <img 
+                        src={client.company_logo_url} 
+                        alt={client.company_name}
+                        className="max-w-full max-h-16 object-contain"
+                      />
+                    </div>
+                  )}
                   {client.carrier_medical_name && (
                     <div className="flex items-center gap-3">
                       <div
