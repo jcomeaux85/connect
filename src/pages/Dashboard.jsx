@@ -149,14 +149,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
-      {/* Gold Badge Splash */}
-      <div className="fixed top-24 right-8 z-40 w-32 h-32 rounded-full opacity-20 pointer-events-none" style={{
-        backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/381316158_image.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        filter: 'brightness(1.2) contrast(1.1)',
-      }} />
-
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Top Row - Greeting and Daily Planner */}
         <div className="grid lg:grid-cols-3 gap-6">
