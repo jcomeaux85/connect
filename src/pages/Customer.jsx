@@ -486,19 +486,21 @@ export default function CustomerPage() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList
-            className="rounded-2xl border-0 p-1"
-            style={{
-              background: '#E0E5EC',
-              boxShadow: 'inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff'
-            }}
-          >
-            <TabsTrigger value="overview" className="rounded-xl" style={{color: '#6B7280'}}>Overview</TabsTrigger>
-            <TabsTrigger value="cases" className="rounded-xl" style={{color: '#6B7280'}}>Cases</TabsTrigger>
-            <TabsTrigger value="calls" className="rounded-xl" style={{color: '#6B7280'}}>Calls</TabsTrigger>
-            <TabsTrigger value="sms" className="rounded-xl" style={{color: '#6B7280'}}>Messages</TabsTrigger>
-            <TabsTrigger value="timeline" className="rounded-xl" style={{color: '#6B7280'}}>Timeline</TabsTrigger>
-          </TabsList>
+          <div className="flex justify-center">
+            <TabsList
+              className="rounded-2xl border-0 p-1"
+              style={{
+                background: '#E0E5EC',
+                boxShadow: 'inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff'
+              }}
+            >
+              <TabsTrigger value="overview" className="rounded-xl" style={{color: '#6B7280'}}>Overview</TabsTrigger>
+              <TabsTrigger value="cases" className="rounded-xl" style={{color: '#6B7280'}}>Cases</TabsTrigger>
+              <TabsTrigger value="calls" className="rounded-xl" style={{color: '#6B7280'}}>Calls</TabsTrigger>
+              <TabsTrigger value="sms" className="rounded-xl" style={{color: '#6B7280'}}>Messages</TabsTrigger>
+              <TabsTrigger value="timeline" className="rounded-xl" style={{color: '#6B7280'}}>Timeline</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid lg:grid-cols-3 gap-6">
