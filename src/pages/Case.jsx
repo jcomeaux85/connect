@@ -1525,8 +1525,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       fontWeight: '700',
                       border: '3px solid #D97706'
                     } : {
-                      ...getButtonStyle('6px', '#10B981'),
-                      color: '#ffffff',
+                      ...getButtonStyle('6px'),
+                      color: colors.textSecondary,
                       fontWeight: '600'
                     }}>
 
