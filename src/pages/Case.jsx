@@ -54,6 +54,7 @@ import AiAssistant from "../components/ai/AiAssistant"; // This import can be re
 import AISuggestionsOrb from "../components/assistant/AISuggestionsOrb"; // New import
 import ActiveCallPanel from "../components/phone/ActiveCallPanel";
 import CollapsibleSection from "../components/CollapsibleSection";
+import PDFViewer from "../components/PDFViewer";
 import {
   summarizeCall,
   suggestNotes,
@@ -98,6 +99,9 @@ export default function CasePage() {
   const [isEditingCase, setIsEditingCase] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedReason, setSelectedReason] = useState(null);
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
+  const [pdfViewerUrl, setPdfViewerUrl] = useState(null);
+  const [pdfViewerTitle, setPdfViewerTitle] = useState('');
 
   const { colors, isDark } = useTheme(); // Destructure isDark here
   const { data: user } = useUser();
@@ -2512,6 +2516,17 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
         onEndCall={handleEndCall}
         onMinimize={() => setShowActiveCallPanel(false)} />
 
-    </div>);
+      {showPDFViewer && (
+        <PDFViewer
+          pdfUrl={pdfViewerUrl}
+          title={pdfViewerTitle}
+          onClose={() => {
+            setShowPDFViewer(false);
+            setPdfViewerUrl(null);
+            setPdfViewerTitle('');
+          }}
+        />
+      )}
+      </div>);
 
-}
+      }

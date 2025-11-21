@@ -38,6 +38,7 @@ import { motion } from "framer-motion";
 import { format, formatDistanceToNow, differenceInYears, differenceInMonths } from "date-fns";
 import CreateCaseModal from "@/components/cases/CreateCaseModal";
 import { useTheme } from "@/components/ThemeProvider";
+import PDFViewer from "@/components/PDFViewer";
 
 export default function CustomerPage() {
   const [searchParams] = useSearchParams();
@@ -47,6 +48,9 @@ export default function CustomerPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedCustomer, setEditedCustomer] = useState({});
   const [showCreateCaseModal, setShowCreateCaseModal] = useState(false);
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
+  const [pdfViewerUrl, setPdfViewerUrl] = useState(null);
+  const [pdfViewerTitle, setPdfViewerTitle] = useState('');
 
   const { colors, getButtonStyle, getInsetStyle } = useTheme();
 
@@ -1078,10 +1082,12 @@ export default function CustomerPage() {
                                 {employers.find(e => e.id === customer.company_id)?.employer_name || 'N/A'}
                               </p>
                               {customerEmployerEntity?.benefit_guide_url && (
-                                <a
-                                  href={customerEmployerEntity.benefit_guide_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                <button
+                                  onClick={() => {
+                                    setPdfViewerUrl(customerEmployerEntity.benefit_guide_url);
+                                    setPdfViewerTitle(`${customerEmployerEntity.employer_name} - Benefit Guide`);
+                                    setShowPDFViewer(true);
+                                  }}
                                   className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm justify-center"
                                   style={{
                                     ...getButtonStyle(),
@@ -1090,6 +1096,34 @@ export default function CustomerPage() {
                                 >
                                   <FileText className="w-4 h-4" />
                                   Benefit Guide
+                                </button>
+                              )}
+                              {customerEmployerEntity?.portal_link_1_url && (
+                                <a
+                                  href={customerEmployerEntity.portal_link_1_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm justify-center"
+                                  style={{
+                                    ...getButtonStyle(),
+                                    color: '#10B981'
+                                  }}
+                                >
+                                  {customerEmployerEntity.portal_link_1_label || 'Portal 1'}
+                                </a>
+                              )}
+                              {customerEmployerEntity?.portal_link_2_url && (
+                                <a
+                                  href={customerEmployerEntity.portal_link_2_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm justify-center"
+                                  style={{
+                                    ...getButtonStyle(),
+                                    color: '#8B5CF6'
+                                  }}
+                                >
+                                  {customerEmployerEntity.portal_link_2_label || 'Portal 2'}
                                 </a>
                               )}
                             </>
@@ -1849,6 +1883,18 @@ export default function CustomerPage() {
         onSubmit={handleCreateCase}
         prefilledCustomerId={customerId}
       />
+
+      {showPDFViewer && (
+        <PDFViewer
+          pdfUrl={pdfViewerUrl}
+          title={pdfViewerTitle}
+          onClose={() => {
+            setShowPDFViewer(false);
+            setPdfViewerUrl(null);
+            setPdfViewerTitle('');
+          }}
+        />
+      )}
     </div>
   );
 }
