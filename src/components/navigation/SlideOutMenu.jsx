@@ -17,8 +17,8 @@ import {
   Settings,
   LogOut,
   User,
-  Search
-} from 'lucide-react';
+  Search } from
+'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -31,18 +31,18 @@ export default function SlideOutMenu() {
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => base44.auth.me()
   });
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers-search'],
     queryFn: () => base44.entities.Customer.list('-updated_date', 50),
-    enabled: isOpen && searchQuery.length > 0,
+    enabled: isOpen && searchQuery.length > 0
   });
 
-  const filteredCustomers = customers.filter(c =>
-    `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.primary_phone?.includes(searchQuery)
+  const filteredCustomers = customers.filter((c) =>
+  `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  c.primary_phone?.includes(searchQuery)
   );
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function SlideOutMenu() {
       closeTimer = setTimeout(() => {
         setIsOpen(false);
         setIsExpanded(false);
-      }, 0);
+      }, 1500); // Increased to 1.5 seconds
     };
 
     const menuElement = document.getElementById('slide-out-menu');
@@ -79,14 +79,14 @@ export default function SlideOutMenu() {
   }, []);
 
   const navigationItems = [
-    { title: 'Dashboard', url: createPageUrl('Dashboard'), icon: LayoutGrid },
-    { title: 'Cases', url: createPageUrl('Cases'), icon: Folder },
-    { title: 'Customers', url: createPageUrl('Customers'), icon: Users },
-    { title: 'Analytics', url: createPageUrl('Analytics'), icon: TrendingUp },
-    { title: 'Tasks', url: createPageUrl('Boards'), icon: CheckSquare },
-    { title: 'Call Log', url: createPageUrl('CallLog'), icon: Phone },
-    { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock },
-  ];
+  { title: 'Dashboard', url: createPageUrl('Dashboard'), icon: LayoutGrid },
+  { title: 'Cases', url: createPageUrl('Cases'), icon: Folder },
+  { title: 'Customers', url: createPageUrl('Customers'), icon: Users },
+  { title: 'Analytics', url: createPageUrl('Analytics'), icon: TrendingUp },
+  { title: 'Tasks', url: createPageUrl('Boards'), icon: CheckSquare },
+  { title: 'Call Log', url: createPageUrl('CallLog'), icon: Phone },
+  { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock }];
+
 
   const handleLogout = async () => {
     await base44.auth.logout();
@@ -96,15 +96,15 @@ export default function SlideOutMenu() {
     <>
       {/* Backdrop */}
       <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[59]"
-            style={{ pointerEvents: 'none' }}
-          />
-        )}
+        {isOpen &&
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[59]"
+          style={{ pointerEvents: 'none' }} />
+
+        }
       </AnimatePresence>
 
       <div
@@ -113,21 +113,21 @@ export default function SlideOutMenu() {
         style={{
           width: isExpanded ? '280px' : isOpen ? '80px' : '20px',
           transition: 'width 0.3s ease'
-        }}
-      >
+        }}>
+
         <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ x: -280, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -280, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="h-full py-6 px-3 flex flex-col"
-              style={{
-                background: colors.bg,
-                boxShadow: `12px 0 24px ${colors.shadowDark}`
-              }}
-            >
+          {isOpen &&
+          <motion.div
+            initial={{ x: -280, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -280, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="h-full py-6 px-3 flex flex-col"
+            style={{
+              background: colors.bg,
+              boxShadow: `12px 0 24px ${colors.shadowDark}`
+            }}>
+
             {/* User Profile */}
             <div className="mb-8 px-2">
               <div
@@ -135,24 +135,24 @@ export default function SlideOutMenu() {
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                }}
-              >
-                {user?.profile_photo_url ? (
-                  <img
-                    src={user.profile_photo_url}
-                    alt={user.full_name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="w-6 h-6" style={{ color: colors.iconColor }} />
-                )}
+                }}>
+
+                {user?.profile_photo_url ?
+                <img
+                  src={user.profile_photo_url}
+                  alt={user.full_name}
+                  className="w-full h-full object-cover" /> :
+
+
+                <User className="w-6 h-6" style={{ color: colors.iconColor }} />
+                }
               </div>
-              {isExpanded && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-3 text-center"
-                >
+              {isExpanded &&
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-3 text-center">
+
                   <p className="font-semibold text-sm" style={{ color: colors.text }}>
                     {user?.full_name || 'User'}
                   </p>
@@ -160,46 +160,46 @@ export default function SlideOutMenu() {
                     {user?.role === 'admin' ? 'Administrator' : 'Agent'}
                   </p>
                 </motion.div>
-              )}
+              }
             </div>
 
             {/* Search (only when expanded) */}
-            {isExpanded && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mb-6 px-2"
-              >
+            {isExpanded &&
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mb-6 px-2">
+
                 <div className="relative">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: colors.textTertiary }} />
                   <Input
-                    placeholder="Search customers..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 rounded-xl border-0 h-10 text-sm"
-                    style={{
-                      background: colors.bg,
-                      boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`,
-                      color: colors.text
-                    }}
-                  />
+                  placeholder="Search customers..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 rounded-xl border-0 h-10 text-sm"
+                  style={{
+                    background: colors.bg,
+                    boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`,
+                    color: colors.text
+                  }} />
+
                 </div>
 
                 {/* Search Results */}
-                {searchQuery && filteredCustomers.length > 0 && (
-                  <div
-                    className="mt-2 rounded-xl overflow-hidden max-h-48 overflow-y-auto"
-                    style={{
-                      background: colors.bg,
-                      boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                    }}
-                  >
-                    {filteredCustomers.map(customer => (
-                      <Link
-                        key={customer.id}
-                        to={createPageUrl(`Customer?id=${customer.id}`)}
-                        className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                      >
+                {searchQuery && filteredCustomers.length > 0 &&
+              <div
+                className="mt-2 rounded-xl overflow-hidden max-h-48 overflow-y-auto"
+                style={{
+                  background: colors.bg,
+                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                }}>
+
+                    {filteredCustomers.map((customer) =>
+                <Link
+                  key={customer.id}
+                  to={createPageUrl(`Customer?id=${customer.id}`)}
+                  className="block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+
                         <p className="text-sm font-medium" style={{ color: colors.text }}>
                           {customer.first_name} {customer.last_name}
                         </p>
@@ -207,11 +207,11 @@ export default function SlideOutMenu() {
                           {customer.primary_phone}
                         </p>
                       </Link>
-                    ))}
-                  </div>
                 )}
+                  </div>
+              }
               </motion.div>
-            )}
+            }
 
             {/* Navigation Items */}
             <nav className="flex-1 space-y-1.5">
@@ -223,8 +223,8 @@ export default function SlideOutMenu() {
                   <Link key={item.title} to={item.url}>
                     <motion.div
                       whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
+                      whileTap={{ scale: 0.98 }} className="my-64 py-5 rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
+
                       style={isActive ? {
                         background: colors.bg,
                         boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
@@ -232,26 +232,26 @@ export default function SlideOutMenu() {
                         background: colors.bg,
                         boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                       }}
-                      onMouseEnter={() => setIsExpanded(true)}
-                    >
+                      onMouseEnter={() => setIsExpanded(true)}>
+
                       <Icon
                         className="w-5 h-5"
-                        style={{ color: isActive ? colors.iconColor : colors.textSecondary }}
-                      />
-                      {isExpanded && (
-                        <motion.span
-                          initial={{ opacity: 0, width: 0 }}
-                          animate={{ opacity: 1, width: 'auto' }}
-                          exit={{ opacity: 0, width: 0 }}
-                          className="text-sm font-medium flex-1 text-left"
-                          style={{ color: isActive ? colors.text : colors.textSecondary }}
-                        >
+                        style={{ color: isActive ? colors.iconColor : colors.textSecondary }} />
+
+                      {isExpanded &&
+                      <motion.span
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        className="text-sm font-medium flex-1 text-left"
+                        style={{ color: isActive ? colors.text : colors.textSecondary }}>
+
                           {item.title}
                         </motion.span>
-                      )}
+                      }
                     </motion.div>
-                  </Link>
-                );
+                  </Link>);
+
               })}
             </nav>
 
@@ -266,19 +266,19 @@ export default function SlideOutMenu() {
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                 }}
-                onMouseEnter={() => setIsExpanded(true)}
-              >
+                onMouseEnter={() => setIsExpanded(true)}>
+
                 <MessageSquare className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                {isExpanded && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    className="text-sm font-medium flex-1 text-left"
-                    style={{ color: colors.textSecondary }}
-                  >
+                {isExpanded &&
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  className="text-sm font-medium flex-1 text-left"
+                  style={{ color: colors.textSecondary }}>
+
                     Messages
                   </motion.span>
-                )}
+                }
               </motion.button>
 
               <motion.button
@@ -290,19 +290,19 @@ export default function SlideOutMenu() {
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                 }}
-                onMouseEnter={() => setIsExpanded(true)}
-              >
+                onMouseEnter={() => setIsExpanded(true)}>
+
                 <Phone className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                {isExpanded && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    className="text-sm font-medium flex-1 text-left"
-                    style={{ color: colors.textSecondary }}
-                  >
+                {isExpanded &&
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  className="text-sm font-medium flex-1 text-left"
+                  style={{ color: colors.textSecondary }}>
+
                     Phone
                   </motion.span>
-                )}
+                }
               </motion.button>
 
               <Link to={createPageUrl('Settings')}>
@@ -314,19 +314,19 @@ export default function SlideOutMenu() {
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
-                  onMouseEnter={() => setIsExpanded(true)}
-                >
+                  onMouseEnter={() => setIsExpanded(true)}>
+
                   <Settings className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                  {isExpanded && (
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      className="text-sm font-medium flex-1 text-left"
-                      style={{ color: colors.textSecondary }}
-                    >
+                  {isExpanded &&
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 'auto' }}
+                    className="text-sm font-medium flex-1 text-left"
+                    style={{ color: colors.textSecondary }}>
+
                       Settings
                     </motion.span>
-                  )}
+                  }
                 </motion.div>
               </Link>
 
@@ -339,25 +339,25 @@ export default function SlideOutMenu() {
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                 }}
-                onMouseEnter={() => setIsExpanded(true)}
-              >
+                onMouseEnter={() => setIsExpanded(true)}>
+
                 <LogOut className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                {isExpanded && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    className="text-sm font-medium flex-1 text-left"
-                    style={{ color: colors.textSecondary }}
-                  >
+                {isExpanded &&
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  className="text-sm font-medium flex-1 text-left"
+                  style={{ color: colors.textSecondary }}>
+
                     Logout
                   </motion.span>
-                )}
+                }
               </motion.button>
             </div>
           </motion.div>
-        )}
+          }
       </AnimatePresence>
       </div>
-    </>
-  );
+    </>);
+
 }
