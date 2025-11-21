@@ -166,16 +166,40 @@ export default function Dashboard() {
               }}
             >
               <CardContent className="p-6">
-                {/* Current Time */}
-                <div className="flex items-center gap-3 mb-4">
-                  <h2 className="text-4xl font-bold" style={{ color: colors.text }}>
-                    8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
-                  </h2>
+                {/* Time and Weather Row */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-4xl font-bold" style={{ color: colors.text }}>
+                      8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
+                    </h2>
+                  </div>
+                  
+                  {weather && (
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="w-16 h-16 rounded-3xl flex items-center justify-center"
+                        style={{
+                          background: colors.bg,
+                          boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`
+                        }}
+                      >
+                        <WeatherIcon className="w-8 h-8" style={{ color: '#3B82F6' }} />
+                      </div>
+                      <div>
+                        <p className="text-3xl font-bold" style={{ color: colors.text }}>
+                          {weather.temp}°
+                        </p>
+                        <p className="text-sm" style={{ color: colors.textSecondary }}>
+                          {weather.condition}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Other Time Zones */}
+                {/* Other Time Zones - Centered */}
                 {weather && (
-                  <div className="flex flex-row gap-2 text-xs justify-end mb-4" style={{ color: colors.textTertiary }}>
+                  <div className="flex flex-row gap-2 text-xs justify-center mb-4" style={{ color: colors.textTertiary }}>
                     <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
                       PST: 6:15 AM
                     </div>
@@ -200,31 +224,6 @@ export default function Dashboard() {
                     )}
                   </div>
                 </div>
-
-                {weather && (
-                  <div className="mb-4">
-
-                    <div className="flex items-center gap-4">
-                      <div
-                        className="w-20 h-20 rounded-3xl flex items-center justify-center"
-                        style={{
-                          background: colors.bg,
-                          boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`
-                        }}
-                      >
-                        <WeatherIcon className="w-10 h-10" style={{ color: '#3B82F6' }} />
-                      </div>
-                      <div>
-                        <p className="text-4xl font-bold" style={{ color: colors.text }}>
-                          {weather.temp}°
-                        </p>
-                        <p className="text-sm" style={{ color: colors.textSecondary }}>
-                          {weather.condition}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Quick Action Buttons */}
                 <div className="flex gap-2">
