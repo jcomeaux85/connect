@@ -48,6 +48,8 @@ export default function CustomerPage() {
   const [editedCustomer, setEditedCustomer] = useState({});
   const [showCreateCaseModal, setShowCreateCaseModal] = useState(false);
 
+  const { colors, getButtonStyle, getInsetStyle } = useTheme();
+
   const { data: customer, isLoading: customerLoading } = useQuery({
     queryKey: ['customer', customerId],
     queryFn: async () => {
@@ -309,8 +311,6 @@ export default function CustomerPage() {
 
   const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
   const isVIP = customer.is_vip || false;
-
-  const { colors, getButtonStyle, getInsetStyle } = useTheme();
 
   return (
     <div className="p-4 md:p-6 min-h-screen" style={{ background: colors.bg }}>
