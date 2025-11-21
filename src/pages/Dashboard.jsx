@@ -166,6 +166,13 @@ export default function Dashboard() {
               }}
             >
               <CardContent className="p-6">
+                {/* Current Time */}
+                <div className="flex items-center gap-3 mb-4">
+                  <h2 className="text-4xl font-bold" style={{ color: colors.text }}>
+                    8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
+                  </h2>
+                </div>
+
                 {/* Other Time Zones */}
                 {weather && (
                   <div className="flex flex-row gap-2 text-xs justify-end mb-4" style={{ color: colors.textTertiary }}>
@@ -267,22 +274,6 @@ export default function Dashboard() {
               }}
             >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <div className="flex items-center gap-3">
-                  <CardTitle className="text-4xl font-bold" style={{ color: colors.text }}>
-                    8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
-                  </CardTitle>
-                  <Button
-                    size="icon"
-                    className="rounded-xl h-8 w-8 border-0"
-                    style={{
-                      background: colors.bg,
-                      boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`,
-                      color: colors.textSecondary
-                    }}
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </Button>
-                </div>
                 <p className="text-sm" style={{ color: colors.textSecondary }}>
                   You have {activeCases} active {activeCases === 1 ? 'case' : 'cases'} · {urgentCases} urgent
                 </p>
