@@ -2519,15 +2519,14 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       </div>
                     </div>
                 }
-                </CardContent>
-                </Card>
+              </CardContent>
+            </Card>
             }
           </div>
         </div>
-      </div>
 
         {/* AI Suggestions Orb - Floating Button */}
-      <AISuggestionsOrb
+        <AISuggestionsOrb
         suggestion={aiSuggestion}
         isLoading={aiLoading}
         onAccept={(suggestion) => {
