@@ -889,8 +889,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             <button
               onClick={() => setIsEditingCase(!isEditingCase)}
               className="rounded-xl h-8 px-4 text-xs border-0"
-              style={{ ...getButtonStyle('3px'), color: colors.textSecondary }}
-            >
+              style={{ ...getButtonStyle('3px'), color: colors.textSecondary }}>
+
               <Edit3 className="w-3 h-3 mr-1 inline" />
               {isEditingCase ? 'Cancel' : 'Edit Case Details'}
             </button>
@@ -901,17 +901,19 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     {caseData.customer_name}
                   </h1>
                 </Link>
-                {caseData.priority === 'urgent' && (
-                  <Badge
-                    className="border-0 text-xs px-3 py-1 rounded-full"
-                    style={{
-                      background: colors.badgeUrgentBg,
-                      color: colors.badgeUrgentText,
-                      boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                    }}>
-                    urgent
-                  </Badge>
-                )}
+                <Badge
+                  className="border-0 text-xs px-3 py-1 rounded-full"
+                  style={{
+                    background: caseData.priority === 'urgent' ? colors.badgeUrgentBg :
+                    caseData.priority === 'high' ? colors.badgeHighBg :
+                    colors.badgeMediumBg,
+                    color: caseData.priority === 'urgent' ? colors.badgeUrgentText :
+                    caseData.priority === 'high' ? colors.badgeHighText : colors.badgeMediumText,
+                    boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                  }}>
+
+                  {caseData.priority}
+                </Badge>
                 {qualityScore &&
                 <Badge
                   className="border-0 text-xs px-3 py-1 rounded-full"
@@ -1065,31 +1067,31 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             background: colors.bg,
             boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
           }}>
-            {isEditingCase && (
-              <div className="p-6 border-b" style={{ borderColor: colors.border }}>
+            {isEditingCase &&
+            <div className="p-6 border-b" style={{ borderColor: colors.border }}>
                 <div className="mb-4">
                   <label className="text-sm font-semibold mb-2 block" style={{ color: colors.text }}>
                     What is this call about?
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {['General Benefits', 'HSA/FSA', 'Medical', 'Dental', 'Vision', 'Life', 'Disability', 'Other'].map(cat => (
-                      <button
-                        key={cat}
-                        onClick={() => setSelectedCategory(cat)}
-                        className="px-4 py-2 rounded-xl text-sm border-0 transition-all"
-                        style={selectedCategory === cat ? {
-                          background: isDark ? '#3B82F6' : '#DBEAFE',
-                          color: isDark ? '#ffffff' : '#1E40AF',
-                          boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
-                        } : {
-                          background: isDark ? '#374151' : '#F3F4F6',
-                          color: colors.textSecondary,
-                          boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
-                        }}
-                      >
+                    {['General Benefits', 'HSA/FSA', 'Medical', 'Dental', 'Vision', 'Life', 'Disability', 'Other'].map((cat) =>
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className="px-4 py-2 rounded-xl text-sm border-0 transition-all"
+                    style={selectedCategory === cat ? {
+                      background: isDark ? '#3B82F6' : '#DBEAFE',
+                      color: isDark ? '#ffffff' : '#1E40AF',
+                      boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+                    } : {
+                      background: isDark ? '#374151' : '#F3F4F6',
+                      color: colors.textSecondary,
+                      boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
+                    }}>
+
                         {cat}
                       </button>
-                    ))}
+                  )}
                   </div>
                 </div>
 
@@ -1098,115 +1100,97 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     Why did they call?
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {['General Questions', 'Enrollment Assistance', 'Claim Assistance', 'Document Submissions', 'Provider Search', 'Billing Inquiry', 'Authorization Request', 'Other'].map(reason => (
-                      <button
-                        key={reason}
-                        onClick={() => setSelectedReason(reason)}
-                        className="px-4 py-2 rounded-xl text-sm border-0 transition-all"
-                        style={selectedReason === reason ? {
-                          background: isDark ? '#8B5CF6' : '#EDE9FE',
-                          color: isDark ? '#ffffff' : '#5B21B6',
-                          boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
-                        } : {
-                          background: isDark ? '#4B5563' : '#E5E7EB',
-                          color: colors.textSecondary,
-                          boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
-                        }}
-                      >
+                    {['General Questions', 'Enrollment Assistance', 'Claim Assistance', 'Document Submissions', 'Provider Search', 'Billing Inquiry', 'Authorization Request', 'Other'].map((reason) =>
+                  <button
+                    key={reason}
+                    onClick={() => setSelectedReason(reason)}
+                    className="px-4 py-2 rounded-xl text-sm border-0 transition-all"
+                    style={selectedReason === reason ? {
+                      background: isDark ? '#8B5CF6' : '#EDE9FE',
+                      color: isDark ? '#ffffff' : '#5B21B6',
+                      boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+                    } : {
+                      background: isDark ? '#4B5563' : '#E5E7EB',
+                      color: colors.textSecondary,
+                      boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
+                    }}>
+
                         {reason}
                       </button>
-                    ))}
+                  )}
                   </div>
                 </div>
 
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => {
-                      updateCaseMutation.mutate({
-                        id: caseId,
-                        data: {
-                          call_category: selectedCategory,
-                          call_reason: selectedReason
-                        }
-                      });
-                      setIsEditingCase(false);
-                    }}
-                    className="rounded-2xl h-10 px-6 border-0"
-                    style={{ ...getButtonStyle('4px', '#10B981'), color: '#ffffff', fontWeight: '600' }}
-                  >
+                  onClick={() => {
+                    updateCaseMutation.mutate({
+                      id: caseId,
+                      data: {
+                        call_category: selectedCategory,
+                        call_reason: selectedReason
+                      }
+                    });
+                    setIsEditingCase(false);
+                  }}
+                  className="rounded-2xl h-10 px-6 border-0"
+                  style={{ ...getButtonStyle('4px', '#10B981'), color: '#ffffff', fontWeight: '600' }}>
+
                     Save
                   </Button>
                   <Button
-                    onClick={() => {
-                      setSelectedCategory(caseData.call_category || null);
-                      setSelectedReason(caseData.call_reason || null);
-                      setIsEditingCase(false);
-                    }}
-                    className="rounded-2xl h-10 px-6 border-0"
-                    style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}
-                  >
+                  onClick={() => {
+                    setSelectedCategory(caseData.call_category || null);
+                    setSelectedReason(caseData.call_reason || null);
+                    setIsEditingCase(false);
+                  }}
+                  className="rounded-2xl h-10 px-6 border-0"
+                  style={{ ...getButtonStyle('4px'), color: colors.textSecondary }}>
+
                     Cancel
                   </Button>
                 </div>
               </div>
-            )}
+            }
 
             <div className="grid md:grid-cols-3 gap-6 p-4">
-              {/* Left: Company Logo and Tags */}
-              <div className="flex flex-col items-center gap-3">
-                {employer?.company_logo_url ? (
-                  <img 
-                    src={employer.company_logo_url} 
-                    alt={employer.employer_name}
-                    className="max-w-full max-h-20 object-contain"
-                  />
-                ) : (
-                  <div
-                    className="w-20 h-20 rounded-xl flex items-center justify-center"
-                    style={getInsetStyle('4px')}
-                  >
+              {/* Left: Company Logo */}
+              <div className="flex items-center justify-center">
+                {employer?.company_logo_url ?
+                <img
+                  src={employer.company_logo_url}
+                  alt={employer.employer_name}
+                  className="max-w-full max-h-20 object-contain" /> :
+
+
+                <div
+                  className="w-20 h-20 rounded-xl flex items-center justify-center"
+                  style={getInsetStyle('4px')}>
+
                     <Building2 className="w-10 h-10" style={{ color: colors.textTertiary }} />
                   </div>
-                )}
+                }
+              </div>
 
-                {/* Tags Row */}
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {caseData.priority && caseData.priority !== 'urgent' && (
-                    <Badge
-                      className="border-0 text-xs px-3 py-1 rounded-full"
-                      style={{
-                        background: caseData.priority === 'high' ? colors.badgeHighBg : colors.badgeMediumBg,
-                        color: caseData.priority === 'high' ? colors.badgeHighText : colors.badgeMediumText,
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                      }}>
-                      {caseData.priority}
-                    </Badge>
-                  )}
-                  {caseData.call_category && (
-                    <span
-                      className="px-3 py-1 rounded-lg text-xs font-medium"
-                      style={{
-                        background: isDark ? '#1E3A8A' : '#DBEAFE',
-                        color: isDark ? '#93C5FD' : '#1E40AF',
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
-                      }}
-                    >
-                      {caseData.call_category}
-                    </span>
-                  )}
-                  {caseData.call_reason && (
-                    <span
-                      className="px-3 py-1 rounded-lg text-xs font-medium"
-                      style={{
-                        background: isDark ? '#5B21B6' : '#EDE9FE',
-                        color: isDark ? '#C4B5FD' : '#5B21B6',
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
-                      }}
-                    >
-                      {caseData.call_reason}
-                    </span>
-                  )}
-                  {employmentStatus && employmentStatus.map((status, idx) => (
+              {/* Center: Case Description */}
+              <div className="md:col-span-2 flex flex-col justify-center">
+                {caseData.description &&
+                <>
+                    <h3 className="text-sm font-semibold mb-1" style={{ color: colors.textSecondary }}>summary:
+
+                  </h3>
+                    <p className="text-2xl font-bold leading-relaxed" style={{ color: colors.text }}>
+                      {caseData.description}
+                    </p>
+                  </>
+                }
+
+                {/* Employment Status Notifications & Benefit Links Row */}
+                {(employmentStatus && employmentStatus.length > 0 || employer) &&
+                <div className="flex flex-wrap justify-between items-center gap-2 mt-3">
+                    {/* Left: Employment Status */}
+                    <div className="flex flex-wrap gap-2">
+                      {employmentStatus && employmentStatus.map((status, idx) =>
                     <Badge
                       key={idx}
                       className="border-0 text-xs px-3 py-1 rounded-full"
@@ -1214,81 +1198,99 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                         background: status.color + '20',
                         color: status.color,
                         boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                      }}>
+
+                          {status.label}
+                        </Badge>
+                    )}
+                    </div>
+
+                    {/* Right: Benefit Guide & Portal Links */}
+                    {employer && (employer.benefit_guide_url || employer.portal_link_1_url || employer.portal_link_2_url) &&
+                  <div className="flex flex-wrap gap-2 ml-auto">
+                        {employer.benefit_guide_url &&
+                    <button
+                      onClick={() => {
+                        setPdfViewerUrl(employer.benefit_guide_url);
+                        setPdfViewerTitle(`${employer.employer_name} - Benefit Guide`);
+                        setShowPDFViewer(true);
                       }}
-                    >
-                      {status.label}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
+                      className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
+                      style={{
+                        ...getButtonStyle('3px'),
+                        color: '#3B82F6'
+                      }}>
 
-              {/* Center: Case Description */}
-              <div className="md:col-span-2 flex flex-col justify-center">
-                {caseData.description && (
-                  <>
-                    <h3 className="text-sm font-semibold mb-1" style={{ color: colors.textSecondary }}>
-                      Case Description
-                    </h3>
-                    <p className="text-4xl font-bold leading-relaxed" style={{ color: colors.text }}>
-                      {caseData.description}
-                    </p>
-                  </>
-                )}
+                            <FileText className="w-3 h-3" />
+                            Benefit Guide
+                          </button>
+                    }
+                        {employer.portal_link_1_url &&
+                    <a
+                      href={employer.portal_link_1_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
+                      style={{
+                        ...getButtonStyle('3px'),
+                        color: '#10B981'
+                      }}>
 
-                {/* Benefit Links Row */}
-                {employer && (employer.benefit_guide_url || employer.portal_link_1_url || employer.portal_link_2_url) && (
-                  <div className="flex flex-wrap gap-2 mt-3 justify-end">
-                    {employer.benefit_guide_url && (
-                      <button
-                        onClick={() => {
-                          setPdfViewerUrl(employer.benefit_guide_url);
-                          setPdfViewerTitle(`${employer.employer_name} - Benefit Guide`);
-                          setShowPDFViewer(true);
-                        }}
-                        className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
-                        style={{
-                          ...getButtonStyle('3px'),
-                          color: '#3B82F6'
-                        }}
-                      >
-                        <FileText className="w-3 h-3" />
-                        Benefit Guide
-                      </button>
-                    )}
-                    {employer.portal_link_1_url && (
-                      <a
-                        href={employer.portal_link_1_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
-                        style={{
-                          ...getButtonStyle('3px'),
-                          color: '#10B981'
-                        }}
-                      >
-                        {employer.portal_link_1_label || 'Portal 1'}
-                      </a>
-                    )}
-                    {employer.portal_link_2_url && (
-                      <a
-                        href={employer.portal_link_2_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
-                        style={{
-                          ...getButtonStyle('3px'),
-                          color: '#8B5CF6'
-                        }}
-                      >
-                        {employer.portal_link_2_label || 'Portal 2'}
-                      </a>
-                    )}
+                            {employer.portal_link_1_label || 'Portal 1'}
+                          </a>
+                    }
+                        {employer.portal_link_2_url &&
+                    <a
+                      href={employer.portal_link_2_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
+                      style={{
+                        ...getButtonStyle('3px'),
+                        color: '#8B5CF6'
+                      }}>
+
+                            {employer.portal_link_2_label || 'Portal 2'}
+                          </a>
+                    }
+                      </div>
+                  }
                   </div>
-                )}
+                }
                 </div>
                 </div>
 
+                {/* Selected Tags Display */}
+                {(caseData.call_category || caseData.call_reason) &&
+            <div className="px-6 pb-4 pt-2 border-t" style={{ borderColor: colors.border }}>
+                <div className="flex flex-wrap gap-2">
+                  {caseData.call_category &&
+                <span
+                  className="px-3 py-1 rounded-lg text-xs font-medium"
+                  style={{
+                    background: isDark ? '#1E3A8A' : '#DBEAFE',
+                    color: isDark ? '#93C5FD' : '#1E40AF',
+                    boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                  }}>
 
+                      {caseData.call_category}
+                    </span>
+                }
+                  {caseData.call_reason &&
+                <span
+                  className="px-3 py-1 rounded-lg text-xs font-medium"
+                  style={{
+                    background: isDark ? '#5B21B6' : '#EDE9FE',
+                    color: isDark ? '#C4B5FD' : '#5B21B6',
+                    boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                  }}>
+
+                      {caseData.call_reason}
+                    </span>
+                }
+                </div>
+                </div>
+            }
                 </div>
         </div>
 
@@ -2379,13 +2381,13 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </Card>
 
                 {/* Carrier Information */}
-                {client && (
-                <Card
-                className="border-0"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-                }}>
+                {client &&
+            <Card
+              className="border-0"
+              style={{
+                background: colors.bg,
+                boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
+              }}>
 
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
@@ -2395,138 +2397,138 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {/* Company Logo */}
-                  {client.company_logo_url && (
-                    <div className="flex justify-center pb-3 border-b" style={{ borderColor: colors.border }}>
-                      <img 
-                        src={client.company_logo_url} 
-                        alt={client.company_name}
-                        className="max-w-full max-h-16 object-contain"
-                      />
+                  {client.company_logo_url &&
+                <div className="flex justify-center pb-3 border-b" style={{ borderColor: colors.border }}>
+                      <img
+                    src={client.company_logo_url}
+                    alt={client.company_name}
+                    className="max-w-full max-h-16 object-contain" />
+
                     </div>
-                  )}
-                  {client.carrier_medical_name && (
-                    <div className="flex items-center gap-3">
+                }
+                  {client.carrier_medical_name &&
+                <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
-                        style={{ ...getButtonStyle('3px') }}>
-                        {client.carrier_medical_logo_url ? (
-                          <img src={client.carrier_medical_logo_url} alt="Medical" className="w-full h-full object-cover" />
-                        ) : (
-                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                        )}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
+                    style={{ ...getButtonStyle('3px') }}>
+                        {client.carrier_medical_logo_url ?
+                    <img src={client.carrier_medical_logo_url} alt="Medical" className="w-full h-full object-cover" /> :
+
+                    <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                    }
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Medical</p>
                         <p className="font-medium" style={{ color: colors.text }}>
                           {client.carrier_medical_name}
                         </p>
-                        {client.carrier_medical_phone && (
-                          <a href={`tel:${client.carrier_medical_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                        {client.carrier_medical_phone &&
+                    <a href={`tel:${client.carrier_medical_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
                             {client.carrier_medical_phone}
                           </a>
-                        )}
+                    }
                       </div>
                     </div>
-                  )}
-                  {client.carrier_dental_name && (
-                    <div className="flex items-center gap-3">
+                }
+                  {client.carrier_dental_name &&
+                <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
-                        style={{ ...getButtonStyle('3px') }}>
-                        {client.carrier_dental_logo_url ? (
-                          <img src={client.carrier_dental_logo_url} alt="Dental" className="w-full h-full object-cover" />
-                        ) : (
-                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                        )}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
+                    style={{ ...getButtonStyle('3px') }}>
+                        {client.carrier_dental_logo_url ?
+                    <img src={client.carrier_dental_logo_url} alt="Dental" className="w-full h-full object-cover" /> :
+
+                    <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                    }
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Dental</p>
                         <p className="font-medium" style={{ color: colors.text }}>
                           {client.carrier_dental_name}
                         </p>
-                        {client.carrier_dental_phone && (
-                          <a href={`tel:${client.carrier_dental_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                        {client.carrier_dental_phone &&
+                    <a href={`tel:${client.carrier_dental_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
                             {client.carrier_dental_phone}
                           </a>
-                        )}
+                    }
                       </div>
                     </div>
-                  )}
-                  {client.carrier_vision_name && (
-                    <div className="flex items-center gap-3">
+                }
+                  {client.carrier_vision_name &&
+                <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
-                        style={{ ...getButtonStyle('3px') }}>
-                        {client.carrier_vision_logo_url ? (
-                          <img src={client.carrier_vision_logo_url} alt="Vision" className="w-full h-full object-cover" />
-                        ) : (
-                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                        )}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
+                    style={{ ...getButtonStyle('3px') }}>
+                        {client.carrier_vision_logo_url ?
+                    <img src={client.carrier_vision_logo_url} alt="Vision" className="w-full h-full object-cover" /> :
+
+                    <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                    }
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Vision</p>
                         <p className="font-medium" style={{ color: colors.text }}>
                           {client.carrier_vision_name}
                         </p>
-                        {client.carrier_vision_phone && (
-                          <a href={`tel:${client.carrier_vision_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                        {client.carrier_vision_phone &&
+                    <a href={`tel:${client.carrier_vision_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
                             {client.carrier_vision_phone}
                           </a>
-                        )}
+                    }
                       </div>
                     </div>
-                  )}
-                  {client.carrier_life_name && (
-                    <div className="flex items-center gap-3">
+                }
+                  {client.carrier_life_name &&
+                <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
-                        style={{ ...getButtonStyle('3px') }}>
-                        {client.carrier_life_logo_url ? (
-                          <img src={client.carrier_life_logo_url} alt="Life" className="w-full h-full object-cover" />
-                        ) : (
-                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                        )}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
+                    style={{ ...getButtonStyle('3px') }}>
+                        {client.carrier_life_logo_url ?
+                    <img src={client.carrier_life_logo_url} alt="Life" className="w-full h-full object-cover" /> :
+
+                    <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                    }
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Life</p>
                         <p className="font-medium" style={{ color: colors.text }}>
                           {client.carrier_life_name}
                         </p>
-                        {client.carrier_life_phone && (
-                          <a href={`tel:${client.carrier_life_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                        {client.carrier_life_phone &&
+                    <a href={`tel:${client.carrier_life_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
                             {client.carrier_life_phone}
                           </a>
-                        )}
+                    }
                       </div>
                     </div>
-                  )}
-                  {client.carrier_disability_name && (
-                    <div className="flex items-center gap-3">
+                }
+                  {client.carrier_disability_name &&
+                <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
-                        style={{ ...getButtonStyle('3px') }}>
-                        {client.carrier_disability_logo_url ? (
-                          <img src={client.carrier_disability_logo_url} alt="Disability" className="w-full h-full object-cover" />
-                        ) : (
-                          <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                        )}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
+                    style={{ ...getButtonStyle('3px') }}>
+                        {client.carrier_disability_logo_url ?
+                    <img src={client.carrier_disability_logo_url} alt="Disability" className="w-full h-full object-cover" /> :
+
+                    <Building2 className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                    }
                       </div>
                       <div>
                         <p className="text-xs" style={{ color: colors.textPlaceholder }}>Disability</p>
                         <p className="font-medium" style={{ color: colors.text }}>
                           {client.carrier_disability_name}
                         </p>
-                        {client.carrier_disability_phone && (
-                          <a href={`tel:${client.carrier_disability_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
+                        {client.carrier_disability_phone &&
+                    <a href={`tel:${client.carrier_disability_phone}`} className="text-xs hover:underline" style={{ color: colors.blue }}>
                             {client.carrier_disability_phone}
                           </a>
-                        )}
+                    }
                       </div>
                     </div>
-                  )}
+                }
                 </CardContent>
                 </Card>
-                )}
+            }
                 </div>
                 </div>
                 </div>
@@ -2568,17 +2570,17 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
         onEndCall={handleEndCall}
         onMinimize={() => setShowActiveCallPanel(false)} />
 
-      {showPDFViewer && (
-        <PDFViewer
-          pdfUrl={pdfViewerUrl}
-          title={pdfViewerTitle}
-          onClose={() => {
-            setShowPDFViewer(false);
-            setPdfViewerUrl(null);
-            setPdfViewerTitle('');
-          }}
-        />
-      )}
-      </div>);
+      {showPDFViewer &&
+      <PDFViewer
+        pdfUrl={pdfViewerUrl}
+        title={pdfViewerTitle}
+        onClose={() => {
+          setShowPDFViewer(false);
+          setPdfViewerUrl(null);
+          setPdfViewerTitle('');
+        }} />
 
       }
+      </div>);
+
+}
