@@ -1174,6 +1174,36 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
 
               {/* Center: Case Description */}
               <div className="md:col-span-2 flex flex-col justify-center">
+                {/* Selected Tags Display - MOVED HERE */}
+                {(caseData.call_category || caseData.call_reason) && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {caseData.call_category && (
+                      <span
+                        className="px-3 py-1 rounded-lg text-xs font-medium"
+                        style={{
+                          background: isDark ? '#1E3A8A' : '#DBEAFE',
+                          color: isDark ? '#93C5FD' : '#1E40AF',
+                          boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                        }}
+                      >
+                        {caseData.call_category}
+                      </span>
+                    )}
+                    {caseData.call_reason && (
+                      <span
+                        className="px-3 py-1 rounded-lg text-xs font-medium"
+                        style={{
+                          background: isDark ? '#5B21B6' : '#EDE9FE',
+                          color: isDark ? '#C4B5FD' : '#5B21B6',
+                          boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                        }}
+                      >
+                        {caseData.call_reason}
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 {caseData.description && (
                   <>
                     <h3 className="text-sm font-semibold mb-1" style={{ color: colors.textSecondary }}>
@@ -1206,35 +1236,56 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </div>
                 </div>
 
-                {/* Selected Tags Display */}
-                {(caseData.call_category || caseData.call_reason) && (
+                {/* Benefit Guide & Portal Links - MOVED HERE */}
+                {employer && (employer.benefit_guide_url || employer.portal_link_1_url || employer.portal_link_2_url) && (
                 <div className="px-6 pb-4 pt-2 border-t" style={{ borderColor: colors.border }}>
-                <div className="flex flex-wrap gap-2">
-                  {caseData.call_category && (
-                    <span
-                      className="px-3 py-1 rounded-lg text-xs font-medium"
-                      style={{
-                        background: isDark ? '#1E3A8A' : '#DBEAFE',
-                        color: isDark ? '#93C5FD' : '#1E40AF',
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
-                      }}
-                    >
-                      {caseData.call_category}
-                    </span>
-                  )}
-                  {caseData.call_reason && (
-                    <span
-                      className="px-3 py-1 rounded-lg text-xs font-medium"
-                      style={{
-                        background: isDark ? '#5B21B6' : '#EDE9FE',
-                        color: isDark ? '#C4B5FD' : '#5B21B6',
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
-                      }}
-                    >
-                      {caseData.call_reason}
-                    </span>
-                  )}
-                </div>
+                  <div className="flex flex-wrap gap-2">
+                    {employer.benefit_guide_url && (
+                      <button
+                        onClick={() => {
+                          setPdfViewerUrl(employer.benefit_guide_url);
+                          setPdfViewerTitle(`${employer.employer_name} - Benefit Guide`);
+                          setShowPDFViewer(true);
+                        }}
+                        className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm"
+                        style={{
+                          ...getButtonStyle('4px'),
+                          color: '#3B82F6'
+                        }}
+                      >
+                        <FileText className="w-4 h-4" />
+                        Benefit Guide
+                      </button>
+                    )}
+                    {employer.portal_link_1_url && (
+                      <a
+                        href={employer.portal_link_1_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm"
+                        style={{
+                          ...getButtonStyle('4px'),
+                          color: '#10B981'
+                        }}
+                      >
+                        {employer.portal_link_1_label || 'Portal 1'}
+                      </a>
+                    )}
+                    {employer.portal_link_2_url && (
+                      <a
+                        href={employer.portal_link_2_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm"
+                        style={{
+                          ...getButtonStyle('4px'),
+                          color: '#8B5CF6'
+                        }}
+                      >
+                        {employer.portal_link_2_label || 'Portal 2'}
+                      </a>
+                    )}
+                  </div>
                 </div>
                 )}
                 </div>
