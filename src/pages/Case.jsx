@@ -1179,7 +1179,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     <h3 className="text-sm font-semibold mb-1" style={{ color: colors.textSecondary }}>
                       Case Description
                     </h3>
-                    <p className="text-4xl font-bold leading-relaxed line-clamp-4" style={{ color: colors.text }}>
+                    <p className="text-4xl font-bold leading-relaxed" style={{ color: colors.text }}>
                       {caseData.description}
                     </p>
                   </>

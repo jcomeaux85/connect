@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, ChevronDown, ChevronUp, Search } from "lucide-react";
+import { Plus, User, ChevronDown, ChevronUp, Search } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCustomerId = null }) {
