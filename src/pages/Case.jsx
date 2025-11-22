@@ -1185,29 +1185,9 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   </>
                 }
 
-                {/* Employment Status Notifications & Benefit Links Row */}
-                {(employmentStatus && employmentStatus.length > 0 || employer) &&
-                <div className="flex flex-wrap justify-between items-center gap-2 mt-3">
-                    {/* Left: Employment Status */}
-                    <div className="flex flex-wrap gap-2">
-                      {employmentStatus && employmentStatus.map((status, idx) =>
-                    <Badge
-                      key={idx}
-                      className="border-0 text-xs px-3 py-1 rounded-full"
-                      style={{
-                        background: status.color + '20',
-                        color: status.color,
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                      }}>
-
-                          {status.label}
-                        </Badge>
-                    )}
-                    </div>
-
-                    {/* Right: Benefit Guide & Portal Links */}
-                    {employer && (employer.benefit_guide_url || employer.portal_link_1_url || employer.portal_link_2_url) &&
-                  <div className="flex flex-wrap gap-2 ml-auto">
+                {/* Benefit Links Row */}
+                {employer && (employer.benefit_guide_url || employer.portal_link_1_url || employer.portal_link_2_url) &&
+                <div className="flex flex-wrap gap-2 mt-3 justify-end">
                         {employer.benefit_guide_url &&
                     <button
                       onClick={() => {
@@ -1260,8 +1240,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </div>
                 </div>
 
-                {/* Selected Tags Display */}
-                {(caseData.call_category || caseData.call_reason) &&
+                {/* Selected Tags Display with Employment Status */}
+                {(caseData.call_category || caseData.call_reason || (employmentStatus && employmentStatus.length > 0)) &&
             <div className="px-6 pb-4 pt-2 border-t" style={{ borderColor: colors.border }}>
                 <div className="flex flex-wrap gap-2">
                   {caseData.call_category &&
@@ -1288,6 +1268,19 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       {caseData.call_reason}
                     </span>
                 }
+                  {employmentStatus && employmentStatus.map((status, idx) =>
+                <Badge
+                  key={idx}
+                  className="border-0 text-xs px-3 py-1 rounded-full"
+                  style={{
+                    background: status.color + '20',
+                    color: status.color,
+                    boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                  }}>
+
+                      {status.label}
+                    </Badge>
+                )}
                 </div>
                 </div>
             }
