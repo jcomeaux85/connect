@@ -1179,28 +1179,82 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     <h3 className="text-sm font-semibold mb-1" style={{ color: colors.textSecondary }}>
                       Case Description
                     </h3>
-                    <p className="text-base leading-relaxed" style={{ color: colors.text }}>
+                    <p className="text-2xl font-bold leading-relaxed" style={{ color: colors.text }}>
                       {caseData.description}
                     </p>
                   </>
                 )}
 
-                {/* Employment Status Notifications */}
-                {employmentStatus && employmentStatus.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {employmentStatus.map((status, idx) => (
-                      <Badge
-                        key={idx}
-                        className="border-0 text-xs px-3 py-1 rounded-full"
-                        style={{
-                          background: status.color + '20',
-                          color: status.color,
-                          boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                        }}
-                      >
-                        {status.label}
-                      </Badge>
-                    ))}
+                {/* Employment Status Notifications & Benefit Links Row */}
+                {((employmentStatus && employmentStatus.length > 0) || employer) && (
+                  <div className="flex flex-wrap justify-between items-center gap-2 mt-3">
+                    {/* Left: Employment Status */}
+                    <div className="flex flex-wrap gap-2">
+                      {employmentStatus && employmentStatus.map((status, idx) => (
+                        <Badge
+                          key={idx}
+                          className="border-0 text-xs px-3 py-1 rounded-full"
+                          style={{
+                            background: status.color + '20',
+                            color: status.color,
+                            boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                          }}
+                        >
+                          {status.label}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    {/* Right: Benefit Guide & Portal Links */}
+                    {employer && (employer.benefit_guide_url || employer.portal_link_1_url || employer.portal_link_2_url) && (
+                      <div className="flex flex-wrap gap-2 ml-auto">
+                        {employer.benefit_guide_url && (
+                          <button
+                            onClick={() => {
+                              setPdfViewerUrl(employer.benefit_guide_url);
+                              setPdfViewerTitle(`${employer.employer_name} - Benefit Guide`);
+                              setShowPDFViewer(true);
+                            }}
+                            className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
+                            style={{
+                              ...getButtonStyle('3px'),
+                              color: '#3B82F6'
+                            }}
+                          >
+                            <FileText className="w-3 h-3" />
+                            Benefit Guide
+                          </button>
+                        )}
+                        {employer.portal_link_1_url && (
+                          <a
+                            href={employer.portal_link_1_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
+                            style={{
+                              ...getButtonStyle('3px'),
+                              color: '#10B981'
+                            }}
+                          >
+                            {employer.portal_link_1_label || 'Portal 1'}
+                          </a>
+                        )}
+                        {employer.portal_link_2_url && (
+                          <a
+                            href={employer.portal_link_2_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-2xl h-9 px-3 border-0 inline-flex items-center gap-2 font-medium text-xs"
+                            style={{
+                              ...getButtonStyle('3px'),
+                              color: '#8B5CF6'
+                            }}
+                          >
+                            {employer.portal_link_2_label || 'Portal 2'}
+                          </a>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
                 </div>
