@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -781,6 +780,7 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
               placeholder="What is this case about? Provide details..."
               className="rounded-2xl border-0 min-h-24"
               style={getInsetStyle()}
+              maxLength={200}
               required
             />
           </div>
