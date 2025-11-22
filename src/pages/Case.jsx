@@ -901,19 +901,17 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     {caseData.customer_name}
                   </h1>
                 </Link>
-                <Badge
-                  className="border-0 text-xs px-3 py-1 rounded-full"
-                  style={{
-                    background: caseData.priority === 'urgent' ? colors.badgeUrgentBg :
-                    caseData.priority === 'high' ? colors.badgeHighBg :
-                    colors.badgeMediumBg,
-                    color: caseData.priority === 'urgent' ? colors.badgeUrgentText :
-                    caseData.priority === 'high' ? colors.badgeHighText : colors.badgeMediumText,
-                    boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                  }}>
-
-                  {caseData.priority}
-                </Badge>
+                {caseData.priority === 'urgent' && (
+                  <Badge
+                    className="border-0 text-xs px-3 py-1 rounded-full"
+                    style={{
+                      background: colors.badgeUrgentBg,
+                      color: colors.badgeUrgentText,
+                      boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                    }}>
+                    urgent
+                  </Badge>
+                )}
                 {qualityScore &&
                 <Badge
                   className="border-0 text-xs px-3 py-1 rounded-full"
@@ -1154,8 +1152,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
             )}
 
             <div className="grid md:grid-cols-3 gap-6 p-4">
-              {/* Left: Company Logo */}
-              <div className="flex items-center justify-center">
+              {/* Left: Company Logo and Tags */}
+              <div className="flex flex-col items-center gap-3">
                 {employer?.company_logo_url ? (
                   <img 
                     src={employer.company_logo_url} 
@@ -1170,6 +1168,58 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                     <Building2 className="w-10 h-10" style={{ color: colors.textTertiary }} />
                   </div>
                 )}
+
+                {/* Tags Row */}
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {caseData.priority && caseData.priority !== 'urgent' && (
+                    <Badge
+                      className="border-0 text-xs px-3 py-1 rounded-full"
+                      style={{
+                        background: caseData.priority === 'high' ? colors.badgeHighBg : colors.badgeMediumBg,
+                        color: caseData.priority === 'high' ? colors.badgeHighText : colors.badgeMediumText,
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                      }}>
+                      {caseData.priority}
+                    </Badge>
+                  )}
+                  {caseData.call_category && (
+                    <span
+                      className="px-3 py-1 rounded-lg text-xs font-medium"
+                      style={{
+                        background: isDark ? '#1E3A8A' : '#DBEAFE',
+                        color: isDark ? '#93C5FD' : '#1E40AF',
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                      }}
+                    >
+                      {caseData.call_category}
+                    </span>
+                  )}
+                  {caseData.call_reason && (
+                    <span
+                      className="px-3 py-1 rounded-lg text-xs font-medium"
+                      style={{
+                        background: isDark ? '#5B21B6' : '#EDE9FE',
+                        color: isDark ? '#C4B5FD' : '#5B21B6',
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}50`
+                      }}
+                    >
+                      {caseData.call_reason}
+                    </span>
+                  )}
+                  {employmentStatus && employmentStatus.map((status, idx) => (
+                    <Badge
+                      key={idx}
+                      className="border-0 text-xs px-3 py-1 rounded-full"
+                      style={{
+                        background: status.color + '20',
+                        color: status.color,
+                        boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                      }}
+                    >
+                      {status.label}
+                    </Badge>
+                  ))}
+                </div>
               </div>
 
               {/* Center: Case Description */}
@@ -1238,59 +1288,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </div>
                 </div>
 
-                {/* Selected Tags Display with Employment Status */}
-                {(caseData.call_category || caseData.call_reason || (employmentStatus && employmentStatus.length > 0)) && (
-                <div className="px-6 pb-4 pt-2 border-t" style={{ borderColor: colors.border }}>
-                <div className="flex flex-wrap justify-between items-center gap-2">
-                  {/* Left: Case Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {caseData.call_category && (
-                      <span
-                        className="px-3 py-1 rounded-lg text-xs font-medium"
-                        style={{
-                          background: isDark ? '#1E3A8A' : '#DBEAFE',
-                          color: isDark ? '#93C5FD' : '#1E40AF',
-                          boxShadow: `2px 2px 4px ${colors.shadowDark}50`
-                        }}
-                      >
-                        {caseData.call_category}
-                      </span>
-                    )}
-                    {caseData.call_reason && (
-                      <span
-                        className="px-3 py-1 rounded-lg text-xs font-medium"
-                        style={{
-                          background: isDark ? '#5B21B6' : '#EDE9FE',
-                          color: isDark ? '#C4B5FD' : '#5B21B6',
-                          boxShadow: `2px 2px 4px ${colors.shadowDark}50`
-                        }}
-                      >
-                        {caseData.call_reason}
-                      </span>
-                    )}
-                  </div>
 
-                  {/* Right: Employment Status Badges */}
-                  {employmentStatus && employmentStatus.length > 0 && (
-                    <div className="flex flex-wrap gap-2 ml-auto">
-                      {employmentStatus.map((status, idx) => (
-                        <Badge
-                          key={idx}
-                          className="border-0 text-xs px-3 py-1 rounded-full"
-                          style={{
-                            background: status.color + '20',
-                            color: status.color,
-                            boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                          }}
-                        >
-                          {status.label}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                </div>
-                )}
                 </div>
         </div>
 
