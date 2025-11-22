@@ -2526,7 +2526,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
         </div>
       </div>
 
-      {/* AI Suggestions Orb - Floating Button */}
+        {/* AI Suggestions Orb - Floating Button */}
       <AISuggestionsOrb
         suggestion={aiSuggestion}
         isLoading={aiLoading}
