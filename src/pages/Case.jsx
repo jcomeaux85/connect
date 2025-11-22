@@ -2522,9 +2522,9 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                 </CardContent>
                 </Card>
             }
-                </div>
-                </div>
-                </div>
+          </div>
+        </div>
+      </div>
 
       {/* AI Suggestions Orb - Floating Button */}
       <AISuggestionsOrb
