@@ -388,154 +388,76 @@ export default function Customers() {
           </div>
         ) : (
           <AnimatePresence>
-            <motion.div
-              layout
-              className={
-                viewMode === "grid"
-                  ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-                  : "space-y-4"
-              }
-            >
-              {filteredCustomers.map((customer) => {
-                const employerInfo = employers.find(e => e.id === customer.company_id);
-                const hasOpenCase = cases.some(c => c.customer_id === customer.id && (c.status === 'new' || c.status === 'in_progress'));
-                
-                return (
-                  <motion.div
-                    key={customer.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    whileHover={{ y: -5 }}
-                  >
-                    <Card
-                      className="border-0 overflow-hidden h-full"
-                      style={{
-                        background: colors.bg,
-                        boxShadow: colors.neumorphicShadowHard,
-                      }}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-3">
-                          {/* Employer Logo */}
-                          <div
-                            className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden"
-                            style={{
-                              background: colors.avatarGradient,
-                              boxShadow: colors.neumorphicShadowInset,
-                            }}
-                          >
-                            {employerInfo?.company_logo_url ? (
-                              <img src={employerInfo.company_logo_url} alt={employerInfo.employer_name} className="w-full h-full object-cover" />
-                            ) : (
-                              <Building2 className="w-6 h-6" style={{ color: colors.textSecondary }} />
-                            )}
+            {viewMode === "grid" ? (
+              <motion.div layout className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredCustomers.map((customer) => {
+                  const employerInfo = employers.find(e => e.id === customer.company_id);
+                  const hasOpenCase = cases.some(c => c.customer_id === customer.id && (c.status === 'new' || c.status === 'in_progress'));
+                  
+                  return (
+                    <motion.div key={customer.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} whileHover={{ y: -5 }}>
+                      <Card className="border-0 overflow-hidden h-full" style={{ background: colors.bg, boxShadow: colors.neumorphicShadowHard }}>
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden" style={{ background: colors.avatarGradient, boxShadow: colors.neumorphicShadowInset }}>
+                              {employerInfo?.company_logo_url ? <img src={employerInfo.company_logo_url} alt={employerInfo.employer_name} className="w-full h-full object-cover" /> : <Building2 className="w-6 h-6" style={{ color: colors.textSecondary }} />}
+                            </div>
+                            <Link to={createPageUrl(`Customer?id=${customer.id}`)} className="flex-1 min-w-0">
+                              <h3 className="text-lg font-bold mb-1" style={{ color: colors.text }}>{`${customer.first_name || ''} ${customer.last_name || ''}`.trim() || 'Unnamed Customer'}</h3>
+                              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs" style={{ color: colors.textSecondary }}>
+                                {customer.job_title && <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" />{customer.job_title}</span>}
+                                {customer.primary_phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{customer.primary_phone}</span>}
+                                {customer.primary_email && <span className="flex items-center gap-1 truncate"><Mail className="w-3 h-3 flex-shrink-0" /><span className="truncate">{customer.primary_email}</span></span>}
+                              </div>
+                            </Link>
+                            <Badge className="border-0 text-xs px-3 py-1 flex-shrink-0" style={{ background: customer.employment_status === 'terminated' ? '#FEE2E2' : '#D1FAE5', color: customer.employment_status === 'terminated' ? '#991B1B' : '#065F46', boxShadow: colors.neumorphicShadowSoftSmall }}>
+                              {customer.employment_status === 'terminated' ? <><XCircle className="w-3 h-3 mr-1 inline" />Terminated</> : <><CheckCircle className="w-3 h-3 mr-1 inline" />Active</>}
+                            </Badge>
+                            {hasOpenCase && <div className="flex-shrink-0"><FolderOpen className="w-5 h-5" style={{ color: '#F59E0B' }} /></div>}
+                            <div className="flex flex-col gap-1 flex-shrink-0">
+                              <button onClick={(e) => { e.preventDefault(); window.location.href = `tel:${customer.primary_phone}`; }} className="rounded-lg h-6 px-2 border-0 text-xs flex items-center gap-1" style={{ background: colors.bg, boxShadow: colors.neumorphicShadowSoft, color: '#10B981' }}><Phone className="w-3 h-3" /></button>
+                              <button onClick={(e) => { e.preventDefault(); window.location.href = createPageUrl(`Customer?id=${customer.id}`); }} className="rounded-lg h-6 px-2 border-0 text-xs flex items-center gap-1" style={{ background: colors.bg, boxShadow: colors.neumorphicShadowSoft, color: '#3B82F6' }}><MessageSquare className="w-3 h-3" /></button>
+                              <button onClick={(e) => { e.preventDefault(); window.location.href = `mailto:${customer.primary_email}`; }} className="rounded-lg h-6 px-2 border-0 text-xs flex items-center gap-1" style={{ background: colors.bg, boxShadow: colors.neumorphicShadowSoft, color: '#8B5CF6' }}><Mail className="w-3 h-3" /></button>
+                            </div>
                           </div>
-
-                          {/* Customer Info */}
-                          <Link to={createPageUrl(`Customer?id=${customer.id}`)} className="flex-1 min-w-0">
-                            <h3 className="text-lg font-bold mb-1" style={{ color: colors.text }}>
-                              {`${customer.first_name || ''} ${customer.last_name || ''}`.trim() || 'Unnamed Customer'}
-                            </h3>
-                            <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs" style={{ color: colors.textSecondary }}>
-                              {customer.job_title && (
-                                <span className="flex items-center gap-1">
-                                  <Briefcase className="w-3 h-3" />
-                                  {customer.job_title}
-                                </span>
-                              )}
-                              {customer.primary_phone && (
-                                <span className="flex items-center gap-1">
-                                  <Phone className="w-3 h-3" />
-                                  {customer.primary_phone}
-                                </span>
-                              )}
-                              {customer.primary_email && (
-                                <span className="flex items-center gap-1 truncate">
-                                  <Mail className="w-3 h-3 flex-shrink-0" />
-                                  <span className="truncate">{customer.primary_email}</span>
-                                </span>
-                              )}
-                            </div>
-                          </Link>
-
-                          {/* Employment Status Badge */}
-                          <Badge
-                            className="border-0 text-xs px-3 py-1 flex-shrink-0"
-                            style={{
-                              background: customer.employment_status === 'terminated' ? '#FEE2E2' : '#D1FAE5',
-                              color: customer.employment_status === 'terminated' ? '#991B1B' : '#065F46',
-                              boxShadow: colors.neumorphicShadowSoftSmall,
-                            }}
-                          >
-                            {customer.employment_status === 'terminated' ? (
-                              <><XCircle className="w-3 h-3 mr-1 inline" />Terminated</>
-                            ) : (
-                              <><CheckCircle className="w-3 h-3 mr-1 inline" />Active</>
-                            )}
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            ) : (
+              <div className="space-y-2">
+                {filteredCustomers.map((customer, index) => {
+                  const employerInfo = employers.find(e => e.id === customer.company_id);
+                  const hasOpenCase = cases.some(c => c.customer_id === customer.id && (c.status === 'new' || c.status === 'in_progress'));
+                  return (
+                    <motion.div key={customer.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.02 }}>
+                      <div className="p-2 rounded-2xl hover:shadow-xl transition-all" style={{ background: colors.bg, boxShadow: colors.neumorphicShadowSoft }}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden" style={{ background: colors.avatarGradient, boxShadow: colors.neumorphicShadowInset }}>
+                            {employerInfo?.company_logo_url ? <img src={employerInfo.company_logo_url} alt="" className="w-full h-full object-cover" /> : <Building2 className="w-4 h-4" style={{ color: colors.textSecondary }} />}
+                          </div>
+                          <Link to={createPageUrl(`Customer?id=${customer.id}`)} className="min-w-[140px]"><span className="font-semibold text-sm" style={{ color: colors.text }}>{`${customer.first_name || ''} ${customer.last_name || ''}`.trim() || 'N/A'}</span></Link>
+                          <div className="min-w-[120px] text-xs truncate" style={{ color: colors.textSecondary }}>{customer.job_title || 'N/A'}</div>
+                          <div className="min-w-[110px] text-xs" style={{ color: colors.textSecondary }}>{customer.primary_phone || 'N/A'}</div>
+                          <div className="flex-1 min-w-[150px] text-xs truncate" style={{ color: colors.textSecondary }}>{customer.primary_email || 'N/A'}</div>
+                          <Badge className="border-0 text-xs px-2 py-0.5 flex-shrink-0" style={{ background: customer.employment_status === 'terminated' ? '#FEE2E2' : '#D1FAE5', color: customer.employment_status === 'terminated' ? '#991B1B' : '#065F46' }}>
+                            {customer.employment_status === 'terminated' ? 'Term' : 'Active'}
                           </Badge>
-
-                          {/* Open Case Indicator */}
-                          {hasOpenCase && (
-                            <div className="flex-shrink-0">
-                              <FolderOpen className="w-5 h-5" style={{ color: '#F59E0B' }} />
-                            </div>
-                          )}
-
-                          {/* Action Buttons - Stacked */}
-                          <div className="flex flex-col gap-1 flex-shrink-0">
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                window.location.href = `tel:${customer.primary_phone}`;
-                              }}
-                              className="rounded-lg h-6 px-2 border-0 text-xs flex items-center gap-1"
-                              style={{
-                                background: colors.bg,
-                                boxShadow: colors.neumorphicShadowSoft,
-                                color: '#10B981'
-                              }}
-                            >
-                              <Phone className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                // SMS functionality - navigate to customer page
-                                window.location.href = createPageUrl(`Customer?id=${customer.id}`);
-                              }}
-                              className="rounded-lg h-6 px-2 border-0 text-xs flex items-center gap-1"
-                              style={{
-                                background: colors.bg,
-                                boxShadow: colors.neumorphicShadowSoft,
-                                color: '#3B82F6'
-                              }}
-                            >
-                              <MessageSquare className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                window.location.href = `mailto:${customer.primary_email}`;
-                              }}
-                              className="rounded-lg h-6 px-2 border-0 text-xs flex items-center gap-1"
-                              style={{
-                                background: colors.bg,
-                                boxShadow: colors.neumorphicShadowSoft,
-                                color: '#8B5CF6'
-                              }}
-                            >
-                              <Mail className="w-3 h-3" />
-                            </button>
+                          {hasOpenCase && <FolderOpen className="w-4 h-4 flex-shrink-0" style={{ color: '#F59E0B' }} />}
+                          <div className="flex gap-1 flex-shrink-0">
+                            <button onClick={(e) => { e.preventDefault(); window.location.href = `tel:${customer.primary_phone}`; }} className="rounded-lg h-7 w-7 border-0 flex items-center justify-center" style={{ background: colors.bg, boxShadow: colors.neumorphicShadowSoft, color: '#10B981' }}><Phone className="w-3 h-3" /></button>
+                            <button onClick={(e) => { e.preventDefault(); window.location.href = createPageUrl(`Customer?id=${customer.id}`); }} className="rounded-lg h-7 w-7 border-0 flex items-center justify-center" style={{ background: colors.bg, boxShadow: colors.neumorphicShadowSoft, color: '#3B82F6' }}><MessageSquare className="w-3 h-3" /></button>
+                            <button onClick={(e) => { e.preventDefault(); window.location.href = `mailto:${customer.primary_email}`; }} className="rounded-lg h-7 w-7 border-0 flex items-center justify-center" style={{ background: colors.bg, boxShadow: colors.neumorphicShadowSoft, color: '#8B5CF6' }}><Mail className="w-3 h-3" /></button>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
           </AnimatePresence>
         )}
 
