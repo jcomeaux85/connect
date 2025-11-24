@@ -461,32 +461,6 @@ export default function Customers() {
                           )}
                         </div>
                       </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="flex flex-wrap gap-2 items-center">
-                          <Badge
-                            variant="outline"
-                            className="border rounded-full text-xs"
-                            style={{
-                              borderColor: colors.border,
-                              color: colors.textSecondary,
-                            }}
-                          >
-                            Call Type
-                          </Badge>
-                          {customer.call_type && (
-                            <Badge
-                              className="border-0 text-xs px-3 py-1"
-                              style={{
-                                background: colors.badgeCallTypeBg,
-                                color: colors.badgeCallTypeText,
-                                boxShadow: colors.neumorphicShadowSoftSmall,
-                              }}
-                            >
-                              {customer.call_type.replace('_', ' ')}
-                            </Badge>
-                          )}
-                        </div>
-                      </CardContent>
                     </Card>
                   </Link>
                 </motion.div>
