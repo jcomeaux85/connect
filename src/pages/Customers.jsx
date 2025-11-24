@@ -403,97 +403,65 @@ export default function Customers() {
                         boxShadow: colors.neumorphicShadowHard,
                       }}
                     >
-                      <CardHeader className="relative pb-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-4">
+                      <CardHeader className="relative pb-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div
-                              className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                              className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
                               style={{
                                 background: colors.avatarGradient,
                                 boxShadow: colors.neumorphicShadowInset,
                               }}
                             >
                               <Users
-                                className="w-8 h-8"
+                                className="w-6 h-6"
                                 style={{ color: colors.textSecondary }}
                               />
                             </div>
-                            <div>
+                            <div className="flex-1 min-w-0">
                               <CardTitle
-                                className="text-xl font-bold"
+                                className="text-lg font-bold mb-1"
                                 style={{ color: colors.text }}
                               >
                                 {`${customer.first_name || ''} ${customer.last_name || ''}`.trim() || 'Unnamed Customer'}
                               </CardTitle>
-                              {customer.job_title && (
-                                <p
-                                  className="text-sm"
-                                  style={{ color: colors.textSecondary }}
-                                >
-                                  {customer.job_title}
-                                </p>
-                              )}
+                              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs" style={{ color: colors.textSecondary }}>
+                                {customer.job_title && (
+                                  <span className="flex items-center gap-1">
+                                    <Briefcase className="w-3 h-3" />
+                                    {customer.job_title}
+                                  </span>
+                                )}
+                                {customer.primary_phone && (
+                                  <span className="flex items-center gap-1">
+                                    <Phone className="w-3 h-3" />
+                                    {customer.primary_phone}
+                                  </span>
+                                )}
+                                {customer.primary_email && (
+                                  <span className="flex items-center gap-1 truncate">
+                                    <Mail className="w-3 h-3 flex-shrink-0" />
+                                    <span className="truncate">{customer.primary_email}</span>
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
+                          {customer.call_category && (
+                            <Badge
+                              className="border-0 text-xs px-3 py-1 flex-shrink-0"
+                              style={{
+                                background: colors.badgeCategoryBg,
+                                color: colors.badgeCategoryText,
+                                boxShadow: colors.neumorphicShadowSoftSmall,
+                              }}
+                            >
+                              {customer.call_category}
+                            </Badge>
+                          )}
                         </div>
-                        {customer.call_category && (
-                          <Badge
-                            className="absolute top-4 right-4 border-0 text-xs px-3 py-1"
-                            style={{
-                              background: colors.badgeCategoryBg,
-                              color: colors.badgeCategoryText,
-                              boxShadow: colors.neumorphicShadowSoftSmall,
-                            }}
-                          >
-                            {customer.call_category}
-                          </Badge>
-                        )}
                       </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3 mb-4">
-                          {customer.primary_phone && (
-                            <div className="flex items-center gap-3">
-                              <Phone
-                                className="w-4 h-4"
-                                style={{ color: colors.iconMuted }}
-                              />
-                              <span
-                                className="text-sm"
-                                style={{ color: colors.textPrimary }}
-                              >
-                                {customer.primary_phone}
-                              </span>
-                            </div>
-                          )}
-                          {customer.primary_email && (
-                            <div className="flex items-center gap-3">
-                              <Mail
-                                className="w-4 h-4"
-                                style={{ color: colors.iconMuted }}
-                              />
-                              <span
-                                className="text-sm truncate"
-                                style={{ color: colors.textPrimary }}
-                              >
-                                {customer.primary_email}
-                              </span>
-                            </div>
-                          )}
-                          {customer.company_name && (
-                            <div className="flex items-center gap-3">
-                              <Briefcase
-                                className="w-4 h-4"
-                                style={{ color: colors.iconMuted }}
-                              />
-                              <span
-                                className="text-sm truncate"
-                                style={{ color: colors.textPrimary }}
-                              >
-                                {customer.company_name}
-                              </span>
-                            </div>
-                          )}
-                        </div>
+                      <CardContent className="pt-0">
                         <div className="flex flex-wrap gap-2 items-center">
                           <Badge
                             variant="outline"
