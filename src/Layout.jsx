@@ -77,7 +77,28 @@ function LayoutContent({ children, currentPageName }) {
   const [showMessages, setShowMessages] = useState(false);
   const [showPhoneDialer, setShowPhoneDialer] = useState(false);
 
-  const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark } = useTheme();
+  const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
+  
+  // Build background style based on settings
+  const getBackgroundStyle = () => {
+    if (!backgroundSettings?.value) return { background: colors.bg };
+    
+    if (backgroundSettings.type === 'image') {
+      return {
+        background: `linear-gradient(${colors.bg}ee, ${colors.bg}ee), url(${backgroundSettings.value}) center/cover fixed`
+      };
+    }
+    if (backgroundSettings.type === 'texture') {
+      return {
+        background: colors.bg,
+        backgroundImage: backgroundSettings.value,
+        backgroundSize: backgroundSettings.preset === 'dots' ? '20px 20px' : 
+                       backgroundSettings.preset === 'grid' ? '40px 40px' : 
+                       backgroundSettings.preset === 'diagonal' ? '10px 10px' : 'auto'
+      };
+    }
+    return { background: colors.bg };
+  };
   
   const { data: user } = useUser();
 
@@ -168,7 +189,7 @@ function LayoutContent({ children, currentPageName }) {
   const unreadMessages = messages.length;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: colors.bg }}>
+    <div className="min-h-screen flex flex-col" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
       <SlideOutMenu />
 
       <nav className="sticky top-0 z-50" style={{ background: colors.bg }}>
