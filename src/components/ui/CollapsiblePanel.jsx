@@ -12,7 +12,8 @@ export default function CollapsiblePanel({
   condensedContent,
   className = '',
   headerExtra,
-  accentColor // New prop for glow color
+  accentColor, // New prop for glow color
+  largerIcon = false // New prop for larger header icon
 }) {
   const { colors, getPanelStyle, getTransitionDuration } = useTheme();
   
@@ -125,13 +126,13 @@ export default function CollapsiblePanel({
         <div className="flex items-center gap-3">
           {Icon && (
             <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center"
+              className={`${largerIcon ? 'w-10 h-10' : 'w-8 h-8'} rounded-xl flex items-center justify-center`}
               style={{
                 background: accentColor ? `${accentColor}20` : colors.bg,
                 boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}`
               }}
             >
-              <Icon className="w-4 h-4" style={{ color: accentColor || colors.textSecondary }} />
+              <Icon className={largerIcon ? 'w-5 h-5' : 'w-4 h-4'} style={{ color: accentColor || colors.textSecondary }} />
             </div>
           )}
           {title && (

@@ -326,6 +326,41 @@ export default function Dashboard() {
           {stats.map((stat, index) => {
             const StatIcon = stat.icon;
             const hasValue = stat.value > 0;
+            
+            // Get recent items for each stat type
+            const getRecentItems = () => {
+              switch(stat.title) {
+                case "Active Cases":
+                  return myCases.filter(c => c.status !== 'closed').slice(0, 3).map(c => ({
+                    id: c.id,
+                    label: c.customer_name || c.case_number,
+                    url: `Case?id=${c.id}`
+                  }));
+                case "Pending Tasks":
+                  return myTasks.filter(t => t.status === 'pending').slice(0, 3).map(t => ({
+                    id: t.id,
+                    label: t.title,
+                    url: t.case_id ? `Case?id=${t.case_id}` : null
+                  }));
+                case "Today's Calls":
+                  return calls.filter(call => call.created_date && isToday(parseISO(call.created_date))).slice(0, 3).map(c => ({
+                    id: c.id,
+                    label: c.customer_phone || 'Unknown',
+                    url: c.case_id ? `Case?id=${c.case_id}` : null
+                  }));
+                case "Urgent Cases":
+                  return myCases.filter(c => c.priority === 'urgent' && c.status !== 'closed').slice(0, 3).map(c => ({
+                    id: c.id,
+                    label: c.customer_name || c.case_number,
+                    url: `Case?id=${c.id}`
+                  }));
+                default:
+                  return [];
+              }
+            };
+            
+            const recentItems = getRecentItems();
+            
             return (
               <motion.div
                 key={stat.title}
@@ -338,6 +373,7 @@ export default function Dashboard() {
                   icon={StatIcon}
                   storageKey={`dashboard-stat-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}
                   accentColor={hasValue ? stat.color : null}
+                  largerIcon
                   condensedContent={
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold" style={{ color: hasValue ? stat.color : colors.text }}>
@@ -346,18 +382,45 @@ export default function Dashboard() {
                     </div>
                   }
                 >
-                  <div className="flex items-center justify-between">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center"
-                      style={{
-                        background: stat.bgGradient,
-                        boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
-                      }}
-                    >
-                      <StatIcon className="w-7 h-7" style={{ color: stat.color }} />
+                  <div className="flex items-start justify-between gap-3">
+                    {/* Recent Items List */}
+                    <div className="flex-1 space-y-1.5">
+                      {recentItems.length > 0 ? (
+                        recentItems.map((item) => (
+                          item.url ? (
+                            <Link key={item.id} to={createPageUrl(item.url)}>
+                              <div 
+                                className="text-xs truncate py-1 px-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer"
+                                style={{ 
+                                  color: colors.textSecondary,
+                                  background: colors.bg,
+                                  boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
+                                }}
+                              >
+                                {item.label}
+                              </div>
+                            </Link>
+                          ) : (
+                            <div 
+                              key={item.id}
+                              className="text-xs truncate py-1 px-2 rounded-lg"
+                              style={{ 
+                                color: colors.textTertiary,
+                                background: colors.bg,
+                                boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}`
+                              }}
+                            >
+                              {item.label}
+                            </div>
+                          )
+                        ))
+                      ) : (
+                        <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>
+                      )}
                     </div>
+                    {/* Count */}
                     <div className="text-right">
-                      <h3 className="text-4xl font-bold" style={{ color: hasValue ? stat.color : colors.text }}>
+                      <h3 className="text-3xl font-bold" style={{ color: hasValue ? stat.color : colors.text }}>
                         {stat.value}
                       </h3>
                     </div>
