@@ -17,8 +17,10 @@ import {
   Settings,
   LogOut,
   User,
-  Search } from
-'lucide-react';
+  Search,
+  Palette,
+  Building2
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -79,13 +81,15 @@ export default function SlideOutMenu() {
   }, []);
 
   const navigationItems = [
-  { title: 'Dashboard', url: createPageUrl('Dashboard'), icon: LayoutGrid },
-  { title: 'Cases', url: createPageUrl('Cases'), icon: Folder },
-  { title: 'Customers', url: createPageUrl('Customers'), icon: Users },
-  { title: 'Analytics', url: createPageUrl('Analytics'), icon: TrendingUp },
-  { title: 'Tasks', url: createPageUrl('Boards'), icon: CheckSquare },
-  { title: 'Call Log', url: createPageUrl('CallLog'), icon: Phone },
-  { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock }];
+    { title: 'Dashboard', url: createPageUrl('Dashboard'), icon: LayoutGrid },
+    { title: 'Cases', url: createPageUrl('Cases'), icon: Folder },
+    { title: 'Customers', url: createPageUrl('Customers'), icon: Users },
+    { title: 'Employers', url: createPageUrl('Employers'), icon: Building2 },
+    { title: 'Analytics', url: createPageUrl('Analytics'), icon: TrendingUp },
+    { title: 'Tasks', url: createPageUrl('Boards'), icon: CheckSquare },
+    { title: 'Call Log', url: createPageUrl('CallLog'), icon: Phone },
+    { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock }
+  ];
 
 
   const handleLogout = async () => {
@@ -223,8 +227,8 @@ export default function SlideOutMenu() {
                   <Link key={item.title} to={item.url}>
                     <motion.div
                       whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }} className="my-64 py-5 rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
-
+                      whileTap={{ scale: 0.98 }}
+                      className="px-3 rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
                       style={isActive ? {
                         background: colors.bg,
                         boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
@@ -261,7 +265,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => window.dispatchEvent(new Event('toggle-messages'))}
-                className="w-full rounded-2xl h-11 flex items-center justify-center gap-3"
+                className="w-full px-3 rounded-2xl h-11 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -285,7 +289,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => window.dispatchEvent(new Event('toggle-phone'))}
-                className="w-full rounded-2xl h-11 flex items-center justify-center gap-3"
+                className="w-full px-3 rounded-2xl h-11 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -305,11 +309,35 @@ export default function SlideOutMenu() {
                 }
               </motion.button>
 
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => window.dispatchEvent(new Event('toggle-background-customizer'))}
+                className="w-full px-3 rounded-2xl h-11 flex items-center justify-center gap-3"
+                style={{
+                  background: colors.bg,
+                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                }}
+                onMouseEnter={() => setIsExpanded(true)}>
+
+                <Palette className="w-5 h-5" style={{ color: colors.textSecondary }} />
+                {isExpanded &&
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  className="text-sm font-medium flex-1 text-left"
+                  style={{ color: colors.textSecondary }}>
+
+                    Customize
+                  </motion.span>
+                }
+              </motion.button>
+
               <Link to={createPageUrl('Settings')}>
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
+                  className="px-3 rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
@@ -334,7 +362,7 @@ export default function SlideOutMenu() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleLogout}
-                className="w-full rounded-2xl h-11 flex items-center justify-center gap-3"
+                className="w-full px-3 rounded-2xl h-11 flex items-center justify-center gap-3"
                 style={{
                   background: colors.bg,
                   boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
