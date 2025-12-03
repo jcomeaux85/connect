@@ -21,8 +21,7 @@ import {
   MessageSquare,
   Search,
   Settings,
-  Edit3,
-  Palette
+  Edit3
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, isToday, parseISO } from "date-fns";
@@ -30,12 +29,11 @@ import { useTheme } from "@/components/ThemeProvider";
 
 import DailyPlanner from "../components/dashboard/DailyPlanner";
 import CollapsiblePanel from "@/components/ui/CollapsiblePanel";
-import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
+
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [weather, setWeather] = useState(null);
-  const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
   const { colors, getTransitionDuration } = useTheme();
 
   useEffect(() => {
@@ -154,22 +152,6 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Customize Background Button */}
-        <div className="flex justify-end mb-2">
-          <button
-            onClick={() => setShowBackgroundCustomizer(true)}
-            className="rounded-xl h-8 px-3 border-0 text-xs flex items-center gap-2"
-            style={{
-              background: colors.bg,
-              boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
-              color: colors.textSecondary,
-              transition: `all ${getTransitionDuration(150)}`
-            }}
-          >
-            <Palette className="w-3 h-3" />
-            Customize
-          </button>
-        </div>
 
         {/* Top Row - Greeting and Daily Planner */}
         <div className="grid lg:grid-cols-3 gap-6">
@@ -549,11 +531,6 @@ export default function Dashboard() {
         </motion.div>
       </div>
 
-      {/* Background Customizer Modal */}
-      <BackgroundCustomizer 
-        isOpen={showBackgroundCustomizer} 
-        onClose={() => setShowBackgroundCustomizer(false)} 
-      />
     </div>
   );
 }
