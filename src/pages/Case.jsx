@@ -1073,6 +1073,85 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
           }}>
             {isEditingCase &&
             <div className="p-6 border-b" style={{ borderColor: colors.border }}>
+                {/* POC: Manual Transcript Input - Remove Later */}
+                <div className="mb-6 p-4 rounded-xl" style={{ background: isDark ? '#1f2937' : '#fef3c7', border: '2px dashed #F59E0B' }}>
+                  <label className="text-sm font-semibold mb-2 block" style={{ color: '#F59E0B' }}>
+                    🧪 POC: Paste Transcript (Remove Later)
+                  </label>
+                  <Textarea
+                    value={manualTranscript}
+                    onChange={(e) => setManualTranscript(e.target.value)}
+                    placeholder="Paste your call transcript here..."
+                    className="rounded-xl border-0 min-h-24 mb-2"
+                    style={{ ...getInsetStyle('3px'), color: colors.text }}
+                  />
+                  <Button
+                    onClick={async () => {
+                      if (!manualTranscript.trim()) return;
+                      setProcessingTranscript(true);
+                      try {
+                        const response = await base44.integrations.Core.InvokeLLM({
+                          prompt: `Analyze this call transcript:
+
+            ${manualTranscript}
+
+            Customer: ${caseData?.customer_name || 'N/A'}
+
+            Provide:
+            1. A concise summary of what was discussed
+            2. Key points mentioned
+            3. Action items stated or agreed upon
+            4. Customer sentiment (positive/neutral/negative)
+            5. Compliance score (0-100)
+            6. Quality score (0-100)`,
+                          response_json_schema: {
+                            type: "object",
+                            properties: {
+                              summary: { type: "string" },
+                              key_points: { type: "array", items: { type: "string" } },
+                              action_items: { type: "array", items: { type: "string" } },
+                              sentiment: { type: "string", enum: ["positive", "neutral", "negative"] },
+                              compliance_score: { type: "number" },
+                              quality_score: { type: "number" }
+                            },
+                            required: ["summary", "key_points", "action_items", "sentiment", "compliance_score", "quality_score"]
+                          }
+                        });
+
+                        // Save transcript
+                        createTranscriptMutation.mutate({
+                          call_id: 'manual-poc',
+                          case_id: caseId,
+                          transcript_text: manualTranscript,
+                          ai_summary: response.summary,
+                          key_points: response.key_points,
+                          action_items: response.action_items,
+                          sentiment: response.sentiment,
+                          compliance_score: response.compliance_score,
+                          quality_score: response.quality_score,
+                          created_date: new Date().toISOString()
+                        });
+
+                        setAiSuggestion({
+                          summary: `Transcript Analysis Complete - Quality: ${response.quality_score}/100`,
+                          key_points: response.key_points,
+                          action_items: response.action_items
+                        });
+
+                        setManualTranscript('');
+                      } catch (error) {
+                        console.error("Error processing transcript:", error);
+                      }
+                      setProcessingTranscript(false);
+                    }}
+                    disabled={!manualTranscript.trim() || processingTranscript}
+                    className="rounded-xl h-9 px-4 border-0"
+                    style={{ ...getButtonStyle('4px', '#F59E0B'), color: '#ffffff', fontWeight: '600' }}
+                  >
+                    {processingTranscript ? 'Processing...' : '🧪 Process Transcript'}
+                  </Button>
+                </div>
+
                 <div className="mb-4">
                   <label className="text-sm font-semibold mb-2 block" style={{ color: colors.text }}>
                     What is this call about?
