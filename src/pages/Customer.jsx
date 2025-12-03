@@ -476,12 +476,12 @@ export default function CustomerPage() {
                 <Card
                   className="border-0"
                   style={{
-                    background: '#E0E5EC',
-                    boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+                    background: colors.bg,
+                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: '#374151' }}>
+                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                       <User className="w-5 h-5" />
                       Personal Information
                     </CardTitle>
@@ -591,12 +591,12 @@ export default function CustomerPage() {
                 <Card
                   className="border-0"
                   style={{
-                    background: '#E0E5EC',
-                    boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+                    background: colors.bg,
+                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: '#374151' }}>
+                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                       <Phone className="w-5 h-5" />
                       Contact Information
                     </CardTitle>
@@ -727,7 +727,7 @@ export default function CustomerPage() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium mb-2 block" style={{ color: '#6B7280' }}>
+                      <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
                         <MapPin className="w-4 h-4 inline mr-1" />
                         Address
                       </label>
@@ -750,9 +750,8 @@ export default function CustomerPage() {
                               onChange={(e) => setEditedCustomer({...editedCustomer, address_city: e.target.value})}
                               className="rounded-2xl border-0 h-10"
                               style={{
-                                background: '#E0E5EC',
-                                boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                                color: '#374151'
+                                ...getInsetStyle(),
+                                color: colors.text
                               }}
                             />
                             <Input
@@ -761,9 +760,8 @@ export default function CustomerPage() {
                               onChange={(e) => setEditedCustomer({...editedCustomer, address_state: e.target.value})}
                               className="rounded-2xl border-0 h-10"
                               style={{
-                                background: '#E0E5EC',
-                                boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                                color: '#374151'
+                                ...getInsetStyle(),
+                                color: colors.text
                               }}
                             />
                             <Input
@@ -772,9 +770,8 @@ export default function CustomerPage() {
                               onChange={(e) => setEditedCustomer({...editedCustomer, address_zip: e.target.value})}
                               className="rounded-2xl border-0 h-10"
                               style={{
-                                background: '#E0E5EC',
-                                boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                                color: '#374151'
+                                ...getInsetStyle(),
+                                color: colors.text
                               }}
                             />
                           </div>
@@ -794,12 +791,12 @@ export default function CustomerPage() {
                 <Card
                   className="border-0"
                   style={{
-                    background: '#E0E5EC',
-                    boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+                    background: colors.bg,
+                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: '#374151' }}>
+                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                       <Briefcase className="w-5 h-5" />
                       Employment Information
                     </CardTitle>
@@ -817,9 +814,8 @@ export default function CustomerPage() {
                               onChange={(e) => setEditedCustomer({...editedCustomer, company_id: e.target.value})}
                               className="flex-1 rounded-2xl border-0 h-10 px-3"
                               style={{
-                                background: '#E0E5EC',
-                                boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                                color: '#374151'
+                                ...getInsetStyle(),
+                                color: colors.text
                               }}
                             >
                               <option value="">Select Company...</option>
@@ -831,7 +827,7 @@ export default function CustomerPage() {
                             </select>
                           ) : (
                             <>
-                              <p className="flex-1 font-medium" style={{ color: '#374151' }}>
+                              <p className="flex-1 font-medium" style={{ color: colors.text }}>
                                 {employers.find(e => e.id === customer.company_id)?.employer_name || 'N/A'}
                               </p>
                               {customerEmployerEntity?.benefit_guide_url && (
@@ -1004,12 +1000,12 @@ export default function CustomerPage() {
                 <Card
                   className="border-0"
                   style={{
-                    background: '#E0E5EC',
-                    boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+                    background: colors.bg,
+                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: '#374151' }}>
+                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                       <FileText className="w-5 h-5" />
                       Notes
                     </CardTitle>
@@ -1046,7 +1042,7 @@ export default function CustomerPage() {
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: '#374151' }}>
+                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                       <Briefcase className="w-5 h-5" />
                       Employment Information
                     </CardTitle>
@@ -1064,9 +1060,8 @@ export default function CustomerPage() {
                               onChange={(e) => setEditedCustomer({...editedCustomer, company_id: e.target.value})}
                               className="rounded-2xl border-0 h-10 px-3"
                               style={{
-                                background: '#E0E5EC',
-                                boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
-                                color: '#374151'
+                                ...getInsetStyle(),
+                                color: colors.text
                               }}
                             >
                               <option value="">Select Company...</option>
@@ -1286,7 +1281,7 @@ export default function CustomerPage() {
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: '#374151' }}>
+                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
                       <Building2 className="w-5 h-5" />
                       Carrier Phone Numbers
                     </CardTitle>
@@ -1432,13 +1427,13 @@ export default function CustomerPage() {
             <Card
               className="border-0 mt-4"
               style={{
-                background: '#E0E5EC',
-                boxShadow: '12px 12px 24px #a3b1c6, -12px -12px 24px #ffffff'
+                background: colors.bg,
+                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle style={{ color: '#374151' }}>Cases</CardTitle>
+                  <CardTitle style={{ color: colors.text }}>Cases</CardTitle>
                   <Button
                     onClick={() => setShowCreateCaseModal(true)}
                     className="rounded-2xl h-10 px-4 border-0"
@@ -1453,16 +1448,15 @@ export default function CustomerPage() {
                 {cases.length === 0 ? (
                   <div className="text-center py-8">
                     <FolderOpen className="w-12 h-12 mx-auto mb-3" style={{ color: colors.textTertiary }} />
-                    <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
+                    <p className="text-sm mb-4" style={{ color: colors.textSecondary }}>
                       No cases yet for this customer
                     </p>
                     <Button
                       onClick={() => setShowCreateCaseModal(true)}
                       className="rounded-2xl h-10 px-4 border-0"
                       style={{
-                        background: '#E0E5EC',
-                        boxShadow: '6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff',
-                        color: '#4B5563'
+                        ...getButtonStyle(),
+                        color: colors.textSecondary
                       }}
                     >
                       <Plus className="w-4 h-4 mr-2" />
@@ -1517,7 +1511,7 @@ export default function CustomerPage() {
                             </div>
                           </div>
                           {caseItem.description && (
-                            <p className="text-sm mb-2" style={{ color: '#6B7280' }}>
+                            <p className="text-sm mb-2" style={{ color: colors.textSecondary }}>
                               {caseItem.description.substring(0, 100)}
                               {caseItem.description.length > 100 && '...'}
                             </p>
@@ -1574,10 +1568,7 @@ export default function CustomerPage() {
                         <div className="flex items-start gap-3">
                           <div
                             className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                            style={{
-                              background: 'linear-gradient(145deg, #f0f4f8, #d1d9e6)',
-                              boxShadow: '3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff'
-                            }}
+                            style={getButtonStyle()}
                           >
                             {call.direction === 'inbound' ? (
                               <PhoneIncoming className="w-5 h-5" style={{ color: '#10b981' }} />
@@ -1612,9 +1603,8 @@ export default function CustomerPage() {
                             </a>
                             {call.notes && (
                               <p className="text-sm p-2 rounded-xl mt-2" style={{
-                                color: '#374151',
-                                background: '#E0E5EC',
-                                boxShadow: 'inset 2px 2px 4px #a3b1c6, inset -2px -2px 4px #ffffff'
+                                ...getInsetStyle(),
+                                color: colors.text
                               }}>
                                 {call.notes}
                               </p>
@@ -1666,12 +1656,7 @@ export default function CustomerPage() {
                         <div className="flex items-start gap-3">
                           <div
                             className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                            style={{
-                              background: sms.direction === 'sent'
-                                ? 'linear-gradient(145deg, #dbeafe, #bfdbfe)'
-                                : 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
-                              boxShadow: '3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff'
-                            }}
+                            style={getButtonStyle()}
                           >
                             {sms.direction === 'sent' ? (
                               <Send className="w-5 h-5" style={{ color: '#3b82f6' }} />
@@ -1706,9 +1691,8 @@ export default function CustomerPage() {
                               {sms.customer_phone}
                             </a>
                             <p className="text-sm p-3 rounded-xl mt-2" style={{
-                              color: '#374151',
-                              background: '#E0E5EC',
-                              boxShadow: 'inset 2px 2px 4px #a3b1c6, inset -2px -2px 4px #ffffff'
+                              ...getInsetStyle(),
+                              color: colors.text
                             }}>
                               {sms.message}
                             </p>
@@ -1807,19 +1791,19 @@ export default function CustomerPage() {
                             )}
 
                             {event.type === 'call' && event.data.notes && (
-                              <p className="text-sm mt-2" style={{ color: '#6B7280' }}>
+                              <p className="text-sm mt-2" style={{ color: colors.textSecondary }}>
                                 {event.data.notes}
                               </p>
                             )}
 
                             {event.type === 'sms' && (
-                              <p className="text-sm mt-2" style={{ color: '#6B7280' }}>
+                              <p className="text-sm mt-2" style={{ color: colors.textSecondary }}>
                                 {event.data.message}
                               </p>
                             )}
 
                             {event.type === 'note' && (
-                              <p className="text-sm mt-2" style={{ color: '#6B7280' }}>
+                              <p className="text-sm mt-2" style={{ color: colors.textSecondary }}>
                                 {event.data.content}
                               </p>
                             )}
