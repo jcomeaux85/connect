@@ -331,11 +331,15 @@ export default function Dashboard() {
                     url: t.case_id ? `Case?id=${t.case_id}` : null
                   }));
                 case "Today's Calls":
-                  return calls.filter(call => call.created_date && isToday(parseISO(call.created_date))).slice(0, 3).map(c => ({
-                    id: c.id,
-                    label: c.customer_phone || 'Unknown',
-                    url: c.case_id ? `Case?id=${c.case_id}` : null
-                  }));
+                  return calls.filter(call => call.created_date && isToday(parseISO(call.created_date))).slice(0, 3).map(c => {
+                    // Find case to get customer name
+                    const relatedCase = cases.find(cs => cs.id === c.case_id);
+                    return {
+                      id: c.id,
+                      label: relatedCase?.customer_name || 'Unknown',
+                      url: c.case_id ? `Case?id=${c.case_id}` : null
+                    };
+                  });
                 case "Urgent Cases":
                   return myCases.filter(c => c.priority === 'urgent' && c.status !== 'closed').slice(0, 3).map(c => ({
                     id: c.id,
