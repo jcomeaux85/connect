@@ -321,10 +321,10 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
-        {/* Stats Grid */}
+        {/* Stats Grid - Now Collapsible Panels */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
-            const Icon = stat.icon;
+            const StatIcon = stat.icon;
             const hasValue = stat.value > 0;
             return (
               <motion.div
@@ -333,147 +333,155 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1 }}
               >
-                <Card
-                  className="border-0 cursor-pointer transition-all hover:scale-[1.02]"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: hasValue 
-                      ? `0 0 30px ${stat.color}40, 0 0 60px ${stat.color}20, 10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-                      : `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-                  }}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div
-                        className="w-14 h-14 rounded-2xl flex items-center justify-center"
-                        style={{
-                          background: stat.bgGradient,
-                          boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
-                        }}
-                      >
-                        <Icon className="w-7 h-7" style={{ color: stat.color }} />
-                      </div>
+                <CollapsiblePanel
+                  title={stat.title}
+                  icon={StatIcon}
+                  storageKey={`dashboard-stat-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  condensedContent={
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold" style={{ color: hasValue ? stat.color : colors.text }}>
+                        {stat.value}
+                      </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-1" style={{ color: colors.text }}>
-                      {stat.value}
-                    </h3>
-                    <p className="text-sm" style={{ color: colors.textSecondary }}>
-                      {stat.title}
-                    </p>
-                  </CardContent>
-                </Card>
+                  }
+                >
+                  <div className="flex items-center justify-between">
+                    <div
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                      style={{
+                        background: stat.bgGradient,
+                        boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
+                      }}
+                    >
+                      <StatIcon className="w-7 h-7" style={{ color: stat.color }} />
+                    </div>
+                    <div className="text-right">
+                      <h3 className="text-4xl font-bold" style={{ color: hasValue ? stat.color : colors.text }}>
+                        {stat.value}
+                      </h3>
+                    </div>
+                  </div>
+                </CollapsiblePanel>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Recent Cases */}
+        {/* Recent Cases - Now Collapsible */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
-          <Card
-            className="border-0"
-            style={{
-              background: colors.bg,
-              boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-            }}
+          <CollapsiblePanel
+            title="Your Recent Cases"
+            icon={Folder}
+            storageKey="dashboard-recent-cases"
+            headerExtra={
+              <span className="text-xs" style={{ color: colors.textSecondary }}>
+                {myCases.length} total
+              </span>
+            }
+            condensedContent={
+              <div className="flex items-center justify-between">
+                <span className="text-sm" style={{ color: colors.text }}>
+                  {myCases.filter(c => c.status !== 'closed').length} open cases
+                </span>
+                <span className="text-xs" style={{ color: colors.textTertiary }}>
+                  Click to expand
+                </span>
+              </div>
+            }
           >
-            <CardHeader>
-              <CardTitle style={{ color: colors.text }}>Your Recent Cases</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {myCases.length === 0 ? (
-                  <p className="text-center py-8" style={{ color: colors.textSecondary }}>
-                    No cases assigned yet
-                  </p>
-                ) : (
-                  myCases.slice(0, 5).map((caseItem, index) => (
-                    <motion.div
-                      key={caseItem.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.8 + index * 0.1 }}
-                    >
-                      <Link to={createPageUrl(`Case?id=${caseItem.id}`)}>
-                        <div
-                          className="p-4 rounded-2xl hover:scale-[1.02] transition-all cursor-pointer"
-                          style={{
-                            background: colors.bg,
-                            boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
-                          }}
-                        >
-                          <div className="flex items-start justify-between mb-2">
-                            <div className="flex-1">
-                              <h4 className="font-semibold mb-1" style={{ color: colors.text }}>
-                                {caseItem.customer_name}
-                              </h4>
-                              <p className="text-sm" style={{ color: colors.textSecondary }}>
-                                {caseItem.case_number} · {caseItem.case_type}
-                              </p>
-                            </div>
-                            <div className="flex gap-2">
-                              <Badge
-                                className="border-0"
-                                style={{
-                                  background:
-                                    caseItem.status === 'closed' ? 'linear-gradient(145deg, #d1d5db, #9ca3af)' :
-                                    caseItem.status === 'resolved' ? 'linear-gradient(145deg, #dcfce7, #bbf7d0)' :
-                                    caseItem.status === 'in_progress' ? 'linear-gradient(145deg, #dbeafe, #bfdbfe)' :
-                                    'linear-gradient(145deg, #fef3c7, #fde68a)',
-                                  color:
-                                    caseItem.status === 'closed' ? '#374151' :
-                                    caseItem.status === 'resolved' ? '#065f46' :
-                                    caseItem.status === 'in_progress' ? '#1e40af' :
-                                    '#92400e'
-                                }}
-                              >
-                                {caseItem.status}
-                              </Badge>
-                              <Badge
-                                className="border-0"
-                                style={{
-                                  background:
-                                    caseItem.priority === 'urgent' ? 'linear-gradient(145deg, #fee2e2, #fecaca)' :
-                                    caseItem.priority === 'high' ? 'linear-gradient(145deg, #fed7aa, #fdba74)' :
-                                    'linear-gradient(145deg, #dbeafe, #bfdbfe)',
-                                  color:
-                                    caseItem.priority === 'urgent' ? '#991b1b' :
-                                    caseItem.priority === 'high' ? '#9a3412' :
-                                    '#1e40af'
-                                }}
-                              >
-                                {caseItem.priority}
-                              </Badge>
-                            </div>
-                          </div>
-                          {caseItem.description && (
-                            <p className="text-sm line-clamp-2" style={{ color: colors.textSecondary }}>
-                              {caseItem.description}
+            <div className="space-y-4">
+              {myCases.length === 0 ? (
+                <p className="text-center py-8" style={{ color: colors.textSecondary }}>
+                  No cases assigned yet
+                </p>
+              ) : (
+                myCases.slice(0, 5).map((caseItem, index) => (
+                  <motion.div
+                    key={caseItem.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + index * 0.05 }}
+                  >
+                    <Link to={createPageUrl(`Case?id=${caseItem.id}`)}>
+                      <div
+                        className="p-4 rounded-2xl hover:scale-[1.02] transition-all cursor-pointer"
+                        style={{
+                          background: colors.cardBg,
+                          boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
+                        }}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h4 className="font-semibold mb-1" style={{ color: colors.text }}>
+                              {caseItem.customer_name}
+                            </h4>
+                            <p className="text-sm" style={{ color: colors.textSecondary }}>
+                              {caseItem.case_number} · {caseItem.case_type}
                             </p>
-                          )}
-                          <div className="flex items-center gap-4 mt-3 text-xs" style={{ color: colors.textTertiary }}>
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              {format(new Date(caseItem.created_date), 'MMM d, h:mm a')}
-                            </span>
-                            {caseItem.customer_phone && (
-                              <span className="flex items-center gap-1">
-                                <Phone className="w-3 h-3" />
-                                {caseItem.customer_phone}
-                              </span>
-                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            <Badge
+                              className="border-0"
+                              style={{
+                                background:
+                                  caseItem.status === 'closed' ? 'linear-gradient(145deg, #d1d5db, #9ca3af)' :
+                                  caseItem.status === 'resolved' ? 'linear-gradient(145deg, #dcfce7, #bbf7d0)' :
+                                  caseItem.status === 'in_progress' ? 'linear-gradient(145deg, #dbeafe, #bfdbfe)' :
+                                  'linear-gradient(145deg, #fef3c7, #fde68a)',
+                                color:
+                                  caseItem.status === 'closed' ? '#374151' :
+                                  caseItem.status === 'resolved' ? '#065f46' :
+                                  caseItem.status === 'in_progress' ? '#1e40af' :
+                                  '#92400e'
+                              }}
+                            >
+                              {caseItem.status}
+                            </Badge>
+                            <Badge
+                              className="border-0"
+                              style={{
+                                background:
+                                  caseItem.priority === 'urgent' ? 'linear-gradient(145deg, #fee2e2, #fecaca)' :
+                                  caseItem.priority === 'high' ? 'linear-gradient(145deg, #fed7aa, #fdba74)' :
+                                  'linear-gradient(145deg, #dbeafe, #bfdbfe)',
+                                color:
+                                  caseItem.priority === 'urgent' ? '#991b1b' :
+                                  caseItem.priority === 'high' ? '#9a3412' :
+                                  '#1e40af'
+                              }}
+                            >
+                              {caseItem.priority}
+                            </Badge>
                           </div>
                         </div>
-                      </Link>
-                    </motion.div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                        {caseItem.description && (
+                          <p className="text-sm line-clamp-2" style={{ color: colors.textSecondary }}>
+                            {caseItem.description}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-4 mt-3 text-xs" style={{ color: colors.textTertiary }}>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {format(new Date(caseItem.created_date), 'MMM d, h:mm a')}
+                          </span>
+                          {caseItem.customer_phone && (
+                            <span className="flex items-center gap-1">
+                              <Phone className="w-3 h-3" />
+                              {caseItem.customer_phone}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))
+              )}
+            </div>
+          </CollapsiblePanel>
         </motion.div>
       </div>
 
