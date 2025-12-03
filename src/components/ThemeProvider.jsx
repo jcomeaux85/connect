@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
@@ -16,13 +16,36 @@ export const ThemeProvider = ({ children }) => {
     return savedTheme || 'dark';
   });
 
+  const [backgroundSettings, setBackgroundSettings] = useState(() => {
+    const saved = localStorage.getItem('backgroundSettings');
+    return saved ? JSON.parse(saved) : { type: 'solid', value: null };
+  });
+
+  const [transitionSpeed, setTransitionSpeed] = useState(() => {
+    const saved = localStorage.getItem('transitionSpeed');
+    return saved ? parseFloat(saved) : 1.05; // 5% slower = 1.05x
+  });
+
   useEffect(() => {
     localStorage.setItem('theme', theme);
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
+  useEffect(() => {
+    localStorage.setItem('backgroundSettings', JSON.stringify(backgroundSettings));
+  }, [backgroundSettings]);
+
+  useEffect(() => {
+    localStorage.setItem('transitionSpeed', transitionSpeed.toString());
+    document.documentElement.style.setProperty('--transition-speed', `${transitionSpeed}`);
+  }, [transitionSpeed]);
+
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  const updateBackgroundSettings = (settings) => {
+    setBackgroundSettings(settings);
   };
 
   const colors = {
@@ -132,6 +155,26 @@ export const ThemeProvider = ({ children }) => {
     };
   };
 
+  // Get brightness-adjusted shadow for panels
+  const getPanelStyle = (brightness = 0) => {
+    // brightness: -3 to +3, affects shadow intensity
+    const baseIntensity = 12;
+    const adjustedIntensity = Math.max(4, baseIntensity + (brightness * 2));
+    const glowOpacity = Math.min(0.3, 0.1 + (brightness * 0.05));
+    
+    return {
+      background: currentColors.cardBg,
+      boxShadow: brightness > 0 
+        ? `0 0 ${adjustedIntensity * 2}px rgba(255,255,255,${glowOpacity}), ${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`
+        : `${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`,
+    };
+  };
+
+  // Transition duration with 5% slower default
+  const getTransitionDuration = (baseMs = 150) => {
+    return `${Math.round(baseMs * transitionSpeed)}ms`;
+  };
+
   const value = {
     theme,
     toggleTheme,
@@ -141,6 +184,11 @@ export const ThemeProvider = ({ children }) => {
     getButtonStyle,
     getButtonHoverStyle,
     getInsetStyle,
+    getPanelStyle,
+    getTransitionDuration,
+    backgroundSettings,
+    updateBackgroundSettings,
+    transitionSpeed,
     isDark: theme === 'dark',
   };
 
