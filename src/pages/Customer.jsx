@@ -1298,7 +1298,10 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_dental_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={getInsetStyle()}
+                            style={{
+                              ...getInsetStyle(),
+                              background: colors.cardBg
+                            }}
                           >
                             <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Dental
@@ -1320,7 +1323,10 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_medical_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={getInsetStyle()}
+                            style={{
+                              ...getInsetStyle(),
+                              background: colors.cardBg
+                            }}
                           >
                             <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Medical
@@ -1342,7 +1348,10 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_vision_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={getInsetStyle()}
+                            style={{
+                              ...getInsetStyle(),
+                              background: colors.cardBg
+                            }}
                           >
                             <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Vision
@@ -1364,7 +1373,10 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_life_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={getInsetStyle()}
+                            style={{
+                              ...getInsetStyle(),
+                              background: colors.cardBg
+                            }}
                           >
                             <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Life
@@ -1386,7 +1398,10 @@ export default function CustomerPage() {
                         {customerClientCompanyEntity.carrier_disability_name && (
                           <div
                             className="p-3 rounded-2xl"
-                            style={getInsetStyle()}
+                            style={{
+                              ...getInsetStyle(),
+                              background: colors.cardBg
+                            }}
                           >
                             <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
                               Disability
