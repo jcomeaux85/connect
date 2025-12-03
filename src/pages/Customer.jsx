@@ -1037,7 +1037,7 @@ export default function CustomerPage() {
                 <Card
                   className="border-0"
                   style={{
-                    background: colors.bg,
+                    background: colors.cardBg,
                     boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
                   }}
                 >
@@ -1276,7 +1276,7 @@ export default function CustomerPage() {
                 <Card
                   className="border-0"
                   style={{
-                    background: colors.bg,
+                    background: colors.cardBg,
                     boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
                   }}
                 >
@@ -1427,7 +1427,7 @@ export default function CustomerPage() {
             <Card
               className="border-0 mt-4"
               style={{
-                background: colors.bg,
+                background: colors.cardBg,
                 boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
               }}
             >
@@ -1539,7 +1539,7 @@ export default function CustomerPage() {
             <Card
               className="border-0 mt-4"
               style={{
-                background: colors.bg,
+                background: colors.cardBg,
                 boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
               }}
             >
@@ -1627,7 +1627,7 @@ export default function CustomerPage() {
             <Card
               className="border-0 mt-4"
               style={{
-                background: colors.bg,
+                background: colors.cardBg,
                 boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
               }}
             >
@@ -1714,7 +1714,7 @@ export default function CustomerPage() {
             <Card
               className="border-0 mt-4"
               style={{
-                background: colors.bg,
+                background: colors.cardBg,
                 boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
               }}
             >
