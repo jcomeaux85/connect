@@ -1966,22 +1966,41 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       }
                           </p>
                     }
-                        {call.recording_url === 'transcript_enabled' &&
-                    <Badge
-                      className="border-0 text-xs px-2 py-0.5"
-                      style={{
-                        background: isDark ? 'linear-gradient(145deg, #2e1d1d, #1a0f0f)' : 'linear-gradient(145deg, #fee2e2, #fecaca)',
-                        color: isDark ? '#f87171' : '#991b1b',
-                        boxShadow: `2px 2px 4px ${colors.shadowDark}`
-                      }}>
-
-                            Transcript Recorded
-                          </Badge>
-                    }
-                        <p className="text-xs mt-2" style={{ color: colors.textPlaceholder }}>
-                          {format(new Date(call.created_date), 'MMM d, h:mm a')}
-                        </p>
-                      </motion.div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <p className="text-xs" style={{ color: colors.textPlaceholder }}>
+                            {format(new Date(call.created_date), 'MMM d, h:mm a')}
+                          </p>
+                          {(() => {
+                            const hasTranscript = callTranscripts.some(t => t.call_id === call.id || (call.id === 'manual-poc' && t.call_id === 'manual-poc'));
+                            return (
+                              <Button
+                                onClick={() => {
+                                  if (hasTranscript) {
+                                    setSelectedTab('overview');
+                                    // Scroll to transcripts section
+                                    document.getElementById('call-transcripts-section')?.scrollIntoView({ behavior: 'smooth' });
+                                  }
+                                }}
+                                disabled={!hasTranscript}
+                                className="rounded-xl h-7 px-3 text-xs font-semibold border-0"
+                                style={{
+                                  background: hasTranscript 
+                                    ? 'linear-gradient(145deg, #8B5CF6, #7C3AED)' 
+                                    : isDark ? '#374151' : '#D1D5DB',
+                                  color: hasTranscript ? '#ffffff' : isDark ? '#6B7280' : '#9CA3AF',
+                                  boxShadow: hasTranscript 
+                                    ? `0 0 12px #8B5CF680, 3px 3px 6px ${colors.shadowDark}` 
+                                    : 'none',
+                                  cursor: hasTranscript ? 'pointer' : 'not-allowed'
+                                }}
+                              >
+                                <FileText className="w-3 h-3 mr-1" />
+                                {hasTranscript ? 'View Transcript' : 'No Transcript'}
+                              </Button>
+                            );
+                          })()}
+                        </div>
+                        </motion.div>
                   )
                   }
                 </div>
