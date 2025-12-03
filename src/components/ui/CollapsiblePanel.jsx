@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Minus, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
 export default function CollapsiblePanel({ 
@@ -11,7 +11,8 @@ export default function CollapsiblePanel({
   defaultCollapsed = false,
   condensedContent,
   className = '',
-  headerExtra
+  headerExtra,
+  accentColor // New prop for glow color
 }) {
   const { colors, getPanelStyle, getTransitionDuration } = useTheme();
   
@@ -48,18 +49,65 @@ export default function CollapsiblePanel({
   };
 
   const panelStyle = getPanelStyle(brightness);
+  
+  // Calculate glow based on brightness and accent color
+  const getGlowStyle = () => {
+    if (brightness <= 0 || !accentColor) return {};
+    const glowIntensity = brightness * 10;
+    return {
+      boxShadow: `0 0 ${glowIntensity * 2}px ${accentColor}40, 0 0 ${glowIntensity * 4}px ${accentColor}20, ${panelStyle.boxShadow}`
+    };
+  };
 
   return (
     <div
-      className={`border-0 rounded-2xl overflow-hidden ${className}`}
+      className={`border-0 rounded-2xl overflow-hidden relative ${className}`}
       style={{
         ...panelStyle,
+        ...getGlowStyle(),
         transition: `all ${getTransitionDuration(200)} ease-out`
       }}
     >
+      {/* Vertical Brightness Dial - Left Edge */}
+      <div 
+        className="absolute left-0 top-0 bottom-0 w-5 flex flex-col items-center justify-center gap-1 z-10"
+        style={{
+          background: `linear-gradient(to right, ${colors.shadowDark}30, transparent)`,
+          borderRadius: '18px 0 0 18px'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={() => adjustBrightness(1)}
+          className="w-4 h-6 rounded-t-lg flex items-center justify-center hover:scale-110 transition-transform"
+          style={{
+            background: colors.cardBg,
+            boxShadow: `1px 1px 2px ${colors.shadowDark}, -1px -1px 2px ${colors.shadowLight}`
+          }}
+        >
+          <ChevronUp className="w-3 h-3" style={{ color: brightness >= 3 ? colors.textTertiary : (accentColor || colors.textSecondary) }} />
+        </button>
+        <div 
+          className="text-[9px] font-bold w-4 text-center"
+          style={{ color: accentColor || colors.textTertiary }}
+        >
+          {brightness > 0 ? `+${brightness}` : brightness}
+        </div>
+        <button
+          onClick={() => adjustBrightness(-1)}
+          className="w-4 h-6 rounded-b-lg flex items-center justify-center hover:scale-110 transition-transform"
+          style={{
+            background: colors.cardBg,
+            boxShadow: `1px 1px 2px ${colors.shadowDark}, -1px -1px 2px ${colors.shadowLight}`
+          }}
+        >
+          <ChevronDown className="w-3 h-3" style={{ color: brightness <= -3 ? colors.textTertiary : colors.textSecondary }} />
+        </button>
+      </div>
+
       {/* Header */}
       <div 
-        className="flex items-center justify-between p-4 cursor-pointer select-none"
+        className="flex items-center justify-between p-4 pl-7 cursor-pointer select-none"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <div className="flex items-center gap-3">
@@ -67,11 +115,11 @@ export default function CollapsiblePanel({
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center"
               style={{
-                background: colors.bg,
+                background: accentColor ? `${accentColor}20` : colors.bg,
                 boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}`
               }}
             >
-              <Icon className="w-4 h-4" style={{ color: colors.textSecondary }} />
+              <Icon className="w-4 h-4" style={{ color: accentColor || colors.textSecondary }} />
             </div>
           )}
           {title && (
@@ -82,41 +130,6 @@ export default function CollapsiblePanel({
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Brightness Controls */}
-          <div 
-            className="flex items-center gap-1 mr-2"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => adjustBrightness(-1)}
-              className="w-6 h-6 rounded-lg flex items-center justify-center"
-              style={{
-                background: colors.bg,
-                boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`,
-                transition: `all ${getTransitionDuration(150)} ease-out`
-              }}
-            >
-              <Minus className="w-3 h-3" style={{ color: colors.textTertiary }} />
-            </button>
-            <span 
-              className="text-xs w-4 text-center" 
-              style={{ color: colors.textTertiary }}
-            >
-              {brightness > 0 ? `+${brightness}` : brightness}
-            </span>
-            <button
-              onClick={() => adjustBrightness(1)}
-              className="w-6 h-6 rounded-lg flex items-center justify-center"
-              style={{
-                background: colors.bg,
-                boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`,
-                transition: `all ${getTransitionDuration(150)} ease-out`
-              }}
-            >
-              <Plus className="w-3 h-3" style={{ color: colors.textTertiary }} />
-            </button>
-          </div>
-
           {headerExtra}
 
           {/* Collapse Toggle */}
@@ -140,7 +153,7 @@ export default function CollapsiblePanel({
               transition={{ duration: parseFloat(getTransitionDuration(200)) / 1000 }}
               className="overflow-hidden"
             >
-              <div className="px-4 pb-3">
+              <div className="px-4 pl-7 pb-3">
                 {condensedContent}
               </div>
             </motion.div>
@@ -153,7 +166,7 @@ export default function CollapsiblePanel({
             transition={{ duration: parseFloat(getTransitionDuration(200)) / 1000 }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4">
+            <div className="px-4 pl-7 pb-4">
               {children}
             </div>
           </motion.div>

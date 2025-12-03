@@ -337,6 +337,7 @@ export default function Dashboard() {
                   title={stat.title}
                   icon={StatIcon}
                   storageKey={`dashboard-stat-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  accentColor={hasValue ? stat.color : null}
                   condensedContent={
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold" style={{ color: hasValue ? stat.color : colors.text }}>
