@@ -422,9 +422,9 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
                       id="customer_name"
                       value={formData.customer_name}
                       onChange={(e) => setFormData(prev => ({ ...prev, customer_name: e.target.value }))}
-                      placeholder="John Doe"
+                      placeholder="Jennifer Kowalski"
                       className="rounded-2xl border-0 h-12"
-                      style={getInsetStyle()}
+                      style={{ ...getInsetStyle(), color: colors.text }}
                       required
                     />
                   </div>
@@ -438,9 +438,9 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
                         id="customer_phone"
                         value={formData.customer_phone}
                         onChange={(e) => setFormData(prev => ({ ...prev, customer_phone: e.target.value }))}
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="555-555-5555"
                         className="rounded-2xl border-0 h-12"
-                        style={getInsetStyle()}
+                        style={{ ...getInsetStyle(), color: colors.text }}
                         required
                       />
                     </div>
@@ -456,7 +456,7 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
                         onChange={(e) => setFormData(prev => ({ ...prev, customer_email: e.target.value }))}
                         placeholder="john@example.com"
                         className="rounded-2xl border-0 h-12"
-                        style={getInsetStyle()}
+                        style={{ ...getInsetStyle(), color: colors.text }}
                       />
                     </div>
                   </div>
@@ -681,7 +681,7 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
                 id="customer_name_prefilled"
                 value={formData.customer_name}
                 className="rounded-2xl border-0 h-12"
-                style={getInsetStyle()}
+                style={{ ...getInsetStyle(), color: colors.text }}
                 disabled
               />
             </div>
@@ -697,7 +697,7 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
               onChange={(e) => setFormData(prev => ({ ...prev, policy_number: e.target.value }))}
               placeholder="POL-123456"
               className="rounded-2xl border-0 h-12"
-              style={getInsetStyle()}
+              style={{ ...getInsetStyle(), color: colors.text }}
             />
           </div>
 
@@ -709,7 +709,7 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
             >
               <SelectTrigger 
                 className="rounded-2xl border-0 h-12"
-                style={getInsetStyle()}
+                style={{ ...getInsetStyle(), color: colors.text }}
               >
                 <SelectValue placeholder="Select agent..." />
               </SelectTrigger>
@@ -733,7 +733,7 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
               >
                 <SelectTrigger 
                   className="rounded-2xl border-0 h-12"
-                  style={getInsetStyle()}
+                  style={{ ...getInsetStyle(), color: colors.text }}
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -755,7 +755,7 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
               >
                 <SelectTrigger 
                   className="rounded-2xl border-0 h-12"
-                  style={getInsetStyle()}
+                  style={{ ...getInsetStyle(), color: colors.text }}
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -779,7 +779,7 @@ export default function CreateCaseModal({ isOpen, onClose, onSubmit, prefilledCu
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="What is this case about? Provide details..."
               className="rounded-2xl border-0 min-h-24"
-              style={getInsetStyle()}
+              style={{ ...getInsetStyle(), color: colors.text }}
               maxLength={200}
               required
             />
