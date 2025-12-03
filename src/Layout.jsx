@@ -35,6 +35,7 @@ import NotificationCenter from "@/components/notifications/NotificationCenter";
 import MessagingPanel from "@/components/messaging/MessagingPanel";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import SlideOutMenu from "@/components/navigation/SlideOutMenu";
+import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
@@ -71,13 +72,14 @@ const userNavigation = [
 ];
 
 function LayoutContent({ children, currentPageName }) {
-  const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showMessages, setShowMessages] = useState(false);
-  const [showPhoneDialer, setShowPhoneDialer] = useState(false);
+    const location = useLocation();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [showMessages, setShowMessages] = useState(false);
+    const [showPhoneDialer, setShowPhoneDialer] = useState(false);
+    const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
 
-  const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
+    const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
   
   // Build background style based on settings
   const getBackgroundStyle = () => {
@@ -147,21 +149,26 @@ function LayoutContent({ children, currentPageName }) {
     // Listen for toggle events from SlideOutMenu
     const handleToggleMessages = () => {
       setShowMessages(prev => !prev);
-      setShowNotifications(false); // Close notifications when messages open/close
-      setShowPhoneDialer(false); // Close phone dialer when messages open/close
+      setShowNotifications(false);
+      setShowPhoneDialer(false);
     };
     const handleTogglePhone = () => {
       setShowPhoneDialer(prev => !prev);
-      setShowMessages(false); // Close messages when phone dialer open/close
-      setShowNotifications(false); // Close notifications when phone dialer open/close
+      setShowMessages(false);
+      setShowNotifications(false);
     };
-    
+    const handleToggleBackgroundCustomizer = () => {
+      setShowBackgroundCustomizer(prev => !prev);
+    };
+
     window.addEventListener('toggle-messages', handleToggleMessages);
     window.addEventListener('toggle-phone', handleTogglePhone);
-    
+    window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
+
     return () => {
       window.removeEventListener('toggle-messages', handleToggleMessages);
       window.removeEventListener('toggle-phone', handleTogglePhone);
+      window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
     };
   }, []);
 
@@ -473,6 +480,11 @@ function LayoutContent({ children, currentPageName }) {
         user={user}
         isOpen={showMessages}
         onClose={() => setShowMessages(false)}
+      />
+
+      <BackgroundCustomizer 
+        isOpen={showBackgroundCustomizer} 
+        onClose={() => setShowBackgroundCustomizer(false)} 
       />
 
       {showPhoneDialer && (
