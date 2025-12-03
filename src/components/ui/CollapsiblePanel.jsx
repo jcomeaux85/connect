@@ -68,41 +68,57 @@ export default function CollapsiblePanel({
         transition: `all ${getTransitionDuration(200)} ease-out`
       }}
     >
-      {/* Vertical Brightness Dial - Left Edge */}
+      {/* Vertical Brightness Slider - Left Edge */}
       <div 
-        className="absolute left-0 top-0 bottom-0 w-5 flex flex-col items-center justify-center gap-1 z-10"
+        className="absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-16 z-10 rounded-full"
         style={{
-          background: `linear-gradient(to right, ${colors.shadowDark}30, transparent)`,
-          borderRadius: '18px 0 0 18px'
+          background: colors.bg,
+          boxShadow: `inset 1px 1px 3px ${colors.shadowDark}, inset -1px -1px 3px ${colors.shadowLight}`
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={() => adjustBrightness(1)}
-          className="w-4 h-6 rounded-t-lg flex items-center justify-center hover:scale-110 transition-transform"
-          style={{
-            background: colors.cardBg,
-            boxShadow: `1px 1px 2px ${colors.shadowDark}, -1px -1px 2px ${colors.shadowLight}`
-          }}
-        >
-          <ChevronUp className="w-3 h-3" style={{ color: brightness >= 3 ? colors.textTertiary : (accentColor || colors.textSecondary) }} />
-        </button>
+        {/* Track fill based on brightness */}
         <div 
-          className="text-[9px] font-bold w-4 text-center"
-          style={{ color: accentColor || colors.textTertiary }}
-        >
-          {brightness > 0 ? `+${brightness}` : brightness}
-        </div>
-        <button
-          onClick={() => adjustBrightness(-1)}
-          className="w-4 h-6 rounded-b-lg flex items-center justify-center hover:scale-110 transition-transform"
+          className="absolute bottom-0 left-0 right-0 rounded-full transition-all duration-200"
           style={{
-            background: colors.cardBg,
-            boxShadow: `1px 1px 2px ${colors.shadowDark}, -1px -1px 2px ${colors.shadowLight}`
+            height: `${((brightness + 3) / 6) * 100}%`,
+            background: accentColor 
+              ? `linear-gradient(to top, ${accentColor}60, ${accentColor})`
+              : `linear-gradient(to top, ${colors.textTertiary}40, ${colors.textSecondary})`,
+            boxShadow: brightness > 0 && accentColor ? `0 0 6px ${accentColor}80` : 'none'
           }}
-        >
-          <ChevronDown className="w-3 h-3" style={{ color: brightness <= -3 ? colors.textTertiary : colors.textSecondary }} />
-        </button>
+        />
+        {/* Draggable thumb */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full cursor-pointer hover:scale-125 transition-transform"
+          style={{
+            bottom: `calc(${((brightness + 3) / 6) * 100}% - 6px)`,
+            background: accentColor || colors.textSecondary,
+            boxShadow: `0 0 4px ${accentColor || colors.shadowDark}`,
+            border: `1px solid ${colors.shadowLight}`
+          }}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            const track = e.currentTarget.parentElement;
+            const trackRect = track.getBoundingClientRect();
+            
+            const handleMove = (moveEvent) => {
+              const y = moveEvent.clientY;
+              const relativeY = trackRect.bottom - y;
+              const percentage = Math.max(0, Math.min(1, relativeY / trackRect.height));
+              const newBrightness = Math.round(percentage * 6) - 3;
+              setBrightness(newBrightness);
+            };
+            
+            const handleUp = () => {
+              document.removeEventListener('mousemove', handleMove);
+              document.removeEventListener('mouseup', handleUp);
+            };
+            
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('mouseup', handleUp);
+          }}
+        />
       </div>
 
       {/* Header */}
