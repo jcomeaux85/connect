@@ -1780,19 +1780,20 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
 
             {/* Call Transcripts */}
             {callTranscripts.length > 0 &&
-            <Card
-              className="border-0"
-              style={{
-                background: colors.bg,
-                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-              }}>
+              <Card
+                id="call-transcripts-section"
+                className="border-0"
+                style={{
+                  background: colors.bg,
+                  boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                }}>
 
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
-                    <Brain className="w-5 h-5" />
-                    Call Analysis & Transcripts
-                  </CardTitle>
-                </CardHeader>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
+                      <Brain className="w-5 h-5" />
+                      Call Analysis & Transcripts
+                    </CardTitle>
+                  </CardHeader>
                 <CardContent>
                   <div className="space-y-4 max-h-[400px] overflow-y-auto">
                     {callTranscripts.map((transcript, index) =>
