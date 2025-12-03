@@ -157,13 +157,59 @@ export const ThemeProvider = ({ children }) => {
 
   // Get brightness-adjusted shadow for panels
   const getPanelStyle = (brightness = 0) => {
-    // brightness: -3 to +3, affects shadow intensity
+    // brightness: -3 to +3, affects shadow intensity AND face color
     const baseIntensity = 12;
     const adjustedIntensity = Math.max(4, baseIntensity + (brightness * 2));
     const glowOpacity = Math.min(0.3, 0.1 + (brightness * 0.05));
-    
+
+    // Calculate face brightness adjustment
+    // brightness 0 = normal cardBg
+    // brightness +3 = lighter face
+    // brightness -3 = almost black
+    const getFaceColor = () => {
+      if (brightness === 0) return currentColors.cardBg;
+
+      if (theme === 'dark') {
+        // Dark mode: base is #2a2e3a
+        const baseR = 42, baseG = 46, baseB = 58;
+        if (brightness > 0) {
+          // Lighten: +1 = +15, +2 = +30, +3 = +45
+          const adjust = brightness * 15;
+          const r = Math.min(255, baseR + adjust);
+          const g = Math.min(255, baseG + adjust);
+          const b = Math.min(255, baseB + adjust);
+          return `rgb(${r}, ${g}, ${b})`;
+        } else {
+          // Darken: -1 = -10, -2 = -20, -3 = -30 (almost black)
+          const adjust = Math.abs(brightness) * 10;
+          const r = Math.max(5, baseR - adjust);
+          const g = Math.max(5, baseG - adjust);
+          const b = Math.max(5, baseB - adjust);
+          return `rgb(${r}, ${g}, ${b})`;
+        }
+      } else {
+        // Light mode: base is #E0E5EC
+        const baseR = 224, baseG = 229, baseB = 236;
+        if (brightness > 0) {
+          // Lighten: +1 = +8, +2 = +16, +3 = +19 (nearly white)
+          const adjust = brightness * 8;
+          const r = Math.min(255, baseR + adjust);
+          const g = Math.min(255, baseG + adjust);
+          const b = Math.min(255, baseB + adjust);
+          return `rgb(${r}, ${g}, ${b})`;
+        } else {
+          // Darken: -1 = -30, -2 = -60, -3 = -90
+          const adjust = Math.abs(brightness) * 30;
+          const r = Math.max(20, baseR - adjust);
+          const g = Math.max(20, baseG - adjust);
+          const b = Math.max(20, baseB - adjust);
+          return `rgb(${r}, ${g}, ${b})`;
+        }
+      }
+    };
+
     return {
-      background: currentColors.cardBg,
+      background: getFaceColor(),
       boxShadow: brightness > 0 
         ? `0 0 ${adjustedIntensity * 2}px rgba(255,255,255,${glowOpacity}), ${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`
         : `${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`,
