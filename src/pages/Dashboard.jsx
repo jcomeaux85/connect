@@ -376,7 +376,7 @@ export default function Dashboard() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     {/* Recent Items List */}
-                    <div className="flex-1 space-y-1.5">
+                    <div className="flex-1 min-w-0 space-y-1.5">
                       {recentItems.length > 0 ? (
                         recentItems.map((item) => (
                           item.url ? (
