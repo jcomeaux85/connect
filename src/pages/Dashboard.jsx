@@ -84,6 +84,12 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
+  const { data: customers = [] } = useQuery({
+    queryKey: ['customers-for-dashboard'],
+    queryFn: () => base44.entities.Customer.list('-updated_date', 100),
+    enabled: !!user,
+  });
+
   // Filter data for current user
   const myCases = cases.filter(c => c.assigned_to === user?.email);
   const myTasks = tasks.filter(t => t.assigned_to === user?.email);
