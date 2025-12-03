@@ -70,32 +70,28 @@ export default function CollapsiblePanel({
     >
       {/* Vertical Brightness Slider - Left Edge */}
       <div 
-        className="absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-16 z-10 rounded-full"
+        className="absolute left-1 top-1/2 -translate-y-1/2 w-[3px] h-16 z-10 rounded-full"
         style={{
-          background: colors.bg,
-          boxShadow: `inset 1px 1px 3px ${colors.shadowDark}, inset -1px -1px 3px ${colors.shadowLight}`
+          background: colors.textTertiary + '40',
+          boxShadow: `inset 1px 1px 2px ${colors.shadowDark}`
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Track fill based on brightness */}
+        {/* Track fill based on brightness - always grey */}
         <div 
           className="absolute bottom-0 left-0 right-0 rounded-full transition-all duration-200"
           style={{
             height: `${((brightness + 3) / 6) * 100}%`,
-            background: accentColor 
-              ? `linear-gradient(to top, ${accentColor}60, ${accentColor})`
-              : `linear-gradient(to top, ${colors.textTertiary}40, ${colors.textSecondary})`,
-            boxShadow: brightness > 0 && accentColor ? `0 0 6px ${accentColor}80` : 'none'
+            background: colors.textTertiary + '80'
           }}
         />
-        {/* Draggable thumb */}
+        {/* Draggable thumb - keeps accent color */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full cursor-pointer hover:scale-125 transition-transform"
+          className="absolute left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full cursor-pointer hover:scale-150 transition-transform"
           style={{
-            bottom: `calc(${((brightness + 3) / 6) * 100}% - 6px)`,
+            bottom: `calc(${((brightness + 3) / 6) * 100}% - 3px)`,
             background: accentColor || colors.textSecondary,
-            boxShadow: `0 0 4px ${accentColor || colors.shadowDark}`,
-            border: `1px solid ${colors.shadowLight}`
+            boxShadow: accentColor ? `0 0 4px ${accentColor}` : 'none'
           }}
           onMouseDown={(e) => {
             e.stopPropagation();
