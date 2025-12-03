@@ -102,6 +102,10 @@ export default function CasePage() {
   const [showPDFViewer, setShowPDFViewer] = useState(false);
   const [pdfViewerUrl, setPdfViewerUrl] = useState(null);
   const [pdfViewerTitle, setPdfViewerTitle] = useState('');
+  
+  // Temporary transcript input for POC
+  const [manualTranscript, setManualTranscript] = useState('');
+  const [processingTranscript, setProcessingTranscript] = useState(false);
 
   const { colors, isDark } = useTheme(); // Destructure isDark here
   const { data: user } = useUser();
