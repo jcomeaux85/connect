@@ -21,18 +21,22 @@ import {
   MessageSquare,
   Search,
   Settings,
-  Edit3
+  Edit3,
+  Palette
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, isToday, parseISO } from "date-fns";
 import { useTheme } from "@/components/ThemeProvider";
 
 import DailyPlanner from "../components/dashboard/DailyPlanner";
+import CollapsiblePanel from "@/components/ui/CollapsiblePanel";
+import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [weather, setWeather] = useState(null);
-  const { colors } = useTheme();
+  const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
+  const { colors, getTransitionDuration } = useTheme();
 
   useEffect(() => {
     loadUser();
@@ -150,137 +154,170 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
       <div className="max-w-7xl mx-auto space-y-6">
+        {/* Customize Background Button */}
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={() => setShowBackgroundCustomizer(true)}
+            className="rounded-xl h-8 px-3 border-0 text-xs flex items-center gap-2"
+            style={{
+              background: colors.bg,
+              boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+              color: colors.textSecondary,
+              transition: `all ${getTransitionDuration(150)}`
+            }}
+          >
+            <Palette className="w-3 h-3" />
+            Customize
+          </button>
+        </div>
+
         {/* Top Row - Greeting and Daily Planner */}
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Weather Card */}
+          {/* Weather Card - Now Collapsible */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card
-              className="border-0 h-full"
-              style={{
-                background: colors.bg,
-                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-              }}
-            >
-              <CardContent className="p-6">
-                {/* Time and Weather Row */}
-                <div className="flex items-center justify-between mb-4">
+            <CollapsiblePanel
+              title="Doc"
+              icon={Sun}
+              storageKey="dashboard-weather"
+              condensedContent={
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-4xl font-bold" style={{ color: colors.text }}>
-                      8:15 <span className="text-2xl" style={{ color: colors.textSecondary }}>AM</span>
-                    </h2>
+                    <span className="text-lg font-bold" style={{ color: colors.text }}>
+                      {format(new Date(), 'h:mm')} <span className="text-sm" style={{ color: colors.textSecondary }}>{format(new Date(), 'a')}</span>
+                    </span>
+                    {weather && (
+                      <span className="text-sm" style={{ color: colors.textSecondary }}>
+                        {weather.temp}° {weather.condition}
+                      </span>
+                    )}
                   </div>
-                  
-                  {weather && (
-                    <div className="flex items-center gap-4">
-                      <div
-                        className="w-16 h-16 rounded-3xl flex items-center justify-center"
-                        style={{
-                          background: colors.bg,
-                          boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`
-                        }}
-                      >
-                        <WeatherIcon className="w-8 h-8" style={{ color: '#3B82F6' }} />
-                      </div>
-                      <div>
-                        <p className="text-3xl font-bold" style={{ color: colors.text }}>
-                          {weather.temp}°
-                        </p>
-                        <p className="text-sm" style={{ color: colors.textSecondary }}>
-                          {weather.condition}
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                  <span className="text-xs" style={{ color: colors.textTertiary }}>
+                    {format(new Date(), 'EEE, MMM d')}
+                  </span>
                 </div>
-
-                {/* Other Time Zones - Centered */}
+              }
+            >
+              {/* Time and Weather Row */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-4xl font-bold" style={{ color: colors.text }}>
+                    {format(new Date(), 'h:mm')} <span className="text-2xl" style={{ color: colors.textSecondary }}>{format(new Date(), 'a')}</span>
+                  </h2>
+                </div>
+                
                 {weather && (
-                  <div className="flex flex-row gap-2 text-xs justify-center mb-4" style={{ color: colors.textTertiary }}>
-                    <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                      PST: 6:15 AM
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="w-16 h-16 rounded-3xl flex items-center justify-center"
+                      style={{
+                        background: colors.bg,
+                        boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`
+                      }}
+                    >
+                      <WeatherIcon className="w-8 h-8" style={{ color: '#3B82F6' }} />
                     </div>
-                    <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                      MST: 7:15 AM
-                    </div>
-                    <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                      EST: 9:15 AM
+                    <div>
+                      <p className="text-3xl font-bold" style={{ color: colors.text }}>
+                        {weather.temp}°
+                      </p>
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
+                        {weather.condition}
+                      </p>
                     </div>
                   </div>
                 )}
+              </div>
 
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h2 className="text-3xl font-bold mb-1" style={{ color: colors.text }}>
-                      Doc
-                    </h2>
-                    {weather && (
-                      <p className="text-sm" style={{ color: colors.textSecondary }}>
-                        {format(new Date(), 'EEEE, MMMM d')}
-                      </p>
-                    )}
+              {/* Other Time Zones - Centered */}
+              {weather && (
+                <div className="flex flex-row gap-2 text-xs justify-center mb-4" style={{ color: colors.textTertiary }}>
+                  <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                    PST: {format(new Date(), 'h:mm a')}
+                  </div>
+                  <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                    MST: {format(new Date(), 'h:mm a')}
+                  </div>
+                  <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
+                    EST: {format(new Date(), 'h:mm a')}
                   </div>
                 </div>
+              )}
 
-                {/* Quick Action Buttons */}
-                <div className="flex gap-2">
-                  <Link to={createPageUrl("Cases")} className="flex-1">
-                    <button
-                      className="w-full rounded-2xl h-10 px-3 border-0 text-sm flex items-center justify-center gap-2"
-                      style={{
-                        background: colors.bg,
-                        boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
-                        color: colors.textSecondary
-                      }}
-                    >
-                      <Folder className="w-4 h-4" />
-                      Cases
-                    </button>
-                  </Link>
-                  <Link to={createPageUrl("Customers")} className="flex-1">
-                    <button
-                      className="w-full rounded-2xl h-10 px-3 border-0 text-sm flex items-center justify-center gap-2"
-                      style={{
-                        background: colors.bg,
-                        boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
-                        color: colors.textSecondary
-                      }}
-                    >
-                      <User className="w-4 h-4" />
-                      Customers
-                    </button>
-                  </Link>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-sm" style={{ color: colors.textSecondary }}>
+                    {format(new Date(), 'EEEE, MMMM d')}
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+
+              {/* Quick Action Buttons */}
+              <div className="flex gap-2">
+                <Link to={createPageUrl("Cases")} className="flex-1">
+                  <button
+                    className="w-full rounded-2xl h-10 px-3 border-0 text-sm flex items-center justify-center gap-2"
+                    style={{
+                      background: colors.bg,
+                      boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+                      color: colors.textSecondary,
+                      transition: `all ${getTransitionDuration(150)}`
+                    }}
+                  >
+                    <Folder className="w-4 h-4" />
+                    Cases
+                  </button>
+                </Link>
+                <Link to={createPageUrl("Customers")} className="flex-1">
+                  <button
+                    className="w-full rounded-2xl h-10 px-3 border-0 text-sm flex items-center justify-center gap-2"
+                    style={{
+                      background: colors.bg,
+                      boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+                      color: colors.textSecondary,
+                      transition: `all ${getTransitionDuration(150)}`
+                    }}
+                  >
+                    <User className="w-4 h-4" />
+                    Customers
+                  </button>
+                </Link>
+              </div>
+            </CollapsiblePanel>
           </motion.div>
 
-          {/* Daily Planner */}
+          {/* Daily Planner - Now Collapsible */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="lg:col-span-2"
           >
-            <Card
-              className="border-0 h-full"
-              style={{
-                background: colors.bg,
-                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-              }}
+            <CollapsiblePanel
+              title="Daily Planner"
+              icon={CalendarIcon}
+              storageKey="dashboard-planner"
+              headerExtra={
+                <span className="text-xs" style={{ color: colors.textSecondary }}>
+                  {activeCases} active · {urgentCases} urgent
+                </span>
+              }
+              condensedContent={
+                <div className="flex items-center justify-between">
+                  <span className="text-sm" style={{ color: colors.text }}>
+                    {activeCases} active cases
+                  </span>
+                  <span className="text-xs" style={{ color: urgentCases > 0 ? '#EF4444' : colors.textTertiary }}>
+                    {urgentCases > 0 ? `${urgentCases} urgent` : 'No urgent'}
+                  </span>
+                </div>
+              }
             >
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <p className="text-sm" style={{ color: colors.textSecondary }}>
-                  You have {activeCases} active {activeCases === 1 ? 'case' : 'cases'} · {urgentCases} urgent
-                </p>
-              </CardHeader>
-              <CardContent>
-                <DailyPlanner />
-              </CardContent>
-            </Card>
+              <DailyPlanner />
+            </CollapsiblePanel>
           </motion.div>
         </div>
 
@@ -439,6 +476,12 @@ export default function Dashboard() {
           </Card>
         </motion.div>
       </div>
+
+      {/* Background Customizer Modal */}
+      <BackgroundCustomizer 
+        isOpen={showBackgroundCustomizer} 
+        onClose={() => setShowBackgroundCustomizer(false)} 
+      />
     </div>
   );
 }
