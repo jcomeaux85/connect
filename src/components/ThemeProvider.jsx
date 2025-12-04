@@ -230,14 +230,23 @@ export const ThemeProvider = ({ children }) => {
       return `rgb(${adjustedValue}, ${adjustedValue}, ${adjustedValue})`;
     };
 
+    // Calculate text glow for brighter text
+    const getTextGlow = () => {
+      if (theme !== 'dark' || brightness <= 0) return 'none';
+      const glowStrength = brightness * 2; // 0-6px
+      const glowOpacity = brightness * 0.1; // 0-0.3
+      return `0 0 ${glowStrength}px rgba(255,255,255,${glowOpacity})`;
+    };
+
     return {
       background: getFaceColor(),
       boxShadow: brightness > 0 
         ? `0 0 ${adjustedIntensity * 2}px rgba(255,255,255,${glowOpacity}), ${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`
         : `${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`,
       textColor: getAdjustedTextColor(),
+      textShadow: getTextGlow(),
     };
-  };
+    };
 
   // Transition duration with 5% slower default
   const getTransitionDuration = (baseMs = 150) => {
