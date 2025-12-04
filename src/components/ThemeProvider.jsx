@@ -208,11 +208,34 @@ export const ThemeProvider = ({ children }) => {
       }
     };
 
+    // Calculate text color for dark mode based on brightness
+    // brightness 0 = #f5f5f5, +3 = #ffffff, -3 = #eaeaea
+    const getAdjustedTextColor = () => {
+      if (theme !== 'dark') return currentColors.text;
+
+      // Base is #f5f5f5 (245, 245, 245) at brightness 0
+      // +3 should be #ffffff (255, 255, 255)
+      // -3 should be #eaeaea (234, 234, 234)
+      const baseValue = 245;
+      let adjustedValue;
+
+      if (brightness >= 0) {
+        // 0 to +3: 245 to 255 (10 units over 3 steps)
+        adjustedValue = Math.min(255, baseValue + Math.round(brightness * (10 / 3)));
+      } else {
+        // 0 to -3: 245 to 234 (11 units over 3 steps)
+        adjustedValue = Math.max(234, baseValue + Math.round(brightness * (11 / 3)));
+      }
+
+      return `rgb(${adjustedValue}, ${adjustedValue}, ${adjustedValue})`;
+    };
+
     return {
       background: getFaceColor(),
       boxShadow: brightness > 0 
         ? `0 0 ${adjustedIntensity * 2}px rgba(255,255,255,${glowOpacity}), ${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`
         : `${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`,
+      textColor: getAdjustedTextColor(),
     };
   };
 
