@@ -209,22 +209,22 @@ export const ThemeProvider = ({ children }) => {
     };
 
     // Calculate text color for dark mode based on brightness
-    // brightness 0 = #f5f5f5, +3 = #ffffff, -3 = #eaeaea
+    // brightness 0 = #d0d0d0, +3 = #ffffff, -3 = #909090
     const getAdjustedTextColor = () => {
       if (theme !== 'dark') return currentColors.text;
 
-      // Base is #f5f5f5 (245, 245, 245) at brightness 0
-      // +3 should be #ffffff (255, 255, 255)
-      // -3 should be #eaeaea (234, 234, 234)
-      const baseValue = 245;
+      // Base is #d0d0d0 (208) at brightness 0
+      // +3 should be #ffffff (255)
+      // -3 should be #909090 (144)
+      const baseValue = 208;
       let adjustedValue;
 
       if (brightness >= 0) {
-        // 0 to +3: 245 to 255 (10 units over 3 steps)
-        adjustedValue = Math.min(255, baseValue + Math.round(brightness * (10 / 3)));
+        // 0 to +3: 208 to 255 (47 units over 3 steps)
+        adjustedValue = Math.min(255, baseValue + Math.round(brightness * (47 / 3)));
       } else {
-        // 0 to -3: 245 to 234 (11 units over 3 steps)
-        adjustedValue = Math.max(234, baseValue + Math.round(brightness * (11 / 3)));
+        // 0 to -3: 208 to 144 (64 units over 3 steps)
+        adjustedValue = Math.max(144, baseValue + Math.round(brightness * (64 / 3)));
       }
 
       return `rgb(${adjustedValue}, ${adjustedValue}, ${adjustedValue})`;
