@@ -165,7 +165,7 @@ export default function CollapsiblePanel({
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: parseFloat(getTransitionDuration(200)) / 1000 }}
               className="overflow-hidden"
-              style={{ color: panelStyle.textColor || colors.text }}
+              style={{ color: panelStyle.textColor || colors.text, textShadow: panelStyle.textShadow || 'none' }}
             >
               <div className="px-4 pl-7 pb-3">
                 {condensedContent}
