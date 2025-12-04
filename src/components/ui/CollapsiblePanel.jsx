@@ -53,10 +53,20 @@ export default function CollapsiblePanel({
   
   // Calculate glow based on brightness and accent color
   const getGlowStyle = () => {
-    if (brightness <= 0 || !accentColor) return {};
+    if (!accentColor) return {};
+    
+    // Always show a tight rim/border glow for accent color panels
+    const rimGlow = `inset 0 0 0 1px ${accentColor}30`;
+    
+    if (brightness <= 0) {
+      return {
+        boxShadow: `${rimGlow}, ${panelStyle.boxShadow}`
+      };
+    }
+    
     const glowIntensity = brightness * 10;
     return {
-      boxShadow: `0 0 ${glowIntensity * 2}px ${accentColor}40, 0 0 ${glowIntensity * 4}px ${accentColor}20, ${panelStyle.boxShadow}`
+      boxShadow: `${rimGlow}, 0 0 ${glowIntensity * 2}px ${accentColor}40, 0 0 ${glowIntensity * 4}px ${accentColor}20, ${panelStyle.boxShadow}`
     };
   };
 
