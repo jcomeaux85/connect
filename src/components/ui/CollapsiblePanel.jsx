@@ -136,7 +136,7 @@ export default function CollapsiblePanel({
             </div>
           )}
           {title && (
-            <h3 className="font-semibold text-sm" style={{ color: panelStyle.textColor || colors.text }}>
+            <h3 className="font-semibold text-sm" style={{ color: panelStyle.textColor || colors.text, textShadow: panelStyle.textShadow || 'none' }}>
               {title}
             </h3>
           )}
