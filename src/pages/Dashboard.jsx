@@ -30,6 +30,8 @@ import { useTheme } from "@/components/ThemeProvider";
 import DailyPlanner from "../components/dashboard/DailyPlanner";
 import CollapsiblePanel from "@/components/ui/CollapsiblePanel";
 import DraggableDashboard from "../components/dashboard/DraggableDashboard";
+import LayoutSelector from "../components/settings/LayoutSelector";
+import { LayoutGrid } from 'lucide-react';
 
 
 export default function Dashboard() {

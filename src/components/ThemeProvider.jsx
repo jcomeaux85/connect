@@ -26,6 +26,11 @@ export const ThemeProvider = ({ children }) => {
     return saved ? parseFloat(saved) : 1.05; // 5% slower = 1.05x
   });
 
+  const [dashboardLayout, setDashboardLayout] = useState(() => {
+    const saved = localStorage.getItem('dashboardLayout');
+    return saved || 'grid';
+  });
+
   useEffect(() => {
     localStorage.setItem('theme', theme);
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -39,6 +44,10 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem('transitionSpeed', transitionSpeed.toString());
     document.documentElement.style.setProperty('--transition-speed', `${transitionSpeed}`);
   }, [transitionSpeed]);
+
+  useEffect(() => {
+    localStorage.setItem('dashboardLayout', dashboardLayout);
+  }, [dashboardLayout]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
@@ -267,6 +276,8 @@ export const ThemeProvider = ({ children }) => {
     backgroundSettings,
     updateBackgroundSettings,
     transitionSpeed,
+    dashboardLayout,
+    setDashboardLayout,
     isDark: theme === 'dark',
   };
 
