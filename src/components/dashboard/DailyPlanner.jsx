@@ -176,10 +176,12 @@ export default function DailyPlanner({ user, greeting, activeCases, urgentCases 
                       onClick={() => setSelectedDate(day)}
                       className="relative p-1 rounded-lg flex items-center justify-center h-6 w-6 md:h-7 md:w-7 mx-auto transition-all"
                       style={{
-                        color: isToday || isSelected ? colors.text : colors.text,
+                        color: colors.text,
                         background: colors.bg,
                         fontWeight: isToday || isSelected ? 'bold' : 'normal',
-                        boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+                        boxShadow: isToday || isSelected 
+                          ? `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+                          : 'none'
                       }}
                     >
                       {format(day, 'd')}
