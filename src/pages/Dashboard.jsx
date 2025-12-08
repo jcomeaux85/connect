@@ -37,6 +37,7 @@ import { LayoutGrid } from 'lucide-react';
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [weather, setWeather] = useState(null);
+  const [showLayoutSelector, setShowLayoutSelector] = useState(false);
   const { colors, getTransitionDuration } = useTheme();
 
   useEffect(() => {
@@ -525,8 +526,30 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
-      <DraggableDashboard panels={dashboardPanels} />
-
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold" style={{ color: colors.text }}>Dashboard</h1>
+          <button
+            onClick={() => setShowLayoutSelector(true)}
+            className="rounded-2xl h-12 px-6 border-0 flex items-center gap-2"
+            style={{
+              background: colors.bg,
+              boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`,
+              color: colors.textSecondary
+            }}
+          >
+            <LayoutGrid className="w-5 h-5" />
+            Change Layout
+          </button>
+        </div>
+        
+        <DraggableDashboard panels={dashboardPanels} />
+        
+        <LayoutSelector 
+          isOpen={showLayoutSelector} 
+          onClose={() => setShowLayoutSelector(false)} 
+        />
+      </div>
     </div>
   );
 }
