@@ -78,6 +78,20 @@ export const ThemeProvider = ({ children }) => {
       
       insetBg: '#E0E5EC',
       insetShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+      
+      // Vibrant colors for both modes
+      primary: '#3B82F6',
+      success: '#10B981',
+      warning: '#F59E0B',
+      danger: '#EF4444',
+      info: '#06B6D4',
+      purple: '#8B5CF6',
+      pink: '#EC4899',
+      indigo: '#6366F1',
+      
+      outerShadow: '8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff',
+      innerShadow: 'inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff',
+      cardShadow: '10px 10px 20px #a3b1c6, -10px -10px 20px #ffffff',
     },
     dark: {
       bg: '#2a2e3a',
@@ -100,12 +114,15 @@ export const ThemeProvider = ({ children }) => {
       insetBg: '#2a2e3a',
       insetShadow: 'inset 3px 3px 6px #1f232d, inset -3px -3px 6px #353945',
       
+      // Vibrant colors for both modes
       primary: '#3B82F6',
       success: '#10B981',
       warning: '#F59E0B',
       danger: '#EF4444',
       info: '#06B6D4',
       purple: '#8B5CF6',
+      pink: '#EC4899',
+      indigo: '#6366F1',
       
       outerShadow: '10px 10px 20px #1f232d, -10px -10px 20px #353945',
       innerShadow: 'inset 4px 4px 8px #1f232d, inset -4px -4px 8px #353945',
