@@ -182,31 +182,52 @@ export const ThemeProvider = ({ children }) => {
   };
 
   // Get brightness-adjusted shadow for panels
-  const getPanelStyle = (brightness = 0) => {
+  const getPanelStyle = (brightness = 0, accentColor = null) => {
     // brightness: -3 to +3, affects shadow intensity AND face color
     const baseIntensity = 12;
     const adjustedIntensity = Math.max(4, baseIntensity + (brightness * 2));
     const glowOpacity = Math.min(0.3, 0.1 + (brightness * 0.05));
 
-    // Calculate face brightness adjustment
-    // brightness 0 = normal cardBg
-    // brightness +3 = lighter face
-    // brightness -3 = almost black
+    // Calculate face color with accent color bleed-through
     const getFaceColor = () => {
       if (brightness === 0) return currentColors.cardBg;
 
+      // If we have an accent color and brightness > 0, blend it in
+      if (accentColor && brightness > 0) {
+        // Parse accent color
+        const hex = accentColor.replace('#', '');
+        const accentR = parseInt(hex.substr(0, 2), 16);
+        const accentG = parseInt(hex.substr(2, 2), 16);
+        const accentB = parseInt(hex.substr(4, 2), 16);
+
+        if (theme === 'dark') {
+          const baseR = 42, baseG = 46, baseB = 58;
+          // Blend accent color at 10-30% strength based on brightness
+          const blendStrength = brightness * 0.10; // 10% at +1, 20% at +2, 30% at +3
+          const r = Math.round(baseR + (accentR - baseR) * blendStrength);
+          const g = Math.round(baseG + (accentG - baseG) * blendStrength);
+          const b = Math.round(baseB + (accentB - baseB) * blendStrength);
+          return `rgb(${r}, ${g}, ${b})`;
+        } else {
+          const baseR = 224, baseG = 229, baseB = 236;
+          const blendStrength = brightness * 0.08; // 8% at +1, 16% at +2, 24% at +3
+          const r = Math.round(baseR + (accentR - baseR) * blendStrength);
+          const g = Math.round(baseG + (accentG - baseG) * blendStrength);
+          const b = Math.round(baseB + (accentB - baseB) * blendStrength);
+          return `rgb(${r}, ${g}, ${b})`;
+        }
+      }
+
+      // No accent color, use original logic
       if (theme === 'dark') {
-        // Dark mode: base is #2a2e3a
         const baseR = 42, baseG = 46, baseB = 58;
         if (brightness > 0) {
-          // Lighten: +1 = +15, +2 = +30, +3 = +45
           const adjust = brightness * 15;
           const r = Math.min(255, baseR + adjust);
           const g = Math.min(255, baseG + adjust);
           const b = Math.min(255, baseB + adjust);
           return `rgb(${r}, ${g}, ${b})`;
         } else {
-          // Darken: -1 = -10, -2 = -20, -3 = -30 (almost black)
           const adjust = Math.abs(brightness) * 10;
           const r = Math.max(5, baseR - adjust);
           const g = Math.max(5, baseG - adjust);
@@ -214,17 +235,14 @@ export const ThemeProvider = ({ children }) => {
           return `rgb(${r}, ${g}, ${b})`;
         }
       } else {
-        // Light mode: base is #E0E5EC
         const baseR = 224, baseG = 229, baseB = 236;
         if (brightness > 0) {
-          // Lighten: +1 = +8, +2 = +16, +3 = +19 (nearly white)
           const adjust = brightness * 8;
           const r = Math.min(255, baseR + adjust);
           const g = Math.min(255, baseG + adjust);
           const b = Math.min(255, baseB + adjust);
           return `rgb(${r}, ${g}, ${b})`;
         } else {
-          // Darken: -1 = -30, -2 = -60, -3 = -90
           const adjust = Math.abs(brightness) * 30;
           const r = Math.max(20, baseR - adjust);
           const g = Math.max(20, baseG - adjust);

@@ -49,7 +49,7 @@ export default function CollapsiblePanel({
     setBrightness(prev => Math.max(-3, Math.min(3, prev + delta)));
   };
 
-  const panelStyle = getPanelStyle(brightness);
+  const panelStyle = getPanelStyle(brightness, accentColor);
   
   // Calculate glow based on brightness and accent color
   const getGlowStyle = () => {
