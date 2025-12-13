@@ -1,15 +1,15 @@
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Bell,
   MessageSquare,
   AlertCircle,
+  CheckCircle2,
   Megaphone,
   X,
   Check,
@@ -18,8 +18,10 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function NotificationCenter({ user, isOpen, onClose }) {
+  const { colors } = useTheme();
   const queryClient = useQueryClient();
   const [selectedTab, setSelectedTab] = useState("all");
 
@@ -103,25 +105,25 @@ export default function NotificationCenter({ user, isOpen, onClose }) {
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 300 }}
         className="fixed right-0 top-0 h-full w-full md:w-[480px] z-50 shadow-2xl"
-        style={{ background: '#E0E5EC' }}
+        style={{ background: colors.bg }}
       >
-        <Card className="h-full border-0 rounded-none" style={{ background: '#E0E5EC' }}>
-          <CardHeader className="border-b" style={{ borderColor: '#D1D9E6' }}>
+        <Card className="h-full border-0 rounded-none" style={{ background: colors.bg }}>
+          <CardHeader className="border-b" style={{ borderColor: colors.border }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div 
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
                   style={{
-                    background: 'linear-gradient(145deg, #dbeafe, #bfdbfe)',
-                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
+                    background: colors.bg,
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
                 >
-                  <Bell className="w-5 h-5" style={{ color: '#3b82f6' }} />
+                  <Bell className="w-5 h-5" style={{ color: colors.primary }} />
                 </div>
                 <div>
-                  <CardTitle style={{ color: '#374151' }}>Notifications</CardTitle>
+                  <CardTitle style={{ color: colors.text }}>Notifications</CardTitle>
                   {unreadCount > 0 && (
-                    <p className="text-xs mt-1" style={{ color: '#6B7280' }}>
+                    <p className="text-xs mt-1" style={{ color: colors.textSecondary }}>
                       {unreadCount} unread
                     </p>
                   )}
@@ -152,8 +154,8 @@ export default function NotificationCenter({ user, isOpen, onClose }) {
           </CardHeader>
 
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="h-[calc(100%-80px)]">
-            <div className="px-6 py-3 border-b" style={{ borderColor: '#D1D9E6' }}>
-              <TabsList className="w-full grid grid-cols-4 gap-2" style={{ background: '#E0E5EC' }}>
+            <div className="px-6 py-3 border-b" style={{ borderColor: colors.border }}>
+              <TabsList className="w-full grid grid-cols-4 gap-2" style={{ background: colors.bg }}>
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="unread">
                   Unread
@@ -167,19 +169,19 @@ export default function NotificationCenter({ user, isOpen, onClose }) {
             </div>
 
             <CardContent className="p-0 h-[calc(100%-120px)] overflow-y-auto">
-              <div className="divide-y" style={{ borderColor: '#D1D9E6' }}>
+              <div className="divide-y" style={{ borderColor: colors.border }}>
                 {filteredNotifications.length === 0 ? (
                   <div className="text-center py-12 px-6">
                     <div 
                       className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
                       style={{
-                        background: '#E0E5EC',
-                        boxShadow: 'inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff'
+                        background: colors.bg,
+                        boxShadow: `inset 6px 6px 12px ${colors.shadowDark}, inset -6px -6px 12px ${colors.shadowLight}`
                       }}
                     >
-                      <Bell className="w-8 h-8" style={{ color: '#9CA3AF' }} />
+                      <Bell className="w-8 h-8" style={{ color: colors.textTertiary }} />
                     </div>
-                    <p style={{ color: '#6B7280' }}>No notifications</p>
+                    <p style={{ color: colors.textSecondary }}>No notifications</p>
                   </div>
                 ) : (
                   filteredNotifications.map((notification) => (
@@ -205,18 +207,18 @@ export default function NotificationCenter({ user, isOpen, onClose }) {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
-                            <h4 className="font-semibold text-sm" style={{ color: '#374151' }}>
+                            <h4 className="font-semibold text-sm" style={{ color: colors.text }}>
                               {notification.title}
                             </h4>
                             {!notification.is_read && (
-                              <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1" />
+                              <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1" style={{ background: colors.primary }} />
                             )}
                           </div>
-                          <p className="text-sm mb-2" style={{ color: '#6B7280' }}>
+                          <p className="text-sm mb-2" style={{ color: colors.textSecondary }}>
                             {notification.message}
                           </p>
                           <div className="flex items-center justify-between">
-                            <span className="text-xs" style={{ color: '#9CA3AF' }}>
+                            <span className="text-xs" style={{ color: colors.textTertiary }}>
                               {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true })}
                             </span>
                             <div className="flex items-center gap-1">

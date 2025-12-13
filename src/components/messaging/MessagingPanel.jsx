@@ -22,8 +22,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow, format } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function MessagingPanel({ user, isOpen, onClose }) {
+  const { colors } = useTheme();
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedPhone, setSelectedPhone] = useState(null);
@@ -216,25 +218,25 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 300 }}
         className="fixed right-0 top-0 h-full w-full md:w-[600px] z-50 shadow-2xl"
-        style={{ background: '#E0E5EC' }}
+        style={{ background: colors.bg }}
       >
-        <Card className="h-full border-0 rounded-none" style={{ background: '#E0E5EC' }}>
-          <CardHeader className="border-b" style={{ borderColor: '#D1D9E6' }}>
+        <Card className="h-full border-0 rounded-none" style={{ background: colors.bg }}>
+          <CardHeader className="border-b" style={{ borderColor: colors.border }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div 
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
                   style={{
-                    background: 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
-                    boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
+                    background: colors.bg,
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
                 >
-                  <MessageSquare className="w-5 h-5" style={{ color: '#16a34a' }} />
+                  <MessageSquare className="w-5 h-5" style={{ color: colors.success }} />
                 </div>
                 <div>
-                  <CardTitle style={{ color: '#374151' }}>Messages</CardTitle>
+                  <CardTitle style={{ color: colors.text }}>Messages</CardTitle>
                   {totalUnread > 0 && (
-                    <p className="text-xs mt-1" style={{ color: '#6B7280' }}>
+                    <p className="text-xs mt-1" style={{ color: colors.textSecondary }}>
                       {totalUnread} unread
                     </p>
                   )}
@@ -253,8 +255,8 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
               <TabsList className="grid w-full grid-cols-2 rounded-xl" style={{
-                background: '#E0E5EC',
-                boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
+                background: colors.bg,
+                boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
               }}>
                 <TabsTrigger value="team" className="rounded-xl">
                   <Users className="w-4 h-4 mr-2" />
@@ -270,25 +272,26 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
 
           <div className="flex h-[calc(100%-160px)]">
             {/* Conversations List */}
-            <div className="w-1/3 border-r overflow-y-auto" style={{ borderColor: '#D1D9E6' }}>
+            <div className="w-1/3 border-r overflow-y-auto" style={{ borderColor: colors.border }}>
               <div className="p-3">
                 <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: '#9CA3AF' }} />
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: colors.textTertiary }} />
                   <Input
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 rounded-xl border-0 h-10"
                     style={{
-                      background: '#E0E5EC',
-                      boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
+                      background: colors.bg,
+                      boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`,
+                      color: colors.text
                     }}
                   />
                 </div>
               </div>
 
               {activeTab === 'team' && (
-                <div className="divide-y" style={{ borderColor: '#D1D9E6' }}>
+                <div className="divide-y" style={{ borderColor: colors.border }}>
                   {conversations.map((conv) => (
                     <button
                       key={conv.user.email}
@@ -307,27 +310,27 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                         <div 
                           className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
                           style={{
-                            background: 'linear-gradient(145deg, #dbeafe, #bfdbfe)',
-                            boxShadow: '3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff'
+                            background: colors.bg,
+                            boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
                           }}
                         >
-                          <span className="font-semibold text-sm" style={{ color: '#3b82f6' }}>
+                          <span className="font-semibold text-sm" style={{ color: colors.primary }}>
                             {conv.user.full_name?.charAt(0) || 'U'}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="font-semibold text-sm truncate" style={{ color: '#374151' }}>
+                            <p className="font-semibold text-sm truncate" style={{ color: colors.text }}>
                               {conv.user.full_name}
                             </p>
                             {conv.unreadCount > 0 && (
-                              <span className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+                              <span className="text-white text-xs px-2 py-0.5 rounded-full" style={{ background: colors.primary }}>
                                 {conv.unreadCount}
                               </span>
                             )}
                           </div>
                           {conv.lastMessage && (
-                            <p className="text-xs truncate" style={{ color: '#9CA3AF' }}>
+                            <p className="text-xs truncate" style={{ color: colors.textTertiary }}>
                               {conv.lastMessage.sender_email === user.email ? 'You: ' : ''}
                               {conv.lastMessage.content}
                             </p>
@@ -340,7 +343,7 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
               )}
 
               {activeTab === 'sms' && (
-                <div className="divide-y" style={{ borderColor: '#D1D9E6' }}>
+                <div className="divide-y" style={{ borderColor: colors.border }}>
                   {smsThreadList.map((thread) => (
                     <button
                       key={thread.phone}
@@ -356,26 +359,26 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                         <div 
                           className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
                           style={{
-                            background: 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
-                            boxShadow: '3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff'
+                            background: colors.bg,
+                            boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
                           }}
                         >
-                          <Phone className="w-4 h-4" style={{ color: '#16a34a' }} />
+                          <Phone className="w-4 h-4" style={{ color: colors.success }} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm truncate" style={{ color: '#374151' }}>
+                          <p className="font-semibold text-sm truncate" style={{ color: colors.text }}>
                             {thread.customer 
                               ? `${thread.customer.first_name} ${thread.customer.last_name}`
                               : thread.phone
                             }
                           </p>
                           {thread.customer && (
-                            <p className="text-xs" style={{ color: '#6B7280' }}>
+                            <p className="text-xs" style={{ color: colors.textSecondary }}>
                               {thread.phone}
                             </p>
                           )}
                           {thread.lastMessage && (
-                            <p className="text-xs truncate mt-1" style={{ color: '#9CA3AF' }}>
+                            <p className="text-xs truncate mt-1" style={{ color: colors.textTertiary }}>
                               {thread.lastMessage.direction === 'sent' ? 'You: ' : ''}
                               {thread.lastMessage.message}
                             </p>
@@ -386,7 +389,7 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                   ))}
                   {smsThreadList.length === 0 && (
                     <div className="p-4 text-center">
-                      <p className="text-sm" style={{ color: '#9CA3AF' }}>No SMS conversations</p>
+                      <p className="text-sm" style={{ color: colors.textTertiary }}>No SMS conversations</p>
                     </div>
                   )}
                 </div>
@@ -398,24 +401,24 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
               {activeTab === 'team' && selectedUser ? (
                 <>
                   {/* Conversation Header */}
-                  <div className="p-4 border-b" style={{ borderColor: '#D1D9E6' }}>
+                  <div className="p-4 border-b" style={{ borderColor: colors.border }}>
                     <div className="flex items-center gap-3">
                       <div 
                         className="w-12 h-12 rounded-full flex items-center justify-center"
                         style={{
-                          background: 'linear-gradient(145deg, #dbeafe, #bfdbfe)',
-                          boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
+                          background: colors.bg,
+                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                         }}
                       >
-                        <span className="font-bold" style={{ color: '#3b82f6' }}>
+                        <span className="font-bold" style={{ color: colors.primary }}>
                           {selectedUser.full_name?.charAt(0) || 'U'}
                         </span>
                       </div>
                       <div>
-                        <h3 className="font-semibold" style={{ color: '#374151' }}>
+                        <h3 className="font-semibold" style={{ color: colors.text }}>
                           {selectedUser.full_name}
                         </h3>
-                        <p className="text-xs" style={{ color: '#6B7280' }}>
+                        <p className="text-xs" style={{ color: colors.textSecondary }}>
                           {selectedUser.email}
                         </p>
                       </div>
@@ -426,7 +429,7 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {conversation.length === 0 ? (
                       <div className="text-center py-12">
-                        <p style={{ color: '#9CA3AF' }}>No messages yet. Start a conversation!</p>
+                        <p style={{ color: colors.textTertiary }}>No messages yet. Start a conversation!</p>
                       </div>
                     ) : (
                       conversation.map((message) => (
@@ -437,20 +440,21 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                           className={`flex ${message.sender_email === user.email ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[70%] p-3 rounded-2xl ${
-                              message.sender_email === user.email
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-white'
-                            }`}
-                            style={message.sender_email !== user.email ? {
-                              boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
-                            } : {}}
+                            className={`max-w-[70%] p-3 rounded-2xl`}
+                            style={message.sender_email === user.email ? {
+                              background: colors.primary,
+                              color: '#ffffff'
+                            } : {
+                              background: colors.bg,
+                              boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+                              color: colors.text
+                            }}
                           >
                             <p className="text-sm">{message.content}</p>
                             <p 
                               className="text-xs mt-1"
                               style={{ 
-                                color: message.sender_email === user.email ? '#dbeafe' : '#9CA3AF' 
+                                color: message.sender_email === user.email ? 'rgba(255,255,255,0.7)' : colors.textTertiary
                               }}
                             >
                               {format(new Date(message.created_date), 'h:mm a')}
@@ -462,7 +466,7 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                   </div>
 
                   {/* Message Input */}
-                  <div className="p-4 border-t" style={{ borderColor: '#D1D9E6' }}>
+                  <div className="p-4 border-t" style={{ borderColor: colors.border }}>
                     <div className="flex gap-2">
                       <Input
                         value={messageText}
@@ -471,8 +475,9 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                         onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
                         className="rounded-2xl border-0"
                         style={{
-                          background: '#E0E5EC',
-                          boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
+                          background: colors.bg,
+                          boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`,
+                          color: colors.text
                         }}
                       />
                       <Button
@@ -480,9 +485,9 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                         disabled={!messageText.trim()}
                         className="rounded-2xl px-6 border-0"
                         style={{
-                          background: 'linear-gradient(145deg, #dbeafe, #bfdbfe)',
-                          boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                          color: '#3b82f6'
+                          background: colors.bg,
+                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+                          color: colors.primary
                         }}
                       >
                         <Send className="w-4 h-4" />
@@ -493,32 +498,32 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
               ) : activeTab === 'sms' && selectedPhone ? (
                 <>
                   {/* SMS Conversation Header */}
-                  <div className="p-4 border-b" style={{ borderColor: '#D1D9E6' }}>
+                  <div className="p-4 border-b" style={{ borderColor: colors.border }}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div 
                           className="w-12 h-12 rounded-full flex items-center justify-center"
                           style={{
-                            background: 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
-                            boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
+                            background: colors.bg,
+                            boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                           }}
                         >
-                          <Phone className="w-5 h-5" style={{ color: '#16a34a' }} />
+                          <Phone className="w-5 h-5" style={{ color: colors.success }} />
                         </div>
                         <div>
                           {(() => {
                             const customer = customers.find(c => c.primary_phone === selectedPhone);
                             return customer ? (
                               <>
-                                <h3 className="font-semibold" style={{ color: '#374151' }}>
+                                <h3 className="font-semibold" style={{ color: colors.text }}>
                                   {customer.first_name} {customer.last_name}
                                 </h3>
-                                <p className="text-xs" style={{ color: '#6B7280' }}>
+                                <p className="text-xs" style={{ color: colors.textSecondary }}>
                                   {selectedPhone}
                                 </p>
                               </>
                             ) : (
-                              <h3 className="font-semibold" style={{ color: '#374151' }}>
+                              <h3 className="font-semibold" style={{ color: colors.text }}>
                                 {selectedPhone}
                               </h3>
                             );
@@ -547,7 +552,7 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {smsConversation.length === 0 ? (
                       <div className="text-center py-12">
-                        <p style={{ color: '#9CA3AF' }}>No messages yet.</p>
+                        <p style={{ color: colors.textTertiary }}>No messages yet.</p>
                       </div>
                     ) : (
                       smsConversation.map((sms) => (
@@ -558,20 +563,21 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                           className={`flex ${sms.direction === 'sent' ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[70%] p-3 rounded-2xl ${
-                              sms.direction === 'sent'
-                                ? 'bg-green-500 text-white'
-                                : 'bg-white'
-                            }`}
-                            style={sms.direction !== 'sent' ? {
-                              boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff'
-                            } : {}}
+                            className={`max-w-[70%] p-3 rounded-2xl`}
+                            style={sms.direction === 'sent' ? {
+                              background: colors.success,
+                              color: '#ffffff'
+                            } : {
+                              background: colors.bg,
+                              boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+                              color: colors.text
+                            }}
                           >
                             <p className="text-sm">{sms.message}</p>
                             <p 
                               className="text-xs mt-1"
                               style={{ 
-                                color: sms.direction === 'sent' ? '#dcfce7' : '#9CA3AF' 
+                                color: sms.direction === 'sent' ? 'rgba(255,255,255,0.7)' : colors.textTertiary
                               }}
                             >
                               {format(new Date(sms.created_date || sms.sent_at), 'h:mm a')}
@@ -583,7 +589,7 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                   </div>
 
                   {/* SMS Input */}
-                  <div className="p-4 border-t" style={{ borderColor: '#D1D9E6' }}>
+                  <div className="p-4 border-t" style={{ borderColor: colors.border }}>
                     <div className="flex gap-2">
                       <Input
                         value={smsText}
@@ -592,8 +598,9 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                         onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendSms()}
                         className="rounded-2xl border-0"
                         style={{
-                          background: '#E0E5EC',
-                          boxShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff'
+                          background: colors.bg,
+                          boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`,
+                          color: colors.text
                         }}
                       />
                       <Button
@@ -601,9 +608,9 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
                         disabled={!smsText.trim()}
                         className="rounded-2xl px-6 border-0"
                         style={{
-                          background: 'linear-gradient(145deg, #dcfce7, #bbf7d0)',
-                          boxShadow: '4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff',
-                          color: '#16a34a'
+                          background: colors.bg,
+                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
+                          color: colors.success
                         }}
                       >
                         <Send className="w-4 h-4" />
@@ -614,8 +621,8 @@ export default function MessagingPanel({ user, isOpen, onClose }) {
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
-                    <MessageSquare className="w-16 h-16 mx-auto mb-4" style={{ color: '#D1D9E6' }} />
-                    <p style={{ color: '#9CA3AF' }}>
+                    <MessageSquare className="w-16 h-16 mx-auto mb-4" style={{ color: colors.border }} />
+                    <p style={{ color: colors.textTertiary }}>
                       {activeTab === 'team' 
                         ? 'Select a conversation to start messaging'
                         : 'Select an SMS conversation'
