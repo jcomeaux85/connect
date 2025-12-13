@@ -55,18 +55,20 @@ export default function CollapsiblePanel({
   const getGlowStyle = () => {
     if (!accentColor) return {};
     
-    // Always show a tight rim/border glow for accent color panels
-    const rimGlow = `inset 0 0 0 1px ${accentColor}30`;
+    // Always show a thin colored border line
+    const borderLine = `inset 0 0 0 1px ${accentColor}`;
     
     if (brightness <= 0) {
       return {
-        boxShadow: `${rimGlow}, ${panelStyle.boxShadow}`
+        boxShadow: `${borderLine}, ${panelStyle.boxShadow}`
       };
     }
     
-    const glowIntensity = brightness * 10;
+    // Subtle glow that extends just past the border line
+    const glowSize = Math.min(4, brightness * 1.5);
+    const glowOpacity = Math.min(0.6, brightness * 0.2);
     return {
-      boxShadow: `${rimGlow}, 0 0 ${glowIntensity * 2}px ${accentColor}40, 0 0 ${glowIntensity * 4}px ${accentColor}20, ${panelStyle.boxShadow}`
+      boxShadow: `${borderLine}, 0 0 ${glowSize}px ${accentColor}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')}, ${panelStyle.boxShadow}`
     };
   };
 
