@@ -164,7 +164,7 @@ export default function Dashboard() {
     {
       id: 'weather',
       defaultWidth: 1,
-      defaultHeight: 2,
+      defaultHeight: 1,
       content: (
         <CollapsiblePanel
           title="Doc"
@@ -276,7 +276,7 @@ export default function Dashboard() {
     {
       id: 'planner',
       defaultWidth: 2,
-      defaultHeight: 2,
+      defaultHeight: 1,
       content: (
         <CollapsiblePanel
           title="Daily Planner"
