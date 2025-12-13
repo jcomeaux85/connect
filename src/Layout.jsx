@@ -14,7 +14,8 @@ import {
   Users,
   MessageSquare,
   Moon,
-  Sun
+  Sun,
+  Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,7 @@ import { useUser } from "@/components/hooks/useUser";
 
 import NotificationCenter from "@/components/notifications/NotificationCenter";
 import MessagingPanel from "@/components/messaging/MessagingPanel";
+import CallsPanel from "@/components/calls/CallsPanel";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import SlideOutMenu from "@/components/navigation/SlideOutMenu";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
@@ -41,6 +43,7 @@ import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
 import IncomingCallPopup from "@/components/notifications/IncomingCallPopup";
 import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
+import { AnimatePresence } from "framer-motion";
 
 const navigationItems = [
   {
@@ -76,6 +79,7 @@ function LayoutContent({ children, currentPageName }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [showMessages, setShowMessages] = useState(false);
+    const [showCalls, setShowCalls] = useState(false);
     const [showPhoneDialer, setShowPhoneDialer] = useState(false);
     const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
 
@@ -197,6 +201,25 @@ function LayoutContent({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
+      {/* Blur Backdrop */}
+      <AnimatePresence>
+        {(showNotifications || showMessages || showCalls) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 backdrop-blur-sm"
+            style={{ background: `${colors.bg}20` }}
+            onClick={() => {
+              setShowNotifications(false);
+              setShowMessages(false);
+              setShowCalls(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       <SlideOutMenu />
 
       <nav className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: `${colors.bg}99` }}>
@@ -299,9 +322,23 @@ function LayoutContent({ children, currentPageName }) {
               </button>
 
               <button
+                className="rounded-2xl h-12 w-12 border-0 flex items-center justify-center"
+                onClick={() => {
+                  setShowCalls(!showCalls);
+                  setShowMessages(false);
+                  setShowNotifications(false);
+                  setShowPhoneDialer(false);
+                }}
+                style={getButtonStyle()}
+              >
+                <Phone className="w-5 h-5" style={{ color: colors.iconColor }} />
+              </button>
+
+              <button
                 className="rounded-2xl h-12 w-12 border-0 relative flex items-center justify-center"
                 onClick={() => {
                   setShowMessages(!showMessages);
+                  setShowCalls(false);
                   setShowNotifications(false);
                   setShowPhoneDialer(false);
                 }}
@@ -321,6 +358,7 @@ function LayoutContent({ children, currentPageName }) {
                 onClick={() => {
                   setShowNotifications(!showNotifications);
                   setShowMessages(false);
+                  setShowCalls(false);
                   setShowPhoneDialer(false);
                 }}
                 style={getButtonStyle()}
@@ -480,6 +518,12 @@ function LayoutContent({ children, currentPageName }) {
         user={user}
         isOpen={showMessages}
         onClose={() => setShowMessages(false)}
+      />
+
+      <CallsPanel
+        user={user}
+        isOpen={showCalls}
+        onClose={() => setShowCalls(false)}
       />
 
       <BackgroundCustomizer 
