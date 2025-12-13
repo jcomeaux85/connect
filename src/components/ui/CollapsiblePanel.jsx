@@ -64,21 +64,23 @@ export default function CollapsiblePanel({
       };
     }
     
-    // Subtle glow that extends just past the border line
-    const glowSize = Math.min(4, brightness * 1.5);
-    const glowOpacity = Math.min(0.6, brightness * 0.2);
+    // Subtle glow matching shadow size (8-12px range)
+    const glowSize = 8 + (brightness * 1.33); // 8px at brightness 1, ~12px at brightness 3
+    const glowOpacity = 0.15 + (brightness * 0.05); // 0.15 to 0.30 opacity
+    const glowHex = Math.round(glowOpacity * 255).toString(16).padStart(2, '0');
     return {
-      boxShadow: `${borderLine}, 0 0 ${glowSize}px ${accentColor}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')}, ${panelStyle.boxShadow}`
+      boxShadow: `${borderLine}, 0 0 ${glowSize}px ${accentColor}${glowHex}, ${panelStyle.boxShadow}`
     };
   };
 
   return (
     <div
-      className={`border-0 rounded-2xl overflow-hidden relative ${className}`}
+      className={`border-0 rounded-2xl relative ${className}`}
       style={{
         ...panelStyle,
         ...getGlowStyle(),
-        transition: `all ${getTransitionDuration(200)} ease-out`
+        transition: `all ${getTransitionDuration(200)} ease-out`,
+        overflow: 'visible'
       }}
     >
       {/* Vertical Brightness Slider - Left Edge */}
