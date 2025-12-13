@@ -115,7 +115,7 @@ export default function SlideOutMenu() {
         id="slide-out-menu"
         className="fixed left-0 top-0 h-full z-[60] pointer-events-auto"
         style={{
-          width: isExpanded ? '280px' : isOpen ? '80px' : '20px',
+          width: isOpen ? '180px' : '20px',
           transition: 'width 0.3s ease'
         }}>
 
@@ -218,169 +218,132 @@ export default function SlideOutMenu() {
             }
 
             {/* Navigation Items */}
-            <nav className="flex-1 space-y-1.5">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.url;
+            <nav className="flex-1">
+              <div className="grid grid-cols-2 gap-2">
+                {navigationItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.url;
 
-                return (
-                  <Link key={item.title} to={item.url}>
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="px-3 rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
-                      style={isActive ? {
-                        background: colors.bg,
-                        boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
-                      } : {
-                        background: colors.bg,
-                        boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                      }}
-                      onMouseEnter={() => setIsExpanded(true)}>
+                  return (
+                    <Link key={item.title} to={item.url}>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 cursor-pointer p-2"
+                        style={isActive ? {
+                          background: colors.bg,
+                          boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
+                        } : {
+                          background: colors.bg,
+                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                        }}
+                        onMouseEnter={() => setIsExpanded(true)}>
 
-                      <Icon
-                        className="w-5 h-5"
-                        style={{ color: isActive ? colors.iconColor : colors.textSecondary }} />
+                        <Icon
+                          className="w-8 h-8"
+                          style={{ color: isActive ? colors.iconColor : colors.textSecondary }} />
 
-                      {isExpanded &&
-                      <motion.span
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 'auto' }}
-                        exit={{ opacity: 0, width: 0 }}
-                        className="text-sm font-medium flex-1 text-left"
-                        style={{ color: isActive ? colors.text : colors.textSecondary }}>
-
+                        <span
+                          className="text-[10px] font-medium text-center leading-tight"
+                          style={{ color: isActive ? colors.text : colors.textSecondary }}>
                           {item.title}
-                        </motion.span>
-                      }
-                    </motion.div>
-                  </Link>);
-
-              })}
+                        </span>
+                      </motion.div>
+                    </Link>
+                  );
+                })}
+              </div>
             </nav>
 
             {/* Quick Actions */}
-            <div className="space-y-1.5 pt-6 border-t" style={{ borderColor: colors.border }}>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => window.dispatchEvent(new Event('toggle-messages'))}
-                className="w-full px-3 rounded-2xl h-11 flex items-center justify-center gap-3"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                }}
-                onMouseEnter={() => setIsExpanded(true)}>
-
-                <MessageSquare className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                {isExpanded &&
-                <motion.span
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  className="text-sm font-medium flex-1 text-left"
-                  style={{ color: colors.textSecondary }}>
-
-                    Messages
-                  </motion.span>
-                }
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => window.dispatchEvent(new Event('toggle-phone'))}
-                className="w-full px-3 rounded-2xl h-11 flex items-center justify-center gap-3"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                }}
-                onMouseEnter={() => setIsExpanded(true)}>
-
-                <Phone className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                {isExpanded &&
-                <motion.span
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  className="text-sm font-medium flex-1 text-left"
-                  style={{ color: colors.textSecondary }}>
-
-                    Phone
-                  </motion.span>
-                }
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => window.dispatchEvent(new Event('toggle-background-customizer'))}
-                className="w-full px-3 rounded-2xl h-11 flex items-center justify-center gap-3"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                }}
-                onMouseEnter={() => setIsExpanded(true)}>
-
-                <Palette className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                {isExpanded &&
-                <motion.span
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  className="text-sm font-medium flex-1 text-left"
-                  style={{ color: colors.textSecondary }}>
-
-                    Customize
-                  </motion.span>
-                }
-              </motion.button>
-
-              <Link to={createPageUrl('Settings')}>
-                <motion.div
+            <div className="pt-4 border-t" style={{ borderColor: colors.border }}>
+              <div className="grid grid-cols-2 gap-2">
+                <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-3 rounded-2xl h-11 flex items-center justify-center gap-3 cursor-pointer"
+                  onClick={() => window.dispatchEvent(new Event('toggle-messages'))}
+                  className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 p-2"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
                   onMouseEnter={() => setIsExpanded(true)}>
 
-                  <Settings className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                  {isExpanded &&
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    className="text-sm font-medium flex-1 text-left"
-                    style={{ color: colors.textSecondary }}>
+                  <MessageSquare className="w-8 h-8" style={{ color: colors.textSecondary }} />
+                  <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                    Messages
+                  </span>
+                </motion.button>
 
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => window.dispatchEvent(new Event('toggle-phone'))}
+                  className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 p-2"
+                  style={{
+                    background: colors.bg,
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                  }}
+                  onMouseEnter={() => setIsExpanded(true)}>
+
+                  <Phone className="w-8 h-8" style={{ color: colors.textSecondary }} />
+                  <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                    Phone
+                  </span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => window.dispatchEvent(new Event('toggle-background-customizer'))}
+                  className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 p-2"
+                  style={{
+                    background: colors.bg,
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                  }}
+                  onMouseEnter={() => setIsExpanded(true)}>
+
+                  <Palette className="w-8 h-8" style={{ color: colors.textSecondary }} />
+                  <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                    Customize
+                  </span>
+                </motion.button>
+
+                <Link to={createPageUrl('Settings')}>
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 cursor-pointer p-2"
+                    style={{
+                      background: colors.bg,
+                      boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                    }}
+                    onMouseEnter={() => setIsExpanded(true)}>
+
+                    <Settings className="w-8 h-8" style={{ color: colors.textSecondary }} />
+                    <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
                       Settings
-                    </motion.span>
-                  }
-                </motion.div>
-              </Link>
+                    </span>
+                  </motion.div>
+                </Link>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleLogout}
-                className="w-full px-3 rounded-2xl h-11 flex items-center justify-center gap-3"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                }}
-                onMouseEnter={() => setIsExpanded(true)}>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleLogout}
+                  className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 p-2"
+                  style={{
+                    background: colors.bg,
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                  }}
+                  onMouseEnter={() => setIsExpanded(true)}>
 
-                <LogOut className="w-5 h-5" style={{ color: colors.textSecondary }} />
-                {isExpanded &&
-                <motion.span
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  className="text-sm font-medium flex-1 text-left"
-                  style={{ color: colors.textSecondary }}>
-
+                  <LogOut className="w-8 h-8" style={{ color: colors.textSecondary }} />
+                  <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
                     Logout
-                  </motion.span>
-                }
-              </motion.button>
+                  </span>
+                </motion.button>
+              </div>
             </div>
           </motion.div>
           }
