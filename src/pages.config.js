@@ -1,33 +1,35 @@
-import Dashboard from './pages/Dashboard';
-import Boards from './pages/Boards';
-import Board from './pages/Board';
 import Analytics from './pages/Analytics';
-import Cases from './pages/Cases';
-import Case from './pages/Case';
-import Customers from './pages/Customers';
-import Customer from './pages/Customer';
+import Board from './pages/Board';
+import Boards from './pages/Boards';
 import CallLog from './pages/CallLog';
-import Timeline from './pages/Timeline';
-import Messages from './pages/Messages';
-import Employers from './pages/Employers';
+import Case from './pages/Case';
+import Cases from './pages/Cases';
 import Companies from './pages/Companies';
+import Customer from './pages/Customer';
+import Customers from './pages/Customers';
+import Dashboard from './pages/Dashboard';
+import Employers from './pages/Employers';
+import Home from './pages/Home';
+import Messages from './pages/Messages';
+import Timeline from './pages/Timeline';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Dashboard": Dashboard,
-    "Boards": Boards,
-    "Board": Board,
     "Analytics": Analytics,
-    "Cases": Cases,
-    "Case": Case,
-    "Customers": Customers,
-    "Customer": Customer,
+    "Board": Board,
+    "Boards": Boards,
     "CallLog": CallLog,
-    "Timeline": Timeline,
-    "Messages": Messages,
-    "Employers": Employers,
+    "Case": Case,
+    "Cases": Cases,
     "Companies": Companies,
+    "Customer": Customer,
+    "Customers": Customers,
+    "Dashboard": Dashboard,
+    "Employers": Employers,
+    "Home": Home,
+    "Messages": Messages,
+    "Timeline": Timeline,
 }
 
 export const pagesConfig = {

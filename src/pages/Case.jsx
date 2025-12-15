@@ -44,7 +44,9 @@ import {
   Users,
   UserPlus,
   Building2, // Added
-  Briefcase // Added
+  Briefcase, // Added
+  Paperclip,
+  Image as ImageIcon
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, formatDistanceToNow, differenceInDays } from "date-fns"; // Added differenceInDays
@@ -55,6 +57,7 @@ import AISuggestionsOrb from "../components/assistant/AISuggestionsOrb"; // New 
 import ActiveCallPanel from "../components/phone/ActiveCallPanel";
 import CollapsibleSection from "../components/CollapsibleSection";
 import PDFViewer from "../components/PDFViewer";
+import AttachmentsPanel from "../components/case/AttachmentsPanel";
 import {
   summarizeCall,
   suggestNotes,
@@ -102,6 +105,7 @@ export default function CasePage() {
   const [showPDFViewer, setShowPDFViewer] = useState(false);
   const [pdfViewerUrl, setPdfViewerUrl] = useState(null);
   const [pdfViewerTitle, setPdfViewerTitle] = useState('');
+  const [showAttachmentsPanel, setShowAttachmentsPanel] = useState(false);
   
   // Temporary transcript input for POC
   const [manualTranscript, setManualTranscript] = useState('');
@@ -204,6 +208,13 @@ export default function CasePage() {
   const { data: callTranscripts = [] } = useQuery({
     queryKey: ['case-transcripts', caseId],
     queryFn: () => base44.entities.CallTranscript.filter({ case_id: caseId }, '-created_date'),
+    enabled: !!caseId
+  });
+
+  // Add attachments query
+  const { data: attachments = [] } = useQuery({
+    queryKey: ['case-attachments', caseId],
+    queryFn: () => base44.entities.Attachment.filter({ case_id: caseId }, '-created_date'),
     enabled: !!caseId
   });
 
@@ -803,7 +814,8 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
   ...calls.map((c) => ({ ...c, type: 'call', timestamp: c.created_date })),
   ...smsMessages.map((s) => ({ ...s, type: 'sms', timestamp: s.created_date || s.sent_at })),
   ...notes.map((n) => ({ ...n, type: 'note', timestamp: n.created_date })),
-  ...tasks.map((t) => ({ ...t, type: 'task', timestamp: t.created_date }))].
+  ...tasks.map((t) => ({ ...t, type: 'task', timestamp: t.created_date })),
+  ...attachments.map((a) => ({ ...a, type: 'attachment', timestamp: a.created_date }))].
   sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   if (caseLoading) {
@@ -1063,6 +1075,17 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                   <SelectItem value="closed">Closed</SelectItem>
                 </SelectContent>
               </Select>
+
+              <Button
+                onClick={() => setShowAttachmentsPanel(true)}
+                className="rounded-2xl h-10 px-4 border-0 font-medium"
+                style={{
+                  ...getButtonStyle('4px'),
+                  color: colors.textSecondary
+                }}>
+                <Paperclip className="w-4 h-4 mr-2" />
+                Attachments {attachments.length > 0 && `(${attachments.length})`}
+              </Button>
             </div>
           </div>
 
@@ -2046,6 +2069,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                             {activity.type === 'sms' && <MessageSquare className="w-5 h-5" style={{ color: colors.textSecondary }} />}
                             {activity.type === 'note' && <FileText className="w-5 h-5" style={{ color: colors.textSecondary }} />}
                             {activity.type === 'task' && <CheckCircle2 className="w-5 h-5" style={{ color: colors.textSecondary }} />}
+                            {activity.type === 'attachment' && <Paperclip className="w-5 h-5" style={{ color: colors.textSecondary }} />}
                           </div>
                           {index < allActivity.length - 1 &&
                       <div className="w-0.5 flex-1 mt-2" style={{ background: colors.timelineConnector }} />
@@ -2061,6 +2085,7 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                               {activity.type === 'sms' && `SMS ${activity.direction === 'sent' ? 'Sent' : 'Received'}`}
                               {activity.type === 'note' && `Note Added`}
                               {activity.type === 'task' && `Task: ${activity.title}`}
+                              {activity.type === 'attachment' && `Attachment: ${activity.title || activity.file_name || 'File'}`}
                             </p>
                             <span className="text-xs" style={{ color: colors.textPlaceholder }}>
                               {format(new Date(activity.timestamp), 'MMM d, h:mm a')}
@@ -2088,6 +2113,18 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
                       <p className="text-sm" style={{ color: colors.textSecondary }}>
                               Status: {activity.status}
                             </p>
+                      }
+                          {activity.type === 'attachment' &&
+                      <div className="flex items-center gap-2">
+                              <Badge className="border-0 text-xs px-2 py-0.5" style={{ background: colors.badgeGeneralBg, color: colors.textSecondary }}>
+                                {activity.attachment_type}
+                              </Badge>
+                              {activity.file_url && (
+                                <a href={activity.file_url} target="_blank" rel="noopener noreferrer" className="text-xs hover:underline" style={{ color: colors.blue }}>
+                                  View File
+                                </a>
+                              )}
+                            </div>
                       }
                         </div>
                       </motion.div>
@@ -2676,6 +2713,12 @@ If no notes were taken, indicate that no transcript is available for analysis.`;
         }} />
 
       }
+
+      <AttachmentsPanel
+        isOpen={showAttachmentsPanel}
+        onClose={() => setShowAttachmentsPanel(false)}
+        caseId={caseId}
+      />
       </div>);
 
 }
