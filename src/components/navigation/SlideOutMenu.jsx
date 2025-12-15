@@ -129,7 +129,7 @@ export default function SlideOutMenu() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -280, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="h-full py-6 px-3 flex flex-col"
+            className="h-full py-6 px-3 flex flex-col overflow-y-auto scrollbar-hide"
             style={{
               background: colors.bg,
               boxShadow: `12px 0 24px ${colors.shadowDark}`
@@ -221,7 +221,7 @@ export default function SlideOutMenu() {
             }
 
             {/* Navigation Items */}
-            <nav className="flex-1 overflow-y-auto scrollbar-hide">
+            <nav className="mb-4">
               <div className="grid grid-cols-2 gap-2">
                 {navigationItems.map((item) => {
                   const Icon = item.icon;
