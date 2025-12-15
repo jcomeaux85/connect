@@ -115,7 +115,7 @@ export default function SlideOutMenu() {
         id="slide-out-menu"
         className="fixed left-0 top-0 h-full z-[60] pointer-events-auto"
         style={{
-          width: isOpen ? '180px' : '20px',
+          width: isOpen ? '220px' : '20px',
           transition: 'width 0.3s ease'
         }}>
 
@@ -218,7 +218,7 @@ export default function SlideOutMenu() {
             }
 
             {/* Navigation Items */}
-            <nav className="flex-1">
+            <nav className="flex-1 overflow-y-auto">
               <div className="grid grid-cols-2 gap-2">
                 {navigationItems.map((item) => {
                   const Icon = item.icon;
@@ -229,7 +229,7 @@ export default function SlideOutMenu() {
                       <motion.div
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 cursor-pointer p-2"
+                        className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 cursor-pointer p-2"
                         style={isActive ? {
                           background: colors.bg,
                           boxShadow: `inset 4px 4px 8px ${colors.shadowDark}, inset -4px -4px 8px ${colors.shadowLight}`
@@ -240,11 +240,11 @@ export default function SlideOutMenu() {
                         onMouseEnter={() => setIsExpanded(true)}>
 
                         <Icon
-                          className="w-8 h-8"
+                          className="w-7 h-7"
                           style={{ color: isActive ? colors.iconColor : colors.textSecondary }} />
 
                         <span
-                          className="text-[10px] font-medium text-center leading-tight"
+                          className="text-[9px] font-medium text-center leading-tight"
                           style={{ color: isActive ? colors.text : colors.textSecondary }}>
                           {item.title}
                         </span>
@@ -262,15 +262,15 @@ export default function SlideOutMenu() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => window.dispatchEvent(new Event('toggle-messages'))}
-                  className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 p-2"
+                  className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 p-2"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
                   onMouseEnter={() => setIsExpanded(true)}>
 
-                  <MessageSquare className="w-8 h-8" style={{ color: colors.textSecondary }} />
-                  <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                  <MessageSquare className="w-7 h-7" style={{ color: colors.textSecondary }} />
+                  <span className="text-[9px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
                     Messages
                   </span>
                 </motion.button>
@@ -279,15 +279,15 @@ export default function SlideOutMenu() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => window.dispatchEvent(new Event('toggle-phone'))}
-                  className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 p-2"
+                  className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 p-2"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
                   onMouseEnter={() => setIsExpanded(true)}>
 
-                  <Phone className="w-8 h-8" style={{ color: colors.textSecondary }} />
-                  <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                  <Phone className="w-7 h-7" style={{ color: colors.textSecondary }} />
+                  <span className="text-[9px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
                     Phone
                   </span>
                 </motion.button>
@@ -296,15 +296,15 @@ export default function SlideOutMenu() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => window.dispatchEvent(new Event('toggle-background-customizer'))}
-                  className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 p-2"
+                  className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 p-2"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
                   onMouseEnter={() => setIsExpanded(true)}>
 
-                  <Palette className="w-8 h-8" style={{ color: colors.textSecondary }} />
-                  <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                  <Palette className="w-7 h-7" style={{ color: colors.textSecondary }} />
+                  <span className="text-[9px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
                     Customize
                   </span>
                 </motion.button>
@@ -313,15 +313,15 @@ export default function SlideOutMenu() {
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 cursor-pointer p-2"
+                    className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 cursor-pointer p-2"
                     style={{
                       background: colors.bg,
                       boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                     }}
                     onMouseEnter={() => setIsExpanded(true)}>
 
-                    <Settings className="w-8 h-8" style={{ color: colors.textSecondary }} />
-                    <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                    <Settings className="w-7 h-7" style={{ color: colors.textSecondary }} />
+                    <span className="text-[9px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
                       Settings
                     </span>
                   </motion.div>
@@ -331,15 +331,15 @@ export default function SlideOutMenu() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleLogout}
-                  className="rounded-2xl h-20 flex flex-col items-center justify-center gap-1 p-2"
+                  className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 p-2"
                   style={{
                     background: colors.bg,
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
                   onMouseEnter={() => setIsExpanded(true)}>
 
-                  <LogOut className="w-8 h-8" style={{ color: colors.textSecondary }} />
-                  <span className="text-[10px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                  <LogOut className="w-7 h-7" style={{ color: colors.textSecondary }} />
+                  <span className="text-[9px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
                     Logout
                   </span>
                 </motion.button>
