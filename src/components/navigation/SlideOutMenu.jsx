@@ -61,7 +61,7 @@ export default function SlideOutMenu() {
       closeTimer = setTimeout(() => {
         setIsOpen(false);
         setIsExpanded(false);
-      }, 1500); // Increased to 1.5 seconds
+      }, 500);
     };
 
     const menuElement = document.getElementById('slide-out-menu');
@@ -105,8 +105,11 @@ export default function SlideOutMenu() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[59]"
-          style={{ pointerEvents: 'none' }} />
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[59] cursor-pointer"
+          onClick={() => {
+            setIsOpen(false);
+            setIsExpanded(false);
+          }} />
 
         }
       </AnimatePresence>
@@ -218,7 +221,7 @@ export default function SlideOutMenu() {
             }
 
             {/* Navigation Items */}
-            <nav className="flex-1 overflow-y-auto">
+            <nav className="flex-1 overflow-y-auto scrollbar-hide">
               <div className="grid grid-cols-2 gap-2">
                 {navigationItems.map((item) => {
                   const Icon = item.icon;
