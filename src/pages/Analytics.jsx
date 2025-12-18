@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -257,8 +256,8 @@ export default function Analytics() {
                     cy="50%"
                     outerRadius={100}
                     dataKey="value"
-                    label={(entry) => `${entry.name}: ${entry.value}`}
-                    labelLine={false} // Added to prevent labels from overlapping/being messy for small slices
+                    label={(entry) => entry.value > 0 ? `${entry.name}: ${entry.value}` : null}
+                    labelLine={true}
                   >
                     {caseStatusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -266,10 +265,12 @@ export default function Analytics() {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      background: colors.tooltipBg,
+                      background: isDark ? 'rgba(42, 46, 58, 0.95)' : 'rgba(224, 229, 236, 0.95)',
+                      backdropFilter: 'blur(8px)',
                       border: 'none',
                       borderRadius: '12px',
-                      boxShadow: `6px 6px 12px ${colors.shadowLight}, -6px -6px 12px ${colors.shadowDark}`
+                      boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`,
+                      color: colors.text
                     }}
                   />
                 </PieChart>
