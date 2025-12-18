@@ -213,10 +213,12 @@ export default function Analytics() {
                   <YAxis stroke={colors.textSecondary} />
                   <Tooltip
                     contentStyle={{
-                      background: colors.tooltipBg,
+                      background: isDark ? 'rgba(42, 46, 58, 0.95)' : 'rgba(224, 229, 236, 0.95)',
+                      backdropFilter: 'blur(8px)',
                       border: 'none',
                       borderRadius: '12px',
-                      boxShadow: `6px 6px 12px ${colors.shadowLight}, -6px -6px 12px ${colors.shadowDark}`
+                      boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`,
+                      color: colors.text
                     }}
                   />
                   <Bar dataKey="inbound" fill={colors.success} radius={[8, 8, 0, 0]} />
