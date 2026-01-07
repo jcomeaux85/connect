@@ -270,7 +270,7 @@ function LayoutContent({ children, currentPageName }) {
                       style={{
                         ...getButtonStyle(isActive),
                         ...(isActive && {
-                          boxShadow: `0 0 20px ${isDark ? '#ffffff40' : '#00000020'}, 0 0 40px ${isDark ? '#ffffff20' : '#00000010'}, ${getButtonStyle(isActive).boxShadow}`
+                          boxShadow: `0 0 8px ${isDark ? '#ffffff50' : '#00000030'}, 0 0 16px ${isDark ? '#ffffff20' : '#00000015'}, ${getButtonStyle(isActive).boxShadow}`
                         })
                       }}
                     >
@@ -485,7 +485,7 @@ function LayoutContent({ children, currentPageName }) {
               textShadow: `1px 1px 2px ${colors.shadowLight}, -1px -1px 2px ${colors.shadowDark}`
             }}
           >
-            BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2025
+            BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
           </p>
           <p 
             className="text-xs mb-1" 
