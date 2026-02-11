@@ -224,11 +224,11 @@ function LayoutContent({ children, currentPageName }) {
 
       <nav className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: `${colors.bg}99` }}>
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center">
-              <Link to={createPageUrl("Dashboard")} className="flex-shrink-0 flex items-center gap-3">
+          <div className="flex items-center justify-between h-20 gap-2">
+            <div className="flex items-center flex-shrink-0">
+              <Link to={createPageUrl("Dashboard")} className="flex-shrink-0 flex items-center gap-2 lg:gap-3">
                 <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                  className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center"
                   style={{
                     background: colors.bg,
                     boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
@@ -236,7 +236,7 @@ function LayoutContent({ children, currentPageName }) {
                 >
                   <div className="flex items-center justify-center">
                     <svg
-                      className="w-6 h-6"
+                      className="w-5 h-5 lg:w-6 lg:h-6"
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -252,21 +252,21 @@ function LayoutContent({ children, currentPageName }) {
                     </svg>
                   </div>
                 </div>
-                <div className="flex flex-col">
+                <div className="hidden lg:flex flex-col">
                   <span className="font-bold text-2xl tracking-tight" style={{ color: colors.text }}>
                     BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[10px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup>
                   </span>
                 </div>
               </Link>
 
-              <div className="hidden md:ml-6 lg:ml-10 md:flex md:items-baseline md:space-x-2 lg:space-x-3 md:flex-shrink-0">
+              <div className="hidden md:ml-3 lg:ml-10 md:flex md:items-baseline md:space-x-1.5 lg:space-x-3 md:flex-shrink">
                 {navigationItems.map((item) => {
                   const isActive = location.pathname === item.url;
                   return (
                     <Link
                       key={item.title}
                       to={item.url}
-                      className="px-3 lg:px-5 py-2.5 rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 relative whitespace-nowrap"
+                      className="px-2.5 lg:px-5 py-2 lg:py-2.5 rounded-xl text-xs lg:text-sm font-medium transition-all hover:-translate-y-0.5 relative whitespace-nowrap"
                       style={{
                         ...getButtonStyle(isActive),
                         ...(isActive && {
@@ -308,7 +308,7 @@ function LayoutContent({ children, currentPageName }) {
               </div>
             </div>
 
-            <div className="hidden md:ml-2 lg:ml-4 md:flex md:items-center md:space-x-2 lg:space-x-3 md:flex-shrink-0">
+            <div className="hidden md:ml-2 lg:ml-4 md:flex md:items-center md:space-x-1.5 lg:space-x-3 md:flex-shrink-0">
               <button
                 onClick={toggleTheme}
                 className="rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 flex items-center justify-center flex-shrink-0"
