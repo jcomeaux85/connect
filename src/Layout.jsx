@@ -281,8 +281,8 @@ function LayoutContent({ children, currentPageName }) {
               </div>
             </div>
 
-            <div className="hidden md:ml-2 lg:ml-4 md:flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
-              <div className="max-w-md lg:max-w-lg w-full xl:max-w-xs">
+            <div className="hidden lg:ml-6 lg:flex lg:justify-end flex-1">
+              <div className="max-w-xs w-full">
                 <label htmlFor="search" className="sr-only">Search</label>
                 <div className="relative">
                   <div
@@ -311,7 +311,7 @@ function LayoutContent({ children, currentPageName }) {
             <div className="hidden md:ml-2 lg:ml-4 md:flex md:items-center md:space-x-2 lg:space-x-3 md:flex-shrink-0">
               <button
                 onClick={toggleTheme}
-                className="rounded-2xl h-12 w-12 border-0 flex items-center justify-center"
+                className="hidden lg:flex rounded-2xl h-12 w-12 border-0 items-center justify-center"
                 style={getButtonStyle()}
               >
                 {isDark ? (
@@ -322,7 +322,7 @@ function LayoutContent({ children, currentPageName }) {
               </button>
 
               <button
-                className="rounded-2xl h-12 w-12 border-0 flex items-center justify-center"
+                className="hidden lg:flex rounded-2xl h-12 w-12 border-0 items-center justify-center"
                 onClick={() => {
                   setShowCalls(!showCalls);
                   setShowMessages(false);
@@ -373,14 +373,14 @@ function LayoutContent({ children, currentPageName }) {
               </button>
 
               <button
-                className="rounded-2xl h-12 w-12 border-0 flex items-center justify-center"
+                className="hidden xl:flex rounded-2xl h-12 w-12 border-0 items-center justify-center"
                 style={getButtonStyle()}
               >
                 <HelpCircle className="w-5 h-5" style={{ color: colors.iconColor }} />
               </button>
 
               <button
-                className="rounded-2xl h-12 w-12 border-0 flex items-center justify-center"
+                className="hidden xl:flex rounded-2xl h-12 w-12 border-0 items-center justify-center"
                 style={getButtonStyle()}
               >
                 <Settings className="w-5 h-5" style={{ color: colors.iconColor }} />
