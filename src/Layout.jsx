@@ -311,18 +311,18 @@ function LayoutContent({ children, currentPageName }) {
             <div className="hidden md:ml-2 lg:ml-4 md:flex md:items-center md:space-x-2 lg:space-x-3 md:flex-shrink-0">
               <button
                 onClick={toggleTheme}
-                className="hidden lg:flex rounded-2xl h-12 w-12 border-0 items-center justify-center"
+                className="rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 flex items-center justify-center flex-shrink-0"
                 style={getButtonStyle()}
               >
                 {isDark ? (
-                  <Sun className="w-5 h-5" style={{ color: colors.iconColor }} />
+                  <Sun className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
                 ) : (
-                  <Moon className="w-5 h-5" style={{ color: colors.iconColor }} />
+                  <Moon className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
                 )}
               </button>
 
               <button
-                className="hidden lg:flex rounded-2xl h-12 w-12 border-0 items-center justify-center"
+                className="rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 flex items-center justify-center flex-shrink-0"
                 onClick={() => {
                   setShowCalls(!showCalls);
                   setShowMessages(false);
@@ -331,11 +331,11 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 style={getButtonStyle()}
               >
-                <Phone className="w-5 h-5" style={{ color: colors.iconColor }} />
+                <Phone className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
               </button>
 
               <button
-                className="rounded-2xl h-12 w-12 border-0 relative flex items-center justify-center"
+                className="rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 relative flex items-center justify-center flex-shrink-0"
                 onClick={() => {
                   setShowMessages(!showMessages);
                   setShowCalls(false);
@@ -344,9 +344,9 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 style={getButtonStyle()}
               >
-                <MessageSquare className="w-5 h-5" style={{ color: colors.iconColor }} />
+                <MessageSquare className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
                 {unreadMessages > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-xs rounded-full flex items-center justify-center font-bold"
+                  <span className="absolute -top-1 -right-1 w-4 h-4 lg:w-5 lg:h-5 bg-green-500 text-white text-[10px] lg:text-xs rounded-full flex items-center justify-center font-bold"
                         style={{ boxShadow: '1px 1px 3px rgba(0,0,0,0.2)' }}>
                     {unreadMessages > 9 ? '9+' : unreadMessages}
                   </span>
@@ -354,7 +354,7 @@ function LayoutContent({ children, currentPageName }) {
               </button>
 
               <button
-                className="rounded-2xl h-12 w-12 border-0 relative flex items-center justify-center"
+                className="rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 relative flex items-center justify-center flex-shrink-0"
                 onClick={() => {
                   setShowNotifications(!showNotifications);
                   setShowMessages(false);
@@ -363,9 +363,9 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 style={getButtonStyle()}
               >
-                <Bell className="w-5 h-5" style={{ color: colors.iconColor }} />
+                <Bell className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
                 {unreadNotifications > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold"
+                  <span className="absolute -top-1 -right-1 w-4 h-4 lg:w-5 lg:h-5 bg-red-500 text-white text-[10px] lg:text-xs rounded-full flex items-center justify-center font-bold"
                         style={{ boxShadow: '1px 1px 3px rgba(0,0,0,0.2)' }}>
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
                   </span>
@@ -373,23 +373,23 @@ function LayoutContent({ children, currentPageName }) {
               </button>
 
               <button
-                className="hidden xl:flex rounded-2xl h-12 w-12 border-0 items-center justify-center"
+                className="rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 flex items-center justify-center flex-shrink-0"
                 style={getButtonStyle()}
               >
-                <HelpCircle className="w-5 h-5" style={{ color: colors.iconColor }} />
+                <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
               </button>
 
               <button
-                className="hidden xl:flex rounded-2xl h-12 w-12 border-0 items-center justify-center"
+                className="rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 flex items-center justify-center flex-shrink-0"
                 style={getButtonStyle()}
               >
-                <Settings className="w-5 h-5" style={{ color: colors.iconColor }} />
+                <Settings className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
               </button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="rounded-full h-12 w-12 p-0 border-0 flex items-center justify-center overflow-hidden"
+                    className="rounded-full h-10 w-10 lg:h-12 lg:w-12 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0"
                     style={getButtonStyle()}
                   >
                      {user?.profile_photo_url ? (
