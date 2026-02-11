@@ -259,14 +259,14 @@ function LayoutContent({ children, currentPageName }) {
                 </div>
               </Link>
 
-              <div className="hidden md:ml-10 md:flex md:items-baseline md:space-x-3">
+              <div className="hidden md:ml-6 lg:ml-10 md:flex md:items-baseline md:space-x-2 lg:space-x-3 md:flex-shrink-0">
                 {navigationItems.map((item) => {
                   const isActive = location.pathname === item.url;
                   return (
                     <Link
                       key={item.title}
                       to={item.url}
-                      className="px-5 py-2.5 rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 relative"
+                      className="px-3 lg:px-5 py-2.5 rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 relative whitespace-nowrap"
                       style={{
                         ...getButtonStyle(isActive),
                         ...(isActive && {
@@ -281,8 +281,8 @@ function LayoutContent({ children, currentPageName }) {
               </div>
             </div>
 
-            <div className="hidden md:ml-4 md:flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
-              <div className="max-w-lg w-full lg:max-w-xs">
+            <div className="hidden md:ml-2 lg:ml-4 md:flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
+              <div className="max-w-md lg:max-w-lg w-full xl:max-w-xs">
                 <label htmlFor="search" className="sr-only">Search</label>
                 <div className="relative">
                   <div
@@ -308,7 +308,7 @@ function LayoutContent({ children, currentPageName }) {
               </div>
             </div>
 
-            <div className="hidden md:ml-4 md:flex md:items-center md:space-x-3">
+            <div className="hidden md:ml-2 lg:ml-4 md:flex md:items-center md:space-x-2 lg:space-x-3 md:flex-shrink-0">
               <button
                 onClick={toggleTheme}
                 className="rounded-2xl h-12 w-12 border-0 flex items-center justify-center"
