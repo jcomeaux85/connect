@@ -468,9 +468,17 @@ function LayoutContent({ children, currentPageName }) {
         )}
       </nav>
 
-      <main className="flex-1 overflow-y-auto overflow-x-hidden">
-        {children}
-      </main>
+      <div className="flex-1 flex overflow-hidden">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+          {children}
+        </main>
+
+        <CallsPanel
+          user={user}
+          isOpen={showCalls}
+          onClose={() => setShowCalls(false)}
+        />
+      </div>
 
       {/* Footer */}
       <footer className="py-6 px-8 border-t" style={{ 
@@ -518,12 +526,6 @@ function LayoutContent({ children, currentPageName }) {
         user={user}
         isOpen={showMessages}
         onClose={() => setShowMessages(false)}
-      />
-
-      <CallsPanel
-        user={user}
-        isOpen={showCalls}
-        onClose={() => setShowCalls(false)}
       />
 
       <BackgroundCustomizer 

@@ -67,17 +67,17 @@ export default function CallsPanel({ user, isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ x: '100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '100%' }}
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: 320, opacity: 1 }}
+          exit={{ width: 0, opacity: 0 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          className="fixed right-0 top-0 h-full w-96 z-50 shadow-2xl"
+          className="h-full flex-shrink-0"
           style={{
             background: colors.bg,
-            boxShadow: `-20px 0 60px ${colors.shadowDark}`,
+            borderLeft: `1px solid ${colors.border}`,
           }}
         >
-          <Card className="h-full border-0 rounded-none" style={{ background: colors.bg }}>
+          <Card className="h-full border-0 rounded-none w-80" style={{ background: colors.bg }}>
             <CardHeader className="border-b" style={{ borderColor: colors.border }}>
               <div className="flex items-center justify-between">
                 <CardTitle style={{ color: colors.text }}>Calls</CardTitle>
