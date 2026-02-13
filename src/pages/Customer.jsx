@@ -218,30 +218,11 @@ export default function CustomerPage() {
     });
   };
 
-  const handleCallClick = async () => {
-    // Find most recent open case or create new one
-    const openCase = cases.find(c => c.status === 'new' || c.status === 'in_progress');
-    
-    if (openCase) {
-      // Navigate to existing open case
-      window.location.href = createPageUrl(`Case?id=${openCase.id}`);
-    } else {
-      // Create new case and navigate
-      const caseNumber = `CASE-${Date.now().toString().slice(-8)}`; // Simple case number generation
-      const newCaseData = {
-        case_number: caseNumber,
-        customer_id: customerId,
-        customer_name: `${customer.first_name} ${customer.last_name}`,
-        customer_phone: customer.primary_phone,
-        customer_email: customer.primary_email || null,
-        case_type: 'inquiry',
-        priority: customer.is_vip ? 'high' : 'medium',
-        description: `Call initiated from customer profile`,
-        status: 'new'
-      };
-      
-      await createCaseMutation.mutateAsync(newCaseData);
-    }
+  const handleCallClick = () => {
+    // Just trigger the phone panel
+    window.dispatchEvent(new CustomEvent('toggle-phone', { 
+      detail: { phoneNumber: customer.primary_phone }
+    }));
   };
 
   const handleSMSClick = async () => {

@@ -156,10 +156,11 @@ function LayoutContent({ children, currentPageName }) {
       setShowNotifications(false);
       setShowPhoneDialer(false);
     };
-    const handleTogglePhone = () => {
-      setShowPhoneDialer(prev => !prev);
+    const handleTogglePhone = (event) => {
+      setShowCalls(prev => !prev);
       setShowMessages(false);
       setShowNotifications(false);
+      setShowPhoneDialer(false);
     };
     const handleToggleBackgroundCustomizer = () => {
       setShowBackgroundCustomizer(prev => !prev);
