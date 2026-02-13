@@ -149,6 +149,3 @@ export default function CallsPanel({ user, isOpen, onClose }) {
     </AnimatePresence>
   );
 }
-
-  );
-}
