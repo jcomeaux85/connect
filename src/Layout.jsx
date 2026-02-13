@@ -222,6 +222,12 @@ function LayoutContent({ children, currentPageName }) {
 
       <SlideOutMenu />
 
+      <CallsPanel
+        user={user}
+        isOpen={showCalls}
+        onClose={() => setShowCalls(false)}
+      />
+
       <nav className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: `${colors.bg}99` }}>
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 gap-2">
@@ -468,17 +474,9 @@ function LayoutContent({ children, currentPageName }) {
         )}
       </nav>
 
-      <div className="flex-1 flex overflow-hidden">
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          {children}
-        </main>
-
-        <CallsPanel
-          user={user}
-          isOpen={showCalls}
-          onClose={() => setShowCalls(false)}
-        />
-      </div>
+      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        {children}
+      </main>
 
       {/* Footer */}
       <footer className="py-6 px-8 border-t" style={{ 
