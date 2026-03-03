@@ -44,7 +44,7 @@ import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
 import IncomingCallPopup from "@/components/notifications/IncomingCallPopup";
 import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 const navigationItems = [
   {
