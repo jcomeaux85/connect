@@ -574,6 +574,13 @@ function LayoutContent({ children, currentPageName }) {
 
       <AIAssistantOrb />
 
+      <DispositionForm
+        isOpen={!!dispositionData}
+        onClose={() => setDispositionData(null)}
+        callData={dispositionData}
+        user={user}
+      />
+
       {/* Incoming Call Popups */}
       {incomingCalls.map((call, index) => (
         <div key={call.id} className="fixed right-6 z-[100]" style={{ top: `${24 + (index * 320)}px` }}>
