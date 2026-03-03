@@ -170,11 +170,17 @@ function LayoutContent({ children, currentPageName }) {
 
     window.addEventListener('toggle-messages', handleToggleMessages);
     window.addEventListener('toggle-phone', handleTogglePhone);
+    const handleShowDisposition = (event) => {
+      setDispositionData(event.detail || {});
+    };
+
+    window.addEventListener('show-disposition-form', handleShowDisposition);
     window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
 
     return () => {
       window.removeEventListener('toggle-messages', handleToggleMessages);
       window.removeEventListener('toggle-phone', handleTogglePhone);
+      window.removeEventListener('show-disposition-form', handleShowDisposition);
       window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
     };
   }, []);
