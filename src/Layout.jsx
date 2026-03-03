@@ -83,6 +83,7 @@ function LayoutContent({ children, currentPageName }) {
     const [showCalls, setShowCalls] = useState(false);
     const [showPhoneDialer, setShowPhoneDialer] = useState(false);
     const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
+  const [dispositionData, setDispositionData] = useState(null);
 
     const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
   
