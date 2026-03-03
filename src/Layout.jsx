@@ -35,6 +35,7 @@ import { useUser } from "@/components/hooks/useUser";
 import NotificationCenter from "@/components/notifications/NotificationCenter";
 import MessagingPanel from "@/components/messaging/MessagingPanel";
 import CallsPanel from "@/components/calls/CallsPanel";
+import DispositionForm from "@/components/calls/DispositionForm";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import SlideOutMenu from "@/components/navigation/SlideOutMenu";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
