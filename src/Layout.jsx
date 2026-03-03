@@ -212,7 +212,7 @@ function LayoutContent({ children, currentPageName }) {
     <div className="min-h-screen flex flex-col" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
       {/* Blur Backdrop */}
       <AnimatePresence>
-        {(showNotifications || showMessages || showCalls) && (
+        {(showNotifications || showMessages) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -223,7 +223,6 @@ function LayoutContent({ children, currentPageName }) {
             onClick={() => {
               setShowNotifications(false);
               setShowMessages(false);
-              setShowCalls(false);
             }}
           />
         )}
