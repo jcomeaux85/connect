@@ -381,23 +381,23 @@ function LayoutContent({ children, currentPageName }) {
               </button>
 
               <button
-                className="hidden xl:flex rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 items-center justify-center flex-shrink-0"
+                className="hidden xl:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
                 style={getButtonStyle()}
               >
-                <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
+                <HelpCircle className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
               </button>
 
               <button
-                className="hidden xl:flex rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 items-center justify-center flex-shrink-0"
+                className="hidden xl:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
                 style={getButtonStyle()}
               >
-                <Settings className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
+                <Settings className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
               </button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="rounded-full h-10 w-10 lg:h-12 lg:w-12 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0"
+                    className="rounded-full h-8 w-8 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0"
                     style={getButtonStyle()}
                   >
                      {user?.profile_photo_url ? (
