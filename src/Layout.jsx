@@ -352,7 +352,7 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 style={getButtonStyle()}
               >
-                <MessageSquare className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
+                <MessageSquare className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                 {unreadMessages > 0 && (
                   <span className="absolute -top-1 -right-1 w-4 h-4 lg:w-5 lg:h-5 bg-green-500 text-white text-[10px] lg:text-xs rounded-full flex items-center justify-center font-bold"
                         style={{ boxShadow: '1px 1px 3px rgba(0,0,0,0.2)' }}>
