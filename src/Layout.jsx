@@ -267,14 +267,14 @@ function LayoutContent({ children, currentPageName }) {
                 </div>
               </Link>
 
-              <div className="hidden md:ml-3 lg:ml-10 md:flex md:items-baseline md:space-x-1.5 lg:space-x-3 md:flex-shrink">
+              <div className="hidden md:ml-3 lg:ml-6 md:flex md:items-baseline md:space-x-1 lg:space-x-2 md:flex-shrink">
                 {navigationItems.map((item) => {
                   const isActive = location.pathname === item.url;
                   return (
                     <Link
                       key={item.title}
                       to={item.url}
-                      className="px-2.5 lg:px-5 py-2 lg:py-2.5 rounded-xl text-xs lg:text-sm font-medium transition-all hover:-translate-y-0.5 relative whitespace-nowrap"
+                      className="px-2 lg:px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:-translate-y-0.5 relative whitespace-nowrap"
                       style={{
                         ...getButtonStyle(isActive),
                         ...(isActive && {
