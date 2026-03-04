@@ -232,7 +232,7 @@ function LayoutContent({ children, currentPageName }) {
 
       <nav className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: `${colors.bg}99` }}>
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 gap-2">
+          <div className="flex items-center justify-between h-14 gap-2">
             <div className="flex items-center flex-shrink-0">
               <Link to={createPageUrl("Dashboard")} className="flex-shrink-0 flex items-center gap-2 lg:gap-3">
                 <div
