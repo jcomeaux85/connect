@@ -236,7 +236,7 @@ function LayoutContent({ children, currentPageName }) {
             <div className="flex items-center flex-shrink-0">
               <Link to={createPageUrl("Dashboard")} className="flex-shrink-0 flex items-center gap-2 lg:gap-3">
                 <div
-                  className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center"
+                  className="w-7 h-7 lg:w-9 lg:h-9 rounded-2xl flex items-center justify-center"
                   style={{
                     background: colors.bg,
                     boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
