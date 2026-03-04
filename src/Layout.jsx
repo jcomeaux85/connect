@@ -319,7 +319,7 @@ function LayoutContent({ children, currentPageName }) {
             <div className="hidden md:ml-2 lg:ml-4 md:flex md:items-center md:space-x-1 lg:space-x-2 md:flex-shrink-0">
               <button
                 onClick={toggleTheme}
-                className="hidden xl:flex rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 items-center justify-center flex-shrink-0"
+                className="hidden xl:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
                 style={getButtonStyle()}
               >
                 {isDark ? (
