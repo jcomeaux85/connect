@@ -323,9 +323,9 @@ function LayoutContent({ children, currentPageName }) {
                 style={getButtonStyle()}
               >
                 {isDark ? (
-                  <Sun className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
+                  <Sun className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                 ) : (
-                  <Moon className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
+                  <Moon className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                 )}
               </button>
 
