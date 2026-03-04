@@ -407,7 +407,7 @@ function LayoutContent({ children, currentPageName }) {
                          className="w-full h-full object-cover"
                        />
                      ) : (
-                       <div className="w-10 h-10 rounded-full flex items-center justify-center" style={getInsetStyle()}>
+                       <div className="w-8 h-8 rounded-full flex items-center justify-center" style={getInsetStyle()}>
                          <span style={{ color: colors.textSecondary }} className="font-bold text-sm">
                            {user?.full_name?.charAt(0) || 'U'}
                          </span>
