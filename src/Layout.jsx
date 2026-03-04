@@ -261,7 +261,7 @@ function LayoutContent({ children, currentPageName }) {
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-col">
-                  <span className="font-bold text-2xl tracking-tight" style={{ color: colors.text }}>
+                  <span className="font-bold text-base tracking-tight" style={{ color: colors.text }}>
                     BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[10px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup>
                   </span>
                 </div>
