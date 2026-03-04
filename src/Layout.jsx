@@ -362,7 +362,7 @@ function LayoutContent({ children, currentPageName }) {
               </button>
 
               <button
-                className="rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 relative flex items-center justify-center flex-shrink-0"
+                className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
                 onClick={() => {
                   setShowNotifications(!showNotifications);
                   setShowMessages(false);
