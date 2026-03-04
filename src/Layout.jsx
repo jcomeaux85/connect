@@ -330,7 +330,7 @@ function LayoutContent({ children, currentPageName }) {
               </button>
 
               <button
-                className="hidden lg:flex rounded-2xl h-10 w-10 lg:h-12 lg:w-12 border-0 items-center justify-center flex-shrink-0"
+                className="hidden lg:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
                 onClick={() => {
                   setShowCalls(!showCalls);
                   setShowMessages(false);
