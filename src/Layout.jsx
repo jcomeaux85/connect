@@ -339,7 +339,7 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 style={getButtonStyle()}
               >
-                <Phone className="w-4 h-4 lg:w-5 lg:h-5" style={{ color: colors.iconColor }} />
+                <Phone className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
               </button>
 
               <button
