@@ -476,23 +476,13 @@ function LayoutContent({ children, currentPageName }) {
         )}
       </nav>
 
-      <AnimatePresence>
-        {showCalls && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-            style={{ overflow: 'hidden' }}
-          >
-            <CallsPanel
-              user={user}
-              isOpen={showCalls}
-              onClose={() => setShowCalls(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {showCalls && (
+        <CallsPanel
+          user={user}
+          isOpen={showCalls}
+          onClose={() => setShowCalls(false)}
+        />
+      )}
 
       <main className="flex-1 overflow-y-auto overflow-x-hidden">
         {children}
