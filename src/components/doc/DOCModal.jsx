@@ -24,58 +24,27 @@ export default function DOCModal({ isOpen, onClose }) {
           style={{ background: `${colors.bg}40` }}
         />
 
-        {/* DOC Container */}
+        {/* DOC Container - Floating without background */}
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           className="relative w-[95vw] h-[90vh] rounded-3xl overflow-hidden"
-          style={{
-            background: colors.bg,
-            boxShadow: `0 20px 60px ${colors.shadowDark}, 0 -10px 40px ${colors.shadowLight}`
-          }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header */}
-          <div 
-            className="flex items-center justify-between p-4 border-b"
-            style={{ 
-              borderColor: colors.border,
-              background: colors.bg
+          {/* Close Button - Floating */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{
+              background: colors.bg,
+              boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
             }}
           >
-            <div className="flex items-center gap-3">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                }}
-              >
-                <FileText className="w-5 h-5" style={{ color: '#dc2626' }} />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold" style={{ color: colors.text }}>
-                  DOC™ — Directory of Coverage
-                </h2>
-                <p className="text-xs" style={{ color: colors.textSecondary }}>
-                  Search and reference benefit information
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{
-                background: colors.bg,
-                boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-              }}
-            >
-              <X className="w-5 h-5" style={{ color: colors.iconColor }} />
-            </button>
-          </div>
+            <X className="w-5 h-5" style={{ color: colors.iconColor }} />
+          </button>
 
-          {/* DOC iframe */}
+          {/* DOC iframe - No background, just floating content */}
           <iframe
             key={iframeKey}
             srcDoc={`<!DOCTYPE html>
@@ -91,7 +60,7 @@ export default function DOCModal({ isOpen, onClose }) {
 </head>
 <body>Loading DOC...</body>
 </html>`}
-            className="w-full h-[calc(100%-72px)]"
+            className="w-full h-full rounded-3xl"
             style={{ border: 'none' }}
             title="DOC Directory"
           />
