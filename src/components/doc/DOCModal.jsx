@@ -24,13 +24,14 @@ export default function DOCModal({ isOpen, onClose }) {
           style={{ background: `${colors.bg}40` }}
         />
 
-        {/* DOC Container - Floating without background */}
+        {/* DOC Container - Fully transparent wrapper */}
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="relative w-[95vw] h-[90vh] rounded-3xl overflow-hidden"
+          className="relative w-[95vw] h-[90vh] rounded-3xl overflow-visible"
           onClick={(e) => e.stopPropagation()}
+          style={{ background: 'transparent' }}
         >
           {/* Close Button - Floating */}
           <button
@@ -44,7 +45,7 @@ export default function DOCModal({ isOpen, onClose }) {
             <X className="w-5 h-5" style={{ color: colors.iconColor }} />
           </button>
 
-          {/* DOC iframe - No background, just floating content */}
+          {/* DOC iframe - Transparent, floating content */}
           <iframe
             key={iframeKey}
             srcDoc={`<!DOCTYPE html>
@@ -58,10 +59,10 @@ export default function DOCModal({ isOpen, onClose }) {
     .then(html => document.write(html));
 </script>
 </head>
-<body>Loading DOC...</body>
+<body style="background: transparent;">Loading DOC...</body>
 </html>`}
             className="w-full h-full rounded-3xl"
-            style={{ border: 'none' }}
+            style={{ border: 'none', background: 'transparent' }}
             title="DOC Directory"
           />
         </motion.div>
