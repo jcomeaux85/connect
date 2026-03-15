@@ -78,7 +78,19 @@ export default function DOCModal({ isOpen, onClose }) {
           {/* DOC iframe */}
           <iframe
             key={iframeKey}
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/837165c78_DOC.html"
+            srcDoc={`<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  fetch('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/837165c78_DOC.html')
+    .then(r => r.text())
+    .then(html => document.write(html));
+</script>
+</head>
+<body>Loading DOC...</body>
+</html>`}
             className="w-full h-[calc(100%-72px)]"
             style={{ border: 'none' }}
             title="DOC Directory"
