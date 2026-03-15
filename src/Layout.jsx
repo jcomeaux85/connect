@@ -40,6 +40,7 @@ import DispositionForm from "@/components/calls/DispositionForm";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import SlideOutMenu from "@/components/navigation/SlideOutMenu";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
+import DOCModal from "@/components/doc/DOCModal";
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
@@ -591,6 +592,11 @@ function LayoutContent({ children, currentPageName }) {
         onClose={() => setDispositionData(null)}
         callData={dispositionData}
         user={user}
+      />
+
+      <DOCModal
+        isOpen={showDOC}
+        onClose={() => setShowDOC(false)}
       />
 
       {/* Incoming Call Popups */}
