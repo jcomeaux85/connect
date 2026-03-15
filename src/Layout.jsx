@@ -15,7 +15,8 @@ import {
   MessageSquare,
   Moon,
   Sun,
-  Phone
+  Phone,
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -83,7 +84,8 @@ function LayoutContent({ children, currentPageName }) {
     const [showCalls, setShowCalls] = useState(false);
     const [showPhoneDialer, setShowPhoneDialer] = useState(false);
     const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
-  const [dispositionData, setDispositionData] = useState(null);
+    const [dispositionData, setDispositionData] = useState(null);
+    const [showDOC, setShowDOC] = useState(false);
 
     const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
   
@@ -340,6 +342,15 @@ function LayoutContent({ children, currentPageName }) {
                 style={getButtonStyle()}
               >
                 <Phone className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
+              </button>
+
+              <button
+                className="hidden xl:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
+                onClick={() => setShowDOC(!showDOC)}
+                style={getButtonStyle()}
+                title="DOC™ Directory"
+              >
+                <FileText className="w-3.5 h-3.5" style={{ color: '#dc2626' }} />
               </button>
 
               <button
