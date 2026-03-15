@@ -49,14 +49,30 @@ export default function DOCModal({ isOpen, onClose }) {
           <iframe
             key={iframeKey}
             srcDoc={`<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" style="background: transparent;">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  html, body { background: transparent !important; }
+</style>
 <script>
   fetch('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/837165c78_DOC.html')
     .then(r => r.text())
-    .then(html => document.write(html));
+    .then(html => {
+      document.write(html);
+      setTimeout(() => {
+        document.documentElement.style.background = 'transparent';
+        document.body.style.background = 'transparent';
+        const allElements = document.querySelectorAll('*');
+        allElements.forEach(el => {
+          const bgColor = window.getComputedStyle(el).backgroundColor;
+          if (bgColor === 'rgb(255, 255, 255)' || bgColor === 'white') {
+            el.style.backgroundColor = 'transparent';
+          }
+        });
+      }, 100);
+    });
 </script>
 </head>
 <body style="background: transparent;">Loading DOC...</body>
