@@ -156,3 +156,8 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+/* Apply 90% zoom to the whole app for better screen fit */
+#root {
+  zoom: 0.9;
+}

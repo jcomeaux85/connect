@@ -212,7 +212,7 @@ function LayoutContent({ children, currentPageName }) {
   const unreadMessages = messages.length;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}`, fontSize: '90%' }}>
+    <div className="min-h-screen flex flex-col" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
       {/* Blur Backdrop */}
       <AnimatePresence>
         {(showNotifications || showMessages) && (
