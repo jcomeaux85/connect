@@ -90,12 +90,12 @@ export default function PersistentSidebar({
   const handleLogout = () => base44.auth.logout();
   const actions = quickActions({ onToggleMessages, onTogglePhone, onToggleBackgroundCustomizer, onToggleTheme, onLogout: handleLogout }, isDark);
 
-  // Neumorphic button style helpers
+  // Neumorphic button style with glare highlight on top edge
   const btnStyle = (active) => ({
     background: colors.bg,
     boxShadow: active
       ? `inset 3px 3px 7px ${colors.shadowDark}, inset -3px -3px 7px ${colors.shadowLight}`
-      : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, 1px 1px 2px ${colors.shadowDark}80`,
+      : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, inset 0 1px 0 ${colors.shadowLight}`,
     border: 'none',
   });
 
