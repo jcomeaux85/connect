@@ -335,7 +335,7 @@ function LayoutContent({ children, currentPageName }) {
         </main>
 
         {/* Footer */}
-        <footer className="flex-shrink-0 py-3 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.bg }}>
+        <footer className="flex-shrink-0 py-2 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.bg }}>
           <p className="text-xs font-bold" style={{ color: colors.text }}>
             BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
             <span className="mx-2" style={{ color: colors.textTertiary }}>·</span>
