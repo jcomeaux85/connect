@@ -41,7 +41,6 @@ import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import SlideOutMenu from "@/components/navigation/SlideOutMenu";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 import DOCModal from "@/components/doc/DOCModal";
-import { Link } from "react-router-dom";
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
