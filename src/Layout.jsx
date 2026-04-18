@@ -174,7 +174,9 @@ function LayoutContent({ children, currentPageName }) {
 
   const unreadNotifications = notifications.length;
   const unreadMessages = messages.length;
-  const SIDEBAR_W = SIDEBAR_WIDTHS[sidebarLevel - 1];
+  // Level 1 floats over content (no margin push, no backdrop)
+  // Levels 2 & 3 push content and show a dimming backdrop
+  const SIDEBAR_W = sidebarLevel === 1 ? 0 : SIDEBAR_WIDTHS[sidebarLevel - 1];
 
   const handleSidebarLevelChange = (level) => {
     setSidebarLevel(level);
@@ -183,6 +185,21 @@ function LayoutContent({ children, currentPageName }) {
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
+
+      {/* Backdrop for levels 2 & 3 — dims/blurs content behind sidebar */}
+      <AnimatePresence>
+        {sidebarLevel > 1 && (
+          <motion.div
+            key="sidebar-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[55] pointer-events-none"
+            style={{ background: `${colors.bg}30`, backdropFilter: 'blur(2px)' }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Persistent Sidebar — always rendered */}
       <PersistentSidebar
@@ -254,17 +271,28 @@ function LayoutContent({ children, currentPageName }) {
               <div className="flex items-center gap-2 ml-4">
                 <button
                   onClick={() => setShowDOC(p => !p)}
-                  className="h-8 px-4 rounded-xl text-xs font-bold border-0"
-                  style={{ ...navBtnStyle(false), color: '#dc2626' }}
+                  className="h-8 px-4 rounded-xl text-xs font-bold border-0 relative overflow-hidden"
+                  style={{
+                    background: `linear-gradient(145deg, #ef4444, #b91c1c)`,
+                    boxShadow: `3px 3px 8px ${colors.shadowDark}, -1px -1px 4px ${colors.shadowLight}, inset 0 1px 0 rgba(255,255,255,0.25)`,
+                    color: '#fff',
+                  }}
                 >
-                  <FileText className="w-3.5 h-3.5 mr-1.5 inline" />DOC™
+                  <span className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.22) 0%, transparent 55%)', borderRadius: 'inherit' }} />
+                  <FileText className="w-3.5 h-3.5 mr-1.5 inline relative z-10" />
+                  <span className="relative z-10">DOC™</span>
                 </button>
                 <Link
                   to="/Core"
-                  className="h-8 px-4 rounded-xl text-xs font-bold border-0 flex items-center no-underline"
-                  style={{ ...navBtnStyle(false), color: '#7c3aed' }}
+                  className="h-8 px-4 rounded-xl text-xs font-bold border-0 flex items-center no-underline relative overflow-hidden"
+                  style={{
+                    background: `linear-gradient(145deg, #7c3aed, #5b21b6)`,
+                    boxShadow: `3px 3px 8px ${colors.shadowDark}, -1px -1px 4px ${colors.shadowLight}, inset 0 1px 0 rgba(255,255,255,0.25)`,
+                    color: '#fff',
+                  }}
                 >
-                  CORE
+                  <span className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.2) 0%, transparent 55%)', borderRadius: 'inherit' }} />
+                  <span className="relative z-10">CORE</span>
                 </Link>
               </div>
 
