@@ -80,9 +80,11 @@ export default function PersistentSidebar({
   const location = useLocation();
   const { colors } = useTheme();
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const level = sidebarLevel ?? 1; // 1, 2, or 3
-  const width = SIDEBAR_WIDTHS[level - 1];
+  // When hovered, show at the selected level width; otherwise collapse to 0 (hidden)
+  const width = isHovered ? SIDEBAR_WIDTHS[level - 1] : 0;
   const isMin = level === 1;
   const isMid = level === 2;
   const isFull = level === 3;
@@ -106,19 +108,30 @@ export default function PersistentSidebar({
   });
 
   return (
+    <>
+      {/* Invisible hover trigger strip — always present on the left edge */}
+      <div
+        className="fixed left-0 top-0 h-full z-[59]"
+        style={{ width: '12px' }}
+        onMouseEnter={() => setIsHovered(true)}
+      />
+
     <motion.div
       animate={{ width }}
       transition={{ type: 'spring', damping: 28, stiffness: 260 }}
       className="fixed left-0 top-0 h-full z-[60] flex flex-col select-none"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         background: isDark
-          ? 'rgba(30, 32, 44, 0.55)'
-          : 'rgba(224, 229, 236, 0.55)',
+          ? 'rgba(30, 32, 44, 0.75)'
+          : 'rgba(224, 229, 236, 0.75)',
         backdropFilter: 'blur(20px) saturate(180%)',
         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         borderRight: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.6)'}`,
         boxShadow: `4px 0 32px ${colors.shadowDark}40`,
-        overflow: 'visible',
+        overflow: 'hidden',
+        pointerEvents: isHovered ? 'auto' : 'none',
       }}
     >
       {/* Clip the interior but let tooltips escape via a wrapper */}
@@ -304,5 +317,6 @@ export default function PersistentSidebar({
         </div>
       </div>
     </motion.div>
+    </>
   );
 }

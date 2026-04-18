@@ -174,9 +174,6 @@ function LayoutContent({ children, currentPageName }) {
 
   const unreadNotifications = notifications.length;
   const unreadMessages = messages.length;
-  // Level 1 floats over content (no margin push, no backdrop)
-  // Levels 2 & 3 push content and show a dimming backdrop
-  const SIDEBAR_W = sidebarLevel === 1 ? 0 : SIDEBAR_WIDTHS[sidebarLevel - 1];
 
   const handleSidebarLevelChange = (level) => {
     setSidebarLevel(level);
@@ -186,22 +183,7 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
 
-      {/* Backdrop for levels 2 & 3 — dims/blurs content behind sidebar */}
-      <AnimatePresence>
-        {sidebarLevel > 1 && (
-          <motion.div
-            key="sidebar-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[55] pointer-events-none"
-            style={{ background: `${colors.bg}30`, backdropFilter: 'blur(2px)' }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Persistent Sidebar — always rendered */}
+      {/* Persistent Sidebar — always rendered, floats over content */}
       <PersistentSidebar
         sidebarLevel={sidebarLevel}
         onSidebarLevelChange={handleSidebarLevelChange}
@@ -214,12 +196,8 @@ function LayoutContent({ children, currentPageName }) {
         user={user}
       />
 
-      {/* Main area: nav + content */}
-      <motion.div
-        className="flex flex-col flex-1 overflow-hidden"
-        animate={{ marginLeft: SIDEBAR_W }}
-        transition={{ type: 'spring', damping: 28, stiffness: 260 }}
-      >
+      {/* Main area: nav + content — never pushed by sidebar */}
+      <div className="flex flex-col flex-1 overflow-hidden">
 
         {/* Top Nav — always visible */}
         <nav
@@ -364,7 +342,7 @@ function LayoutContent({ children, currentPageName }) {
             <span style={{ color: colors.textSecondary }}>indie<span style={{ color: colors.textTertiary }}>|</span>render<sup className="text-[6px]" style={{ color: colors.textTertiary }}>™</sup></span>
           </p>
         </footer>
-      </motion.div>
+      </div>
 
       {/* ─── Global Overlays (always mounted so calls/SMS always ring) ─── */}
 
