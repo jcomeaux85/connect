@@ -30,7 +30,7 @@ import MessagingPanel from "@/components/messaging/MessagingPanel";
 import CallsPanel from "@/components/calls/CallsPanel";
 import DispositionForm from "@/components/calls/DispositionForm";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
-import PersistentSidebar from "@/components/navigation/PersistentSidebar";
+import PersistentSidebar, { SIDEBAR_COLLAPSED_W, SIDEBAR_EXPANDED_W } from "@/components/navigation/PersistentSidebar";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 import DOCModal from "@/components/doc/DOCModal";
 
@@ -157,7 +157,7 @@ function LayoutContent({ children, currentPageName }) {
 
   const unreadNotifications = notifications.length;
   const unreadMessages = messages.length;
-  const SIDEBAR_W = 56; // collapsed sidebar width in px
+  const SIDEBAR_W = expanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
@@ -176,7 +176,11 @@ function LayoutContent({ children, currentPageName }) {
       />
 
       {/* Main area: nav + content */}
-      <div className="flex flex-col flex-1 overflow-hidden" style={{ marginLeft: `${SIDEBAR_W}px` }}>
+      <motion.div
+        className="flex flex-col flex-1 overflow-hidden"
+        animate={{ marginLeft: SIDEBAR_W }}
+        transition={{ type: 'spring', damping: 28, stiffness: 260 }}
+      >
 
         {/* Top Nav — always visible */}
         <nav
@@ -308,7 +312,7 @@ function LayoutContent({ children, currentPageName }) {
         </nav>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden" style={{ scrollbarWidth: 'thin' }}>
           {children}
         </main>
 
@@ -320,7 +324,7 @@ function LayoutContent({ children, currentPageName }) {
             <span style={{ color: colors.textSecondary }}>indie<span style={{ color: colors.textTertiary }}>|</span>render<sup className="text-[6px]" style={{ color: colors.textTertiary }}>™</sup></span>
           </p>
         </footer>
-      </div>
+      </motion.div>
 
       {/* ─── Global Overlays (always mounted so calls/SMS always ring) ─── */}
 
