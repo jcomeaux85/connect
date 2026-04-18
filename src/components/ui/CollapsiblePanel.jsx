@@ -80,7 +80,7 @@ export default function CollapsiblePanel({
         ...panelStyle,
         ...getGlowStyle(),
         transition: `all ${getTransitionDuration(200)} ease-out`,
-        overflow: 'visible'
+        overflow: 'hidden'
       }}
     >
       {/* Vertical Brightness Slider - Left Edge */}

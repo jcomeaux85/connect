@@ -202,10 +202,10 @@ export default function Dashboard() {
                   className="w-16 h-16 rounded-3xl flex items-center justify-center"
                   style={{
                     background: colors.bg,
-                    boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
                   }}
                 >
-                  <WeatherIcon className="w-8 h-8" style={{ color: '#3B82F6' }} />
+                  <WeatherIcon className="w-8 h-8" style={{ color: '#7c3aed' }} />
                 </div>
                 <div>
                   <p className="text-3xl font-bold" style={{ color: colors.text }}>
