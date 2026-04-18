@@ -22,10 +22,10 @@ import {
   Building2,
   Sun,
   Moon,
-  HelpCircle
+  HelpCircle,
+  FileText
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 export default function SlideOutMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -113,8 +113,56 @@ export default function SlideOutMenu() {
             setIsOpen(false);
             setIsExpanded(false);
           }} />
-
         }
+      </AnimatePresence>
+
+      {/* Slingshot pills — DOC and CORE fly out along the top when sidebar opens */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* DOC pill */}
+            <motion.button
+              initial={{ x: -120, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -120, opacity: 0 }}
+              transition={{ type: 'spring', damping: 18, stiffness: 220, delay: 0.08 }}
+              onClick={() => window.dispatchEvent(new CustomEvent('toggle-doc'))}
+              className="fixed z-[61] flex items-center gap-1.5 px-4 h-9 rounded-b-2xl text-xs font-bold cursor-pointer"
+              style={{
+                top: 0,
+                left: '232px',
+                background: colors.bg,
+                color: '#dc2626',
+                boxShadow: `4px 4px 12px ${colors.shadowDark}, -2px -2px 6px ${colors.shadowLight}`
+              }}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              DOC™
+            </motion.button>
+
+            {/* CORE pill */}
+            <motion.div
+              initial={{ x: -200, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -200, opacity: 0 }}
+              transition={{ type: 'spring', damping: 18, stiffness: 220, delay: 0.15 }}
+              className="fixed z-[61]"
+              style={{ top: 0, left: '300px' }}
+            >
+              <Link
+                to="/Core"
+                className="flex items-center gap-1.5 px-4 h-9 rounded-b-2xl text-xs font-bold"
+                style={{
+                  background: colors.bg,
+                  color: '#7c3aed',
+                  boxShadow: `4px 4px 12px ${colors.shadowDark}, -2px -2px 6px ${colors.shadowLight}`
+                }}
+              >
+                CORE
+              </Link>
+            </motion.div>
+          </>
+        )}
       </AnimatePresence>
 
       <div

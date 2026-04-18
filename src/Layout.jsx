@@ -11,8 +11,7 @@ import {
   X,
   Users,
   MessageSquare,
-  Phone,
-  FileText
+  Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -166,9 +165,13 @@ function LayoutContent({ children, currentPageName }) {
     const handleToggleBackgroundCustomizer = () => {
       setShowBackgroundCustomizer(prev => !prev);
     };
+    const handleToggleDoc = () => {
+      setShowDOC(prev => !prev);
+    };
 
     window.addEventListener('toggle-messages', handleToggleMessages);
     window.addEventListener('toggle-phone', handleTogglePhone);
+    window.addEventListener('toggle-doc', handleToggleDoc);
     const handleShowDisposition = (event) => {
       setDispositionData(event.detail || {});
     };
@@ -181,6 +184,7 @@ function LayoutContent({ children, currentPageName }) {
       window.removeEventListener('toggle-phone', handleTogglePhone);
       window.removeEventListener('show-disposition-form', handleShowDisposition);
       window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
+      window.removeEventListener('toggle-doc', handleToggleDoc);
     };
   }, []);
 
@@ -260,8 +264,8 @@ function LayoutContent({ children, currentPageName }) {
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-col">
-                  <span className="font-bold text-base tracking-tight" style={{ color: colors.text }}>
-                    BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[10px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup>
+                  <span className="font-bold text-base tracking-tight" style={{ color: '#7c3aed' }}>
+                    BEN<span style={{ color: '#9ca3af' }}>|</span>CONNECT<sup className="text-[10px] ml-0.5" style={{ color: '#9ca3af' }}>™</sup>
                   </span>
                 </div>
               </Link>
@@ -331,23 +335,7 @@ function LayoutContent({ children, currentPageName }) {
                 <Phone className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
               </button>
 
-              <button
-                className="hidden xl:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
-                onClick={() => setShowDOC(!showDOC)}
-                style={getButtonStyle()}
-                title="DOC™ Directory"
-              >
-                <FileText className="w-3.5 h-3.5" style={{ color: '#dc2626' }} />
-              </button>
 
-              <Link
-                to="/Core"
-                className="hidden xl:flex rounded-2xl h-8 px-3 border-0 items-center justify-center flex-shrink-0 gap-1 text-xs font-bold"
-                style={{ ...getButtonStyle(), color: '#7c3aed' }}
-                title="BEN|connect Core (Pro Workforce)"
-              >
-                CORE
-              </Link>
 
               <button
                 className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
