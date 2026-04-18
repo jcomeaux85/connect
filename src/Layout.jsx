@@ -41,6 +41,7 @@ import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import SlideOutMenu from "@/components/navigation/SlideOutMenu";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 import DOCModal from "@/components/doc/DOCModal";
+import { Link } from "react-router-dom";
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
@@ -353,6 +354,15 @@ function LayoutContent({ children, currentPageName }) {
               >
                 <FileText className="w-3.5 h-3.5" style={{ color: '#dc2626' }} />
               </button>
+
+              <Link
+                to="/Core"
+                className="hidden xl:flex rounded-2xl h-8 px-3 border-0 items-center justify-center flex-shrink-0 gap-1 text-xs font-bold"
+                style={{ ...getButtonStyle(), color: '#7c3aed' }}
+                title="BEN|connect Core (Pro Workforce)"
+              >
+                CORE
+              </Link>
 
               <button
                 className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"

@@ -1,0 +1,77 @@
+{
+  "name": "CoreEmployee",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "position": {
+      "type": "string"
+    },
+    "department": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "hire_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "employee_id": {
+      "type": "string"
+    },
+    "pay_type": {
+      "type": "string",
+      "enum": [
+        "Salaried",
+        "Hourly",
+        "Contract"
+      ],
+      "default": "Salaried"
+    },
+    "pay_frequency": {
+      "type": "string",
+      "enum": [
+        "Weekly",
+        "Bi-weekly",
+        "Semi-monthly",
+        "Monthly"
+      ],
+      "default": "Bi-weekly"
+    },
+    "health_plan": {
+      "type": "string"
+    },
+    "retirement_contribution": {
+      "type": "string"
+    },
+    "pto_balance": {
+      "type": "number",
+      "default": 80
+    },
+    "ytd_earnings": {
+      "type": "number",
+      "default": 0
+    },
+    "emergency_contact_name": {
+      "type": "string"
+    },
+    "emergency_contact_phone": {
+      "type": "string"
+    },
+    "emergency_contact_relation": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "full_name",
+    "email"
+  ]
+}

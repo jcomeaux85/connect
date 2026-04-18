@@ -1,0 +1,41 @@
+{
+  "name": "CorePaystub",
+  "type": "object",
+  "properties": {
+    "employee_email": {
+      "type": "string"
+    },
+    "pay_period_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "pay_period_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "pay_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "gross_pay": {
+      "type": "number"
+    },
+    "net_pay": {
+      "type": "number"
+    },
+    "hours_worked": {
+      "type": "number"
+    },
+    "deductions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "employee_email",
+    "pay_period_start",
+    "pay_period_end",
+    "gross_pay",
+    "net_pay"
+  ]
+}

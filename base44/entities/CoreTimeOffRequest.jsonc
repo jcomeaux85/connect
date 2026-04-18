@@ -1,0 +1,46 @@
+{
+  "name": "CoreTimeOffRequest",
+  "type": "object",
+  "properties": {
+    "employee_email": {
+      "type": "string"
+    },
+    "request_type": {
+      "type": "string",
+      "enum": [
+        "Vacation",
+        "Sick Leave",
+        "Personal Day",
+        "Bereavement",
+        "Other"
+      ],
+      "default": "Vacation"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "denied"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "employee_email",
+    "request_type",
+    "start_date",
+    "end_date"
+  ]
+}

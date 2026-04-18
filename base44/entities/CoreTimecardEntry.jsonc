@@ -1,0 +1,49 @@
+{
+  "name": "CoreTimecardEntry",
+  "type": "object",
+  "properties": {
+    "employee_email": {
+      "type": "string"
+    },
+    "work_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "clock_in": {
+      "type": "string"
+    },
+    "clock_out": {
+      "type": "string"
+    },
+    "hours": {
+      "type": "number"
+    },
+    "entry_type": {
+      "type": "string",
+      "enum": [
+        "regular",
+        "overtime",
+        "holiday",
+        "sick"
+      ],
+      "default": "regular"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "submitted",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "employee_email",
+    "work_date"
+  ]
+}
