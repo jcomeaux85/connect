@@ -57,12 +57,12 @@ function LayoutContent({ children, currentPageName }) {
   });
 
   const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
-  // Simple neumorphic helper used inline in nav
+  // Neumorphic button with glare highlight on top edge
   const navBtnStyle = (active = false) => ({
     background: colors.bg,
     boxShadow: active
       ? `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
-      : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
+      : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, inset 0 1px 0 ${colors.shadowLight}`,
     border: 'none',
   });
 
@@ -254,10 +254,8 @@ function LayoutContent({ children, currentPageName }) {
                         to={item.url}
                         className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:-translate-y-0.5 whitespace-nowrap"
                         style={{
-                          ...getButtonStyle(isActive),
-                          ...(isActive && {
-                            boxShadow: `0 0 8px ${isDark ? '#ffffff50' : '#00000030'}, 0 0 16px ${isDark ? '#ffffff20' : '#00000015'}, ${getButtonStyle(isActive).boxShadow}`
-                          })
+                          ...navBtnStyle(isActive),
+                          color: isActive ? colors.text : colors.textSecondary,
                         }}
                       >
                         {item.title}
@@ -271,28 +269,17 @@ function LayoutContent({ children, currentPageName }) {
               <div className="flex items-center gap-2 ml-4">
                 <button
                   onClick={() => setShowDOC(p => !p)}
-                  className="h-8 px-4 rounded-xl text-xs font-bold border-0 relative overflow-hidden"
-                  style={{
-                    background: `linear-gradient(145deg, #ef4444, #b91c1c)`,
-                    boxShadow: `3px 3px 8px ${colors.shadowDark}, -1px -1px 4px ${colors.shadowLight}, inset 0 1px 0 rgba(255,255,255,0.25)`,
-                    color: '#fff',
-                  }}
+                  className="h-8 px-4 rounded-xl text-xs font-bold border-0"
+                  style={{ ...navBtnStyle(false), color: '#dc2626' }}
                 >
-                  <span className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.22) 0%, transparent 55%)', borderRadius: 'inherit' }} />
-                  <FileText className="w-3.5 h-3.5 mr-1.5 inline relative z-10" />
-                  <span className="relative z-10">DOC™</span>
+                  <FileText className="w-3.5 h-3.5 mr-1.5 inline" />DOC™
                 </button>
                 <Link
                   to="/Core"
-                  className="h-8 px-4 rounded-xl text-xs font-bold border-0 flex items-center no-underline relative overflow-hidden"
-                  style={{
-                    background: `linear-gradient(145deg, #7c3aed, #5b21b6)`,
-                    boxShadow: `3px 3px 8px ${colors.shadowDark}, -1px -1px 4px ${colors.shadowLight}, inset 0 1px 0 rgba(255,255,255,0.25)`,
-                    color: '#fff',
-                  }}
+                  className="h-8 px-4 rounded-xl text-xs font-bold border-0 flex items-center no-underline"
+                  style={{ ...navBtnStyle(false), color: '#7c3aed' }}
                 >
-                  <span className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(160deg, rgba(255,255,255,0.2) 0%, transparent 55%)', borderRadius: 'inherit' }} />
-                  <span className="relative z-10">CORE</span>
+                  CORE
                 </Link>
               </div>
 
@@ -301,7 +288,7 @@ function LayoutContent({ children, currentPageName }) {
                 <button
                   className="rounded-2xl h-8 w-8 border-0 flex items-center justify-center flex-shrink-0"
                   onClick={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
-                  style={getButtonStyle()}
+                  style={navBtnStyle()}
                 >
                   <Phone className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                 </button>
@@ -309,7 +296,7 @@ function LayoutContent({ children, currentPageName }) {
                 <button
                   className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
                   onClick={() => { setShowMessages(p => !p); setShowCalls(false); setShowNotifications(false); }}
-                  style={getButtonStyle()}
+                  style={navBtnStyle()}
                 >
                   <MessageSquare className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                   {unreadMessages > 0 && (
@@ -322,7 +309,7 @@ function LayoutContent({ children, currentPageName }) {
                 <button
                   className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
                   onClick={() => { setShowNotifications(p => !p); setShowMessages(false); setShowCalls(false); }}
-                  style={getButtonStyle()}
+                  style={navBtnStyle()}
                 >
                   <Bell className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                   {unreadNotifications > 0 && (
@@ -334,7 +321,7 @@ function LayoutContent({ children, currentPageName }) {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="rounded-full h-8 w-8 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0" style={getButtonStyle()}>
+                    <button className="rounded-full h-8 w-8 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0" style={navBtnStyle()}>
                       {user?.profile_photo_url ? (
                         <img src={user.profile_photo_url} alt={user.full_name || 'User'} className="w-full h-full object-cover" />
                       ) : (
