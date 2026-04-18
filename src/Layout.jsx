@@ -5,16 +5,12 @@ import {
   LayoutGrid,
   Search,
   Bell,
-  Settings,
-  HelpCircle,
   Folder,
   TrendingUp,
   Menu as MenuIcon,
   X,
   Users,
   MessageSquare,
-  Moon,
-  Sun,
   Phone,
   FileText
 } from "lucide-react";
@@ -212,7 +208,7 @@ function LayoutContent({ children, currentPageName }) {
   const unreadMessages = messages.length;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
+    <div className="min-h-screen flex flex-col" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}`, fontSize: '90%' }}>
       {/* Blur Backdrop */}
       <AnimatePresence>
         {(showNotifications || showMessages) && (
@@ -320,17 +316,7 @@ function LayoutContent({ children, currentPageName }) {
             </div>
 
             <div className="hidden md:ml-2 lg:ml-4 md:flex md:items-center md:space-x-1 lg:space-x-2 md:flex-shrink-0">
-              <button
-                onClick={toggleTheme}
-                className="hidden xl:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
-                style={getButtonStyle()}
-              >
-                {isDark ? (
-                  <Sun className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-                ) : (
-                  <Moon className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-                )}
-              </button>
+
 
               <button
                 className="hidden lg:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
@@ -401,19 +387,7 @@ function LayoutContent({ children, currentPageName }) {
                 )}
               </button>
 
-              <button
-                className="hidden xl:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
-                style={getButtonStyle()}
-              >
-                <HelpCircle className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-              </button>
 
-              <button
-                className="hidden xl:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
-                style={getButtonStyle()}
-              >
-                <Settings className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-              </button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

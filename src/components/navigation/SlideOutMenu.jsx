@@ -19,7 +19,10 @@ import {
   User,
   Search,
   Palette,
-  Building2
+  Building2,
+  Sun,
+  Moon,
+  HelpCircle
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -29,7 +32,7 @@ export default function SlideOutMenu() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
-  const { colors } = useTheme();
+  const { colors, toggleTheme, isDark } = useTheme();
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
@@ -118,7 +121,7 @@ export default function SlideOutMenu() {
         id="slide-out-menu"
         className="fixed left-0 top-0 h-full z-[60] pointer-events-auto"
         style={{
-          width: isOpen ? '220px' : '20px',
+          width: isOpen ? '220px' : '48px',
           transition: 'width 0.3s ease'
         }}>
 
@@ -333,6 +336,37 @@ export default function SlideOutMenu() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={toggleTheme}
+                  className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 p-2"
+                  style={{
+                    background: colors.bg,
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                  }}
+                  onMouseEnter={() => setIsExpanded(true)}>
+                  {isDark ? <Sun className="w-7 h-7" style={{ color: colors.textSecondary }} /> : <Moon className="w-7 h-7" style={{ color: colors.textSecondary }} />}
+                  <span className="text-[9px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                    {isDark ? 'Light' : 'Dark'}
+                  </span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 p-2"
+                  style={{
+                    background: colors.bg,
+                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                  }}
+                  onMouseEnter={() => setIsExpanded(true)}>
+                  <HelpCircle className="w-7 h-7" style={{ color: colors.textSecondary }} />
+                  <span className="text-[9px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
+                    Help
+                  </span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleLogout}
                   className="rounded-2xl h-16 flex flex-col items-center justify-center gap-1 p-2"
                   style={{
@@ -340,12 +374,31 @@ export default function SlideOutMenu() {
                     boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
                   }}
                   onMouseEnter={() => setIsExpanded(true)}>
-
                   <LogOut className="w-7 h-7" style={{ color: colors.textSecondary }} />
                   <span className="text-[9px] font-medium text-center leading-tight" style={{ color: colors.textSecondary }}>
                     Logout
                   </span>
                 </motion.button>
+              </div>
+            </div>
+
+            {/* User Profile Footer */}
+            <div className="mt-auto pt-4 border-t" style={{ borderColor: colors.border }}>
+              <div className="flex items-center gap-3 px-2 py-2 rounded-2xl" style={{
+                background: colors.bg,
+                boxShadow: `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+              }}>
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0"
+                  style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}` }}>
+                  {user?.profile_photo_url ?
+                    <img src={user.profile_photo_url} alt={user.full_name} className="w-full h-full object-cover" /> :
+                    <span style={{ color: colors.text }} className="font-bold text-sm">{user?.full_name?.charAt(0) || 'U'}</span>
+                  }
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-xs font-semibold truncate" style={{ color: colors.text }}>{user?.full_name || 'User'}</p>
+                  <p className="text-[10px] truncate" style={{ color: colors.textSecondary }}>{user?.role === 'admin' ? 'Administrator' : 'Agent'}</p>
+                </div>
               </div>
             </div>
           </motion.div>

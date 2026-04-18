@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Search, FileText } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
+
+const DOC_URL = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/837165c78_DOC.html';
 
 export default function DOCModal({ isOpen, onClose }) {
   const { colors } = useTheme();
-  const [iframeKey, setIframeKey] = useState(0);
+
+  const handlePopOut = () => {
+    window.open(DOC_URL, '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
+  };
 
   if (!isOpen) return null;
 
@@ -15,28 +20,25 @@ export default function DOCModal({ isOpen, onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center"
-        onClick={onClose}
+        className="fixed inset-0 z-[100]"
+        style={{ top: 0, left: 0, right: 0, bottom: 0 }}
       >
-        {/* Blur backdrop */}
-        <div 
-          className="absolute inset-0 backdrop-blur-md"
-          style={{ background: `${colors.bg}40` }}
-        />
-
-        {/* DOC Container - Fully transparent wrapper */}
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          className="relative w-[95vw] h-[90vh] rounded-3xl overflow-visible"
-          onClick={(e) => e.stopPropagation()}
-          style={{ background: 'transparent' }}
-        >
-          {/* Close Button - Floating */}
+        {/* Control buttons - floating top-right */}
+        <div className="absolute top-3 right-3 z-10 flex gap-2">
+          <button
+            onClick={handlePopOut}
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            title="Open in new window"
+            style={{
+              background: colors.bg,
+              boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
+            }}
+          >
+            <ExternalLink className="w-4 h-4" style={{ color: colors.iconColor }} />
+          </button>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-10 h-10 rounded-xl flex items-center justify-center"
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
             style={{
               background: colors.bg,
               boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
@@ -44,44 +46,15 @@ export default function DOCModal({ isOpen, onClose }) {
           >
             <X className="w-5 h-5" style={{ color: colors.iconColor }} />
           </button>
+        </div>
 
-          {/* DOC iframe - Transparent, floating content */}
-          <iframe
-            key={iframeKey}
-            srcDoc={`<!DOCTYPE html>
-<html lang="en" data-theme="dark" style="background: transparent;">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  html, body { background: transparent !important; }
-</style>
-<script>
-  fetch('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/837165c78_DOC.html')
-    .then(r => r.text())
-    .then(html => {
-      document.write(html);
-      setTimeout(() => {
-        document.documentElement.style.background = 'transparent';
-        document.body.style.background = 'transparent';
-        const allElements = document.querySelectorAll('*');
-        allElements.forEach(el => {
-          const bgColor = window.getComputedStyle(el).backgroundColor;
-          if (bgColor === 'rgb(255, 255, 255)' || bgColor === 'white') {
-            el.style.backgroundColor = 'transparent';
-          }
-        });
-      }, 100);
-    });
-</script>
-</head>
-<body style="background: transparent;">Loading DOC...</body>
-</html>`}
-            className="w-full h-full rounded-3xl"
-            style={{ border: 'none', background: 'transparent' }}
-            title="DOC Directory"
-          />
-        </motion.div>
+        {/* Full-screen DOC iframe */}
+        <iframe
+          src={DOC_URL}
+          className="w-full h-full"
+          style={{ border: 'none', display: 'block' }}
+          title="DOC Directory"
+        />
       </motion.div>
     </AnimatePresence>
   );
