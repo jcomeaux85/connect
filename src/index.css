@@ -158,12 +158,11 @@ button:focus-visible {
 }
 
 /* Apply 90% zoom to the whole app for better screen fit */
-html, body {
-  background: transparent;
-  height: 100%;
-}
-
 #root {
   zoom: 0.9;
-  height: 100%;
+}
+
+html, body {
+  background: #2a2e3a;
+  min-height: 100%;
 }
