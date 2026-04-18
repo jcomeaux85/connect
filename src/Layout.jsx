@@ -7,13 +7,11 @@ import {
   Bell,
   Folder,
   TrendingUp,
-  Menu as MenuIcon,
   X,
   Users,
   MessageSquare,
   Phone
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -23,7 +21,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from '@tanstack/react-query';
 import { useUser } from "@/components/hooks/useUser";
@@ -33,7 +30,7 @@ import MessagingPanel from "@/components/messaging/MessagingPanel";
 import CallsPanel from "@/components/calls/CallsPanel";
 import DispositionForm from "@/components/calls/DispositionForm";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
-import SlideOutMenu from "@/components/navigation/SlideOutMenu";
+import PersistentSidebar from "@/components/navigation/PersistentSidebar";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 import DOCModal from "@/components/doc/DOCModal";
 
@@ -44,149 +41,77 @@ import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
 import { AnimatePresence, motion } from "framer-motion";
 
 const navigationItems = [
-  {
-    title: "Dashboard",
-    url: createPageUrl("Dashboard"),
-    icon: LayoutGrid,
-  },
-  {
-    title: "Cases",
-    url: createPageUrl("Cases"),
-    icon: Folder,
-  },
-  {
-    title: "Customers",
-    url: createPageUrl("Customers"),
-    icon: Users,
-  },
-  {
-    title: "Analytics",
-    url: createPageUrl("Analytics"),
-    icon: TrendingUp,
-  },
-];
-
-const userNavigation = [
-    { name: 'Your Profile', href: '#' },
-    { name: 'Settings', href: '#' },
-    { name: 'Sign out', href: '#' },
+  { title: "Dashboard", url: createPageUrl("Dashboard"), icon: LayoutGrid },
+  { title: "Cases", url: createPageUrl("Cases"), icon: Folder },
+  { title: "Customers", url: createPageUrl("Customers"), icon: Users },
+  { title: "Analytics", url: createPageUrl("Analytics"), icon: TrendingUp },
 ];
 
 function LayoutContent({ children, currentPageName }) {
-    const location = useLocation();
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [showNotifications, setShowNotifications] = useState(false);
-    const [showMessages, setShowMessages] = useState(false);
-    const [showCalls, setShowCalls] = useState(false);
-    const [showPhoneDialer, setShowPhoneDialer] = useState(false);
-    const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
-    const [dispositionData, setDispositionData] = useState(null);
-    const [showDOC, setShowDOC] = useState(false);
+  const location = useLocation();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [showCalls, setShowCalls] = useState(false);
+  const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
+  const [dispositionData, setDispositionData] = useState(null);
+  const [showDOC, setShowDOC] = useState(false);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
 
-    const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
-  
-  // Build background style based on settings
+  const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
+
   const getBackgroundStyle = () => {
     if (!backgroundSettings?.value) return { background: colors.bg };
-    
     if (backgroundSettings.type === 'image') {
-      return {
-        background: `linear-gradient(${colors.bg}ee, ${colors.bg}ee), url(${backgroundSettings.value}) center/cover fixed`
-      };
+      return { background: `linear-gradient(${colors.bg}ee, ${colors.bg}ee), url(${backgroundSettings.value}) center/cover fixed` };
     }
     if (backgroundSettings.type === 'texture') {
       return {
         background: colors.bg,
         backgroundImage: backgroundSettings.value,
-        backgroundSize: backgroundSettings.preset === 'dots' ? '20px 20px' : 
-                       backgroundSettings.preset === 'grid' ? '40px 40px' : 
-                       backgroundSettings.preset === 'diagonal' ? '10px 10px' : 'auto'
+        backgroundSize: backgroundSettings.preset === 'dots' ? '20px 20px' :
+          backgroundSettings.preset === 'grid' ? '40px 40px' :
+          backgroundSettings.preset === 'diagonal' ? '10px 10px' : 'auto'
       };
     }
     return { background: colors.bg };
   };
-  
+
   const { data: user } = useUser();
 
-  // Fetch incoming calls
+  // Incoming calls polling
   const { data: incomingCalls = [] } = useQuery({
     queryKey: ['incoming-calls'],
     queryFn: () => base44.entities.IncomingCall.filter({ status: 'ringing' }, '-created_date'),
     enabled: !!user?.email,
-    refetchInterval: 3000, // Check every 3 seconds
+    refetchInterval: 3000,
   });
 
-  // Fetch customers for incoming calls
   const { data: incomingCallCustomers = {} } = useQuery({
     queryKey: ['incoming-call-customers', incomingCalls.map(c => c.customer_id).join(',')],
     queryFn: async () => {
       const customerIds = incomingCalls.map(c => c.customer_id).filter(Boolean);
       if (customerIds.length === 0) return {};
-      
       const customers = await base44.entities.Customer.list();
       const customerMap = {};
       customers.forEach(customer => {
-        if (customerIds.includes(customer.id)) {
-          customerMap[customer.id] = customer;
-        }
+        if (customerIds.includes(customer.id)) customerMap[customer.id] = customer;
       });
       return customerMap;
     },
     enabled: incomingCalls.length > 0,
   });
 
-  // Fetch recent unread SMS
   const { data: incomingSMS = [] } = useQuery({
     queryKey: ['incoming-sms'],
     queryFn: async () => {
       if (!user?.email) return [];
       const recentSMS = await base44.entities.SMS.filter({ direction: 'received' }, '-created_date', 10);
-      // Only show SMS from last 30 seconds
       const thirtySecondsAgo = new Date(Date.now() - 30000);
       return recentSMS.filter(sms => new Date(sms.created_date) > thirtySecondsAgo);
     },
     enabled: !!user?.email,
-    refetchInterval: 5000, // Check every 5 seconds
+    refetchInterval: 5000,
   });
-
-  useEffect(() => {
-    // Listen for toggle events from SlideOutMenu
-    const handleToggleMessages = () => {
-      setShowMessages(prev => !prev);
-      setShowNotifications(false);
-      setShowPhoneDialer(false);
-    };
-    const handleTogglePhone = (event) => {
-      setShowCalls(prev => !prev);
-      setShowMessages(false);
-      setShowNotifications(false);
-      setShowPhoneDialer(false);
-    };
-    const handleToggleBackgroundCustomizer = () => {
-      setShowBackgroundCustomizer(prev => !prev);
-    };
-    const handleToggleDoc = () => {
-      setShowDOC(prev => !prev);
-    };
-
-    window.addEventListener('toggle-messages', handleToggleMessages);
-    window.addEventListener('toggle-phone', handleTogglePhone);
-    window.addEventListener('toggle-doc', handleToggleDoc);
-    const handleShowDisposition = (event) => {
-      setDispositionData(event.detail || {});
-    };
-
-    window.addEventListener('show-disposition-form', handleShowDisposition);
-    window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
-
-    return () => {
-      window.removeEventListener('toggle-messages', handleToggleMessages);
-      window.removeEventListener('toggle-phone', handleTogglePhone);
-      window.removeEventListener('show-disposition-form', handleShowDisposition);
-      window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
-      window.removeEventListener('toggle-doc', handleToggleDoc);
-    };
-  }, []);
 
   const { data: notifications = [] } = useQuery({
     queryKey: ['notifications', user?.email],
@@ -208,367 +133,216 @@ function LayoutContent({ children, currentPageName }) {
     refetchInterval: 10000,
   });
 
+  useEffect(() => {
+    const handleToggleMessages = () => { setShowMessages(p => !p); setShowNotifications(false); };
+    const handleTogglePhone = () => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); };
+    const handleToggleBackgroundCustomizer = () => setShowBackgroundCustomizer(p => !p);
+    const handleToggleDoc = () => setShowDOC(p => !p);
+    const handleShowDisposition = (e) => setDispositionData(e.detail || {});
+
+    window.addEventListener('toggle-messages', handleToggleMessages);
+    window.addEventListener('toggle-phone', handleTogglePhone);
+    window.addEventListener('toggle-doc', handleToggleDoc);
+    window.addEventListener('show-disposition-form', handleShowDisposition);
+    window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
+
+    return () => {
+      window.removeEventListener('toggle-messages', handleToggleMessages);
+      window.removeEventListener('toggle-phone', handleTogglePhone);
+      window.removeEventListener('toggle-doc', handleToggleDoc);
+      window.removeEventListener('show-disposition-form', handleShowDisposition);
+      window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
+    };
+  }, []);
+
   const unreadNotifications = notifications.length;
   const unreadMessages = messages.length;
+  const SIDEBAR_W = 56; // collapsed sidebar width in px
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
-      {/* Blur Backdrop */}
+    <div className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
+
+      {/* Persistent Sidebar — always rendered */}
+      <PersistentSidebar
+        expanded={sidebarExpanded}
+        onExpandedChange={setSidebarExpanded}
+        onToggleDoc={() => setShowDOC(p => !p)}
+        onToggleMessages={() => { setShowMessages(p => !p); setShowNotifications(false); }}
+        onTogglePhone={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
+        onToggleBackgroundCustomizer={() => setShowBackgroundCustomizer(p => !p)}
+        onToggleTheme={toggleTheme}
+        isDark={isDark}
+        user={user}
+      />
+
+      {/* Main area: nav + content */}
+      <div className="flex flex-col flex-1 overflow-hidden" style={{ marginLeft: `${SIDEBAR_W}px` }}>
+
+        {/* Top Nav — always visible */}
+        <nav
+          className="flex-shrink-0 z-50 backdrop-blur-xl"
+          style={{ background: `${colors.bg}f0`, borderBottom: `1px solid ${colors.border}` }}
+        >
+          <div className="px-4 lg:px-6">
+            <div className="flex items-center justify-between h-14 gap-2">
+
+              {/* Logo + nav links */}
+              <div className="flex items-center gap-4 flex-shrink-0">
+                <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2">
+                  <div
+                    className="w-8 h-8 rounded-2xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: colors.bg, boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}` }}
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: colors.iconColor }}>
+                      <path d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <span className="font-bold text-base tracking-tight hidden md:block" style={{ color: '#7c3aed' }}>
+                    BEN<span style={{ color: '#9ca3af' }}>|</span>CONNECT<sup className="text-[10px] ml-0.5" style={{ color: '#9ca3af' }}>™</sup>
+                  </span>
+                </Link>
+
+                <div className="flex items-center gap-1">
+                  {navigationItems.map((item) => {
+                    const isActive = location.pathname === item.url;
+                    return (
+                      <Link
+                        key={item.title}
+                        to={item.url}
+                        className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:-translate-y-0.5 whitespace-nowrap"
+                        style={{
+                          ...getButtonStyle(isActive),
+                          ...(isActive && {
+                            boxShadow: `0 0 8px ${isDark ? '#ffffff50' : '#00000030'}, 0 0 16px ${isDark ? '#ffffff20' : '#00000015'}, ${getButtonStyle(isActive).boxShadow}`
+                          })
+                        }}
+                      >
+                        {item.title}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Search */}
+              <div className="hidden lg:flex flex-1 max-w-xs ml-4">
+                <div className="relative w-full rounded-2xl" style={getInsetStyle()}>
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-4 w-4" style={{ color: colors.textTertiary }} />
+                  </div>
+                  <Input
+                    className="block w-full pl-10 pr-3 py-2 border-0 rounded-2xl text-sm focus:outline-none focus:ring-0"
+                    placeholder="Search everything..."
+                    type="search"
+                    style={{ background: 'transparent', color: colors.text }}
+                  />
+                </div>
+              </div>
+
+              {/* Right icons */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  className="rounded-2xl h-8 w-8 border-0 flex items-center justify-center flex-shrink-0"
+                  onClick={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
+                  style={getButtonStyle()}
+                >
+                  <Phone className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
+                </button>
+
+                <button
+                  className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
+                  onClick={() => { setShowMessages(p => !p); setShowCalls(false); setShowNotifications(false); }}
+                  style={getButtonStyle()}
+                >
+                  <MessageSquare className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
+                  {unreadMessages > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                      {unreadMessages > 9 ? '9+' : unreadMessages}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
+                  onClick={() => { setShowNotifications(p => !p); setShowMessages(false); setShowCalls(false); }}
+                  style={getButtonStyle()}
+                >
+                  <Bell className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
+                  {unreadNotifications > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                    </span>
+                  )}
+                </button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="rounded-full h-8 w-8 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0" style={getButtonStyle()}>
+                      {user?.profile_photo_url ? (
+                        <img src={user.profile_photo_url} alt={user.full_name || 'User'} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center" style={getInsetStyle()}>
+                          <span style={{ color: colors.textSecondary }} className="font-bold text-sm">{user?.full_name?.charAt(0) || 'U'}</span>
+                        </div>
+                      )}
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-48" align="end" style={{
+                    background: colors.bg, border: 'none',
+                    boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`,
+                    color: colors.text
+                  }}>
+                    <DropdownMenuLabel style={{ color: colors.text }}>
+                      <div>{user?.full_name || 'My Account'}</div>
+                      {user?.role === 'admin' && <div className="text-xs" style={{ color: colors.textSecondary }}>Administrator</div>}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator style={{ background: colors.border }} />
+                    <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Your Profile</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Settings</Link></DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => base44.auth.logout()} style={{ color: colors.text }}>Sign out</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+          {children}
+        </main>
+
+        {/* Footer */}
+        <footer className="flex-shrink-0 py-3 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.bg }}>
+          <p className="text-xs font-bold" style={{ color: colors.text }}>
+            BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
+            <span className="mx-2" style={{ color: colors.textTertiary }}>·</span>
+            <span style={{ color: colors.textSecondary }}>indie<span style={{ color: colors.textTertiary }}>|</span>render<sup className="text-[6px]" style={{ color: colors.textTertiary }}>™</sup></span>
+          </p>
+        </footer>
+      </div>
+
+      {/* ─── Global Overlays (always mounted so calls/SMS always ring) ─── */}
+
       <AnimatePresence>
         {(showNotifications || showMessages) && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-40 backdrop-blur-sm"
             style={{ background: `${colors.bg}20` }}
-            onClick={() => {
-              setShowNotifications(false);
-              setShowMessages(false);
-            }}
+            onClick={() => { setShowNotifications(false); setShowMessages(false); }}
           />
         )}
       </AnimatePresence>
 
-      <SlideOutMenu />
-
-      <nav className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: `${colors.bg}99` }}>
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 gap-2">
-            <div className="flex items-center flex-shrink-0">
-              <Link to={createPageUrl("Dashboard")} className="flex-shrink-0 flex items-center gap-2 lg:gap-3">
-                <div
-                  className="w-7 h-7 lg:w-9 lg:h-9 rounded-2xl flex items-center justify-center"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
-                  }}
-                >
-                  <div className="flex items-center justify-center">
-                    <svg
-                      className="w-4 h-4 lg:w-5 lg:h-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      style={{ color: colors.iconColor }}
-                    >
-                      <path
-                        d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div className="hidden lg:flex flex-col">
-                  <span className="font-bold text-base tracking-tight" style={{ color: '#7c3aed' }}>
-                    BEN<span style={{ color: '#9ca3af' }}>|</span>CONNECT<sup className="text-[10px] ml-0.5" style={{ color: '#9ca3af' }}>™</sup>
-                  </span>
-                </div>
-              </Link>
-
-              <div className="hidden md:ml-3 lg:ml-6 md:flex md:items-baseline md:space-x-1 lg:space-x-2 md:flex-shrink">
-                {navigationItems.map((item) => {
-                  const isActive = location.pathname === item.url;
-                  return (
-                    <Link
-                      key={item.title}
-                      to={item.url}
-                      className="px-2 lg:px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:-translate-y-0.5 relative whitespace-nowrap"
-                      style={{
-                        ...getButtonStyle(isActive),
-                        ...(isActive && {
-                          boxShadow: `0 0 8px ${isDark ? '#ffffff50' : '#00000030'}, 0 0 16px ${isDark ? '#ffffff20' : '#00000015'}, ${getButtonStyle(isActive).boxShadow}`
-                        })
-                      }}
-                    >
-                      {item.title}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="hidden lg:ml-6 lg:flex lg:justify-end flex-1">
-              <div className="max-w-xs w-full">
-                <label htmlFor="search" className="sr-only">Search</label>
-                <div className="relative">
-                  <div
-                    className="rounded-2xl"
-                    style={getInsetStyle()}
-                  >
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Search className="h-5 w-5" style={{ color: colors.textTertiary }} />
-                    </div>
-                    <Input
-                      id="search"
-                      name="search"
-                      className="block w-full pl-12 pr-3 py-3 border-0 rounded-2xl leading-5 placeholder-gray-400 focus:outline-none focus:ring-0 text-sm"
-                      placeholder="Search everything..."
-                      type="search"
-                      style={{
-                        background: 'transparent',
-                        color: colors.text
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden md:ml-2 lg:ml-4 md:flex md:items-center md:space-x-1 lg:space-x-2 md:flex-shrink-0">
-
-
-              <button
-                className="hidden lg:flex rounded-2xl h-8 w-8 border-0 items-center justify-center flex-shrink-0"
-                onClick={() => {
-                  setShowCalls(!showCalls);
-                  setShowMessages(false);
-                  setShowNotifications(false);
-                  setShowPhoneDialer(false);
-                }}
-                style={getButtonStyle()}
-              >
-                <Phone className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-              </button>
-
-
-
-              <button
-                className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
-                onClick={() => {
-                  setShowMessages(!showMessages);
-                  setShowCalls(false);
-                  setShowNotifications(false);
-                  setShowPhoneDialer(false);
-                }}
-                style={getButtonStyle()}
-              >
-                <MessageSquare className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-                {unreadMessages > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 lg:w-5 lg:h-5 bg-green-500 text-white text-[10px] lg:text-xs rounded-full flex items-center justify-center font-bold"
-                        style={{ boxShadow: '1px 1px 3px rgba(0,0,0,0.2)' }}>
-                    {unreadMessages > 9 ? '9+' : unreadMessages}
-                  </span>
-                )}
-              </button>
-
-              <button
-                className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
-                onClick={() => {
-                  setShowNotifications(!showNotifications);
-                  setShowMessages(false);
-                  setShowCalls(false);
-                  setShowPhoneDialer(false);
-                }}
-                style={getButtonStyle()}
-              >
-                <Bell className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-                {unreadNotifications > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 lg:w-5 lg:h-5 bg-red-500 text-white text-[10px] lg:text-xs rounded-full flex items-center justify-center font-bold"
-                        style={{ boxShadow: '1px 1px 3px rgba(0,0,0,0.2)' }}>
-                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                  </span>
-                )}
-              </button>
-
-
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className="rounded-full h-8 w-8 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0"
-                    style={getButtonStyle()}
-                  >
-                     {user?.profile_photo_url ? (
-                       <img 
-                         src={user.profile_photo_url} 
-                         alt={user.full_name || 'User'}
-                         className="w-full h-full object-cover"
-                       />
-                     ) : (
-                       <div className="w-8 h-8 rounded-full flex items-center justify-center" style={getInsetStyle()}>
-                         <span style={{ color: colors.textSecondary }} className="font-bold text-sm">
-                           {user?.full_name?.charAt(0) || 'U'}
-                         </span>
-                       </div>
-                     )}
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48" align="end" style={{
-                  background: colors.bg,
-                  border: 'none',
-                  boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`,
-                  color: colors.text
-                }}>
-                  <DropdownMenuLabel style={{ color: colors.text }}>
-                    <div>{user?.full_name || 'My Account'}</div>
-                    {user?.role === 'admin' && (
-                      <div className="text-xs" style={{ color: colors.textSecondary }}>Administrator</div>
-                    )}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator style={{ background: colors.border }} />
-                  {userNavigation.map((item) => (
-                    <DropdownMenuItem key={item.name} asChild>
-                      <Link to={item.href} style={{ color: colors.text }}>{item.name}</Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="rounded-2xl h-12 w-12 border-0 flex items-center justify-center"
-                style={getButtonStyle()}
-              >
-                <span className="sr-only">Open main menu</span>
-                {mobileMenuOpen ? (
-                  <X className="block h-6 w-6" style={{ color: colors.iconColor }} />
-                ) : (
-                  <MenuIcon className="block h-6 w-6" style={{ color: colors.iconColor }} />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {mobileMenuOpen && (
-          <div className="md:hidden" style={{ background: colors.bg, borderTop: `1px solid ${colors.border}` }}>
-            <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3">
-              {navigationItems.map((item) => {
-                const isActive = location.pathname === item.url;
-                return (
-                  <Link
-                    key={item.title}
-                    to={item.url}
-                    className="block px-4 py-3 rounded-2xl text-base font-medium transition-all"
-                    style={getButtonStyle(isActive)}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.title}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {showCalls && (
-        <CallsPanel
-          user={user}
-          isOpen={showCalls}
-          onClose={() => setShowCalls(false)}
-        />
-      )}
-
-      <main className="flex-1 overflow-y-auto overflow-x-hidden">
-        {children}
-      </main>
-
-      {/* Footer */}
-      <footer className="py-6 px-8 border-t" style={{ 
-        borderColor: colors.border,
-        background: colors.bg 
-      }}>
-        <div className="max-w-7xl mx-auto text-center">
-          <p 
-            className="text-sm font-bold mb-1" 
-            style={{ 
-              color: colors.text,
-              textShadow: `1px 1px 2px ${colors.shadowLight}, -1px -1px 2px ${colors.shadowDark}`
-            }}
-          >
-            BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
-          </p>
-          <p 
-            className="text-xs mb-1" 
-            style={{ 
-              color: colors.textSecondary,
-              textShadow: `1px 1px 2px ${colors.shadowLight}, -1px -1px 2px ${colors.shadowDark}`
-            }}
-          >
-            an <span className="font-semibold">indie<span style={{ color: colors.textTertiary }}>|</span>render<sup className="text-[6px]" style={{ color: colors.textTertiary }}>™</sup></span> company
-          </p>
-          <p 
-            className="text-xs font-medium" 
-            style={{ 
-              color: colors.textTertiary,
-              textShadow: `1px 1px 2px ${colors.shadowLight}, -1px -1px 2px ${colors.shadowDark}`
-            }}
-          >
-            ALL RIGHTS RESERVED.
-          </p>
-        </div>
-      </footer>
-
-      <NotificationCenter
-        user={user}
-        isOpen={showNotifications}
-        onClose={() => setShowNotifications(false)}
-      />
-
-      <MessagingPanel
-        user={user}
-        isOpen={showMessages}
-        onClose={() => setShowMessages(false)}
-      />
-
-      <BackgroundCustomizer 
-        isOpen={showBackgroundCustomizer} 
-        onClose={() => setShowBackgroundCustomizer(false)} 
-      />
-
-      {showPhoneDialer && (
-        <div className="fixed bottom-6 right-6 z-[100] w-96">
-          <Card 
-            className="border-0"
-            style={{
-              background: colors.bg,
-              boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-            }}
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle style={{ color: colors.text }}>Phone Dialer</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowPhoneDialer(false)}
-                  className="rounded-xl h-8 w-8"
-                  style={getButtonStyle()}
-                >
-                  <X className="w-4 h-4" style={{ color: colors.iconColor }} />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-center py-4" style={{ color: colors.textSecondary }}>
-                Phone dialer coming soon. Use the Call Interface on case pages to make calls.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
+      <NotificationCenter user={user} isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
+      <MessagingPanel user={user} isOpen={showMessages} onClose={() => setShowMessages(false)} />
+      {showCalls && <CallsPanel user={user} isOpen={showCalls} onClose={() => setShowCalls(false)} />}
+      <BackgroundCustomizer isOpen={showBackgroundCustomizer} onClose={() => setShowBackgroundCustomizer(false)} />
       <AIAssistantOrb />
-
-      <DispositionForm
-        isOpen={!!dispositionData}
-        onClose={() => setDispositionData(null)}
-        callData={dispositionData}
-        user={user}
-      />
-
-      <DOCModal
-        isOpen={showDOC}
-        onClose={() => setShowDOC(false)}
-      />
+      <DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} />
+      <DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} />
 
       {/* Incoming Call Popups */}
       {incomingCalls.map((call, index) => (
@@ -576,16 +350,9 @@ function LayoutContent({ children, currentPageName }) {
           <IncomingCallPopup
             call={call}
             customer={call.customer_id ? incomingCallCustomers[call.customer_id] : null}
-            onAnswer={async () => {
-              await base44.entities.IncomingCall.update(call.id, { status: 'answered', answered_at: new Date().toISOString() });
-              // TODO: Create case and navigate to it
-            }}
-            onDecline={async () => {
-              await base44.entities.IncomingCall.update(call.id, { status: 'declined' });
-            }}
-            onVoicemail={async () => {
-              await base44.entities.IncomingCall.update(call.id, { status: 'voicemail' });
-            }}
+            onAnswer={async () => { await base44.entities.IncomingCall.update(call.id, { status: 'answered', answered_at: new Date().toISOString() }); }}
+            onDecline={async () => { await base44.entities.IncomingCall.update(call.id, { status: 'declined' }); }}
+            onVoicemail={async () => { await base44.entities.IncomingCall.update(call.id, { status: 'voicemail' }); }}
           />
         </div>
       ))}
@@ -595,25 +362,12 @@ function LayoutContent({ children, currentPageName }) {
         <div key={sms.id} className="fixed right-6 z-[100]" style={{ top: `${24 + (incomingCalls.length * 320) + (index * 280)}px` }}>
           <IncomingSMSPopup
             sms={sms}
-            customer={null} // TODO: Fetch customer if needed
+            customer={null}
             onReply={async (replyText) => {
-              await base44.entities.SMS.create({
-                case_id: sms.case_id,
-                customer_phone: sms.customer_phone,
-                message: replyText,
-                direction: 'sent',
-                status: 'sent',
-                sent_at: new Date().toISOString()
-              });
+              await base44.entities.SMS.create({ case_id: sms.case_id, customer_phone: sms.customer_phone, message: replyText, direction: 'sent', status: 'sent', sent_at: new Date().toISOString() });
             }}
-            onDismiss={() => {
-              // SMS will automatically disappear after 30 seconds
-            }}
-            onViewCase={() => {
-              if (sms.case_id) {
-                window.location.href = createPageUrl(`Case?id=${sms.case_id}`);
-              }
-            }}
+            onDismiss={() => {}}
+            onViewCase={() => { if (sms.case_id) window.location.href = createPageUrl(`Case?id=${sms.case_id}`); }}
           />
         </div>
       ))}
