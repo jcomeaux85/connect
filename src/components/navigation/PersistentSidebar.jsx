@@ -90,13 +90,19 @@ export default function PersistentSidebar({
   const handleLogout = () => base44.auth.logout();
   const actions = quickActions({ onToggleMessages, onTogglePhone, onToggleBackgroundCustomizer, onToggleTheme, onLogout: handleLogout }, isDark);
 
-  // Neumorphic button style with glare highlight on top edge
+  // Glass-morphism button style
   const btnStyle = (active) => ({
-    background: colors.bg,
+    background: active
+      ? (isDark ? 'rgba(124, 58, 237, 0.25)' : 'rgba(124, 58, 237, 0.12)')
+      : (isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.45)'),
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
     boxShadow: active
-      ? `inset 3px 3px 7px ${colors.shadowDark}, inset -3px -3px 7px ${colors.shadowLight}`
-      : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, inset 0 1px 0 ${colors.shadowLight}`,
-    border: 'none',
+      ? `inset 0 1px 0 rgba(255,255,255,0.15), 0 0 0 1px rgba(124,58,237,0.3)`
+      : `inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.15)`,
+    border: active
+      ? '1px solid rgba(124,58,237,0.3)'
+      : `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.6)'}`,
   });
 
   return (
@@ -105,9 +111,14 @@ export default function PersistentSidebar({
       transition={{ type: 'spring', damping: 28, stiffness: 260 }}
       className="fixed left-0 top-0 h-full z-[60] flex flex-col select-none"
       style={{
-        background: colors.bg,
-        boxShadow: `4px 0 24px ${colors.shadowDark}`,
-        overflow: 'visible', // allow tooltips to escape
+        background: isDark
+          ? 'rgba(30, 32, 44, 0.55)'
+          : 'rgba(224, 229, 236, 0.55)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        borderRight: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.6)'}`,
+        boxShadow: `4px 0 32px ${colors.shadowDark}40`,
+        overflow: 'visible',
       }}
     >
       {/* Clip the interior but let tooltips escape via a wrapper */}
@@ -116,7 +127,7 @@ export default function PersistentSidebar({
         {/* Header: logo */}
         <div
           className="flex items-center flex-shrink-0 px-1.5 gap-2"
-          style={{ height: '56px', borderBottom: `1px solid ${colors.border}` }}
+          style={{ height: '56px', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)'}` }}
         >
           <div
             className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto"
@@ -192,7 +203,7 @@ export default function PersistentSidebar({
           </div>
 
           {/* Divider + Quick actions */}
-          <div className={`pt-2 border-t grid gap-1.5 ${isFull ? 'grid-cols-2' : 'grid-cols-1'}`} style={{ borderColor: colors.border }}>
+          <div className={`pt-2 border-t grid gap-1.5 ${isFull ? 'grid-cols-2' : 'grid-cols-1'}`} style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)' }}>
             {actions.map(({ label, icon: Icon, onClick, to }) => {
               const hovered = hoveredItem === `action-${label}`;
               const btn = (
@@ -233,12 +244,12 @@ export default function PersistentSidebar({
         </div>
 
         {/* Size switcher — 1 / 2 / 3 */}
-        <div className="flex-shrink-0 p-1.5 border-t" style={{ borderColor: colors.border }}>
+        <div className="flex-shrink-0 p-1.5 border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)' }}>
           <div
             className="flex rounded-xl overflow-hidden"
             style={{
-              background: colors.bg,
-              boxShadow: `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`,
+              background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.06)',
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)'}`,
             }}
           >
             {[1, 2, 3].map(l => (
@@ -267,7 +278,7 @@ export default function PersistentSidebar({
         </div>
 
         {/* User footer */}
-        <div className="flex-shrink-0 p-1.5 border-t" style={{ borderColor: colors.border }}>
+        <div className="flex-shrink-0 p-1.5 border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)' }}>
           <div
             className="flex items-center gap-2 px-1.5 py-1 rounded-xl"
             style={btnStyle(true)}
