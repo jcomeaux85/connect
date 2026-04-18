@@ -81,6 +81,16 @@ export default function PersistentSidebar({
   const { colors } = useTheme();
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
+  const hideTimer = React.useRef(null);
+
+  const handleMouseEnter = () => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    hideTimer.current = setTimeout(() => setIsHovered(false), 800);
+  };
 
   const level = sidebarLevel ?? 1; // 1, 2, or 3
   // When hovered, show at the selected level width; otherwise collapse to 0 (hidden)
@@ -113,15 +123,15 @@ export default function PersistentSidebar({
       <div
         className="fixed left-0 top-0 h-full z-[59]"
         style={{ width: '12px' }}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={handleMouseEnter}
       />
 
     <motion.div
       animate={{ width }}
       transition={{ type: 'spring', damping: 28, stiffness: 260 }}
       className="fixed left-0 top-0 h-full z-[60] flex flex-col select-none"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       style={{
         background: isDark
           ? 'rgba(30, 32, 44, 0.75)'
