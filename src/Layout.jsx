@@ -157,7 +157,7 @@ function LayoutContent({ children, currentPageName }) {
 
   const unreadNotifications = notifications.length;
   const unreadMessages = messages.length;
-  const SIDEBAR_W = expanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
+  const SIDEBAR_W = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
