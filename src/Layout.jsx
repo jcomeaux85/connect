@@ -3,16 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   LayoutGrid,
-  Search,
   Bell,
   Folder,
-  TrendingUp,
-  X,
   Users,
   MessageSquare,
-  Phone
+  Phone,
+  FileText
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,7 +27,7 @@ import MessagingPanel from "@/components/messaging/MessagingPanel";
 import CallsPanel from "@/components/calls/CallsPanel";
 import DispositionForm from "@/components/calls/DispositionForm";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
-import PersistentSidebar, { SIDEBAR_COLLAPSED_W, SIDEBAR_EXPANDED_W } from "@/components/navigation/PersistentSidebar";
+import PersistentSidebar, { SIDEBAR_WIDTHS } from "@/components/navigation/PersistentSidebar";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 import DOCModal from "@/components/doc/DOCModal";
 
@@ -44,7 +41,6 @@ const navigationItems = [
   { title: "Dashboard", url: createPageUrl("Dashboard"), icon: LayoutGrid },
   { title: "Cases", url: createPageUrl("Cases"), icon: Folder },
   { title: "Customers", url: createPageUrl("Customers"), icon: Users },
-  { title: "Analytics", url: createPageUrl("Analytics"), icon: TrendingUp },
 ];
 
 function LayoutContent({ children, currentPageName }) {
@@ -55,9 +51,20 @@ function LayoutContent({ children, currentPageName }) {
   const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
   const [dispositionData, setDispositionData] = useState(null);
   const [showDOC, setShowDOC] = useState(false);
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [sidebarLevel, setSidebarLevel] = useState(() => {
+    const saved = localStorage.getItem('sidebarLevel');
+    return saved ? parseInt(saved) : 1;
+  });
 
   const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
+  // Simple neumorphic helper used inline in nav
+  const navBtnStyle = (active = false) => ({
+    background: colors.bg,
+    boxShadow: active
+      ? `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+      : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
+    border: 'none',
+  });
 
   const getBackgroundStyle = () => {
     if (!backgroundSettings?.value) return { background: colors.bg };
@@ -167,15 +174,20 @@ function LayoutContent({ children, currentPageName }) {
 
   const unreadNotifications = notifications.length;
   const unreadMessages = messages.length;
-  const SIDEBAR_W = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
+  const SIDEBAR_W = SIDEBAR_WIDTHS[sidebarLevel - 1];
+
+  const handleSidebarLevelChange = (level) => {
+    setSidebarLevel(level);
+    localStorage.setItem('sidebarLevel', level.toString());
+  };
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
 
       {/* Persistent Sidebar — always rendered */}
       <PersistentSidebar
-        expanded={sidebarExpanded}
-        onExpandedChange={setSidebarExpanded}
+        sidebarLevel={sidebarLevel}
+        onSidebarLevelChange={handleSidebarLevelChange}
         onToggleDoc={() => setShowDOC(p => !p)}
         onToggleMessages={() => { setShowMessages(p => !p); setShowNotifications(false); }}
         onTogglePhone={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
@@ -238,19 +250,22 @@ function LayoutContent({ children, currentPageName }) {
                 </div>
               </div>
 
-              {/* Search */}
-              <div className="hidden lg:flex flex-1 max-w-xs ml-4">
-                <div className="relative w-full rounded-2xl" style={getInsetStyle()}>
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4" style={{ color: colors.textTertiary }} />
-                  </div>
-                  <Input
-                    className="block w-full pl-10 pr-3 py-2 border-0 rounded-2xl text-sm focus:outline-none focus:ring-0"
-                    placeholder="Search everything..."
-                    type="search"
-                    style={{ background: 'transparent', color: colors.text }}
-                  />
-                </div>
+              {/* DOC + CORE quick access */}
+              <div className="flex items-center gap-2 ml-4">
+                <button
+                  onClick={() => setShowDOC(p => !p)}
+                  className="h-8 px-4 rounded-xl text-xs font-bold border-0"
+                  style={{ ...navBtnStyle(false), color: '#dc2626' }}
+                >
+                  <FileText className="w-3.5 h-3.5 mr-1.5 inline" />DOC™
+                </button>
+                <Link
+                  to="/Core"
+                  className="h-8 px-4 rounded-xl text-xs font-bold border-0 flex items-center no-underline"
+                  style={{ ...navBtnStyle(false), color: '#7c3aed' }}
+                >
+                  CORE
+                </Link>
               </div>
 
               {/* Right icons */}
