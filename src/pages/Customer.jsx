@@ -39,6 +39,7 @@ import { format, formatDistanceToNow, differenceInYears, differenceInMonths } fr
 import CreateCaseModal from "@/components/cases/CreateCaseModal";
 import { useTheme } from "@/components/ThemeProvider";
 import PDFViewer from "@/components/PDFViewer";
+import EmailComposerModal from "@/components/email/EmailComposerModal";
 
 export default function CustomerPage() {
   const [searchParams] = useSearchParams();
@@ -51,6 +52,7 @@ export default function CustomerPage() {
   const [showPDFViewer, setShowPDFViewer] = useState(false);
   const [pdfViewerUrl, setPdfViewerUrl] = useState(null);
   const [pdfViewerTitle, setPdfViewerTitle] = useState('');
+  const [showEmailComposer, setShowEmailComposer] = useState(false);
 
   const { colors, getButtonStyle, getInsetStyle } = useTheme();
 
@@ -252,9 +254,7 @@ export default function CustomerPage() {
   };
 
   const handleEmailClick = () => {
-    if (customer.primary_email) {
-      window.location.href = `mailto:${customer.primary_email}`;
-    }
+    setShowEmailComposer(true);
   };
 
   const handleCreateCase = async (caseData) => {
@@ -398,16 +398,14 @@ export default function CustomerPage() {
                     SMS
                   </Button>
                 )}
-                {customer.primary_email && (
-                  <Button
-                    onClick={handleEmailClick}
-                    className="rounded-2xl h-10 px-4 border-0"
-                    style={getButtonStyle()}
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email
-                  </Button>
-                )}
+                <Button
+                  onClick={handleEmailClick}
+                  className="rounded-2xl h-10 px-4 border-0"
+                  style={getButtonStyle()}
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Email
+                </Button>
                 <Button
                   onClick={handleToggleEscalation}
                   className="rounded-2xl h-10 px-4 border-0"
@@ -1875,6 +1873,13 @@ export default function CustomerPage() {
           }}
         />
       )}
+
+      <EmailComposerModal
+        isOpen={showEmailComposer}
+        onClose={() => setShowEmailComposer(false)}
+        toEmail={customer.primary_email}
+        toName={fullName}
+      />
     </div>
   );
 }

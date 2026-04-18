@@ -140,11 +140,20 @@ function LayoutContent({ children, currentPageName }) {
     const handleToggleDoc = () => setShowDOC(p => !p);
     const handleShowDisposition = (e) => setDispositionData(e.detail || {});
 
+    // Ctrl+Alt+Enter (or Ctrl+Alt+D) to toggle DOC
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.altKey && (e.key === 'Enter' || e.key === 'd' || e.key === 'D')) {
+        e.preventDefault();
+        setShowDOC(p => !p);
+      }
+    };
+
     window.addEventListener('toggle-messages', handleToggleMessages);
     window.addEventListener('toggle-phone', handleTogglePhone);
     window.addEventListener('toggle-doc', handleToggleDoc);
     window.addEventListener('show-disposition-form', handleShowDisposition);
     window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('toggle-messages', handleToggleMessages);
@@ -152,6 +161,7 @@ function LayoutContent({ children, currentPageName }) {
       window.removeEventListener('toggle-doc', handleToggleDoc);
       window.removeEventListener('show-disposition-form', handleShowDisposition);
       window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
