@@ -246,43 +246,6 @@ function LayoutContent({ children, currentPageName }) {
                 </div>
               </div>
 
-              {/* DOC + CORE + HelpHub quick access */}
-              <div className="flex items-start gap-2 ml-4" style={{ position: 'relative', top: '-8px', marginBottom: '-8px' }}>
-                {/* DOC™ logo button */}
-                <button
-                  onClick={() => setShowDOC(p => !p)}
-                  className="h-9 px-3 rounded-xl border-0 flex flex-col items-center justify-center leading-none"
-                  style={{ ...navBtnStyle(false), minWidth: '52px', borderRadius: '0 0 10px 10px', borderTop: 'none' }}
-                  title="Directory of Coverage"
-                >
-                  <span className="font-black tracking-tight" style={{ fontSize: '15px', color: '#dc2626', lineHeight: 1 }}>DOC<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
-                  <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.2 }}>Directory of Coverage</span>
-                </button>
-
-                {/* Core™ logo button */}
-                <Link
-                  to="/Core"
-                  className="h-9 px-3 border-0 flex flex-col items-center justify-center leading-none no-underline"
-                  style={{ ...navBtnStyle(false), minWidth: '52px', borderRadius: '0 0 10px 10px', borderTop: 'none' }}
-                  title="Workforce Management Platform"
-                >
-                  <span className="font-light tracking-tight" style={{ fontSize: '15px', color: '#16a34a', lineHeight: 1 }}>Core<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
-                  <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.2 }}>Workforce Mgmt</span>
-                </Link>
-
-                {/* HelpHub logo button */}
-                <button
-                  className="h-9 px-3 border-0 flex flex-col items-center justify-center leading-none"
-                  style={{ ...navBtnStyle(false), minWidth: '62px', borderRadius: '0 0 10px 10px', borderTop: 'none' }}
-                  title="Agent Navigation Layer"
-                >
-                  <span className="font-black tracking-tight" style={{ fontSize: '15px', lineHeight: 1 }}>
-                    <span style={{ color: '#1d4ed8' }}>Help</span><span style={{ color: '#9ca3af' }}>Hub</span>
-                  </span>
-                  <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.2 }}>Agent Nav Layer</span>
-                </button>
-              </div>
-
               {/* Right icons */}
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button
@@ -387,6 +350,40 @@ function LayoutContent({ children, currentPageName }) {
       <AIAssistantOrb />
       <DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} />
       <DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} />
+
+      {/* DOC + CORE + HelpHub — fixed tabs hanging from top of screen */}
+      <div className="fixed z-[55] flex gap-2" style={{ top: 0, left: '50%', transform: 'translateX(-50%)' }}>
+        <button
+          onClick={() => setShowDOC(p => !p)}
+          className="px-4 flex flex-col items-center justify-end pb-1.5 border-0 leading-none"
+          style={{ ...navBtnStyle(false), height: '38px', minWidth: '64px', borderRadius: '0 0 12px 12px' }}
+          title="Directory of Coverage"
+        >
+          <span className="font-black tracking-tight" style={{ fontSize: '16px', color: '#dc2626', lineHeight: 1 }}>DOC<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
+          <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.4 }}>Directory of Coverage</span>
+        </button>
+
+        <Link
+          to="/Core"
+          className="px-4 flex flex-col items-center justify-end pb-1.5 border-0 leading-none no-underline"
+          style={{ ...navBtnStyle(false), height: '38px', minWidth: '64px', borderRadius: '0 0 12px 12px' }}
+          title="Workforce Management Platform"
+        >
+          <span className="font-light tracking-tight" style={{ fontSize: '16px', color: '#16a34a', lineHeight: 1 }}>Core<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
+          <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.4 }}>Workforce Mgmt</span>
+        </Link>
+
+        <button
+          className="px-4 flex flex-col items-center justify-end pb-1.5 border-0 leading-none"
+          style={{ ...navBtnStyle(false), height: '38px', minWidth: '74px', borderRadius: '0 0 12px 12px' }}
+          title="Agent Navigation Layer"
+        >
+          <span className="font-black tracking-tight" style={{ fontSize: '16px', lineHeight: 1 }}>
+            <span style={{ color: '#1d4ed8' }}>Help</span><span style={{ color: '#9ca3af' }}>Hub</span>
+          </span>
+          <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.4 }}>Agent Nav Layer</span>
+        </button>
+      </div>
 
       {/* Incoming Call Popups */}
       {incomingCalls.map((call, index) => (
