@@ -247,7 +247,7 @@ function LayoutContent({ children, currentPageName }) {
               </div>
 
               {/* DOC + CORE + HelpHub quick access */}
-              <div className="flex items-center gap-2 ml-4">
+              <div className="flex items-end gap-2 ml-4" style={{ paddingTop: '6px' }}>
                 {/* DOC™ logo button */}
                 <button
                   onClick={() => setShowDOC(p => !p)}
