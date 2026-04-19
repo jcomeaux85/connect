@@ -218,9 +218,12 @@ function LayoutContent({ children, currentPageName }) {
                       <path d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
-                  <span className="font-bold text-base tracking-tight hidden md:block" style={{ color: '#7c3aed' }}>
-                    BEN<span style={{ color: '#9ca3af' }}>|</span>CONNECT<sup className="text-[10px] ml-0.5" style={{ color: '#9ca3af' }}>™</sup>
-                  </span>
+                  <div className="hidden md:flex flex-col leading-none">
+                    <span className="font-black tracking-tight" style={{ fontSize: '14px', lineHeight: 1 }}>
+                      <span style={{ color: '#7c3aed' }}>BEN</span><span style={{ color: '#9ca3af' }}>|CONNECT</span>
+                    </span>
+                    <span style={{ fontSize: '7px', color: '#9ca3af', letterSpacing: '0.04em', lineHeight: 1.4 }}>Unified Benefits Intelligence Platform</span>
+                  </div>
                 </Link>
 
                 <div className="flex items-center gap-1">
@@ -243,22 +246,41 @@ function LayoutContent({ children, currentPageName }) {
                 </div>
               </div>
 
-              {/* DOC + CORE quick access */}
+              {/* DOC + CORE + HelpHub quick access */}
               <div className="flex items-center gap-2 ml-4">
+                {/* DOC™ logo button */}
                 <button
                   onClick={() => setShowDOC(p => !p)}
-                  className="h-8 px-4 rounded-xl text-xs font-bold border-0"
-                  style={{ ...navBtnStyle(false), color: '#dc2626' }}
+                  className="h-9 px-3 rounded-xl border-0 flex flex-col items-center justify-center leading-none"
+                  style={{ ...navBtnStyle(false), minWidth: '52px' }}
+                  title="Directory of Coverage"
                 >
-                  <FileText className="w-3.5 h-3.5 mr-1.5 inline" />DOC™
+                  <span className="font-black tracking-tight" style={{ fontSize: '15px', color: '#dc2626', lineHeight: 1 }}>DOC<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
+                  <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.2 }}>Directory of Coverage</span>
                 </button>
+
+                {/* Core™ logo button */}
                 <Link
                   to="/Core"
-                  className="h-8 px-4 rounded-xl text-xs font-bold border-0 flex items-center no-underline"
-                  style={{ ...navBtnStyle(false), color: '#7c3aed' }}
+                  className="h-9 px-3 rounded-xl border-0 flex flex-col items-center justify-center leading-none no-underline"
+                  style={{ ...navBtnStyle(false), minWidth: '52px' }}
+                  title="Workforce Management Platform"
                 >
-                  CORE
+                  <span className="font-light tracking-tight" style={{ fontSize: '15px', color: '#16a34a', lineHeight: 1 }}>Core<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
+                  <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.2 }}>Workforce Mgmt</span>
                 </Link>
+
+                {/* HelpHub logo button */}
+                <button
+                  className="h-9 px-3 rounded-xl border-0 flex flex-col items-center justify-center leading-none"
+                  style={{ ...navBtnStyle(false), minWidth: '62px' }}
+                  title="Agent Navigation Layer"
+                >
+                  <span className="font-black tracking-tight" style={{ fontSize: '15px', lineHeight: 1 }}>
+                    <span style={{ color: '#1d4ed8' }}>Help</span><span style={{ color: '#9ca3af' }}>Hub</span>
+                  </span>
+                  <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.2 }}>Agent Nav Layer</span>
+                </button>
               </div>
 
               {/* Right icons */}
