@@ -317,8 +317,8 @@ function LayoutContent({ children, currentPageName }) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="rounded-full h-8 w-8 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0" style={navBtnStyle()}>
-                      {user?.profile_photo_url ? (
-                        <img src={user.profile_photo_url} alt={user.full_name || 'User'} className="w-full h-full object-cover" />
+                      {(user?.profile_photo_url || true) ? (
+                        <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-8 h-8 rounded-full flex items-center justify-center" style={getInsetStyle()}>
                           <span style={{ color: colors.textSecondary }} className="font-bold text-sm">{user?.full_name?.charAt(0) || 'U'}</span>

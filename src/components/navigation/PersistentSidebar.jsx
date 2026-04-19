@@ -310,10 +310,11 @@ export default function PersistentSidebar({
               className="w-6 h-6 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0"
               style={btnStyle(false)}
             >
-              {user?.profile_photo_url
-                ? <img src={user.profile_photo_url} alt={user.full_name} className="w-full h-full object-cover" />
-                : <span style={{ color: colors.text }} className="font-bold text-[10px]">{user?.full_name?.charAt(0) || 'U'}</span>
-              }
+              <img
+                src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"}
+                alt={user?.full_name || 'User'}
+                className="w-full h-full object-cover"
+              />
             </div>
             <AnimatePresence>
               {!isMin && (

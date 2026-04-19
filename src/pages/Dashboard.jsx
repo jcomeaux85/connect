@@ -45,9 +45,16 @@ export default function Dashboard() {
     loadWeather();
   }, []);
 
+  const PROFILE_PHOTO = "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png";
+
   const loadUser = async () => {
     try {
       const userData = await base44.auth.me();
+      // Set profile photo if not already set
+      if (!userData.profile_photo_url) {
+        await base44.auth.updateMe({ profile_photo_url: PROFILE_PHOTO });
+        userData.profile_photo_url = PROFILE_PHOTO;
+      }
       setUser(userData);
     } catch (error) {
       console.error("Error loading user:", error);
