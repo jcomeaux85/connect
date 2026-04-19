@@ -247,12 +247,12 @@ function LayoutContent({ children, currentPageName }) {
               </div>
 
               {/* DOC + CORE + HelpHub quick access */}
-              <div className="flex items-end gap-2 ml-4" style={{ paddingTop: '6px' }}>
+              <div className="flex items-start gap-2 ml-4" style={{ position: 'relative', top: '-8px', marginBottom: '-8px' }}>
                 {/* DOC™ logo button */}
                 <button
                   onClick={() => setShowDOC(p => !p)}
                   className="h-9 px-3 rounded-xl border-0 flex flex-col items-center justify-center leading-none"
-                  style={{ ...navBtnStyle(false), minWidth: '52px' }}
+                  style={{ ...navBtnStyle(false), minWidth: '52px', borderRadius: '0 0 10px 10px', borderTop: 'none' }}
                   title="Directory of Coverage"
                 >
                   <span className="font-black tracking-tight" style={{ fontSize: '15px', color: '#dc2626', lineHeight: 1 }}>DOC<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
@@ -262,8 +262,8 @@ function LayoutContent({ children, currentPageName }) {
                 {/* Core™ logo button */}
                 <Link
                   to="/Core"
-                  className="h-9 px-3 rounded-xl border-0 flex flex-col items-center justify-center leading-none no-underline"
-                  style={{ ...navBtnStyle(false), minWidth: '52px' }}
+                  className="h-9 px-3 border-0 flex flex-col items-center justify-center leading-none no-underline"
+                  style={{ ...navBtnStyle(false), minWidth: '52px', borderRadius: '0 0 10px 10px', borderTop: 'none' }}
                   title="Workforce Management Platform"
                 >
                   <span className="font-light tracking-tight" style={{ fontSize: '15px', color: '#16a34a', lineHeight: 1 }}>Core<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
@@ -272,8 +272,8 @@ function LayoutContent({ children, currentPageName }) {
 
                 {/* HelpHub logo button */}
                 <button
-                  className="h-9 px-3 rounded-xl border-0 flex flex-col items-center justify-center leading-none"
-                  style={{ ...navBtnStyle(false), minWidth: '62px' }}
+                  className="h-9 px-3 border-0 flex flex-col items-center justify-center leading-none"
+                  style={{ ...navBtnStyle(false), minWidth: '62px', borderRadius: '0 0 10px 10px', borderTop: 'none' }}
                   title="Agent Navigation Layer"
                 >
                   <span className="font-black tracking-tight" style={{ fontSize: '15px', lineHeight: 1 }}>
