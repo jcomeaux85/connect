@@ -202,10 +202,10 @@ function LayoutContent({ children, currentPageName }) {
         {/* Top Nav — always visible */}
         <nav
           className="flex-shrink-0 z-50 backdrop-blur-xl relative"
-          style={{ background: `${colors.bg}f0`, borderBottom: `1px solid ${colors.border}` }}
+          style={{ background: `${colors.bg}f0`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}
         >
-          {/* DOC + CORE + HelpHub — hang from top of nav bar */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 flex gap-2 z-10 pointer-events-auto">
+          {/* DOC + CORE + HelpHub — hang from top of nav bar, top half hidden above nav edge */}
+          <div className="absolute left-1/2 -translate-x-1/2 flex gap-2 z-10 pointer-events-auto" style={{ top: '-18px' }}>
             <button
               onClick={() => setShowDOC(p => !p)}
               className="px-4 flex flex-col items-center justify-end pb-1.5 border-0 leading-none"
