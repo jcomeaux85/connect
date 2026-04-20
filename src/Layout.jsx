@@ -207,28 +207,8 @@ function LayoutContent({ children, currentPageName }) {
         >
           <div className="px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px' }}>
 
-            {/* LEFT: BEN|CONNECT logo + page tabs — flat top, rounded bottom, hang from top */}
+            {/* LEFT: page tabs only */}
             <div className="flex items-end gap-1 flex-shrink-0">
-              {/* BEN|CONNECT logo/home */}
-              <Link
-                to={createPageUrl("Dashboard")}
-                className="flex flex-col items-center justify-end pb-2 px-3 no-underline transition-all"
-                style={{
-                  boxShadow: location.pathname === createPageUrl("Dashboard")
-                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
-                  background: colors.bg,
-                  borderRadius: '0 0 12px 12px',
-                  height: '44px',
-                  marginTop: 0,
-                }}
-              >
-                <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed', lineHeight: 1 }}>
-                  BEN<span style={{ color: colors.textTertiary }}>|</span>connect<sup style={{ fontSize: '7px', verticalAlign: 'super', color: colors.textTertiary }}>™</sup>
-                </span>
-              </Link>
-
-              {/* Page nav tabs */}
               {navigationItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
@@ -243,7 +223,6 @@ function LayoutContent({ children, currentPageName }) {
                       background: isActive ? (isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)') : colors.bg,
                       borderRadius: '0 0 10px 10px',
                       height: '40px',
-                      marginTop: 0,
                     }}
                   >
                     <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
@@ -252,8 +231,28 @@ function LayoutContent({ children, currentPageName }) {
               })}
             </div>
 
-            {/* CENTER: DOC, Core, HelpHub — flat top, hang from top edge */}
+            {/* CENTER: BEN|connect, DOC, Core, HelpHub — flat top, hang from top edge */}
             <div className="flex items-end gap-1 absolute left-1/2 -translate-x-1/2" style={{ bottom: 0, top: 0, alignItems: 'flex-end' }}>
+              {/* BEN|connect */}
+              <Link
+                to={createPageUrl("Dashboard")}
+                className="flex flex-col items-center justify-end pb-1.5 no-underline transition-all"
+                style={{
+                  boxShadow: location.pathname === createPageUrl("Dashboard")
+                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
+                    : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
+                  background: location.pathname === createPageUrl("Dashboard") ? (isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)') : colors.bg,
+                  borderRadius: '0 0 12px 12px',
+                  height: '44px',
+                  minWidth: '90px',
+                }}
+              >
+                <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed', lineHeight: 1 }}>
+                  BEN<span style={{ color: colors.textTertiary }}>|</span>connect<sup style={{ fontSize: '7px', verticalAlign: 'super', color: colors.textTertiary }}>™</sup>
+                </span>
+                <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Home</span>
+              </Link>
+
               {/* DOC */}
               <button
                 onClick={() => setShowDOC(p => !p)}
