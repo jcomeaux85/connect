@@ -174,49 +174,12 @@ export default function Dashboard() {
       defaultHeight: 2,
       minWidth: 280,
       content: (
-        <div className="rounded-2xl overflow-hidden relative" style={{ boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}` }}>
-          {/* Chip image fills the panel */}
+        <div className="w-full h-full rounded-2xl overflow-hidden" style={{ boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}` }}>
           <img
             src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
             alt="BEN|CONNECT chip"
-            className="w-full h-full object-cover"
-            style={{ display: 'block', minHeight: '200px', maxHeight: '320px' }}
+            style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center' }}
           />
-          {/* Overlay: time + date + weather on top of the chip */}
-          <div className="absolute inset-0 flex flex-col justify-between p-4" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 40%, transparent 55%, rgba(0,0,0,0.55) 100%)' }}>
-            {/* Top: time */}
-            <div>
-              <p className="text-white font-bold tabular-nums" style={{ fontSize: '2rem', lineHeight: 1, textShadow: '0 2px 8px rgba(0,0,0,0.7)' }}>
-                {format(new Date(), 'h:mm')}
-                <span className="text-base font-light ml-1" style={{ opacity: 0.75 }}>{format(new Date(), 'a')}</span>
-              </p>
-              <p className="text-xs mt-0.5 font-light" style={{ color: 'rgba(255,255,255,0.7)', textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>
-                {format(new Date(), 'EEEE, MMMM d')}
-              </p>
-            </div>
-            {/* Bottom: weather + quick nav */}
-            <div>
-              {weather && (
-                <div className="flex items-center gap-2 mb-3">
-                  <WeatherIcon className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.85)' }} />
-                  <span className="text-white text-sm font-semibold" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>{weather.temp}°</span>
-                  <span className="text-xs" style={{ color: 'rgba(255,255,255,0.65)' }}>{weather.condition}</span>
-                </div>
-              )}
-              <div className="flex gap-2">
-                <Link to={createPageUrl("Cases")} className="flex-1">
-                  <button className="w-full rounded-xl h-8 border-0 text-xs flex items-center justify-center gap-1.5 font-semibold" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)' }}>
-                    <Folder className="w-3 h-3" />Cases
-                  </button>
-                </Link>
-                <Link to={createPageUrl("Customers")} className="flex-1">
-                  <button className="w-full rounded-xl h-8 border-0 text-xs flex items-center justify-center gap-1.5 font-semibold" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)' }}>
-                    <User className="w-3 h-3" />Customers
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
       )
     },
