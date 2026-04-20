@@ -57,6 +57,7 @@ function LayoutContent({ children, currentPageName }) {
   });
 
   const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
+  // isDark already destructured above
   // Neumorphic button with glare highlight on top edge
   const navBtnStyle = (active = false) => ({
     background: colors.bg,
@@ -239,91 +240,114 @@ function LayoutContent({ children, currentPageName }) {
           <div className="px-4 lg:px-6">
             <div className="flex items-center justify-between h-14 gap-2">
 
-              {/* Logo + nav links */}
-              <div className="flex items-center gap-4 flex-shrink-0">
-                <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2">
-                  <div
-                    className="w-8 h-8 rounded-2xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: colors.bg, boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}` }}
-                  >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: colors.iconColor }}>
-                      <path d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                  <div className="hidden md:flex flex-col leading-none">
-                    <span className="font-black tracking-tight" style={{ fontSize: '14px', lineHeight: 1 }}>
-                      <span style={{ color: '#7c3aed' }}>BEN</span><span style={{ color: '#9ca3af' }}>|CONNECT</span>
-                    </span>
-                    <span style={{ fontSize: '7px', color: '#9ca3af', letterSpacing: '0.04em', lineHeight: 1.4 }}>Unified Benefits Intelligence Platform</span>
-                  </div>
+              {/* Logo + nav links — all hang from top */}
+              <div className="flex items-end gap-1 flex-shrink-0 h-full">
+
+                {/* Logo tab */}
+                <Link
+                  to={createPageUrl("Dashboard")}
+                  className="flex flex-col items-center justify-end pb-1.5 no-underline"
+                  style={{
+                    ...navBtnStyle(false),
+                    height: '38px', minWidth: '80px', borderRadius: '0 0 12px 12px',
+                    marginTop: '-18px', position: 'relative', top: '-18px',
+                  }}
+                  title="Dashboard"
+                >
+                  <span className="font-black tracking-tight" style={{ fontSize: '12px', color: '#7c3aed', lineHeight: 1 }}>BEN<span style={{ color: '#9ca3af' }}>|</span>C</span>
+                  <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.4 }}>Home</span>
                 </Link>
 
-                <div className="flex items-center gap-1">
-                  {navigationItems.map((item) => {
-                    const isActive = location.pathname === item.url;
-                    return (
-                      <Link
-                        key={item.title}
-                        to={item.url}
-                        className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:-translate-y-0.5 whitespace-nowrap"
-                        style={{
-                          ...navBtnStyle(isActive),
-                          color: isActive ? colors.text : colors.textSecondary,
-                        }}
-                      >
-                        {item.title}
-                      </Link>
-                    );
-                  })}
-                </div>
+                {/* Nav page tabs — slightly different shade/shape */}
+                {navigationItems.map((item) => {
+                  const isActive = location.pathname === item.url;
+                  return (
+                    <Link
+                      key={item.title}
+                      to={item.url}
+                      className="flex flex-col items-center justify-end pb-1.5 no-underline"
+                      style={{
+                        background: isActive
+                          ? (isDark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.10)')
+                          : colors.bg,
+                        boxShadow: isActive
+                          ? `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
+                          : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, inset 0 1px 0 ${colors.shadowLight}`,
+                        border: 'none',
+                        height: '34px', minWidth: '56px', borderRadius: '0 0 10px 10px',
+                        marginTop: '-18px', position: 'relative', top: '-18px',
+                      }}
+                    >
+                      <span className="font-semibold text-[11px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary, lineHeight: 1 }}>{item.title}</span>
+                    </Link>
+                  );
+                })}
               </div>
 
-              {/* Right icons */}
-              <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Right icons — also hang from top */}
+              <div className="flex items-end gap-1.5 flex-shrink-0 h-full">
+
+                {/* Phone */}
                 <button
-                  className="rounded-2xl h-8 w-8 border-0 flex items-center justify-center flex-shrink-0"
+                  className="flex flex-col items-center justify-end pb-1.5 border-0"
                   onClick={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
-                  style={navBtnStyle()}
+                  style={{
+                    ...navBtnStyle(showCalls),
+                    height: '32px', width: '36px', borderRadius: '0 0 10px 10px',
+                    marginTop: '-18px', position: 'relative', top: '-18px',
+                  }}
                 >
                   <Phone className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                 </button>
 
+                {/* Messages */}
                 <button
-                  className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
+                  className="flex flex-col items-center justify-end pb-1.5 border-0 relative"
                   onClick={() => { setShowMessages(p => !p); setShowCalls(false); setShowNotifications(false); }}
-                  style={navBtnStyle()}
+                  style={{
+                    ...navBtnStyle(showMessages),
+                    height: '32px', width: '36px', borderRadius: '0 0 10px 10px',
+                    marginTop: '-18px', position: 'relative', top: '-18px',
+                  }}
                 >
                   <MessageSquare className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                   {unreadMessages > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                    <span className="absolute -top-0.5 right-0.5 w-3.5 h-3.5 bg-green-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold" style={{ top: '2px' }}>
                       {unreadMessages > 9 ? '9+' : unreadMessages}
                     </span>
                   )}
                 </button>
 
+                {/* Notifications */}
                 <button
-                  className="rounded-2xl h-8 w-8 border-0 relative flex items-center justify-center flex-shrink-0"
+                  className="flex flex-col items-center justify-end pb-1.5 border-0 relative"
                   onClick={() => { setShowNotifications(p => !p); setShowMessages(false); setShowCalls(false); }}
-                  style={navBtnStyle()}
+                  style={{
+                    ...navBtnStyle(showNotifications),
+                    height: '32px', width: '36px', borderRadius: '0 0 10px 10px',
+                    marginTop: '-18px', position: 'relative', top: '-18px',
+                  }}
                 >
                   <Bell className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
                   {unreadNotifications > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                    <span className="absolute right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold" style={{ top: '2px' }}>
                       {unreadNotifications > 9 ? '9+' : unreadNotifications}
                     </span>
                   )}
                 </button>
 
+                {/* User avatar — taller pill */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="rounded-full h-8 w-8 p-0 border-0 flex items-center justify-center overflow-hidden flex-shrink-0" style={navBtnStyle()}>
-                      {(user?.profile_photo_url || true) ? (
-                        <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center" style={getInsetStyle()}>
-                          <span style={{ color: colors.textSecondary }} className="font-bold text-sm">{user?.full_name?.charAt(0) || 'U'}</span>
-                        </div>
-                      )}
+                    <button
+                      className="p-0 border-0 overflow-hidden flex-shrink-0"
+                      style={{
+                        ...navBtnStyle(false),
+                        height: '36px', width: '36px', borderRadius: '0 0 18px 18px',
+                        marginTop: '-18px', position: 'relative', top: '-18px',
+                      }}
+                    >
+                      <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-48" align="end" style={{

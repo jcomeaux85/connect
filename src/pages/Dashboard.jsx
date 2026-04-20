@@ -537,7 +537,13 @@ export default function Dashboard() {
     <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold" style={{ color: colors.text }}>Dashboard</h1>
+          <img
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+            alt="BEN|CONNECT chip"
+            className="w-full rounded-2xl object-cover"
+            style={{ maxHeight: '180px', objectPosition: 'center', objectFit: 'cover' }}
+          />
+          <p className="text-center mt-2 font-light tracking-widest text-xs uppercase" style={{ color: '#9ca3af', letterSpacing: '0.25em' }}>dashboard</p>
         </div>
         
         <DraggableDashboard panels={dashboardPanels} />
