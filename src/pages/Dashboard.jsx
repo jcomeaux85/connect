@@ -174,111 +174,50 @@ export default function Dashboard() {
       defaultHeight: 2,
       minWidth: 280,
       content: (
-        <CollapsiblePanel
-          title="Doc"
-          icon={Sun}
-          storageKey="dashboard-weather"
-          condensedContent={
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-lg font-bold" style={{ color: colors.text }}>
-                  {format(new Date(), 'h:mm')} <span className="text-sm" style={{ color: colors.textSecondary }}>{format(new Date(), 'a')}</span>
-                </span>
-                {weather && (
-                  <span className="text-sm" style={{ color: colors.textSecondary }}>
-                    {weather.temp}° {weather.condition}
-                  </span>
-                )}
-              </div>
-              <span className="text-xs" style={{ color: colors.textTertiary }}>
-                {format(new Date(), 'EEE, MMM d')}
-              </span>
-            </div>
-          }
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <h2 className="text-4xl font-bold" style={{ color: colors.text }}>
-                {format(new Date(), 'h:mm')} <span className="text-2xl" style={{ color: colors.textSecondary }}>{format(new Date(), 'a')}</span>
-              </h2>
-            </div>
-            
-            {weather && (
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-16 h-16 rounded-3xl flex items-center justify-center"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: `4px 4px 8px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`
-                  }}
-                >
-                  <WeatherIcon className="w-8 h-8" style={{ color: '#7c3aed' }} />
-                </div>
-                <div>
-                  <p className="text-3xl font-bold" style={{ color: colors.text }}>
-                    {weather.temp}°
-                  </p>
-                  <p className="text-sm" style={{ color: colors.textSecondary }}>
-                    {weather.condition}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {weather && (
-            <div className="flex flex-row gap-2 text-xs justify-center mb-4" style={{ color: colors.textTertiary }}>
-              <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                PST: {format(new Date(), 'h:mm a')}
-              </div>
-              <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                MST: {format(new Date(), 'h:mm a')}
-              </div>
-              <div className="px-2 py-0.5 rounded inline-block" style={{ background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>
-                EST: {format(new Date(), 'h:mm a')}
-              </div>
-            </div>
-          )}
-
-          <div className="flex items-start justify-between mb-4">
+        <div className="rounded-2xl overflow-hidden relative" style={{ boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}` }}>
+          {/* Chip image fills the panel */}
+          <img
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+            alt="BEN|CONNECT chip"
+            className="w-full h-full object-cover"
+            style={{ display: 'block', minHeight: '200px', maxHeight: '320px' }}
+          />
+          {/* Overlay: time + date + weather on top of the chip */}
+          <div className="absolute inset-0 flex flex-col justify-between p-4" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 40%, transparent 55%, rgba(0,0,0,0.55) 100%)' }}>
+            {/* Top: time */}
             <div>
-              <p className="text-sm" style={{ color: colors.textSecondary }}>
+              <p className="text-white font-bold tabular-nums" style={{ fontSize: '2rem', lineHeight: 1, textShadow: '0 2px 8px rgba(0,0,0,0.7)' }}>
+                {format(new Date(), 'h:mm')}
+                <span className="text-base font-light ml-1" style={{ opacity: 0.75 }}>{format(new Date(), 'a')}</span>
+              </p>
+              <p className="text-xs mt-0.5 font-light" style={{ color: 'rgba(255,255,255,0.7)', textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>
                 {format(new Date(), 'EEEE, MMMM d')}
               </p>
             </div>
+            {/* Bottom: weather + quick nav */}
+            <div>
+              {weather && (
+                <div className="flex items-center gap-2 mb-3">
+                  <WeatherIcon className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.85)' }} />
+                  <span className="text-white text-sm font-semibold" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>{weather.temp}°</span>
+                  <span className="text-xs" style={{ color: 'rgba(255,255,255,0.65)' }}>{weather.condition}</span>
+                </div>
+              )}
+              <div className="flex gap-2">
+                <Link to={createPageUrl("Cases")} className="flex-1">
+                  <button className="w-full rounded-xl h-8 border-0 text-xs flex items-center justify-center gap-1.5 font-semibold" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)' }}>
+                    <Folder className="w-3 h-3" />Cases
+                  </button>
+                </Link>
+                <Link to={createPageUrl("Customers")} className="flex-1">
+                  <button className="w-full rounded-xl h-8 border-0 text-xs flex items-center justify-center gap-1.5 font-semibold" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)' }}>
+                    <User className="w-3 h-3" />Customers
+                  </button>
+                </Link>
+              </div>
+            </div>
           </div>
-
-          <div className="flex gap-2">
-            <Link to={createPageUrl("Cases")} className="flex-1">
-              <button
-                className="w-full rounded-2xl h-10 px-3 border-0 text-sm flex items-center justify-center gap-2"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
-                  color: colors.textSecondary,
-                  transition: `all ${getTransitionDuration(150)}`
-                }}
-              >
-                <Folder className="w-4 h-4" />
-                Cases
-              </button>
-            </Link>
-            <Link to={createPageUrl("Customers")} className="flex-1">
-              <button
-                className="w-full rounded-2xl h-10 px-3 border-0 text-sm flex items-center justify-center gap-2"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`,
-                  color: colors.textSecondary,
-                  transition: `all ${getTransitionDuration(150)}`
-                }}
-              >
-                <User className="w-4 h-4" />
-                Customers
-              </button>
-            </Link>
-          </div>
-        </CollapsiblePanel>
+        </div>
       )
     },
     {
