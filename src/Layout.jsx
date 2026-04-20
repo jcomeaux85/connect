@@ -207,20 +207,20 @@ function LayoutContent({ children, currentPageName }) {
         >
           <div className="px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px' }}>
 
-            {/* LEFT: BEN|CONNECT logo + page tabs */}
-            <div className="flex items-stretch gap-1 flex-shrink-0">
+            {/* LEFT: BEN|CONNECT logo + page tabs — flat top, rounded bottom, hang from top */}
+            <div className="flex items-end gap-1 flex-shrink-0">
               {/* BEN|CONNECT logo/home */}
               <Link
                 to={createPageUrl("Dashboard")}
-                className="flex flex-col items-center justify-center px-3 no-underline border-b-2 transition-all"
+                className="flex flex-col items-center justify-end pb-2 px-3 no-underline transition-all"
                 style={{
-                  borderBottomColor: location.pathname === createPageUrl("Dashboard") ? '#7c3aed' : 'transparent',
                   boxShadow: location.pathname === createPageUrl("Dashboard")
                     ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                    : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
-                  borderRadius: '8px 8px 0 0',
-                  margin: '6px 0 0 0',
+                  borderRadius: '0 0 12px 12px',
+                  height: '44px',
+                  marginTop: 0,
                 }}
               >
                 <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed', lineHeight: 1 }}>
@@ -235,15 +235,15 @@ function LayoutContent({ children, currentPageName }) {
                   <Link
                     key={item.title}
                     to={item.url}
-                    className="flex items-center justify-center px-4 no-underline border-b-2 transition-all"
+                    className="flex items-end justify-center pb-2 px-4 no-underline transition-all"
                     style={{
-                      borderBottomColor: isActive ? '#7c3aed' : 'transparent',
                       boxShadow: isActive
                         ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                        : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                      background: colors.bg,
-                      borderRadius: '8px 8px 0 0',
-                      margin: '6px 0 0 0',
+                        : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
+                      background: isActive ? (isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)') : colors.bg,
+                      borderRadius: '0 0 10px 10px',
+                      height: '40px',
+                      marginTop: 0,
                     }}
                   >
                     <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
@@ -252,21 +252,20 @@ function LayoutContent({ children, currentPageName }) {
               })}
             </div>
 
-            {/* CENTER: DOC, Core, HelpHub */}
-            <div className="flex items-stretch gap-1 absolute left-1/2 -translate-x-1/2 h-full">
+            {/* CENTER: DOC, Core, HelpHub — flat top, hang from top edge */}
+            <div className="flex items-end gap-1 absolute left-1/2 -translate-x-1/2" style={{ bottom: 0, top: 0, alignItems: 'flex-end' }}>
               {/* DOC */}
               <button
                 onClick={() => setShowDOC(p => !p)}
-                className="flex flex-col items-center justify-center px-4 border-0 border-b-2 transition-all"
+                className="flex flex-col items-center justify-end pb-1.5 border-0 transition-all"
                 style={{
-                  borderBottomColor: showDOC ? '#dc2626' : 'transparent',
                   boxShadow: showDOC
                     ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                    : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
-                  borderRadius: '8px 8px 0 0',
-                  margin: '6px 0 0 0',
-                  minWidth: '64px',
+                  borderRadius: '0 0 12px 12px',
+                  height: '42px',
+                  minWidth: '72px',
                 }}
               >
                 <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#dc2626', lineHeight: 1 }}>DOC<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
@@ -276,16 +275,15 @@ function LayoutContent({ children, currentPageName }) {
               {/* Core */}
               <Link
                 to="/Core"
-                className="flex flex-col items-center justify-center px-4 border-b-2 transition-all no-underline"
+                className="flex flex-col items-center justify-end pb-1.5 transition-all no-underline"
                 style={{
-                  borderBottomColor: location.pathname === '/Core' ? '#16a34a' : 'transparent',
                   boxShadow: location.pathname === '/Core'
                     ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                    : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
-                  borderRadius: '8px 8px 0 0',
-                  margin: '6px 0 0 0',
-                  minWidth: '64px',
+                  borderRadius: '0 0 12px 12px',
+                  height: '42px',
+                  minWidth: '72px',
                 }}
               >
                 <span className="font-light tracking-tight" style={{ fontSize: '14px', color: '#16a34a', lineHeight: 1 }}>Core<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
@@ -294,14 +292,13 @@ function LayoutContent({ children, currentPageName }) {
 
               {/* HelpHub */}
               <button
-                className="flex flex-col items-center justify-center px-4 border-0 border-b-2 transition-all"
+                className="flex flex-col items-center justify-end pb-1.5 border-0 transition-all"
                 style={{
-                  borderBottomColor: 'transparent',
-                  boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  boxShadow: `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
-                  borderRadius: '8px 8px 0 0',
-                  margin: '6px 0 0 0',
-                  minWidth: '74px',
+                  borderRadius: '0 0 12px 12px',
+                  height: '42px',
+                  minWidth: '80px',
                 }}
               >
                 <span className="font-black tracking-tight" style={{ fontSize: '14px', lineHeight: 1 }}>
