@@ -248,7 +248,7 @@ function LayoutContent({ children, currentPageName }) {
                 }}
               >
                 <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed', lineHeight: 1 }}>
-                  BEN<span style={{ color: colors.textTertiary }}>|</span>connect<sup style={{ fontSize: '7px', verticalAlign: 'super', color: colors.textTertiary }}>™</sup>
+                  BEN<span style={{ color: colors.textTertiary }}>|</span>connect
                 </span>
                 <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Home</span>
               </Link>
@@ -267,7 +267,7 @@ function LayoutContent({ children, currentPageName }) {
                   minWidth: '72px',
                 }}
               >
-                <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#dc2626', lineHeight: 1 }}>DOC<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
+                <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#dc2626', lineHeight: 1 }}>DOC</span>
                 <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Directory of Coverage</span>
               </button>
 
@@ -285,7 +285,7 @@ function LayoutContent({ children, currentPageName }) {
                   minWidth: '72px',
                 }}
               >
-                <span className="font-light tracking-tight" style={{ fontSize: '14px', color: '#16a34a', lineHeight: 1 }}>Core<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
+                <span className="font-light tracking-tight" style={{ fontSize: '14px', color: '#16a34a', lineHeight: 1 }}>Core</span>
                 <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Workforce Mgmt</span>
               </Link>
 
