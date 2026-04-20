@@ -169,23 +169,8 @@ export default function Dashboard() {
   // Define dashboard panels
   const dashboardPanels = [
     {
-      id: 'weather',
-      defaultWidth: 1,
-      defaultHeight: 2,
-      minWidth: 280,
-      content: (
-        <div className="w-full h-full rounded-2xl overflow-hidden" style={{ boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}` }}>
-          <img
-            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
-            alt="BEN|CONNECT chip"
-            style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center' }}
-          />
-        </div>
-      )
-    },
-    {
       id: 'planner',
-      defaultWidth: 2,
+      defaultWidth: 3,
       defaultHeight: 2,
       minWidth: 320,
       content: (
@@ -194,9 +179,21 @@ export default function Dashboard() {
           icon={CalendarIcon}
           storageKey="dashboard-planner"
           headerExtra={
-            <span className="text-xs" style={{ color: colors.textSecondary }}>
-              {activeCases} active · {urgentCases} urgent
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs" style={{ color: colors.textSecondary }}>
+                {activeCases} active · {urgentCases} urgent
+              </span>
+              <Link to={createPageUrl("Cases")}>
+                <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
+                  <Folder className="w-3 h-3" />Cases
+                </button>
+              </Link>
+              <Link to={createPageUrl("Customers")}>
+                <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
+                  <User className="w-3 h-3" />Customers
+                </button>
+              </Link>
+            </div>
           }
           condensedContent={
             <div className="flex items-center justify-between">
