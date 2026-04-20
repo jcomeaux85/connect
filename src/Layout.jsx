@@ -247,7 +247,7 @@ function LayoutContent({ children, currentPageName }) {
                   minWidth: '76px',
                 }}
               >
-                <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed' }}>connect</span>
+                <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed' }}>Connect</span>
               </Link>
 
               {/* DOC */}
