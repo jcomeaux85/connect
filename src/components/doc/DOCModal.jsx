@@ -24,7 +24,15 @@ export default function DOCModal({ isOpen, onClose }) {
   }, [isOpen]);
 
   const handlePopOut = () => {
-    window.open(DOC_URL, '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
+    if (htmlContent) {
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blob);
+      const win = window.open(blobUrl, '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
+      // Revoke after a delay to allow the window to load
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+    } else {
+      window.open(DOC_URL, '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
+    }
   };
 
   if (!isOpen) return null;
