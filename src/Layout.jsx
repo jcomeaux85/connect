@@ -233,10 +233,10 @@ function LayoutContent({ children, currentPageName }) {
 
             {/* CENTER: BEN|connect, DOC, Core, HelpHub — flat top, hang from top edge */}
             <div className="flex items-end gap-1 absolute left-1/2 -translate-x-1/2" style={{ bottom: 0, top: 0, alignItems: 'flex-end' }}>
-              {/* BEN|connect */}
+              {/* connect */}
               <Link
                 to={createPageUrl("Dashboard")}
-                className="flex flex-col items-center justify-end pb-1.5 no-underline transition-all"
+                className="flex items-center justify-center no-underline transition-all"
                 style={{
                   boxShadow: location.pathname === createPageUrl("Dashboard")
                     ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
@@ -244,19 +244,16 @@ function LayoutContent({ children, currentPageName }) {
                   background: location.pathname === createPageUrl("Dashboard") ? (isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)') : colors.bg,
                   borderRadius: '0 0 12px 12px',
                   height: '52px',
-                  minWidth: '90px',
+                  minWidth: '76px',
                 }}
               >
-                <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed', lineHeight: 1 }}>
-                  BEN<span style={{ color: colors.textTertiary }}>|</span>connect
-                </span>
-
+                <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed' }}>connect</span>
               </Link>
 
               {/* DOC */}
               <button
                 onClick={() => setShowDOC(p => !p)}
-                className="flex flex-col items-center justify-end pb-1.5 border-0 transition-all"
+                className="flex items-center justify-center border-0 transition-all"
                 style={{
                   boxShadow: showDOC
                     ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
@@ -264,17 +261,16 @@ function LayoutContent({ children, currentPageName }) {
                   background: colors.bg,
                   borderRadius: '0 0 12px 12px',
                   height: '52px',
-                  minWidth: '72px',
+                  minWidth: '64px',
                 }}
               >
-                <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#dc2626', lineHeight: 1 }}>DOC</span>
-
+                <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#dc2626' }}>DOC</span>
               </button>
 
               {/* Core */}
               <Link
                 to="/Core"
-                className="flex flex-col items-center justify-end pb-1.5 transition-all no-underline"
+                className="flex items-center justify-center transition-all no-underline"
                 style={{
                   boxShadow: location.pathname === '/Core'
                     ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
@@ -282,28 +278,24 @@ function LayoutContent({ children, currentPageName }) {
                   background: colors.bg,
                   borderRadius: '0 0 12px 12px',
                   height: '52px',
-                  minWidth: '72px',
+                  minWidth: '64px',
                 }}
               >
-                <span className="font-light tracking-tight" style={{ fontSize: '14px', color: '#16a34a', lineHeight: 1 }}>Core</span>
-
+                <span className="font-light tracking-tight" style={{ fontSize: '14px', color: '#16a34a' }}>Core</span>
               </Link>
 
-              {/* HelpHub */}
+              {/* Hub */}
               <button
-                className="flex flex-col items-center justify-end pb-1.5 border-0 transition-all"
+                className="flex items-center justify-center border-0 transition-all"
                 style={{
                   boxShadow: `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
                   borderRadius: '0 0 12px 12px',
                   height: '52px',
-                  minWidth: '80px',
+                  minWidth: '64px',
                 }}
               >
-                <span className="font-black tracking-tight" style={{ fontSize: '14px', lineHeight: 1 }}>
-                  <span style={{ color: '#1d4ed8' }}>Help</span><span style={{ color: colors.textTertiary }}>Hub</span>
-                </span>
-
+                <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#1d4ed8' }}>Hub</span>
               </button>
             </div>
 
