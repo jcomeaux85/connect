@@ -166,10 +166,19 @@ export default function Dashboard() {
           icon={CalendarIcon}
           storageKey="dashboard-planner"
           headerExtra={
-            <div className="flex items-center gap-3">
-              <span className="text-xs" style={{ color: colors.textSecondary }}>
-                {activeCases} active
-              </span>
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold tabular-nums" style={{ color: colors.text }}>{format(new Date(), 'h:mm a')}</span>
+                <span className="text-xs" style={{ color: colors.textSecondary }}>{format(new Date(), 'EEEE, MMM d')}</span>
+                {weather && (
+                  <>
+                    <WeatherIcon className="w-3.5 h-3.5" style={{ color: '#7c3aed' }} />
+                    <span className="text-xs font-semibold" style={{ color: colors.text }}>{weather.temp}°</span>
+                    <span className="text-xs" style={{ color: colors.textSecondary }}>{weather.condition}</span>
+                  </>
+                )}
+              </div>
+              <span className="text-xs font-semibold" style={{ color: colors.textSecondary }}>{greeting}, {firstName}!</span>
               <Link to={createPageUrl("Cases")}>
                 <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
                   <Folder className="w-3 h-3" />Cases
@@ -192,44 +201,7 @@ export default function Dashboard() {
         </CollapsiblePanel>
       )
     },
-    // ── STAT ROW PANEL 1: Welcome / Time ──
-    {
-      id: 'welcome',
-      defaultWidth: 1,
-      defaultHeight: 1,
-      content: (
-        <CollapsiblePanel
-          title="Welcome"
-          icon={Sun}
-          storageKey="dashboard-welcome"
-          condensedContent={
-            <span className="text-sm font-semibold" style={{ color: colors.text }}>{format(new Date(), 'h:mm a')}</span>
-          }
-        >
-          <div className="flex flex-col gap-3">
-            <div>
-              <p className="text-3xl font-bold tabular-nums" style={{ color: colors.text }}>
-                {format(new Date(), 'h:mm')}
-                <span className="text-lg font-light ml-1" style={{ color: colors.textSecondary }}>{format(new Date(), 'a')}</span>
-              </p>
-              <p className="text-sm mt-0.5" style={{ color: colors.textSecondary }}>{format(new Date(), 'EEEE, MMMM d')}</p>
-            </div>
-            <div className="pt-1 border-t" style={{ borderColor: colors.border }}>
-              <p className="text-xs font-semibold" style={{ color: colors.textTertiary }}>{greeting},</p>
-              <p className="text-base font-bold" style={{ color: colors.text }}>{firstName}!</p>
-            </div>
-            {weather && (
-              <div className="flex items-center gap-2">
-                <WeatherIcon className="w-4 h-4" style={{ color: '#7c3aed' }} />
-                <span className="text-sm font-semibold" style={{ color: colors.text }}>{weather.temp}°</span>
-                <span className="text-xs" style={{ color: colors.textSecondary }}>{weather.condition}</span>
-              </div>
-            )}
-          </div>
-        </CollapsiblePanel>
-      )
-    },
-    // ── STAT ROW PANEL 2: Active Cases ──
+    // ── STAT ROW PANEL 1: Active Cases ──
     {
       id: 'stat-active-cases',
       defaultWidth: 1,
