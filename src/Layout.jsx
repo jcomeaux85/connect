@@ -202,170 +202,196 @@ function LayoutContent({ children, currentPageName }) {
 
         {/* Top Nav — always visible */}
         <nav
-          className="flex-shrink-0 z-50 backdrop-blur-xl relative"
-          style={{ background: `${colors.bg}f0`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}
+          className="flex-shrink-0 z-50 backdrop-blur-xl"
+          style={{ background: `${colors.bg}f0`, borderBottom: `1px solid ${colors.border}` }}
         >
-          {/* DOC + CORE + HelpHub — hang from top of nav bar, top half hidden above nav edge */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex gap-2 z-10 pointer-events-auto" style={{ top: '-18px' }}>
-            <button
-              onClick={() => setShowDOC(p => !p)}
-              className="px-4 flex flex-col items-center justify-end pb-1.5 border-0 leading-none"
-              style={{ ...navBtnStyle(false), height: '38px', minWidth: '64px', borderRadius: '0 0 12px 12px' }}
-              title="Directory of Coverage"
-            >
-              <span className="font-black tracking-tight" style={{ fontSize: '16px', color: '#dc2626', lineHeight: 1 }}>DOC<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
-              <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.4 }}>Directory of Coverage</span>
-            </button>
-            <Link
-              to="/Core"
-              className="px-4 flex flex-col items-center justify-end pb-1.5 border-0 leading-none no-underline"
-              style={{ ...navBtnStyle(false), height: '38px', minWidth: '64px', borderRadius: '0 0 12px 12px' }}
-              title="Workforce Management Platform"
-            >
-              <span className="font-light tracking-tight" style={{ fontSize: '16px', color: '#16a34a', lineHeight: 1 }}>Core<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
-              <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.4 }}>Workforce Mgmt</span>
-            </Link>
-            <button
-              className="px-4 flex flex-col items-center justify-end pb-1.5 border-0 leading-none"
-              style={{ ...navBtnStyle(false), height: '38px', minWidth: '74px', borderRadius: '0 0 12px 12px' }}
-              title="Agent Navigation Layer"
-            >
-              <span className="font-black tracking-tight" style={{ fontSize: '16px', lineHeight: 1 }}>
-                <span style={{ color: '#1d4ed8' }}>Help</span><span style={{ color: '#9ca3af' }}>Hub</span>
-              </span>
-              <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.4 }}>Agent Nav Layer</span>
-            </button>
-          </div>
+          <div className="px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px' }}>
 
-          <div className="px-4 lg:px-6" style={{ overflow: 'visible' }}>
-            <div className="flex items-center justify-between gap-2" style={{ height: '60px', overflow: 'visible' }}>
+            {/* LEFT: BEN|CONNECT logo + page tabs */}
+            <div className="flex items-stretch gap-1 flex-shrink-0">
+              {/* BEN|CONNECT logo/home */}
+              <Link
+                to={createPageUrl("Dashboard")}
+                className="flex flex-col items-center justify-center px-3 no-underline border-b-2 transition-all"
+                style={{
+                  borderBottomColor: location.pathname === createPageUrl("Dashboard") ? '#7c3aed' : 'transparent',
+                  boxShadow: location.pathname === createPageUrl("Dashboard")
+                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
+                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg,
+                  borderRadius: '8px 8px 0 0',
+                  margin: '6px 0 0 0',
+                }}
+              >
+                <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed', lineHeight: 1 }}>
+                  BEN<span style={{ color: colors.textTertiary }}>|</span>connect<sup style={{ fontSize: '7px', verticalAlign: 'super', color: colors.textTertiary }}>™</sup>
+                </span>
+              </Link>
 
-              {/* Logo + nav links — all hang from top */}
-              <div className="flex items-end gap-1 flex-shrink-0 h-full" style={{ overflow: 'visible' }}>
+              {/* Page nav tabs */}
+              {navigationItems.map((item) => {
+                const isActive = location.pathname === item.url;
+                return (
+                  <Link
+                    key={item.title}
+                    to={item.url}
+                    className="flex items-center justify-center px-4 no-underline border-b-2 transition-all"
+                    style={{
+                      borderBottomColor: isActive ? '#7c3aed' : 'transparent',
+                      boxShadow: isActive
+                        ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
+                        : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                      background: colors.bg,
+                      borderRadius: '8px 8px 0 0',
+                      margin: '6px 0 0 0',
+                    }}
+                  >
+                    <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
+                  </Link>
+                );
+              })}
+            </div>
 
-                {/* Logo tab */}
-                <Link
-                  to={createPageUrl("Dashboard")}
-                  className="flex flex-col items-center justify-end pb-1.5 no-underline"
-                  style={{
-                    ...navBtnStyle(false),
-                    height: '38px', minWidth: '80px', borderRadius: '0 0 12px 12px',
-                    marginTop: '-18px', position: 'relative', top: '-18px',
-                  }}
-                  title="Dashboard"
-                >
-                  <span className="font-black tracking-tight" style={{ fontSize: '12px', color: '#7c3aed', lineHeight: 1 }}>BEN<span style={{ color: '#9ca3af' }}>|</span>C</span>
-                  <span style={{ fontSize: '6px', color: '#9ca3af', letterSpacing: '0.03em', lineHeight: 1.4 }}>Home</span>
-                </Link>
+            {/* CENTER: DOC, Core, HelpHub */}
+            <div className="flex items-stretch gap-1 absolute left-1/2 -translate-x-1/2 h-full">
+              {/* DOC */}
+              <button
+                onClick={() => setShowDOC(p => !p)}
+                className="flex flex-col items-center justify-center px-4 border-0 border-b-2 transition-all"
+                style={{
+                  borderBottomColor: showDOC ? '#dc2626' : 'transparent',
+                  boxShadow: showDOC
+                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
+                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg,
+                  borderRadius: '8px 8px 0 0',
+                  margin: '6px 0 0 0',
+                  minWidth: '64px',
+                }}
+              >
+                <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#dc2626', lineHeight: 1 }}>DOC<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
+                <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Directory of Coverage</span>
+              </button>
 
-                {/* Nav page tabs — slightly different shade/shape */}
-                {navigationItems.map((item) => {
-                  const isActive = location.pathname === item.url;
-                  return (
-                    <Link
-                      key={item.title}
-                      to={item.url}
-                      className="flex flex-col items-center justify-end pb-1.5 no-underline"
-                      style={{
-                        background: isActive
-                          ? (isDark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.10)')
-                          : colors.bg,
-                        boxShadow: isActive
-                          ? `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
-                          : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, inset 0 1px 0 ${colors.shadowLight}`,
-                        border: 'none',
-                        height: '34px', minWidth: '56px', borderRadius: '0 0 10px 10px',
-                        marginTop: '-18px', position: 'relative', top: '-18px',
-                      }}
-                    >
-                      <span className="font-semibold text-[11px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary, lineHeight: 1 }}>{item.title}</span>
-                    </Link>
-                  );
-                })}
-              </div>
+              {/* Core */}
+              <Link
+                to="/Core"
+                className="flex flex-col items-center justify-center px-4 border-b-2 transition-all no-underline"
+                style={{
+                  borderBottomColor: location.pathname === '/Core' ? '#16a34a' : 'transparent',
+                  boxShadow: location.pathname === '/Core'
+                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
+                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg,
+                  borderRadius: '8px 8px 0 0',
+                  margin: '6px 0 0 0',
+                  minWidth: '64px',
+                }}
+              >
+                <span className="font-light tracking-tight" style={{ fontSize: '14px', color: '#16a34a', lineHeight: 1 }}>Core<sup style={{ fontSize: '7px', verticalAlign: 'super' }}>™</sup></span>
+                <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Workforce Mgmt</span>
+              </Link>
 
-              {/* Right icons — also hang from top */}
-              <div className="flex items-end gap-1.5 flex-shrink-0 h-full" style={{ overflow: 'visible' }}>
+              {/* HelpHub */}
+              <button
+                className="flex flex-col items-center justify-center px-4 border-0 border-b-2 transition-all"
+                style={{
+                  borderBottomColor: 'transparent',
+                  boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg,
+                  borderRadius: '8px 8px 0 0',
+                  margin: '6px 0 0 0',
+                  minWidth: '74px',
+                }}
+              >
+                <span className="font-black tracking-tight" style={{ fontSize: '14px', lineHeight: 1 }}>
+                  <span style={{ color: '#1d4ed8' }}>Help</span><span style={{ color: colors.textTertiary }}>Hub</span>
+                </span>
+                <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Agent Nav Layer</span>
+              </button>
+            </div>
 
-                {/* Phone */}
-                <button
-                  className="flex flex-col items-center justify-end pb-1.5 border-0"
-                  onClick={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
-                  style={{
-                    ...navBtnStyle(showCalls),
-                    height: '32px', width: '36px', borderRadius: '0 0 10px 10px',
-                    marginTop: '-18px', position: 'relative', top: '-18px',
-                  }}
-                >
-                  <Phone className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-                </button>
+            {/* RIGHT: Phone, Messages, Notifications, Avatar */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {/* Phone */}
+              <button
+                className="flex items-center justify-center rounded-xl border-0 w-9 h-9"
+                onClick={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
+                style={{
+                  boxShadow: showCalls
+                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
+                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg,
+                }}
+              >
+                <Phone className="w-4 h-4" style={{ color: showCalls ? '#7c3aed' : colors.iconColor }} />
+              </button>
 
-                {/* Messages */}
-                <button
-                  className="flex flex-col items-center justify-end pb-1.5 border-0 relative"
-                  onClick={() => { setShowMessages(p => !p); setShowCalls(false); setShowNotifications(false); }}
-                  style={{
-                    ...navBtnStyle(showMessages),
-                    height: '32px', width: '36px', borderRadius: '0 0 10px 10px',
-                    marginTop: '-18px', position: 'relative', top: '-18px',
-                  }}
-                >
-                  <MessageSquare className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-                  {unreadMessages > 0 && (
-                    <span className="absolute -top-0.5 right-0.5 w-3.5 h-3.5 bg-green-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold" style={{ top: '2px' }}>
-                      {unreadMessages > 9 ? '9+' : unreadMessages}
-                    </span>
-                  )}
-                </button>
+              {/* Messages */}
+              <button
+                className="flex items-center justify-center rounded-xl border-0 w-9 h-9 relative"
+                onClick={() => { setShowMessages(p => !p); setShowCalls(false); setShowNotifications(false); }}
+                style={{
+                  boxShadow: showMessages
+                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
+                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg,
+                }}
+              >
+                <MessageSquare className="w-4 h-4" style={{ color: showMessages ? '#7c3aed' : colors.iconColor }} />
+                {unreadMessages > 0 && (
+                  <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-green-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
+                    {unreadMessages > 9 ? '9+' : unreadMessages}
+                  </span>
+                )}
+              </button>
 
-                {/* Notifications */}
-                <button
-                  className="flex flex-col items-center justify-end pb-1.5 border-0 relative"
-                  onClick={() => { setShowNotifications(p => !p); setShowMessages(false); setShowCalls(false); }}
-                  style={{
-                    ...navBtnStyle(showNotifications),
-                    height: '32px', width: '36px', borderRadius: '0 0 10px 10px',
-                    marginTop: '-18px', position: 'relative', top: '-18px',
-                  }}
-                >
-                  <Bell className="w-3.5 h-3.5" style={{ color: colors.iconColor }} />
-                  {unreadNotifications > 0 && (
-                    <span className="absolute right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold" style={{ top: '2px' }}>
-                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                    </span>
-                  )}
-                </button>
+              {/* Notifications */}
+              <button
+                className="flex items-center justify-center rounded-xl border-0 w-9 h-9 relative"
+                onClick={() => { setShowNotifications(p => !p); setShowMessages(false); setShowCalls(false); }}
+                style={{
+                  boxShadow: showNotifications
+                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
+                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg,
+                }}
+              >
+                <Bell className="w-4 h-4" style={{ color: showNotifications ? '#7c3aed' : colors.iconColor }} />
+                {unreadNotifications > 0 && (
+                  <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                  </span>
+                )}
+              </button>
 
-                {/* User avatar — taller pill */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      className="p-0 border-0 overflow-hidden flex-shrink-0"
-                      style={{
-                        ...navBtnStyle(false),
-                        height: '36px', width: '36px', borderRadius: '0 0 18px 18px',
-                        marginTop: '-18px', position: 'relative', top: '-18px',
-                      }}
-                    >
-                      <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-48" align="end" style={{
-                    background: colors.bg, border: 'none',
-                    boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`,
-                    color: colors.text
-                  }}>
-                    <DropdownMenuLabel style={{ color: colors.text }}>
-                      <div>{user?.full_name || 'My Account'}</div>
-                      {user?.role === 'admin' && <div className="text-xs" style={{ color: colors.textSecondary }}>Administrator</div>}
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator style={{ background: colors.border }} />
-                    <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Your Profile</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Settings</Link></DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => base44.auth.logout()} style={{ color: colors.text }}>Sign out</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+              {/* User avatar */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full w-9 h-9"
+                    style={{
+                      boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                    }}
+                  >
+                    <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48" align="end" style={{
+                  background: colors.bg, border: 'none',
+                  boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`,
+                  color: colors.text
+                }}>
+                  <DropdownMenuLabel style={{ color: colors.text }}>
+                    <div>{user?.full_name || 'My Account'}</div>
+                    {user?.role === 'admin' && <div className="text-xs" style={{ color: colors.textSecondary }}>Administrator</div>}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator style={{ background: colors.border }} />
+                  <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Your Profile</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Settings</Link></DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => base44.auth.logout()} style={{ color: colors.text }}>Sign out</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </nav>
