@@ -250,7 +250,7 @@ function LayoutContent({ children, currentPageName }) {
                 <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed', lineHeight: 1 }}>
                   BEN<span style={{ color: colors.textTertiary }}>|</span>connect
                 </span>
-                <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Home</span>
+
               </Link>
 
               {/* DOC */}
@@ -268,7 +268,7 @@ function LayoutContent({ children, currentPageName }) {
                 }}
               >
                 <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#dc2626', lineHeight: 1 }}>DOC</span>
-                <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Directory of Coverage</span>
+
               </button>
 
               {/* Core */}
@@ -286,7 +286,7 @@ function LayoutContent({ children, currentPageName }) {
                 }}
               >
                 <span className="font-light tracking-tight" style={{ fontSize: '14px', color: '#16a34a', lineHeight: 1 }}>Core</span>
-                <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Workforce Mgmt</span>
+
               </Link>
 
               {/* HelpHub */}
@@ -303,7 +303,7 @@ function LayoutContent({ children, currentPageName }) {
                 <span className="font-black tracking-tight" style={{ fontSize: '14px', lineHeight: 1 }}>
                   <span style={{ color: '#1d4ed8' }}>Help</span><span style={{ color: colors.textTertiary }}>Hub</span>
                 </span>
-                <span style={{ fontSize: '6px', color: colors.textTertiary, letterSpacing: '0.03em', lineHeight: 1.4 }}>Agent Nav Layer</span>
+
               </button>
             </div>
 
