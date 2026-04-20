@@ -29,9 +29,15 @@ export default function DraggableDashboard({ panels }) {
             transition={{ delay: (index + 1) * 0.05 }}
             style={{ minHeight: '180px' }}
           >
-            <div className="h-full rounded-2xl min-h-[180px] overflow-hidden" style={{ background: colors.bg, boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`, ...(panel.id !== 'chip-image' && { padding: '1rem' }) }}>
-              <div className="h-full overflow-auto">{panel.content}</div>
-            </div>
+            {panel.id === 'chip-image' ? (
+              <div className="h-full min-h-[180px] rounded-2xl overflow-hidden" style={{ boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}` }}>
+                {panel.content}
+              </div>
+            ) : (
+              <div className="h-full rounded-2xl p-4 min-h-[180px]" style={{ background: colors.bg, boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}` }}>
+                <div className="h-full overflow-auto">{panel.content}</div>
+              </div>
+            )}
           </motion.div>
         ))}
       </div>
