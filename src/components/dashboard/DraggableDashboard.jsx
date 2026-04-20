@@ -29,7 +29,7 @@ export default function DraggableDashboard({ panels }) {
             transition={{ delay: (index + 1) * 0.05 }}
           >
             {panel.id === 'chip-image' ? (
-              <div className="h-full rounded-2xl overflow-hidden min-h-[180px]">
+              <div className="h-full min-h-[180px]">
                 {panel.content}
               </div>
             ) : (
