@@ -27,9 +27,10 @@ export default function DraggableDashboard({ panels }) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: (index + 1) * 0.05 }}
+            style={{ minHeight: '180px' }}
           >
             {panel.id === 'chip-image' ? (
-              <div className="h-full w-full" style={{ minHeight: '180px' }}>
+              <div style={{ width: '100%', height: '100%', minHeight: '180px', overflow: 'hidden', borderRadius: '16px' }}>
                 {panel.content}
               </div>
             ) : (

@@ -296,13 +296,11 @@ export default function Dashboard() {
       defaultWidth: 1,
       defaultHeight: 1,
       content: (
-        <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '180px' }}>
-          <img
-            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
-            alt="BEN|CONNECT chip"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-          />
-        </div>
+        <img
+          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+          alt="BEN|CONNECT chip"
+          style={{ width: '100%', height: '100%', minHeight: '180px', objectFit: 'cover', objectPosition: 'center', display: 'block', borderRadius: '16px' }}
+        />
       )
     },
     {
