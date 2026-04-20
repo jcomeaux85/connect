@@ -203,9 +203,9 @@ function LayoutContent({ children, currentPageName }) {
         {/* Top Nav — always visible */}
         <nav
           className="flex-shrink-0 z-50 backdrop-blur-xl"
-          style={{ background: `${colors.bg}f0`, borderBottom: `1px solid ${colors.border}` }}
+          style={{ background: `${colors.bg}f0`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}
         >
-          <div className="px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px' }}>
+          <div className="px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px', overflow: 'visible' }}>
 
             {/* LEFT: page tabs only */}
             <div className="flex items-end gap-1 flex-shrink-0">
@@ -222,7 +222,7 @@ function LayoutContent({ children, currentPageName }) {
                         : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                       background: isActive ? (isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)') : colors.bg,
                       borderRadius: '0 0 10px 10px',
-                      height: '40px',
+                      height: '52px',
                     }}
                   >
                     <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
@@ -243,7 +243,7 @@ function LayoutContent({ children, currentPageName }) {
                     : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: location.pathname === createPageUrl("Dashboard") ? (isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)') : colors.bg,
                   borderRadius: '0 0 12px 12px',
-                  height: '44px',
+                  height: '52px',
                   minWidth: '90px',
                 }}
               >
@@ -263,7 +263,7 @@ function LayoutContent({ children, currentPageName }) {
                     : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
                   borderRadius: '0 0 12px 12px',
-                  height: '42px',
+                  height: '52px',
                   minWidth: '72px',
                 }}
               >
@@ -281,7 +281,7 @@ function LayoutContent({ children, currentPageName }) {
                     : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
                   borderRadius: '0 0 12px 12px',
-                  height: '42px',
+                  height: '52px',
                   minWidth: '72px',
                 }}
               >
@@ -296,7 +296,7 @@ function LayoutContent({ children, currentPageName }) {
                   boxShadow: `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
                   borderRadius: '0 0 12px 12px',
-                  height: '42px',
+                  height: '52px',
                   minWidth: '80px',
                 }}
               >
