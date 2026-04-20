@@ -299,7 +299,7 @@ export default function Dashboard() {
         <img
           src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
           alt="BEN|CONNECT chip"
-          style={{ width: '100%', height: '100%', minHeight: '180px', objectFit: 'cover', objectPosition: 'center', display: 'block', borderRadius: '16px' }}
+          style={{ width: '100%', height: '100%', minHeight: '180px', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
         />
       )
     },
