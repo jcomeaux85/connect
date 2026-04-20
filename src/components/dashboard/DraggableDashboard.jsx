@@ -30,7 +30,7 @@ export default function DraggableDashboard({ panels }) {
             style={{ minHeight: '180px' }}
           >
             {panel.id === 'chip-image' ? (
-              <div className="h-full min-h-[180px] rounded-2xl overflow-hidden" style={{ boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}` }}>
+              <div className="h-full min-h-[180px] rounded-2xl overflow-hidden">
                 {panel.content}
               </div>
             ) : (
