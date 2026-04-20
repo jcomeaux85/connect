@@ -237,11 +237,11 @@ function LayoutContent({ children, currentPageName }) {
             </button>
           </div>
 
-          <div className="px-4 lg:px-6">
-            <div className="flex items-center justify-between gap-2" style={{ height: '60px', paddingTop: '6px' }}>
+          <div className="px-4 lg:px-6" style={{ overflow: 'visible' }}>
+            <div className="flex items-center justify-between gap-2" style={{ height: '60px', overflow: 'visible' }}>
 
               {/* Logo + nav links — all hang from top */}
-              <div className="flex items-end gap-1 flex-shrink-0 h-full">
+              <div className="flex items-end gap-1 flex-shrink-0 h-full" style={{ overflow: 'visible' }}>
 
                 {/* Logo tab */}
                 <Link
@@ -285,7 +285,7 @@ function LayoutContent({ children, currentPageName }) {
               </div>
 
               {/* Right icons — also hang from top */}
-              <div className="flex items-end gap-1.5 flex-shrink-0 h-full">
+              <div className="flex items-end gap-1.5 flex-shrink-0 h-full" style={{ overflow: 'visible' }}>
 
                 {/* Phone */}
                 <button
