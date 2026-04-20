@@ -116,33 +116,17 @@ export default function Dashboard() {
 
   const stats = [
     {
-      title: "Active Cases",
-      value: activeCases,
-      icon: Folder,
-      color: "#3B82F6",
-      bgGradient: "linear-gradient(145deg, #dbeafe, #bfdbfe)"
-    },
-    {
       title: "Pending Tasks",
       value: pendingTasks,
       icon: CheckSquare,
       color: "#8B5CF6",
-      bgGradient: "linear-gradient(145deg, #ede9fe, #ddd6fe)"
     },
     {
       title: "Today's Calls",
       value: todayCalls,
       icon: Phone,
       color: "#10B981",
-      bgGradient: "linear-gradient(145deg, #dcfce7, #bbf7d0)"
     },
-    {
-      title: "Urgent Cases",
-      value: urgentCases,
-      icon: AlertCircle,
-      color: "#EF4444",
-      bgGradient: "linear-gradient(145deg, #fee2e2, #fecaca)"
-    }
   ];
 
   const getWeatherIcon = (condition) => {
@@ -166,6 +150,9 @@ export default function Dashboard() {
 
   const WeatherIcon = weather ? getWeatherIcon(weather.condition) : Sun;
 
+  const greeting = `Good ${new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}`;
+  const firstName = user?.full_name?.split(' ')[0] || 'there';
+
   // Define dashboard panels
   const dashboardPanels = [
     {
@@ -181,7 +168,7 @@ export default function Dashboard() {
           headerExtra={
             <div className="flex items-center gap-3">
               <span className="text-xs" style={{ color: colors.textSecondary }}>
-                {activeCases} active · {urgentCases} urgent
+                {activeCases} active
               </span>
               <Link to={createPageUrl("Cases")}>
                 <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
@@ -197,123 +184,155 @@ export default function Dashboard() {
           }
           condensedContent={
             <div className="flex items-center justify-between">
-              <span className="text-sm" style={{ color: colors.text }}>
-                {activeCases} active cases
-              </span>
-              <span className="text-xs" style={{ color: urgentCases > 0 ? '#EF4444' : colors.textTertiary }}>
-                {urgentCases > 0 ? `${urgentCases} urgent` : 'No urgent'}
-              </span>
+              <span className="text-sm" style={{ color: colors.text }}>{activeCases} active cases</span>
             </div>
           }
         >
-          <DailyPlanner user={user} greeting={`Good ${new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, ${user?.full_name?.split(' ')[0] || 'there'}!`} activeCases={activeCases} urgentCases={urgentCases} />
+          <DailyPlanner user={user} greeting={`${greeting}, ${firstName}!`} activeCases={activeCases} urgentCases={0} />
         </CollapsiblePanel>
       )
     },
-    ...stats.map((stat, index) => {
-      const StatIcon = stat.icon;
-      const hasValue = stat.value > 0;
-      
-      const getRecentItems = () => {
-        switch(stat.title) {
-          case "Active Cases":
-            return myCases.filter(c => c.status !== 'closed').slice(0, 3).map(c => ({
-              id: c.id,
-              label: c.customer_name || c.case_number,
-              url: `Case?id=${c.id}`
-            }));
-          case "Pending Tasks":
-            return myTasks.filter(t => t.status === 'pending').slice(0, 3).map(t => ({
-              id: t.id,
-              label: t.title,
-              url: t.case_id ? `Case?id=${t.case_id}` : null
-            }));
-          case "Today's Calls":
-            return calls.filter(call => call.created_date && isToday(parseISO(call.created_date))).slice(0, 3).map(c => {
-              const relatedCase = cases.find(cs => cs.id === c.case_id);
-              return {
-                id: c.id,
-                label: relatedCase?.customer_name || 'Unknown',
-                url: c.case_id ? `Case?id=${c.case_id}` : null
-              };
-            });
-          case "Urgent Cases":
-            return myCases.filter(c => c.priority === 'urgent' && c.status !== 'closed').slice(0, 3).map(c => ({
-              id: c.id,
-              label: c.customer_name || c.case_number,
-              url: `Case?id=${c.id}`
-            }));
-          default:
-            return [];
-        }
-      };
-      
-      const recentItems = getRecentItems();
-      
-      return {
-        id: `stat-${stat.title}`,
-        defaultWidth: 1,
-        defaultHeight: 1,
-        content: (
-          <CollapsiblePanel
-            title={stat.title}
-            icon={StatIcon}
-            storageKey={`dashboard-stat-${stat.title.toLowerCase().replace(/\s+/g, '-')}`}
-            accentColor={hasValue ? stat.color : null}
-            largerIcon
-            condensedContent={
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold" style={{ color: hasValue ? stat.color : colors.text }}>
-                  {stat.value}
-                </span>
+    // ── STAT ROW PANEL 1: Welcome / Time ──
+    {
+      id: 'welcome',
+      defaultWidth: 1,
+      defaultHeight: 1,
+      content: (
+        <CollapsiblePanel
+          title="Welcome"
+          icon={Sun}
+          storageKey="dashboard-welcome"
+          condensedContent={
+            <span className="text-sm font-semibold" style={{ color: colors.text }}>{format(new Date(), 'h:mm a')}</span>
+          }
+        >
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className="text-3xl font-bold tabular-nums" style={{ color: colors.text }}>
+                {format(new Date(), 'h:mm')}
+                <span className="text-lg font-light ml-1" style={{ color: colors.textSecondary }}>{format(new Date(), 'a')}</span>
+              </p>
+              <p className="text-sm mt-0.5" style={{ color: colors.textSecondary }}>{format(new Date(), 'EEEE, MMMM d')}</p>
+            </div>
+            <div className="pt-1 border-t" style={{ borderColor: colors.border }}>
+              <p className="text-xs font-semibold" style={{ color: colors.textTertiary }}>{greeting},</p>
+              <p className="text-base font-bold" style={{ color: colors.text }}>{firstName}!</p>
+            </div>
+            {weather && (
+              <div className="flex items-center gap-2">
+                <WeatherIcon className="w-4 h-4" style={{ color: '#7c3aed' }} />
+                <span className="text-sm font-semibold" style={{ color: colors.text }}>{weather.temp}°</span>
+                <span className="text-xs" style={{ color: colors.textSecondary }}>{weather.condition}</span>
               </div>
-            }
+            )}
+          </div>
+        </CollapsiblePanel>
+      )
+    },
+    // ── STAT ROW PANEL 2: Active Cases ──
+    {
+      id: 'stat-active-cases',
+      defaultWidth: 1,
+      defaultHeight: 1,
+      content: (() => {
+        const recentItems = myCases.filter(c => c.status !== 'closed').slice(0, 3).map(c => ({ id: c.id, label: c.customer_name || c.case_number, url: `Case?id=${c.id}` }));
+        const hasValue = activeCases > 0;
+        return (
+          <CollapsiblePanel title="Active Cases" icon={Folder} storageKey="dashboard-stat-active-cases" accentColor={hasValue ? '#3B82F6' : null} largerIcon
+            condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#3B82F6' : colors.text }}>{activeCases}</span>}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0 space-y-1.5">
-                {recentItems.length > 0 ? (
-                  recentItems.map((item) => (
-                    item.url ? (
-                      <Link key={item.id} to={createPageUrl(item.url)}>
-                        <div 
-                          className="text-xs truncate py-1 px-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer"
-                          style={{ 
-                            color: colors.textSecondary,
-                            background: colors.bg,
-                            boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}`
-                          }}
-                        >
-                          {item.label}
-                        </div>
-                      </Link>
-                    ) : (
-                      <div 
-                        key={item.id}
-                        className="text-xs truncate py-1 px-2 rounded-lg"
-                        style={{ 
-                          color: colors.textTertiary,
-                          background: colors.bg,
-                          boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}`
-                        }}
-                      >
-                        {item.label}
-                      </div>
-                    )
-                  ))
-                ) : (
-                  <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>
-                )}
+                {recentItems.length > 0 ? recentItems.map(item => (
+                  <Link key={item.id} to={createPageUrl(item.url)}>
+                    <div className="text-xs truncate py-1 px-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer" style={{ color: colors.textSecondary, background: colors.bg, boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}` }}>{item.label}</div>
+                  </Link>
+                )) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
               </div>
-              <div className="text-right">
-                <h3 className="text-3xl font-bold" style={{ color: hasValue ? stat.color : colors.text }}>
-                  {stat.value}
-                </h3>
-              </div>
+              <h3 className="text-3xl font-bold" style={{ color: hasValue ? '#3B82F6' : colors.text }}>{activeCases}</h3>
             </div>
           </CollapsiblePanel>
-        )
-      };
-    }),
+        );
+      })()
+    },
+    // ── STAT ROW PANEL 3: Pending Tasks ──
+    {
+      id: 'stat-pending-tasks',
+      defaultWidth: 1,
+      defaultHeight: 1,
+      content: (() => {
+        const recentItems = myTasks.filter(t => t.status === 'pending').slice(0, 3).map(t => ({ id: t.id, label: t.title, url: t.case_id ? `Case?id=${t.case_id}` : null }));
+        const hasValue = pendingTasks > 0;
+        return (
+          <CollapsiblePanel title="Pending Tasks" icon={CheckSquare} storageKey="dashboard-stat-pending-tasks" accentColor={hasValue ? '#8B5CF6' : null} largerIcon
+            condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#8B5CF6' : colors.text }}>{pendingTasks}</span>}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0 space-y-1.5">
+                {recentItems.length > 0 ? recentItems.map(item => (
+                  item.url ? (
+                    <Link key={item.id} to={createPageUrl(item.url)}>
+                      <div className="text-xs truncate py-1 px-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer" style={{ color: colors.textSecondary, background: colors.bg, boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}` }}>{item.label}</div>
+                    </Link>
+                  ) : (
+                    <div key={item.id} className="text-xs truncate py-1 px-2 rounded-lg" style={{ color: colors.textTertiary, background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>{item.label}</div>
+                  )
+                )) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
+              </div>
+              <h3 className="text-3xl font-bold" style={{ color: hasValue ? '#8B5CF6' : colors.text }}>{pendingTasks}</h3>
+            </div>
+          </CollapsiblePanel>
+        );
+      })()
+    },
+    // ── STAT ROW PANEL 4: Today's Calls ──
+    {
+      id: 'stat-todays-calls',
+      defaultWidth: 1,
+      defaultHeight: 1,
+      content: (() => {
+        const recentItems = calls.filter(call => call.created_date && isToday(parseISO(call.created_date))).slice(0, 3).map(c => {
+          const relatedCase = cases.find(cs => cs.id === c.case_id);
+          return { id: c.id, label: relatedCase?.customer_name || 'Unknown', url: c.case_id ? `Case?id=${c.case_id}` : null };
+        });
+        const hasValue = todayCalls > 0;
+        return (
+          <CollapsiblePanel title="Today's Calls" icon={Phone} storageKey="dashboard-stat-todays-calls" accentColor={hasValue ? '#10B981' : null} largerIcon
+            condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#10B981' : colors.text }}>{todayCalls}</span>}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0 space-y-1.5">
+                {recentItems.length > 0 ? recentItems.map(item => (
+                  item.url ? (
+                    <Link key={item.id} to={createPageUrl(item.url)}>
+                      <div className="text-xs truncate py-1 px-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer" style={{ color: colors.textSecondary, background: colors.bg, boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}` }}>{item.label}</div>
+                    </Link>
+                  ) : (
+                    <div key={item.id} className="text-xs truncate py-1 px-2 rounded-lg" style={{ color: colors.textTertiary, background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>{item.label}</div>
+                  )
+                )) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
+              </div>
+              <h3 className="text-3xl font-bold" style={{ color: hasValue ? '#10B981' : colors.text }}>{todayCalls}</h3>
+            </div>
+          </CollapsiblePanel>
+        );
+      })()
+    },
+    // ── STAT ROW PANEL 5: Chip image (replaces Urgent Cases) ──
+    {
+      id: 'chip-image',
+      defaultWidth: 1,
+      defaultHeight: 1,
+      content: (
+        <div className="w-full h-full rounded-xl overflow-hidden" style={{ minHeight: '180px' }}>
+          <img
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+            alt="BEN|CONNECT chip"
+            style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center' }}
+          />
+        </div>
+      )
+    },
     {
       id: 'recent-cases',
       defaultWidth: 3,
