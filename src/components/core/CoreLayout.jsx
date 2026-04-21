@@ -31,7 +31,7 @@ export default function CoreLayout({ activeSection, onNavigate, children }) {
             <span className="text-gray-400">|</span>
             <span>connect</span>
           </div>
-          <div className="text-[10px] font-semibold text-purple-500 tracking-widest uppercase mt-0.5">Pro Workforce</div>
+          <div className="text-[10px] font-semibold text-purple-500 tracking-widest uppercase mt-0.5">Core</div>
         </div>
 
         {/* Nav */}
