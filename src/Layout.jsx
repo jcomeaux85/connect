@@ -252,9 +252,9 @@ function LayoutContent({ children, currentPageName }) {
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* DOC */}
-              <button
-                onClick={() => setShowDOC(p => !p)}
-                className="flex items-center justify-center border-0 bg-transparent"
+              <Link
+                to="/DOC"
+                className="flex items-center justify-center no-underline"
               >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
@@ -263,7 +263,7 @@ function LayoutContent({ children, currentPageName }) {
                   onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                 />
-              </button>
+              </Link>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
