@@ -429,7 +429,7 @@ export default function Dashboard() {
             src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/36da25dea_illusion-69e4663927f6b2b345e2f17a.png"
             alt="ebm chip"
             className="w-full rounded-2xl"
-            style={{ maxHeight: '180px', objectFit: 'contain', objectPosition: 'center' }}
+            style={{ maxHeight: '180px', objectFit: 'cover', objectPosition: 'center' }}
           />
           <p className="text-center mt-2 font-light tracking-widest text-xs uppercase" style={{ color: '#9ca3af', letterSpacing: '0.25em' }}>dashboard</p>
         </div>
