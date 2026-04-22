@@ -241,7 +241,7 @@ function LayoutContent({ children, currentPageName }) {
                 
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
-                  alt="Connect" className="px-2 rounded-none chip-nav-img"
+                  alt="Connect" className="rounded-none chip-nav-img"
 
                   style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
