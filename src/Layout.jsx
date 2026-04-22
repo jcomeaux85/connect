@@ -232,66 +232,57 @@ function LayoutContent({ children, currentPageName }) {
             </div>
 
             {/* CENTER: BEN|connect, DOC, Core, HelpHub — no containers, raw tech feel */}
-            <div className="flex items-center gap-3 absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0, paddingTop: '4px' }}>
+            <div className="flex items-center gap-4 absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0, paddingTop: '6px' }}>
               {/* connect */}
-              <Link to={createPageUrl("Dashboard")} className="flex items-center justify-center no-underline">
+              <Link
+                to={createPageUrl("Dashboard")}
+                className="flex items-center justify-center no-underline"
+              >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="Connect"
-                  style={{
-                    height: '46px', width: '46px', objectFit: 'cover', display: 'block',
-                    borderRadius: '6px',
-                    border: '1px solid rgba(180,180,200,0.5)',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 8px 2px rgba(100,180,255,0.25)',
-                  }}
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
                 />
               </Link>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* DOC */}
-              <button onClick={() => setShowDOC(p => !p)} className="flex items-center justify-center border-0 bg-transparent p-0">
+              <button
+                onClick={() => setShowDOC(p => !p)}
+                className="flex items-center justify-center border-0 bg-transparent"
+              >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="DOC"
-                  style={{
-                    height: '46px', width: '46px', objectFit: 'cover', display: 'block',
-                    borderRadius: '6px',
-                    border: '1px solid rgba(180,180,200,0.5)',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 8px 2px rgba(100,180,255,0.25)',
-                  }}
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
                 />
               </button>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* Core */}
-              <Link to="/Core" className="flex items-center justify-center no-underline">
+              <Link
+                to="/Core"
+                className="flex items-center justify-center no-underline"
+              >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="Core"
-                  style={{
-                    height: '46px', width: '46px', objectFit: 'cover', display: 'block',
-                    borderRadius: '6px',
-                    border: '1px solid rgba(180,180,200,0.5)',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 8px 2px rgba(100,180,255,0.25)',
-                  }}
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
                 />
               </Link>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* HelpHub */}
-              <button className="flex items-center justify-center border-0 bg-transparent p-0">
+              <button
+                className="flex items-center justify-center border-0 bg-transparent"
+              >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="HelpHub"
-                  style={{
-                    height: '46px', width: '46px', objectFit: 'cover', display: 'block',
-                    borderRadius: '6px',
-                    border: '1px solid rgba(180,180,200,0.5)',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 8px 2px rgba(100,180,255,0.25)',
-                  }}
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
                 />
               </button>
             </div>
