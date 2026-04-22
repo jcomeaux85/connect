@@ -28,7 +28,6 @@ import { format, isToday, parseISO } from "date-fns";
 import { useTheme } from "@/components/ThemeProvider";
 
 import DailyPlanner from "../components/dashboard/DailyPlanner";
-import VideoIntro from "../components/dashboard/VideoIntro";
 import CollapsiblePanel from "@/components/ui/CollapsiblePanel";
 import DraggableDashboard from "../components/dashboard/DraggableDashboard";
 import LayoutSelector from "../components/settings/LayoutSelector";
@@ -424,12 +423,15 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
-      <VideoIntro />
+
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex flex-col items-center">
-          <img
-            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a1017a091_kling_20260422___3363_0.png"
-            alt="ebm chip"
+          <video
+            src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
+            autoPlay
+            muted
+            playsInline
+            onEnded={e => { e.target.pause(); }}
             className="w-full rounded-2xl"
             style={{
               maxHeight: '180px',
