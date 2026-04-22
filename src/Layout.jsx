@@ -231,78 +231,54 @@ function LayoutContent({ children, currentPageName }) {
               })}
             </div>
 
-            {/* CENTER: BEN|connect, DOC, Core, HelpHub — flat top, hang from top edge */}
-            <div className="flex items-end gap-1 absolute left-1/2 -translate-x-1/2" style={{ bottom: 0, top: 0, alignItems: 'flex-end' }}>
+            {/* CENTER: BEN|connect, DOC, Core, HelpHub — no containers, raw tech feel */}
+            <div className="flex items-center gap-4 absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0 }}>
               {/* connect */}
               <Link
                 to={createPageUrl("Dashboard")}
-                className="flex items-center justify-center no-underline transition-all"
-                style={{
-                  boxShadow: location.pathname === createPageUrl("Dashboard")
-                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
-                  background: location.pathname === createPageUrl("Dashboard") ? (isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)') : colors.bg,
-                  borderRadius: '0 0 12px 12px',
-                  height: '52px',
-                  minWidth: '76px',
-                }}
+                className="flex items-center justify-center no-underline transition-all hover:opacity-80"
+                style={{ opacity: location.pathname === createPageUrl("Dashboard") ? 1 : 0.6 }}
               >
-                <span className="font-black tracking-tight whitespace-nowrap" style={{ fontSize: '13px', color: '#7c3aed' }}>Connect</span>
+                <span className="font-black tracking-tighter whitespace-nowrap" style={{ fontSize: '16px', color: '#a78bfa', letterSpacing: '-0.03em', textShadow: '0 0 12px rgba(167,139,250,0.7)' }}>Connect</span>
               </Link>
+
+              <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* DOC */}
               <button
                 onClick={() => setShowDOC(p => !p)}
-                className="flex items-center justify-center border-0 transition-all"
-                style={{
-                  boxShadow: showDOC
-                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
-                  background: colors.bg,
-                  borderRadius: '0 0 12px 12px',
-                  height: '52px',
-                  minWidth: '64px',
-                }}
+                className="flex items-center justify-center border-0 bg-transparent transition-all hover:opacity-80"
+                style={{ opacity: showDOC ? 1 : 0.6 }}
               >
-                <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#dc2626' }}>DOC</span>
+                <span className="font-black tracking-tighter" style={{ fontSize: '16px', color: '#f87171', letterSpacing: '-0.03em', textShadow: '0 0 12px rgba(248,113,113,0.7)' }}>DOC</span>
               </button>
+
+              <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* Core */}
               <Link
                 to="/Core"
-                className="flex items-center justify-center transition-all no-underline overflow-hidden"
-                style={{
-                  boxShadow: location.pathname === '/Core'
-                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
-                  background: colors.bg,
-                  borderRadius: '0 0 12px 12px',
-                  height: '52px',
-                  minWidth: '64px',
-                }}
+                className="flex items-center justify-center transition-all no-underline hover:opacity-80"
+                style={{ opacity: location.pathname === '/Core' ? 1 : 0.75 }}
               >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/6dbb828fe_generated_image.png"
                   alt="Core"
-                  style={{ height: '42px', width: '42px', objectFit: 'contain', mixBlendMode: 'screen' }}
+                  style={{ height: '40px', width: '40px', objectFit: 'contain', mixBlendMode: 'screen', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }}
                 />
               </Link>
 
-              {/* Hub */}
+              <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
+
+              {/* HelpHub */}
               <button
-                className="flex items-center justify-center border-0 transition-all overflow-hidden"
-                style={{
-                  boxShadow: `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
-                  background: colors.bg,
-                  borderRadius: '0 0 12px 12px',
-                  height: '52px',
-                  minWidth: '64px',
-                }}
+                className="flex items-center justify-center border-0 bg-transparent transition-all hover:opacity-80"
+                style={{ opacity: 0.85 }}
               >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f090bdba3_helphub.png"
                   alt="HelpHub"
-                  style={{ height: '50px', width: '50px', objectFit: 'contain' }}
+                  style={{ height: '44px', width: '44px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(56,189,248,0.6))' }}
                 />
               </button>
             </div>
