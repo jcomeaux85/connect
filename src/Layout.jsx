@@ -290,7 +290,7 @@ function LayoutContent({ children, currentPageName }) {
 
               {/* Hub */}
               <button
-                className="flex items-center justify-center border-0 transition-all"
+                className="flex items-center justify-center border-0 transition-all overflow-hidden"
                 style={{
                   boxShadow: `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                   background: colors.bg,
@@ -299,7 +299,11 @@ function LayoutContent({ children, currentPageName }) {
                   minWidth: '64px',
                 }}
               >
-                <span className="font-black tracking-tight" style={{ fontSize: '14px', color: '#1d4ed8' }}>Hub</span>
+                <img
+                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f090bdba3_helphub.png"
+                  alt="HelpHub"
+                  style={{ height: '42px', width: '42px', objectFit: 'contain' }}
+                />
               </button>
             </div>
 
