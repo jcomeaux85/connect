@@ -137,10 +137,10 @@ export default function CollapsiblePanel({
         className="flex items-center justify-between p-4 pl-7 cursor-pointer select-none"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           {Icon && (
             <div
-              className={`${largerIcon ? 'w-10 h-10' : 'w-8 h-8'} rounded-xl flex items-center justify-center`}
+              className={`${largerIcon ? 'w-10 h-10' : 'w-8 h-8'} rounded-xl flex items-center justify-center flex-shrink-0`}
               style={{
                 background: accentColor ? `${accentColor}20` : colors.bg,
                 boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}`
@@ -154,10 +154,11 @@ export default function CollapsiblePanel({
               {title}
             </h3>
           )}
+          {!title && !Icon && headerExtra}
         </div>
 
-        <div className="flex items-center gap-2">
-          {headerExtra}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {(title || Icon) && headerExtra}
 
           {/* Collapse Toggle */}
           <motion.div
