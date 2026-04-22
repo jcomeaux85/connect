@@ -242,14 +242,7 @@ function LayoutContent({ children, currentPageName }) {
                 className="flex items-center justify-center no-underline"
                 style={{ transformOrigin: 'center top' }}
               >
-                <img
-                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
-                  alt="Connect"
-                  className="chip-nav-img"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                />
+
               </Link>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
@@ -405,7 +398,7 @@ function LayoutContent({ children, currentPageName }) {
         {/* Footer */}
         <footer className="flex-shrink-0 py-2 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.bg }}>
           <p className="text-xs font-bold" style={{ color: colors.text }}>
-            BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
+            BEN<span style={{ color: colors.textSecondary }}>|</span>connect 2026
             <span className="mx-2" style={{ color: colors.textTertiary }}>·</span>
             <span style={{ color: colors.textSecondary }}>indie<span style={{ color: colors.textTertiary }}>|</span>render<sup className="text-[6px]" style={{ color: colors.textTertiary }}>™</sup></span>
           </p>
