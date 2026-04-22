@@ -152,14 +152,7 @@ export default function PersistentSidebar({
           className="flex items-center flex-shrink-0 px-1.5 gap-2"
           style={{ height: '56px', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)'}` }}
         >
-          <div
-            className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto"
-            style={btnStyle(false)}
-          >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" style={{ color: colors.iconColor }}>
-              <path d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
+
           <AnimatePresence>
             {!isMin && (
               <motion.span
@@ -168,7 +161,7 @@ export default function PersistentSidebar({
                 className="font-bold text-xs tracking-tight whitespace-nowrap"
                 style={{ color: '#7c3aed' }}
               >
-                BEN<span style={{ color: '#9ca3af' }}>|</span>CONNECT<sup className="text-[7px]" style={{ color: '#9ca3af' }}>™</sup>
+                BEN<span style={{ color: '#9ca3af' }}>|</span>connect
               </motion.span>
             )}
           </AnimatePresence>
