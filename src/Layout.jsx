@@ -232,16 +232,20 @@ function LayoutContent({ children, currentPageName }) {
             </div>
 
             {/* CENTER: BEN|connect, DOC, Core, HelpHub — no containers, raw tech feel */}
-            <div className="flex items-center gap-4 absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0, paddingTop: '6px' }}>
+            <div className="flex items-center gap-4 absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0, paddingTop: '6px', overflow: 'visible' }}>
               {/* connect */}
               <Link
                 to={createPageUrl("Dashboard")}
                 className="flex items-center justify-center no-underline"
+                style={{ transformOrigin: 'center top' }}
               >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="Connect"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                  className="chip-nav-img"
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                 />
               </Link>
 
@@ -255,7 +259,9 @@ function LayoutContent({ children, currentPageName }) {
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="DOC"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                 />
               </button>
 
@@ -269,7 +275,9 @@ function LayoutContent({ children, currentPageName }) {
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="Core"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                 />
               </Link>
 
@@ -282,7 +290,9 @@ function LayoutContent({ children, currentPageName }) {
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="HelpHub"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                 />
               </button>
             </div>
