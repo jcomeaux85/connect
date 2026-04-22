@@ -304,13 +304,16 @@ function LayoutContent({ children, currentPageName }) {
                 className="flex items-center justify-center rounded-xl border-0 w-9 h-9"
                 onClick={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
                 style={{
+                  background: showCalls 
+                    ? `linear-gradient(145deg, #e8e8e8, #d4d4d4)`
+                    : `linear-gradient(145deg, #f5f5f5, #e0e0e0)`,
                   boxShadow: showCalls
-                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg,
+                    ? `inset 3px 3px 6px #cccccc, inset -3px -3px 6px #ffffff`
+                    : `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
+                  border: '1px solid rgba(255,255,255,0.4)',
                 }}
               >
-                <Phone className="w-4 h-4" style={{ color: showCalls ? '#7c3aed' : colors.iconColor }} />
+                <Phone className="w-4 h-4" style={{ color: showCalls ? '#7c3aed' : '#666' }} />
               </button>
 
               {/* Messages */}
@@ -318,13 +321,16 @@ function LayoutContent({ children, currentPageName }) {
                 className="flex items-center justify-center rounded-xl border-0 w-9 h-9 relative"
                 onClick={() => { setShowMessages(p => !p); setShowCalls(false); setShowNotifications(false); }}
                 style={{
+                  background: showMessages 
+                    ? `linear-gradient(145deg, #e8e8e8, #d4d4d4)`
+                    : `linear-gradient(145deg, #f5f5f5, #e0e0e0)`,
                   boxShadow: showMessages
-                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg,
+                    ? `inset 3px 3px 6px #cccccc, inset -3px -3px 6px #ffffff`
+                    : `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
+                  border: '1px solid rgba(255,255,255,0.4)',
                 }}
               >
-                <MessageSquare className="w-4 h-4" style={{ color: showMessages ? '#7c3aed' : colors.iconColor }} />
+                <MessageSquare className="w-4 h-4" style={{ color: showMessages ? '#7c3aed' : '#666' }} />
                 {unreadMessages > 0 && (
                   <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-green-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
                     {unreadMessages > 9 ? '9+' : unreadMessages}
@@ -337,13 +343,16 @@ function LayoutContent({ children, currentPageName }) {
                 className="flex items-center justify-center rounded-xl border-0 w-9 h-9 relative"
                 onClick={() => { setShowNotifications(p => !p); setShowMessages(false); setShowCalls(false); }}
                 style={{
+                  background: showNotifications 
+                    ? `linear-gradient(145deg, #e8e8e8, #d4d4d4)`
+                    : `linear-gradient(145deg, #f5f5f5, #e0e0e0)`,
                   boxShadow: showNotifications
-                    ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                    : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg,
+                    ? `inset 3px 3px 6px #cccccc, inset -3px -3px 6px #ffffff`
+                    : `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
+                  border: '1px solid rgba(255,255,255,0.4)',
                 }}
               >
-                <Bell className="w-4 h-4" style={{ color: showNotifications ? '#7c3aed' : colors.iconColor }} />
+                <Bell className="w-4 h-4" style={{ color: showNotifications ? '#7c3aed' : '#666' }} />
                 {unreadNotifications > 0 && (
                   <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
@@ -357,7 +366,8 @@ function LayoutContent({ children, currentPageName }) {
                   <button
                     className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full w-9 h-9"
                     style={{
-                      boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                      boxShadow: `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
+                      border: '1px solid rgba(255,255,255,0.4)',
                     }}
                   >
                     <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
