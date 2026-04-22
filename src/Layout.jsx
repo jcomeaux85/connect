@@ -8,16 +8,16 @@ import {
   Users,
   MessageSquare,
   Phone,
-  FileText
-} from "lucide-react";
+  FileText } from
+"lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger } from
+"@/components/ui/dropdown-menu";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from '@tanstack/react-query';
 import { useUser } from "@/components/hooks/useUser";
@@ -38,10 +38,10 @@ import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
 import { AnimatePresence, motion } from "framer-motion";
 
 const navigationItems = [
-  { title: "Dashboard", url: createPageUrl("Dashboard"), icon: LayoutGrid },
-  { title: "Cases", url: createPageUrl("Cases"), icon: Folder },
-  { title: "Customers", url: createPageUrl("Customers"), icon: Users },
-];
+{ title: "Dashboard", url: createPageUrl("Dashboard"), icon: LayoutGrid },
+{ title: "Cases", url: createPageUrl("Cases"), icon: Folder },
+{ title: "Customers", url: createPageUrl("Customers"), icon: Users }];
+
 
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
@@ -61,10 +61,10 @@ function LayoutContent({ children, currentPageName }) {
   // Neumorphic button with glare highlight on top edge
   const navBtnStyle = (active = false) => ({
     background: colors.bg,
-    boxShadow: active
-      ? `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}`
-      : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, inset 0 1px 0 ${colors.shadowLight}`,
-    border: 'none',
+    boxShadow: active ?
+    `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}` :
+    `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, inset 0 1px 0 ${colors.shadowLight}`,
+    border: 'none'
   });
 
   const getBackgroundStyle = () => {
@@ -77,8 +77,8 @@ function LayoutContent({ children, currentPageName }) {
         background: colors.bg,
         backgroundImage: backgroundSettings.value,
         backgroundSize: backgroundSettings.preset === 'dots' ? '20px 20px' :
-          backgroundSettings.preset === 'grid' ? '40px 40px' :
-          backgroundSettings.preset === 'diagonal' ? '10px 10px' : 'auto'
+        backgroundSettings.preset === 'grid' ? '40px 40px' :
+        backgroundSettings.preset === 'diagonal' ? '10px 10px' : 'auto'
       };
     }
     return { background: colors.bg };
@@ -91,22 +91,22 @@ function LayoutContent({ children, currentPageName }) {
     queryKey: ['incoming-calls'],
     queryFn: () => base44.entities.IncomingCall.filter({ status: 'ringing' }, '-created_date'),
     enabled: !!user?.email,
-    refetchInterval: 3000,
+    refetchInterval: 3000
   });
 
   const { data: incomingCallCustomers = {} } = useQuery({
-    queryKey: ['incoming-call-customers', incomingCalls.map(c => c.customer_id).join(',')],
+    queryKey: ['incoming-call-customers', incomingCalls.map((c) => c.customer_id).join(',')],
     queryFn: async () => {
-      const customerIds = incomingCalls.map(c => c.customer_id).filter(Boolean);
+      const customerIds = incomingCalls.map((c) => c.customer_id).filter(Boolean);
       if (customerIds.length === 0) return {};
       const customers = await base44.entities.Customer.list();
       const customerMap = {};
-      customers.forEach(customer => {
+      customers.forEach((customer) => {
         if (customerIds.includes(customer.id)) customerMap[customer.id] = customer;
       });
       return customerMap;
     },
-    enabled: incomingCalls.length > 0,
+    enabled: incomingCalls.length > 0
   });
 
   const { data: incomingSMS = [] } = useQuery({
@@ -115,10 +115,10 @@ function LayoutContent({ children, currentPageName }) {
       if (!user?.email) return [];
       const recentSMS = await base44.entities.SMS.filter({ direction: 'received' }, '-created_date', 10);
       const thirtySecondsAgo = new Date(Date.now() - 30000);
-      return recentSMS.filter(sms => new Date(sms.created_date) > thirtySecondsAgo);
+      return recentSMS.filter((sms) => new Date(sms.created_date) > thirtySecondsAgo);
     },
     enabled: !!user?.email,
-    refetchInterval: 5000,
+    refetchInterval: 5000
   });
 
   const { data: notifications = [] } = useQuery({
@@ -128,7 +128,7 @@ function LayoutContent({ children, currentPageName }) {
       return base44.entities.Notification.filter({ user_email: user.email, is_read: false }, '-created_date', 20);
     },
     enabled: !!user?.email,
-    refetchInterval: 15000,
+    refetchInterval: 15000
   });
 
   const { data: messages = [] } = useQuery({
@@ -138,21 +138,21 @@ function LayoutContent({ children, currentPageName }) {
       return base44.entities.Message.filter({ recipient_email: user.email, is_read: false }, '-created_date', 20);
     },
     enabled: !!user?.email,
-    refetchInterval: 10000,
+    refetchInterval: 10000
   });
 
   useEffect(() => {
-    const handleToggleMessages = () => { setShowMessages(p => !p); setShowNotifications(false); };
-    const handleTogglePhone = () => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); };
-    const handleToggleBackgroundCustomizer = () => setShowBackgroundCustomizer(p => !p);
-    const handleToggleDoc = () => setShowDOC(p => !p);
+    const handleToggleMessages = () => {setShowMessages((p) => !p);setShowNotifications(false);};
+    const handleTogglePhone = () => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);};
+    const handleToggleBackgroundCustomizer = () => setShowBackgroundCustomizer((p) => !p);
+    const handleToggleDoc = () => setShowDOC((p) => !p);
     const handleShowDisposition = (e) => setDispositionData(e.detail || {});
 
     // Ctrl+Alt+Enter (or Ctrl+Alt+D) to toggle DOC
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.altKey && (e.key === 'Enter' || e.key === 'd' || e.key === 'D')) {
         e.preventDefault();
-        setShowDOC(p => !p);
+        setShowDOC((p) => !p);
       }
     };
 
@@ -188,14 +188,14 @@ function LayoutContent({ children, currentPageName }) {
       <PersistentSidebar
         sidebarLevel={sidebarLevel}
         onSidebarLevelChange={handleSidebarLevelChange}
-        onToggleDoc={() => setShowDOC(p => !p)}
-        onToggleMessages={() => { setShowMessages(p => !p); setShowNotifications(false); }}
-        onTogglePhone={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
-        onToggleBackgroundCustomizer={() => setShowBackgroundCustomizer(p => !p)}
+        onToggleDoc={() => setShowDOC((p) => !p)}
+        onToggleMessages={() => {setShowMessages((p) => !p);setShowNotifications(false);}}
+        onTogglePhone={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
+        onToggleBackgroundCustomizer={() => setShowBackgroundCustomizer((p) => !p)}
         onToggleTheme={toggleTheme}
         isDark={isDark}
-        user={user}
-      />
+        user={user} />
+      
 
       {/* Main area: nav + content — never pushed by sidebar */}
       <div className="flex flex-col flex-1 overflow-hidden">
@@ -203,9 +203,9 @@ function LayoutContent({ children, currentPageName }) {
         {/* Top Nav — always visible */}
         <nav
           className="flex-shrink-0 z-50"
-          style={{ background: colors.bg, borderBottom: `1px solid ${colors.border}`, overflow: 'visible', boxShadow: `0 2px 4px rgba(0,0,0,0.06)` }}
-        >
-          <div className="px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px', overflow: 'visible' }}>
+          style={{ background: `url(https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9bc988c50_illusion-69e467683d302998c71d3fda.png) center top/cover no-repeat`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}>
+          
+          <div className="bg-[hsl(var(--foreground))] px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px', overflow: 'visible' }}>
 
             {/* LEFT: page tabs only */}
             <div className="flex items-end gap-1 flex-shrink-0">
@@ -215,22 +215,19 @@ function LayoutContent({ children, currentPageName }) {
                   <Link
                     key={item.title}
                     to={item.url}
-                    className="flex items-end justify-center pb-2 px-4 no-underline transition-all border-0"
+                    className="flex items-end justify-center pb-2 px-4 no-underline transition-all"
                     style={{
-                      background: isActive
-                        ? `linear-gradient(145deg, #e8e8e8, #d4d4d4)`
-                        : `linear-gradient(145deg, #f5f5f5, #e0e0e0)`,
-                      boxShadow: isActive
-                        ? `inset 3px 3px 6px #cccccc, inset -3px -3px 6px #ffffff`
-                        : `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
-                      border: '1px solid rgba(255,255,255,0.4)',
+                      boxShadow: isActive ?
+                      `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
+                      `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
+                      background: isActive ? isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)' : colors.bg,
                       borderRadius: '0 0 10px 10px',
-                      height: '52px',
-                    }}
-                  >
-                    <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : '#666' }}>{item.title}</span>
-                  </Link>
-                );
+                      height: '52px'
+                    }}>
+                    
+                    <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
+                  </Link>);
+
               })}
             </div>
 
@@ -240,58 +237,63 @@ function LayoutContent({ children, currentPageName }) {
               <Link
                 to={createPageUrl("Dashboard")}
                 className="flex items-center justify-center no-underline"
-                style={{ transformOrigin: 'center top' }}
-              >
-
+                style={{ transformOrigin: 'center top' }}>
+                
+                <img
+                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
+                  alt="Connect"
+                  className="chip-nav-img"
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+                
               </Link>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* DOC */}
-              <button
-                className="flex items-center justify-center no-underline border-0 bg-transparent"
-                onClick={() => {
-                  window.open('https://ndrndr.com/alera/doc/index.html', '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no,scrollbars=yes');
-                }}
-              >
+              <Link
+                to="/DOC"
+                className="flex items-center justify-center no-underline">
+                
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="DOC"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top', cursor: 'pointer' }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                />
-              </button>
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+                
+              </Link>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* Core */}
               <Link
                 to="/Core"
-                className="flex items-center justify-center no-underline"
-              >
+                className="flex items-center justify-center no-underline">
+                
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="Core"
                   style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                />
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+                
               </Link>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* HelpHub */}
               <button
-                className="flex items-center justify-center border-0 bg-transparent"
-              >
+                className="flex items-center justify-center border-0 bg-transparent">
+                
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="HelpHub"
                   style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                />
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+                
               </button>
             </div>
 
@@ -300,62 +302,53 @@ function LayoutContent({ children, currentPageName }) {
               {/* Phone */}
               <button
                 className="flex items-center justify-center rounded-xl border-0 w-9 h-9"
-                onClick={() => { setShowCalls(p => !p); setShowMessages(false); setShowNotifications(false); }}
+                onClick={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
                 style={{
-                  background: showCalls 
-                    ? `linear-gradient(145deg, #e8e8e8, #d4d4d4)`
-                    : `linear-gradient(145deg, #f5f5f5, #e0e0e0)`,
-                  boxShadow: showCalls
-                    ? `inset 3px 3px 6px #cccccc, inset -3px -3px 6px #ffffff`
-                    : `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
-                  border: '1px solid rgba(255,255,255,0.4)',
-                }}
-              >
-                <Phone className="w-4 h-4" style={{ color: showCalls ? '#7c3aed' : '#666' }} />
+                  boxShadow: showCalls ?
+                  `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
+                  `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg
+                }}>
+                
+                <Phone className="w-4 h-4" style={{ color: showCalls ? '#7c3aed' : colors.iconColor }} />
               </button>
 
               {/* Messages */}
               <button
                 className="flex items-center justify-center rounded-xl border-0 w-9 h-9 relative"
-                onClick={() => { setShowMessages(p => !p); setShowCalls(false); setShowNotifications(false); }}
+                onClick={() => {setShowMessages((p) => !p);setShowCalls(false);setShowNotifications(false);}}
                 style={{
-                  background: showMessages 
-                    ? `linear-gradient(145deg, #e8e8e8, #d4d4d4)`
-                    : `linear-gradient(145deg, #f5f5f5, #e0e0e0)`,
-                  boxShadow: showMessages
-                    ? `inset 3px 3px 6px #cccccc, inset -3px -3px 6px #ffffff`
-                    : `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
-                  border: '1px solid rgba(255,255,255,0.4)',
-                }}
-              >
-                <MessageSquare className="w-4 h-4" style={{ color: showMessages ? '#7c3aed' : '#666' }} />
-                {unreadMessages > 0 && (
-                  <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-green-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
+                  boxShadow: showMessages ?
+                  `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
+                  `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg
+                }}>
+                
+                <MessageSquare className="w-4 h-4" style={{ color: showMessages ? '#7c3aed' : colors.iconColor }} />
+                {unreadMessages > 0 &&
+                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-green-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
                     {unreadMessages > 9 ? '9+' : unreadMessages}
                   </span>
-                )}
+                }
               </button>
 
               {/* Notifications */}
               <button
                 className="flex items-center justify-center rounded-xl border-0 w-9 h-9 relative"
-                onClick={() => { setShowNotifications(p => !p); setShowMessages(false); setShowCalls(false); }}
+                onClick={() => {setShowNotifications((p) => !p);setShowMessages(false);setShowCalls(false);}}
                 style={{
-                  background: showNotifications 
-                    ? `linear-gradient(145deg, #e8e8e8, #d4d4d4)`
-                    : `linear-gradient(145deg, #f5f5f5, #e0e0e0)`,
-                  boxShadow: showNotifications
-                    ? `inset 3px 3px 6px #cccccc, inset -3px -3px 6px #ffffff`
-                    : `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
-                  border: '1px solid rgba(255,255,255,0.4)',
-                }}
-              >
-                <Bell className="w-4 h-4" style={{ color: showNotifications ? '#7c3aed' : '#666' }} />
-                {unreadNotifications > 0 && (
-                  <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
+                  boxShadow: showNotifications ?
+                  `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
+                  `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  background: colors.bg
+                }}>
+                
+                <Bell className="w-4 h-4" style={{ color: showNotifications ? '#7c3aed' : colors.iconColor }} />
+                {unreadNotifications > 0 &&
+                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
                     {unreadNotifications > 9 ? '9+' : unreadNotifications}
                   </span>
-                )}
+                }
               </button>
 
               {/* User avatar */}
@@ -364,10 +357,9 @@ function LayoutContent({ children, currentPageName }) {
                   <button
                     className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full w-9 h-9"
                     style={{
-                      boxShadow: `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
-                      border: '1px solid rgba(255,255,255,0.4)',
-                    }}
-                  >
+                      boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`
+                    }}>
+                    
                     <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
                   </button>
                 </DropdownMenuTrigger>
@@ -398,7 +390,7 @@ function LayoutContent({ children, currentPageName }) {
         {/* Footer */}
         <footer className="flex-shrink-0 py-2 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.bg }}>
           <p className="text-xs font-bold" style={{ color: colors.text }}>
-            BEN<span style={{ color: colors.textSecondary }}>|</span>connect 2026
+            BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
             <span className="mx-2" style={{ color: colors.textTertiary }}>·</span>
             <span style={{ color: colors.textSecondary }}>indie<span style={{ color: colors.textTertiary }}>|</span>render<sup className="text-[6px]" style={{ color: colors.textTertiary }}>™</sup></span>
           </p>
@@ -408,15 +400,15 @@ function LayoutContent({ children, currentPageName }) {
       {/* ─── Global Overlays (always mounted so calls/SMS always ring) ─── */}
 
       <AnimatePresence>
-        {(showNotifications || showMessages) && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 backdrop-blur-sm"
-            style={{ background: `${colors.bg}20` }}
-            onClick={() => { setShowNotifications(false); setShowMessages(false); }}
-          />
-        )}
+        {(showNotifications || showMessages) &&
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-40 backdrop-blur-sm"
+          style={{ background: `${colors.bg}20` }}
+          onClick={() => {setShowNotifications(false);setShowMessages(false);}} />
+
+        }
       </AnimatePresence>
 
       <NotificationCenter user={user} isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
@@ -428,40 +420,40 @@ function LayoutContent({ children, currentPageName }) {
       <DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} />
 
       {/* Incoming Call Popups */}
-      {incomingCalls.map((call, index) => (
-        <div key={call.id} className="fixed right-6 z-[100]" style={{ top: `${24 + (index * 320)}px` }}>
+      {incomingCalls.map((call, index) =>
+      <div key={call.id} className="fixed right-6 z-[100]" style={{ top: `${24 + index * 320}px` }}>
           <IncomingCallPopup
-            call={call}
-            customer={call.customer_id ? incomingCallCustomers[call.customer_id] : null}
-            onAnswer={async () => { await base44.entities.IncomingCall.update(call.id, { status: 'answered', answered_at: new Date().toISOString() }); }}
-            onDecline={async () => { await base44.entities.IncomingCall.update(call.id, { status: 'declined' }); }}
-            onVoicemail={async () => { await base44.entities.IncomingCall.update(call.id, { status: 'voicemail' }); }}
-          />
+          call={call}
+          customer={call.customer_id ? incomingCallCustomers[call.customer_id] : null}
+          onAnswer={async () => {await base44.entities.IncomingCall.update(call.id, { status: 'answered', answered_at: new Date().toISOString() });}}
+          onDecline={async () => {await base44.entities.IncomingCall.update(call.id, { status: 'declined' });}}
+          onVoicemail={async () => {await base44.entities.IncomingCall.update(call.id, { status: 'voicemail' });}} />
+        
         </div>
-      ))}
+      )}
 
       {/* Incoming SMS Popups */}
-      {incomingSMS.map((sms, index) => (
-        <div key={sms.id} className="fixed right-6 z-[100]" style={{ top: `${24 + (incomingCalls.length * 320) + (index * 280)}px` }}>
+      {incomingSMS.map((sms, index) =>
+      <div key={sms.id} className="fixed right-6 z-[100]" style={{ top: `${24 + incomingCalls.length * 320 + index * 280}px` }}>
           <IncomingSMSPopup
-            sms={sms}
-            customer={null}
-            onReply={async (replyText) => {
-              await base44.entities.SMS.create({ case_id: sms.case_id, customer_phone: sms.customer_phone, message: replyText, direction: 'sent', status: 'sent', sent_at: new Date().toISOString() });
-            }}
-            onDismiss={() => {}}
-            onViewCase={() => { if (sms.case_id) window.location.href = createPageUrl(`Case?id=${sms.case_id}`); }}
-          />
+          sms={sms}
+          customer={null}
+          onReply={async (replyText) => {
+            await base44.entities.SMS.create({ case_id: sms.case_id, customer_phone: sms.customer_phone, message: replyText, direction: 'sent', status: 'sent', sent_at: new Date().toISOString() });
+          }}
+          onDismiss={() => {}}
+          onViewCase={() => {if (sms.case_id) window.location.href = createPageUrl(`Case?id=${sms.case_id}`);}} />
+        
         </div>
-      ))}
-    </div>
-  );
+      )}
+    </div>);
+
 }
 
 export default function Layout({ children, currentPageName }) {
   return (
     <ThemeProvider>
       <LayoutContent children={children} currentPageName={currentPageName} />
-    </ThemeProvider>
-  );
+    </ThemeProvider>);
+
 }
