@@ -299,7 +299,7 @@ export default function Dashboard() {
         <img
           src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/10b930afa_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
           alt="BEN|CONNECT chip"
-          style={{ width: '100%', height: '180px', objectFit: 'contain', objectPosition: 'center', display: 'block', borderRadius: '1rem', filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.55)) drop-shadow(0 8px 12px rgba(0,0,0,0.4)) drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+          style={{ width: '100%', height: '180px', objectFit: 'cover', objectPosition: 'center', display: 'block', borderRadius: '1rem', filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.55)) drop-shadow(0 8px 12px rgba(0,0,0,0.4)) drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
         />
       )
     },
