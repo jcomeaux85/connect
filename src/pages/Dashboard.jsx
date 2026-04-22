@@ -162,23 +162,23 @@ export default function Dashboard() {
       minWidth: 320,
       content: (
         <CollapsiblePanel
-          title="Daily Planner"
-          icon={CalendarIcon}
+          title={null}
+          icon={null}
           storageKey="dashboard-planner"
           headerExtra={
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold tabular-nums" style={{ color: colors.text }}>{format(new Date(), 'h:mm a')}</span>
+            <div className="flex items-center gap-4 flex-wrap flex-1">
+              <div className="flex items-center gap-2 flex-1">
                 <span className="text-xs" style={{ color: colors.textSecondary }}>{format(new Date(), 'EEEE, MMM d')}</span>
                 {weather && (
                   <>
                     <WeatherIcon className="w-3.5 h-3.5" style={{ color: '#7c3aed' }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.text }}>{weather.temp}°</span>
+                    <span className="text-sm font-bold tabular-nums" style={{ color: colors.text }}>{weather.temp}°</span>
                     <span className="text-xs" style={{ color: colors.textSecondary }}>{weather.condition}</span>
                   </>
                 )}
+                <span className="text-sm font-bold tabular-nums" style={{ color: colors.text }}>{format(new Date(), 'h:mm a')}</span>
+                <span className="text-xs font-semibold" style={{ color: colors.textSecondary }}>{greeting}, {firstName}!</span>
               </div>
-              <span className="text-xs font-semibold" style={{ color: colors.textSecondary }}>{greeting}, {firstName}!</span>
               <Link to={createPageUrl("Cases")}>
                 <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
                   <Folder className="w-3 h-3" />Cases
