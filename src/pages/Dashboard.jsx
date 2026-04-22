@@ -297,7 +297,7 @@ export default function Dashboard() {
       defaultHeight: 1,
       content: (
         <img
-          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/10b930afa_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
           alt="BEN|CONNECT chip"
           style={{ width: '100%', height: '180px', objectFit: 'cover', objectPosition: 'center', display: 'block', borderRadius: '1rem' }}
         />
@@ -426,7 +426,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <img
-            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9a3f88c19_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/10b930afa_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
             alt="BEN|CONNECT chip"
             className="w-full rounded-2xl object-cover"
             style={{ maxHeight: '180px', objectPosition: 'center', objectFit: 'cover' }}
