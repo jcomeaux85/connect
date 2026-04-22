@@ -202,8 +202,8 @@ function LayoutContent({ children, currentPageName }) {
 
         {/* Top Nav — always visible */}
         <nav
-          className="flex-shrink-0 z-50 backdrop-blur-xl"
-          style={{ background: `${colors.bg}f0`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}
+          className="flex-shrink-0 z-50"
+          style={{ background: `url(https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9bc988c50_illusion-69e467683d302998c71d3fda.png) center/cover no-repeat`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}
         >
           <div className="px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px', overflow: 'visible' }}>
 
