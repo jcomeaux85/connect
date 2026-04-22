@@ -261,7 +261,7 @@ function LayoutContent({ children, currentPageName }) {
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/6dbb828fe_generated_image.png"
                   alt="Core"
-                  style={{ height: '40px', width: '40px', objectFit: 'contain', mixBlendMode: 'screen' }}
+                  style={{ height: '36px', width: 'auto', objectFit: 'contain', display: 'block' }}
                 />
               </Link>
 
@@ -274,7 +274,7 @@ function LayoutContent({ children, currentPageName }) {
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f090bdba3_helphub.png"
                   alt="HelpHub"
-                  style={{ height: '44px', width: '44px', objectFit: 'contain' }}
+                  style={{ height: '44px', width: 'auto', objectFit: 'contain', display: 'block' }}
                 />
               </button>
             </div>
