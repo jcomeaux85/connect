@@ -270,7 +270,7 @@ function LayoutContent({ children, currentPageName }) {
               {/* Core */}
               <Link
                 to="/Core"
-                className="flex items-center justify-center transition-all no-underline"
+                className="flex items-center justify-center transition-all no-underline overflow-hidden"
                 style={{
                   boxShadow: location.pathname === '/Core'
                     ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
@@ -281,7 +281,11 @@ function LayoutContent({ children, currentPageName }) {
                   minWidth: '64px',
                 }}
               >
-                <span className="font-light tracking-tight" style={{ fontSize: '14px', color: '#16a34a' }}>Core</span>
+                <img
+                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/6dbb828fe_generated_image.png"
+                  alt="Core"
+                  style={{ height: '42px', width: '42px', objectFit: 'contain', mixBlendMode: 'screen' }}
+                />
               </Link>
 
               {/* Hub */}
