@@ -180,14 +180,14 @@ export default function Dashboard() {
                 <span className="text-xs font-semibold" style={{ color: colors.textSecondary }}>{greeting}, {firstName}!</span>
               </div>
               <Link to={createPageUrl("Cases")}>
-                <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5 hidden" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
-                  <Folder className="w-3 h-3" />Cases
-                </button>
+                
+
+          
               </Link>
               <Link to={createPageUrl("Customers")}>
-                <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5 hidden" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
-                  <User className="w-3 h-3" />Customers
-                </button>
+                
+
+          
               </Link>
             </div>
       }
