@@ -232,7 +232,7 @@ function LayoutContent({ children, currentPageName }) {
             </div>
 
             {/* CENTER: BEN|connect, DOC, Core, HelpHub — no containers, raw tech feel */}
-            <div className="flex items-center gap-4 absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0 }}>
+            <div className="flex items-center gap-4 absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0, paddingTop: '6px' }}>
               {/* connect */}
               <Link
                 to={createPageUrl("Dashboard")}
