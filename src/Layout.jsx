@@ -203,7 +203,7 @@ function LayoutContent({ children, currentPageName }) {
         {/* Top Nav — always visible */}
         <nav
           className="flex-shrink-0 z-50"
-          style={{ background: `url(https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/4c437e419_hdrbg.png) center center/cover no-repeat`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}
+          style={{ background: colors.bg, borderBottom: `1px solid ${colors.border}`, overflow: 'visible', boxShadow: `0 2px 4px rgba(0,0,0,0.06)` }}
         >
           <div className="px-3 flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px', overflow: 'visible' }}>
 
@@ -215,17 +215,20 @@ function LayoutContent({ children, currentPageName }) {
                   <Link
                     key={item.title}
                     to={item.url}
-                    className="flex items-end justify-center pb-2 px-4 no-underline transition-all"
+                    className="flex items-end justify-center pb-2 px-4 no-underline transition-all border-0"
                     style={{
+                      background: isActive
+                        ? `linear-gradient(145deg, #e8e8e8, #d4d4d4)`
+                        : `linear-gradient(145deg, #f5f5f5, #e0e0e0)`,
                       boxShadow: isActive
-                        ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}`
-                        : `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
-                      background: isActive ? (isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)') : colors.bg,
+                        ? `inset 3px 3px 6px #cccccc, inset -3px -3px 6px #ffffff`
+                        : `4px 4px 12px rgba(0,0,0,0.08), -2px -2px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.6)`,
+                      border: '1px solid rgba(255,255,255,0.4)',
                       borderRadius: '0 0 10px 10px',
                       height: '52px',
                     }}
                   >
-                    <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
+                    <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : '#666' }}>{item.title}</span>
                   </Link>
                 );
               })}
