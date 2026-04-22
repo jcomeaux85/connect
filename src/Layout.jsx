@@ -257,12 +257,8 @@ function LayoutContent({ children, currentPageName }) {
               {/* DOC */}
               <button
                 className="flex items-center justify-center no-underline border-0 bg-transparent"
-                onClick={(e) => {
-                  if (e.ctrlKey || e.metaKey) {
-                    window.open('/DOC', '_blank');
-                  } else {
-                    window.location.href = '/DOC';
-                  }
+                onClick={() => {
+                  window.open('https://ndrndr.com/alera/doc/index.html', '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no,scrollbars=yes');
                 }}
               >
                 <img

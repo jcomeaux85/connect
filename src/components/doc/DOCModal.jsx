@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Loader2 } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
-const DOC_URL = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/837165c78_DOC.html';
+const DOC_URL = 'https://ndrndr.com/alera/doc/index.html';
 
 export default function DOCModal({ isOpen, onClose }) {
   const { colors } = useTheme();
