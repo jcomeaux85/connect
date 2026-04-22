@@ -236,10 +236,9 @@ function LayoutContent({ children, currentPageName }) {
               {/* connect */}
               <Link
                 to={createPageUrl("Dashboard")}
-                className="flex items-center justify-center no-underline transition-all hover:opacity-80"
-                style={{ opacity: location.pathname === createPageUrl("Dashboard") ? 1 : 0.6 }}
+                className="flex items-center justify-center no-underline"
               >
-                <span className="font-black tracking-tighter whitespace-nowrap" style={{ fontSize: '16px', color: '#a78bfa', letterSpacing: '-0.03em', textShadow: '0 0 12px rgba(167,139,250,0.7)' }}>Connect</span>
+                <span className="font-black tracking-tighter whitespace-nowrap" style={{ fontSize: '16px', color: '#a78bfa' }}>Connect</span>
               </Link>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
@@ -247,10 +246,9 @@ function LayoutContent({ children, currentPageName }) {
               {/* DOC */}
               <button
                 onClick={() => setShowDOC(p => !p)}
-                className="flex items-center justify-center border-0 bg-transparent transition-all hover:opacity-80"
-                style={{ opacity: showDOC ? 1 : 0.6 }}
+                className="flex items-center justify-center border-0 bg-transparent"
               >
-                <span className="font-black tracking-tighter" style={{ fontSize: '16px', color: '#f87171', letterSpacing: '-0.03em', textShadow: '0 0 12px rgba(248,113,113,0.7)' }}>DOC</span>
+                <span className="font-black tracking-tighter" style={{ fontSize: '16px', color: '#f87171' }}>DOC</span>
               </button>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
@@ -258,13 +256,12 @@ function LayoutContent({ children, currentPageName }) {
               {/* Core */}
               <Link
                 to="/Core"
-                className="flex items-center justify-center transition-all no-underline hover:opacity-80"
-                style={{ opacity: location.pathname === '/Core' ? 1 : 0.75 }}
+                className="flex items-center justify-center no-underline"
               >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/6dbb828fe_generated_image.png"
                   alt="Core"
-                  style={{ height: '40px', width: '40px', objectFit: 'contain', mixBlendMode: 'screen', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }}
+                  style={{ height: '40px', width: '40px', objectFit: 'contain', mixBlendMode: 'screen' }}
                 />
               </Link>
 
@@ -272,13 +269,12 @@ function LayoutContent({ children, currentPageName }) {
 
               {/* HelpHub */}
               <button
-                className="flex items-center justify-center border-0 bg-transparent transition-all hover:opacity-80"
-                style={{ opacity: 0.85 }}
+                className="flex items-center justify-center border-0 bg-transparent"
               >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f090bdba3_helphub.png"
                   alt="HelpHub"
-                  style={{ height: '44px', width: '44px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(56,189,248,0.6))' }}
+                  style={{ height: '44px', width: '44px', objectFit: 'contain' }}
                 />
               </button>
             </div>
