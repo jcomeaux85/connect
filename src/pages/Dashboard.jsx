@@ -428,10 +428,11 @@ export default function Dashboard() {
         <div className="mb-6 flex flex-col items-center">
           <video
             src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
-            autoPlay
+            autoPlay={!sessionStorage.getItem('dashHeaderPlayed')}
             muted
             playsInline
-            onEnded={e => { e.target.pause(); }}
+            onEnded={e => { e.target.pause(); sessionStorage.setItem('dashHeaderPlayed', '1'); }}
+            onCanPlay={e => { if (sessionStorage.getItem('dashHeaderPlayed')) { e.target.pause(); e.target.currentTime = 9999; } }}
             className="w-full rounded-2xl"
             style={{
               maxHeight: '180px',
