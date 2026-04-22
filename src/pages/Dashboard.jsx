@@ -426,7 +426,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex flex-col items-center">
           <img
-            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/36da25dea_illusion-69e4663927f6b2b345e2f17a.png"
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a1017a091_kling_20260422___3363_0.png"
             alt="ebm chip"
             className="w-full rounded-2xl"
             style={{ maxHeight: '180px', objectFit: 'cover', objectPosition: 'center' }}
