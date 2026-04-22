@@ -248,7 +248,11 @@ function LayoutContent({ children, currentPageName }) {
                 onClick={() => setShowDOC(p => !p)}
                 className="flex items-center justify-center border-0 bg-transparent"
               >
-                <span className="font-black tracking-tighter" style={{ fontSize: '16px', color: '#f87171' }}>DOC</span>
+                <img
+                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a0619203e_kling_20260422_Inpaint_make_the_D_3365_2.png"
+                  alt="DOC"
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                />
               </button>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
