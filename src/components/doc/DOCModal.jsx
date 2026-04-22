@@ -46,12 +46,7 @@ export default function DOCModal({ isOpen, onClose }) {
         className="fixed inset-0 z-[100]"
         style={{ top: 0, left: 0, right: 0, bottom: 0 }}
       >
-        {/* Ultra-thin top bar */}
-        <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-end px-3" style={{ height: '22px', background: `${colors.bg}cc`, borderBottom: `1px solid ${colors.border}` }}>
-          <button onClick={handlePopOut} className="text-[10px] font-medium border-0 bg-transparent cursor-pointer hover:underline" style={{ color: colors.textSecondary }}>pop out</button>
-          <span className="mx-2 text-[10px]" style={{ color: colors.border }}>·</span>
-          <button onClick={onClose} className="text-[10px] font-medium border-0 bg-transparent cursor-pointer hover:underline" style={{ color: colors.textSecondary }}>close</button>
-        </div>
+
 
         {loading && (
           <div className="w-full h-full flex items-center justify-center" style={{ background: colors.bg }}>
@@ -62,8 +57,8 @@ export default function DOCModal({ isOpen, onClose }) {
         {htmlContent && !loading && (
           <iframe
             srcDoc={htmlContent}
-            className="w-full"
-            style={{ border: 'none', display: 'block', height: 'calc(100% - 22px)', marginTop: '22px' }}
+            className="w-full h-full"
+            style={{ border: 'none', display: 'block' }}
             title="DOC Directory"
             sandbox="allow-scripts allow-same-origin"
           />

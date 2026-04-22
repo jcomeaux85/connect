@@ -255,18 +255,24 @@ function LayoutContent({ children, currentPageName }) {
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
               {/* DOC */}
-              <Link
-                to="/DOC"
-                className="flex items-center justify-center no-underline"
+              <button
+                className="flex items-center justify-center no-underline border-0 bg-transparent"
+                onClick={(e) => {
+                  if (e.ctrlKey || e.metaKey) {
+                    window.open('/DOC', '_blank');
+                  } else {
+                    window.location.href = '/DOC';
+                  }
+                }}
               >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="DOC"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top', cursor: 'pointer' }}
                   onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.5)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                 />
-              </Link>
+              </button>
 
               <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
 
