@@ -277,7 +277,7 @@ function LayoutContent({ children, currentPageName }) {
                   alt="Core"
                   style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} className="mb-1" />
                 
               </Link>
 
@@ -292,7 +292,7 @@ function LayoutContent({ children, currentPageName }) {
                   alt="HelpHub"
                   style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} className="mb-1" />
                 
               </button>
             </div>
