@@ -21,8 +21,8 @@ import {
   MessageSquare,
   Search,
   Settings,
-  Edit3
-} from "lucide-react";
+  Edit3 } from
+"lucide-react";
 import { motion } from "framer-motion";
 import { format, isToday, parseISO } from "date-fns";
 import { useTheme } from "@/components/ThemeProvider";
@@ -80,54 +80,54 @@ export default function Dashboard() {
   const { data: cases = [], isLoading: casesLoading } = useQuery({
     queryKey: ['cases'],
     queryFn: () => base44.entities.Case.list('-updated_date'),
-    enabled: !!user,
+    enabled: !!user
   });
 
   const { data: tasks = [], isLoading: tasksLoading } = useQuery({
     queryKey: ['tasks'],
     queryFn: () => base44.entities.Task.list('-updated_date'),
-    enabled: !!user,
+    enabled: !!user
   });
 
   const { data: calls = [], isLoading: callsLoading } = useQuery({
     queryKey: ['calls'],
     queryFn: () => base44.entities.Call.list('-created_date'),
-    enabled: !!user,
+    enabled: !!user
   });
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers-for-dashboard'],
     queryFn: () => base44.entities.Customer.list('-updated_date', 100),
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Filter data for current user
-  const myCases = cases.filter(c => c.assigned_to === user?.email);
-  const myTasks = tasks.filter(t => t.assigned_to === user?.email);
+  const myCases = cases.filter((c) => c.assigned_to === user?.email);
+  const myTasks = tasks.filter((t) => t.assigned_to === user?.email);
 
   // Calculate stats
-  const activeCases = myCases.filter(c => c.status !== 'closed').length;
-  const pendingTasks = myTasks.filter(t => t.status === 'pending').length;
-  const todayCalls = calls.filter(call => {
+  const activeCases = myCases.filter((c) => c.status !== 'closed').length;
+  const pendingTasks = myTasks.filter((t) => t.status === 'pending').length;
+  const todayCalls = calls.filter((call) => {
     if (!call.created_date) return false;
     return isToday(parseISO(call.created_date));
   }).length;
-  const urgentCases = myCases.filter(c => c.priority === 'urgent' && c.status !== 'closed').length;
+  const urgentCases = myCases.filter((c) => c.priority === 'urgent' && c.status !== 'closed').length;
 
   const stats = [
-    {
-      title: "Pending Tasks",
-      value: pendingTasks,
-      icon: CheckSquare,
-      color: "#8B5CF6",
-    },
-    {
-      title: "Today's Calls",
-      value: todayCalls,
-      icon: Phone,
-      color: "#10B981",
-    },
-  ];
+  {
+    title: "Pending Tasks",
+    value: pendingTasks,
+    icon: CheckSquare,
+    color: "#8B5CF6"
+  },
+  {
+    title: "Today's Calls",
+    value: todayCalls,
+    icon: Phone,
+    color: "#10B981"
+  }];
+
 
   const getWeatherIcon = (condition) => {
     const conditionLower = condition?.toLowerCase() || '';
@@ -144,8 +144,8 @@ export default function Dashboard() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: colors.text }}></div>
           <p style={{ color: colors.textSecondary }}>Loading...</p>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   const WeatherIcon = weather ? getWeatherIcon(weather.condition) : Sun;
@@ -155,200 +155,200 @@ export default function Dashboard() {
 
   // Define dashboard panels
   const dashboardPanels = [
-    {
-      id: 'planner',
-      defaultWidth: 3,
-      defaultHeight: 2,
-      minWidth: 320,
-      content: (
-        <CollapsiblePanel
-          title={null}
-          icon={null}
-          storageKey="dashboard-planner"
-          headerExtra={
-            <div className="flex items-center gap-4 flex-wrap flex-1">
+  {
+    id: 'planner',
+    defaultWidth: 3,
+    defaultHeight: 2,
+    minWidth: 320,
+    content:
+    <CollapsiblePanel
+      title={null}
+      icon={null}
+      storageKey="dashboard-planner"
+      headerExtra={
+      <div className="flex items-center gap-4 flex-wrap flex-1">
               <div className="flex items-center gap-2 flex-1">
                 <span className="text-sm font-bold tabular-nums" style={{ color: colors.text }}>{format(new Date(), 'h:mm a')}</span>
                 <span className="text-xs" style={{ color: colors.textSecondary }}>{format(new Date(), 'EEEE, MMM d')}</span>
-                {weather && (
-                  <>
+                {weather &&
+          <>
                     <WeatherIcon className="w-3.5 h-3.5" style={{ color: '#7c3aed' }} />
                     <span className="text-sm font-bold tabular-nums" style={{ color: colors.text }}>{weather.temp}°</span>
                     <span className="text-xs" style={{ color: colors.textSecondary }}>{weather.condition}</span>
                   </>
-                )}
+          }
                 <span className="text-xs font-semibold" style={{ color: colors.textSecondary }}>{greeting}, {firstName}!</span>
               </div>
               <Link to={createPageUrl("Cases")}>
-                <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
+                <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5 hidden" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
                   <Folder className="w-3 h-3" />Cases
                 </button>
               </Link>
               <Link to={createPageUrl("Customers")}>
-                <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
+                <button className="h-6 px-3 rounded-lg border-0 text-xs flex items-center gap-1.5 hidden" style={{ background: colors.bg, boxShadow: `3px 3px 6px ${colors.shadowDark}, -3px -3px 6px ${colors.shadowLight}`, color: colors.textSecondary }}>
                   <User className="w-3 h-3" />Customers
                 </button>
               </Link>
             </div>
-          }
-          condensedContent={
-            <div className="flex items-center justify-between">
+      }
+      condensedContent={
+      <div className="flex items-center justify-between">
               <span className="text-sm" style={{ color: colors.text }}>{activeCases} active cases</span>
             </div>
-          }
-        >
+      }>
+      
           <DailyPlanner user={user} greeting={`${greeting}, ${firstName}!`} activeCases={activeCases} urgentCases={0} />
         </CollapsiblePanel>
-      )
-    },
-    // ── STAT ROW PANEL 1: Active Cases ──
-    {
-      id: 'stat-active-cases',
-      defaultWidth: 1,
-      defaultHeight: 1,
-      content: (() => {
-        const recentItems = myCases.filter(c => c.status !== 'closed').slice(0, 3).map(c => ({ id: c.id, label: c.customer_name || c.case_number, url: `Case?id=${c.id}` }));
-        const hasValue = activeCases > 0;
-        return (
-          <CollapsiblePanel title="Active Cases" icon={Folder} storageKey="dashboard-stat-active-cases" accentColor={hasValue ? '#3B82F6' : null} largerIcon
-            condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#3B82F6' : colors.text }}>{activeCases}</span>}
-          >
+
+  },
+  // ── STAT ROW PANEL 1: Active Cases ──
+  {
+    id: 'stat-active-cases',
+    defaultWidth: 1,
+    defaultHeight: 1,
+    content: (() => {
+      const recentItems = myCases.filter((c) => c.status !== 'closed').slice(0, 3).map((c) => ({ id: c.id, label: c.customer_name || c.case_number, url: `Case?id=${c.id}` }));
+      const hasValue = activeCases > 0;
+      return (
+        <CollapsiblePanel title="Active Cases" icon={Folder} storageKey="dashboard-stat-active-cases" accentColor={hasValue ? '#3B82F6' : null} largerIcon
+        condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#3B82F6' : colors.text }}>{activeCases}</span>}>
+          
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0 space-y-1.5">
-                {recentItems.length > 0 ? recentItems.map(item => (
-                  <Link key={item.id} to={createPageUrl(item.url)}>
+                {recentItems.length > 0 ? recentItems.map((item) =>
+              <Link key={item.id} to={createPageUrl(item.url)}>
                     <div className="text-xs truncate py-1 px-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer" style={{ color: colors.textSecondary, background: colors.bg, boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}` }}>{item.label}</div>
                   </Link>
-                )) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
+              ) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
               </div>
               <h3 className="text-3xl font-bold" style={{ color: hasValue ? '#3B82F6' : colors.text }}>{activeCases}</h3>
             </div>
-          </CollapsiblePanel>
-        );
-      })()
-    },
-    // ── STAT ROW PANEL 3: Pending Tasks ──
-    {
-      id: 'stat-pending-tasks',
-      defaultWidth: 1,
-      defaultHeight: 1,
-      content: (() => {
-        const recentItems = myTasks.filter(t => t.status === 'pending').slice(0, 3).map(t => ({ id: t.id, label: t.title, url: t.case_id ? `Case?id=${t.case_id}` : null }));
-        const hasValue = pendingTasks > 0;
-        return (
-          <CollapsiblePanel title="Pending Tasks" icon={CheckSquare} storageKey="dashboard-stat-pending-tasks" accentColor={hasValue ? '#8B5CF6' : null} largerIcon
-            condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#8B5CF6' : colors.text }}>{pendingTasks}</span>}
-          >
+          </CollapsiblePanel>);
+
+    })()
+  },
+  // ── STAT ROW PANEL 3: Pending Tasks ──
+  {
+    id: 'stat-pending-tasks',
+    defaultWidth: 1,
+    defaultHeight: 1,
+    content: (() => {
+      const recentItems = myTasks.filter((t) => t.status === 'pending').slice(0, 3).map((t) => ({ id: t.id, label: t.title, url: t.case_id ? `Case?id=${t.case_id}` : null }));
+      const hasValue = pendingTasks > 0;
+      return (
+        <CollapsiblePanel title="Pending Tasks" icon={CheckSquare} storageKey="dashboard-stat-pending-tasks" accentColor={hasValue ? '#8B5CF6' : null} largerIcon
+        condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#8B5CF6' : colors.text }}>{pendingTasks}</span>}>
+          
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0 space-y-1.5">
-                {recentItems.length > 0 ? recentItems.map(item => (
-                  item.url ? (
-                    <Link key={item.id} to={createPageUrl(item.url)}>
+                {recentItems.length > 0 ? recentItems.map((item) =>
+              item.url ?
+              <Link key={item.id} to={createPageUrl(item.url)}>
                       <div className="text-xs truncate py-1 px-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer" style={{ color: colors.textSecondary, background: colors.bg, boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}` }}>{item.label}</div>
-                    </Link>
-                  ) : (
-                    <div key={item.id} className="text-xs truncate py-1 px-2 rounded-lg" style={{ color: colors.textTertiary, background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>{item.label}</div>
-                  )
-                )) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
+                    </Link> :
+
+              <div key={item.id} className="text-xs truncate py-1 px-2 rounded-lg" style={{ color: colors.textTertiary, background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>{item.label}</div>
+
+              ) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
               </div>
               <h3 className="text-3xl font-bold" style={{ color: hasValue ? '#8B5CF6' : colors.text }}>{pendingTasks}</h3>
             </div>
-          </CollapsiblePanel>
-        );
-      })()
-    },
-    // ── STAT ROW PANEL 4: Today's Calls ──
-    {
-      id: 'stat-todays-calls',
-      defaultWidth: 1,
-      defaultHeight: 1,
-      content: (() => {
-        const recentItems = calls.filter(call => call.created_date && isToday(parseISO(call.created_date))).slice(0, 3).map(c => {
-          const relatedCase = cases.find(cs => cs.id === c.case_id);
-          return { id: c.id, label: relatedCase?.customer_name || 'Unknown', url: c.case_id ? `Case?id=${c.case_id}` : null };
-        });
-        const hasValue = todayCalls > 0;
-        return (
-          <CollapsiblePanel title="Today's Calls" icon={Phone} storageKey="dashboard-stat-todays-calls" accentColor={hasValue ? '#10B981' : null} largerIcon
-            condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#10B981' : colors.text }}>{todayCalls}</span>}
-          >
+          </CollapsiblePanel>);
+
+    })()
+  },
+  // ── STAT ROW PANEL 4: Today's Calls ──
+  {
+    id: 'stat-todays-calls',
+    defaultWidth: 1,
+    defaultHeight: 1,
+    content: (() => {
+      const recentItems = calls.filter((call) => call.created_date && isToday(parseISO(call.created_date))).slice(0, 3).map((c) => {
+        const relatedCase = cases.find((cs) => cs.id === c.case_id);
+        return { id: c.id, label: relatedCase?.customer_name || 'Unknown', url: c.case_id ? `Case?id=${c.case_id}` : null };
+      });
+      const hasValue = todayCalls > 0;
+      return (
+        <CollapsiblePanel title="Today's Calls" icon={Phone} storageKey="dashboard-stat-todays-calls" accentColor={hasValue ? '#10B981' : null} largerIcon
+        condensedContent={<span className="text-2xl font-bold" style={{ color: hasValue ? '#10B981' : colors.text }}>{todayCalls}</span>}>
+          
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0 space-y-1.5">
-                {recentItems.length > 0 ? recentItems.map(item => (
-                  item.url ? (
-                    <Link key={item.id} to={createPageUrl(item.url)}>
+                {recentItems.length > 0 ? recentItems.map((item) =>
+              item.url ?
+              <Link key={item.id} to={createPageUrl(item.url)}>
                       <div className="text-xs truncate py-1 px-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer" style={{ color: colors.textSecondary, background: colors.bg, boxShadow: `2px 2px 4px ${colors.shadowDark}, -2px -2px 4px ${colors.shadowLight}` }}>{item.label}</div>
-                    </Link>
-                  ) : (
-                    <div key={item.id} className="text-xs truncate py-1 px-2 rounded-lg" style={{ color: colors.textTertiary, background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>{item.label}</div>
-                  )
-                )) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
+                    </Link> :
+
+              <div key={item.id} className="text-xs truncate py-1 px-2 rounded-lg" style={{ color: colors.textTertiary, background: colors.bg, boxShadow: `inset 1px 1px 2px ${colors.shadowDark}, inset -1px -1px 2px ${colors.shadowLight}` }}>{item.label}</div>
+
+              ) : <p className="text-xs" style={{ color: colors.textTertiary }}>None</p>}
               </div>
               <h3 className="text-3xl font-bold" style={{ color: hasValue ? '#10B981' : colors.text }}>{todayCalls}</h3>
             </div>
-          </CollapsiblePanel>
-        );
-      })()
-    },
-    // ── STAT ROW PANEL 5: Chip image (replaces Urgent Cases) ──
-    {
-      id: 'chip-image',
-      defaultWidth: 1,
-      defaultHeight: 1,
-      content: (
-        <img
-          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/10b930afa_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
-          alt="BEN|CONNECT chip"
-          style={{ width: '100%', height: '180px', objectFit: 'contain', objectPosition: 'center', display: 'block', borderRadius: '1rem', filter: 'drop-shadow(4px 5px 1px rgba(0,0,0,0.35)) drop-shadow(6px 8px 16px rgba(0,0,0,0.5))' }}
-        />
-      )
-    },
-    {
-      id: 'recent-cases',
-      defaultWidth: 3,
-      defaultHeight: 1,
-      content: (
-        <CollapsiblePanel
-          title="Your Recent Cases"
-          icon={Folder}
-          storageKey="dashboard-recent-cases"
-          headerExtra={
-            <span className="text-xs" style={{ color: colors.textSecondary }}>
+          </CollapsiblePanel>);
+
+    })()
+  },
+  // ── STAT ROW PANEL 5: Chip image (replaces Urgent Cases) ──
+  {
+    id: 'chip-image',
+    defaultWidth: 1,
+    defaultHeight: 1,
+    content:
+    <img
+      src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/10b930afa_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+      alt="BEN|CONNECT chip"
+      style={{ width: '100%', height: '180px', objectFit: 'contain', objectPosition: 'center', display: 'block', borderRadius: '1rem', filter: 'drop-shadow(4px 5px 1px rgba(0,0,0,0.35)) drop-shadow(6px 8px 16px rgba(0,0,0,0.5))' }} />
+
+
+  },
+  {
+    id: 'recent-cases',
+    defaultWidth: 3,
+    defaultHeight: 1,
+    content:
+    <CollapsiblePanel
+      title="Your Recent Cases"
+      icon={Folder}
+      storageKey="dashboard-recent-cases"
+      headerExtra={
+      <span className="text-xs" style={{ color: colors.textSecondary }}>
               {myCases.length} total
             </span>
-          }
-          condensedContent={
-            <div className="flex items-center justify-between">
+      }
+      condensedContent={
+      <div className="flex items-center justify-between">
               <span className="text-sm" style={{ color: colors.text }}>
-                {myCases.filter(c => c.status !== 'closed').length} open cases
+                {myCases.filter((c) => c.status !== 'closed').length} open cases
               </span>
               <span className="text-xs" style={{ color: colors.textTertiary }}>
                 Click to expand
               </span>
             </div>
-          }
-        >
+      }>
+      
           <div className="space-y-4">
-            {myCases.length === 0 ? (
-              <p className="text-center py-8" style={{ color: colors.textSecondary }}>
+            {myCases.length === 0 ?
+        <p className="text-center py-8" style={{ color: colors.textSecondary }}>
                 No cases assigned yet
-              </p>
-            ) : (
-              myCases.slice(0, 5).map((caseItem, index) => (
-                <motion.div
-                  key={caseItem.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + index * 0.05 }}
-                >
+              </p> :
+
+        myCases.slice(0, 5).map((caseItem, index) =>
+        <motion.div
+          key={caseItem.id}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 + index * 0.05 }}>
+          
                   <Link to={createPageUrl(`Case?id=${caseItem.id}`)}>
                     <div
-                      className="p-4 rounded-2xl hover:scale-[1.02] transition-all cursor-pointer"
-                      style={{
-                        background: colors.cardBg,
-                        boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
-                      }}
-                    >
+              className="p-4 rounded-2xl hover:scale-[1.02] transition-all cursor-pointer"
+              style={{
+                background: colors.cardBg,
+                boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
+              }}>
+              
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
                           <h4 className="font-semibold mb-1" style={{ color: colors.text }}>
@@ -360,66 +360,66 @@ export default function Dashboard() {
                         </div>
                         <div className="flex gap-2">
                           <Badge
-                            className="border-0"
-                            style={{
-                              background:
-                                caseItem.status === 'closed' ? 'linear-gradient(145deg, #d1d5db, #9ca3af)' :
-                                caseItem.status === 'resolved' ? 'linear-gradient(145deg, #dcfce7, #bbf7d0)' :
-                                caseItem.status === 'in_progress' ? 'linear-gradient(145deg, #dbeafe, #bfdbfe)' :
-                                'linear-gradient(145deg, #fef3c7, #fde68a)',
-                              color:
-                                caseItem.status === 'closed' ? '#374151' :
-                                caseItem.status === 'resolved' ? '#065f46' :
-                                caseItem.status === 'in_progress' ? '#1e40af' :
-                                '#92400e'
-                            }}
-                          >
+                    className="border-0"
+                    style={{
+                      background:
+                      caseItem.status === 'closed' ? 'linear-gradient(145deg, #d1d5db, #9ca3af)' :
+                      caseItem.status === 'resolved' ? 'linear-gradient(145deg, #dcfce7, #bbf7d0)' :
+                      caseItem.status === 'in_progress' ? 'linear-gradient(145deg, #dbeafe, #bfdbfe)' :
+                      'linear-gradient(145deg, #fef3c7, #fde68a)',
+                      color:
+                      caseItem.status === 'closed' ? '#374151' :
+                      caseItem.status === 'resolved' ? '#065f46' :
+                      caseItem.status === 'in_progress' ? '#1e40af' :
+                      '#92400e'
+                    }}>
+                    
                             {caseItem.status}
                           </Badge>
                           <Badge
-                            className="border-0"
-                            style={{
-                              background:
-                                caseItem.priority === 'urgent' ? 'linear-gradient(145deg, #fee2e2, #fecaca)' :
-                                caseItem.priority === 'high' ? 'linear-gradient(145deg, #fed7aa, #fdba74)' :
-                                'linear-gradient(145deg, #dbeafe, #bfdbfe)',
-                              color:
-                                caseItem.priority === 'urgent' ? '#991b1b' :
-                                caseItem.priority === 'high' ? '#9a3412' :
-                                '#1e40af'
-                            }}
-                          >
+                    className="border-0"
+                    style={{
+                      background:
+                      caseItem.priority === 'urgent' ? 'linear-gradient(145deg, #fee2e2, #fecaca)' :
+                      caseItem.priority === 'high' ? 'linear-gradient(145deg, #fed7aa, #fdba74)' :
+                      'linear-gradient(145deg, #dbeafe, #bfdbfe)',
+                      color:
+                      caseItem.priority === 'urgent' ? '#991b1b' :
+                      caseItem.priority === 'high' ? '#9a3412' :
+                      '#1e40af'
+                    }}>
+                    
                             {caseItem.priority}
                           </Badge>
                         </div>
                       </div>
-                      {caseItem.description && (
-                        <p className="text-sm line-clamp-2" style={{ color: colors.textSecondary }}>
+                      {caseItem.description &&
+              <p className="text-sm line-clamp-2" style={{ color: colors.textSecondary }}>
                           {caseItem.description}
                         </p>
-                      )}
+              }
                       <div className="flex items-center gap-4 mt-3 text-xs" style={{ color: colors.textTertiary }}>
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {format(new Date(caseItem.created_date), 'MMM d, h:mm a')}
                         </span>
-                        {caseItem.customer_phone && (
-                          <span className="flex items-center gap-1">
+                        {caseItem.customer_phone &&
+                <span className="flex items-center gap-1">
                             <Phone className="w-3 h-3" />
                             {caseItem.customer_phone}
                           </span>
-                        )}
+                }
                       </div>
                     </div>
                   </Link>
                 </motion.div>
-              ))
-            )}
+        )
+        }
           </div>
         </CollapsiblePanel>
-      )
-    }
-  ];
+
+  }];
+
 
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
@@ -428,30 +428,29 @@ export default function Dashboard() {
         <div className="mb-6 flex flex-col items-center">
           <video
             src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
-            autoPlay={!sessionStorage.getItem('dashHeaderPlayed')}
+            autoPlay
             muted
             playsInline
-            onEnded={e => { e.target.pause(); sessionStorage.setItem('dashHeaderPlayed', '1'); }}
-            onCanPlay={e => { if (sessionStorage.getItem('dashHeaderPlayed')) { e.target.pause(); e.target.currentTime = 9999; } }}
+            onEnded={(e) => {e.target.pause();}}
             className="w-full rounded-2xl"
             style={{
               maxHeight: '180px',
               objectFit: 'cover',
               objectPosition: 'center',
               border: '2px solid rgba(180,185,200,0.6)',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.3), 0 0 18px 4px rgba(120,160,255,0.2)',
-            }}
-          />
+              boxShadow: '0 4px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.3), 0 0 18px 4px rgba(120,160,255,0.2)'
+            }} />
+          
           <p className="text-center mt-2 font-light tracking-widest text-xs uppercase" style={{ color: '#9ca3af', letterSpacing: '0.25em' }}>dashboard</p>
         </div>
         
         <DraggableDashboard panels={dashboardPanels} />
         
-        <LayoutSelector 
-          isOpen={showLayoutSelector} 
-          onClose={() => setShowLayoutSelector(false)} 
-        />
+        <LayoutSelector
+          isOpen={showLayoutSelector}
+          onClose={() => setShowLayoutSelector(false)} />
+        
       </div>
-    </div>
-  );
+    </div>);
+
 }
