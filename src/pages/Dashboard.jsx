@@ -429,7 +429,13 @@ export default function Dashboard() {
             src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a1017a091_kling_20260422___3363_0.png"
             alt="ebm chip"
             className="w-full rounded-2xl"
-            style={{ maxHeight: '180px', objectFit: 'cover', objectPosition: 'center' }}
+            style={{
+              maxHeight: '180px',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              border: '2px solid rgba(180,185,200,0.6)',
+              boxShadow: '0 4px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.3), 0 0 18px 4px rgba(120,160,255,0.2)',
+            }}
           />
           <p className="text-center mt-2 font-light tracking-widest text-xs uppercase" style={{ color: '#9ca3af', letterSpacing: '0.25em' }}>dashboard</p>
         </div>
