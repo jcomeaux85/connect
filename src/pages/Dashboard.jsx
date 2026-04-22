@@ -168,6 +168,7 @@ export default function Dashboard() {
           headerExtra={
             <div className="flex items-center gap-4 flex-wrap flex-1">
               <div className="flex items-center gap-2 flex-1">
+                <span className="text-sm font-bold tabular-nums" style={{ color: colors.text }}>{format(new Date(), 'h:mm a')}</span>
                 <span className="text-xs" style={{ color: colors.textSecondary }}>{format(new Date(), 'EEEE, MMM d')}</span>
                 {weather && (
                   <>
@@ -176,7 +177,6 @@ export default function Dashboard() {
                     <span className="text-xs" style={{ color: colors.textSecondary }}>{weather.condition}</span>
                   </>
                 )}
-                <span className="text-sm font-bold tabular-nums" style={{ color: colors.text }}>{format(new Date(), 'h:mm a')}</span>
                 <span className="text-xs font-semibold" style={{ color: colors.textSecondary }}>{greeting}, {firstName}!</span>
               </div>
               <Link to={createPageUrl("Cases")}>
