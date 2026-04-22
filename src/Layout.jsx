@@ -256,12 +256,12 @@ function LayoutContent({ children, currentPageName }) {
                 to="/DOC"
                 className="flex items-center justify-center no-underline">
                 
-                <img
-                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
-                  alt="DOC"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} className="mb-2" />
+                <img src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a0619203e_kling_20260422_Inpaint_make_the_D_3365_2.png"
+
+                alt="DOC"
+                style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} className="mb-2" />
                 
               </Link>
 
