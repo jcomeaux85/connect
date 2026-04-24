@@ -225,7 +225,7 @@ function LayoutContent({ children, currentPageName }) {
                       height: '52px'
                     }}>
                     
-                    <span className="font-semibold text-[12px] whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
+                    <span className="text-[12px] text-sm font-thin whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
                   </Link>);
 
               })}
