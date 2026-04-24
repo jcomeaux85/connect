@@ -148,9 +148,9 @@ export default function PersistentSidebar({
       <div className="flex flex-col h-full overflow-hidden">
 
         {/* Header: logo */}
-        <div
-            className="flex items-center flex-shrink-0 px-1.5 gap-2"
-            style={{ height: '56px', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)'}` }}>
+        <div className="px-1.5 opacity-100 flex items-center flex-shrink-0 gap-2"
+
+          style={{ height: '56px', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)'}` }}>
             
 
           <AnimatePresence>
@@ -168,7 +168,7 @@ export default function PersistentSidebar({
         </div>
 
         {/* Nav items */}
-        <div className="px-1.5 py-2 opacity-95 flex-1 overflow-y-auto overflow-x-visible space-y-1"
+        <div className="px-1.5 py-2 opacity-100 flex-1 overflow-y-auto overflow-x-visible space-y-1"
 
           style={{ scrollbarWidth: 'none' }}>
             
