@@ -82,7 +82,7 @@ function DockNav({ colors }) {
     <div
       ref={dockRef}
       className="flex items-end absolute left-1/2 -translate-x-1/2"
-      style={{ top: 0, bottom: 0, gap: 'clamp(6px, 1vw, 14px)', overflow: 'hidden', paddingBottom: '2px' }}
+      style={{ top: 0, bottom: 0, gap: 'clamp(6px, 1vw, 14px)', overflow: 'visible', paddingBottom: '2px' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -278,7 +278,7 @@ function LayoutContent({ children, currentPageName }) {
         <nav className="flex-shrink-0 z-50"
         style={{ background: '#ffffff', borderBottom: `1px solid ${colors.border}`, overflow: 'visible', position: 'relative' }}>
           
-          <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible' }}>
+          <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible', clipPath: 'none' }}>
 
             {/* LEFT: page tabs — raised up, drop down on hover */}
             <div className="flex items-end gap-0.5 flex-shrink-0" style={{ overflow: 'visible' }}>
