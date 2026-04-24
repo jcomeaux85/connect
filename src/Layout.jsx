@@ -50,9 +50,11 @@ const DOCK_ITEMS = [
   { label: 'HelpHub', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: null },
 ];
 
-const BASE_H = 42;
-const MAX_H = 78;
-const REACH = 110;
+// NAV_H must match the nav bar height so images grow up to exactly the top edge
+const NAV_H = 54; // px — matches clamp max of the nav bar
+const BASE_H = 40;
+const MAX_H = NAV_H - 2; // image top sits just 2px below the screen top
+const REACH = 120;
 
 function DockNav({ colors }) {
   const dockRef = useRef(null);
@@ -68,7 +70,6 @@ function DockNav({ colors }) {
       const dist = Math.abs(e.clientX - center);
       if (dist >= REACH) return BASE_H;
       const t = 1 - dist / REACH;
-      // cubic ease for smooth falloff
       const ease = t * t * (3 - 2 * t);
       return BASE_H + (MAX_H - BASE_H) * ease;
     });
@@ -81,7 +82,7 @@ function DockNav({ colors }) {
     <div
       ref={dockRef}
       className="flex items-end absolute left-1/2 -translate-x-1/2"
-      style={{ top: 0, bottom: 0, gap: 'clamp(6px, 1vw, 14px)', overflow: 'visible', paddingBottom: '4px' }}
+      style={{ top: 0, bottom: 0, gap: 'clamp(6px, 1vw, 14px)', overflow: 'hidden', paddingBottom: '2px' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -96,7 +97,8 @@ function DockNav({ colors }) {
               width: 'auto',
               objectFit: 'contain',
               display: 'block',
-              transition: 'height 0.12s cubic-bezier(0.34,1.4,0.64,1)',
+              // grow from bottom — top clips at nav top edge
+              transition: 'height 0.13s cubic-bezier(0.34,1.4,0.64,1)',
               transformOrigin: 'bottom center',
               willChange: 'height',
             }}
@@ -274,39 +276,41 @@ function LayoutContent({ children, currentPageName }) {
 
         {/* Top Nav — always visible */}
         <nav className="flex-shrink-0 z-50"
-
-        style={{ background: `url(https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9bc988c50_illusion-69e467683d302998c71d3fda.png) center top/cover no-repeat`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}>
+        style={{ background: `url(https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9bc988c50_illusion-69e467683d302998c71d3fda.png) center top/cover no-repeat`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible', position: 'relative' }}>
           
           <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible' }}>
 
-            {/* LEFT: page tabs — clean real button look */}
-            <div className="flex items-end gap-0.5 flex-shrink-0">
+            {/* LEFT: page tabs — raised up, drop down on hover */}
+            <div className="flex items-end gap-0.5 flex-shrink-0" style={{ overflow: 'visible' }}>
               {navigationItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
                   <Link
                     key={item.title}
                     to={item.url}
-                    className="flex items-end justify-center transition-all"
+                    className="flex items-end justify-center nav-tab-drop"
                     style={{
                       paddingBottom: 'clamp(4px, 0.8vw, 8px)',
                       paddingLeft: 'clamp(8px, 1.4vw, 18px)',
                       paddingRight: 'clamp(8px, 1.4vw, 18px)',
                       background: isActive
-                        ? isDark ? 'rgba(124,58,237,0.22)' : 'rgba(124,58,237,0.12)'
-                        : isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)',
+                        ? 'rgba(124,58,237,0.22)'
+                        : 'rgba(255,255,255,0.08)',
                       borderRadius: '0 0 8px 8px',
                       height: '100%',
                       border: isActive
                         ? '1px solid rgba(124,58,237,0.4)'
-                        : '1px solid rgba(255,255,255,0.25)',
+                        : '1px solid rgba(255,255,255,0.18)',
                       borderTop: 'none',
                       boxShadow: isActive
                         ? 'inset 0 -1px 0 rgba(124,58,237,0.3)'
-                        : 'inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.1)',
+                        : 'inset 0 1px 0 rgba(255,255,255,0.3)',
+                      // start raised above nav, transition down on hover
+                      transform: isActive ? 'translateY(0)' : 'translateY(-60%)',
+                      transition: 'transform 0.25s cubic-bezier(0.34,1.4,0.64,1)',
                     }}>
                     <span style={{
-                      color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.7)',
+                      color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.75)',
                       fontSize: 'clamp(9px, 0.85vw, 12px)',
                       fontWeight: isActive ? 500 : 300,
                       textTransform: 'lowercase',

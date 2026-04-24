@@ -181,3 +181,8 @@ html, body {
   background: rgba(120, 120, 120, 0.35);
   border-radius: 2px;
 }
+
+/* Nav tab drop-down on hover */
+.nav-tab-drop:hover {
+  transform: translateY(0) !important;
+}
