@@ -16,11 +16,6 @@ function fromMins(m) {
   const clamped = Math.max(0, m);
   return `${String(Math.floor(clamped / 60)).padStart(2, "0")}:${String(clamped % 60).padStart(2, "0")}`;
 }
-function formatTime(t) {
-  if (!t) return "";
-  const [h, m] = t.split(":").map(Number);
-  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
-}
 function toPct(time, start, end) {
   const total = toMins(end) - toMins(start);
   if (total <= 0) return 0;
@@ -42,12 +37,18 @@ function checkConflict(requestedStart, existingBreaks, myEmail) {
   return false;
 }
 
-// Grey shades for teammates (not the current user)
-const TEAMMATE_COLORS = [
-  "rgba(160,160,180,0.5)",
-  "rgba(130,130,150,0.45)",
-  "rgba(100,100,120,0.4)",
-  "rgba(180,175,200,0.45)",
+// Grey gradient shades for teammates (lightest to darkest)
+const TEAMMATE_LUNCH_COLORS = [
+  "rgba(200,195,220,0.55)",
+  "rgba(170,165,190,0.5)",
+  "rgba(140,135,160,0.45)",
+  "rgba(110,105,130,0.4)",
+];
+const TEAMMATE_DOT_COLORS = [
+  "rgba(210,205,230,0.9)",
+  "rgba(175,170,195,0.9)",
+  "rgba(145,140,165,0.9)",
+  "rgba(115,110,135,0.9)",
 ];
 
 export default function ShiftFlowTimeline() {
@@ -57,7 +58,6 @@ export default function ShiftFlowTimeline() {
     const now = new Date();
     return now.getHours() * 60 + now.getMinutes();
   });
-  const [hover, setHover] = useState(null);
   const [popover, setPopover] = useState(null);
 
   useEffect(() => {
@@ -95,7 +95,6 @@ export default function ShiftFlowTimeline() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["employee-breaks-today"] }),
   });
 
-  // All employees with shifts today
   const employeesWithShifts = useMemo(() =>
     employees.filter(emp => shifts.some(s => s.employee_email === emp.email)),
     [employees, shifts]
@@ -103,211 +102,212 @@ export default function ShiftFlowTimeline() {
 
   if (employeesWithShifts.length === 0) return null;
 
-  // Find the widest shift window to define the full bar range
-  const allStartMins = employeesWithShifts.map(e => {
-    const s = shifts.find(sh => sh.employee_email === e.email);
-    return toMins(s?.start_time || "08:00");
-  });
-  const allEndMins = employeesWithShifts.map(e => {
-    const s = shifts.find(sh => sh.employee_email === e.email);
-    return toMins(s?.end_time || "17:00");
-  });
+  // Global time window = widest shift span
+  const allStartMins = employeesWithShifts.map(e => toMins(shifts.find(s => s.employee_email === e.email)?.start_time || "08:00"));
+  const allEndMins = employeesWithShifts.map(e => toMins(shifts.find(s => s.employee_email === e.email)?.end_time || "17:00"));
   const globalStart = fromMins(Math.min(...allStartMins));
   const globalEnd = fromMins(Math.max(...allEndMins));
 
-  // Current user's shift
-  const meEmployee = employeesWithShifts.find(e => e.email === currentUser?.email);
-  const meShift = meEmployee ? shifts.find(s => s.employee_email === meEmployee.email) : null;
-  const meShiftStart = meShift?.start_time || globalStart;
-  const meShiftEnd = meShift?.end_time || globalEnd;
-  const progressPct = Math.max(0, Math.min(100,
-    ((nowMins - toMins(meShiftStart)) / (toMins(meShiftEnd) - toMins(meShiftStart))) * 100
-  ));
+  // Me
+  const me = employeesWithShifts.find(e => e.email === currentUser?.email);
+  const meShift = me ? shifts.find(s => s.employee_email === me.email) : null;
+  const meStart = meShift?.start_time || globalStart;
+  const meEnd = meShift?.end_time || globalEnd;
 
-  // Group breaks for conflict checking
-  const empGroup = meEmployee?.break_group_id
-    ? breakGroups.find(g => g.id === meEmployee.break_group_id)
-    : null;
+  // Green progress: how far through MY shift
+  const progressPct = meShift
+    ? Math.max(0, Math.min(100, ((nowMins - toMins(meStart)) / (toMins(meEnd) - toMins(meStart))) * 100))
+    : 0;
+
+  // Green bar width in global coords = progressPct of my shift width
+  const meShiftWidthPct = widthPct(meStart, meEnd, globalStart, globalEnd);
+  const meShiftLeftPct = toPct(meStart, globalStart, globalEnd);
+  const greenWidthPct = (progressPct / 100) * meShiftWidthPct;
+
+  // Teammates ordered consistently (not me)
+  const teammates = employeesWithShifts.filter(e => e.email !== currentUser?.email);
+
+  // Group breaks for conflict
+  const empGroup = me?.break_group_id ? breakGroups.find(g => g.id === me.break_group_id) : null;
   const groupBreaks = empGroup
     ? breaks.filter(b => empGroup.member_emails?.includes(b.employee_email))
     : breaks;
 
-  const meBreaks = breaks.filter(b => b.employee_email === meEmployee?.email);
+  const meBreaks = breaks.filter(b => b.employee_email === me?.email);
   const amBreak = meBreaks.find(b => b.break_type === "AM_15_min" && b.status !== "cancelled" && b.status !== "declined");
   const pmBreak = meBreaks.find(b => b.break_type === "PM_15_min" && b.status !== "cancelled" && b.status !== "declined");
 
-  // Teammates (excluding current user)
-  const teammates = employeesWithShifts.filter(e => e.email !== currentUser?.email);
-
   const handleBarClick = (e) => {
-    if (!meEmployee) return;
+    if (!me || !meShift) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
-    const totalMins = toMins(meShiftEnd) - toMins(meShiftStart);
-    const clickedMins = toMins(meShiftStart) + Math.round((pct * totalMins) / 15) * 15;
-    const lunchStart = meEmployee.lunch_start_time || "12:00";
-    const lunchEnd = meEmployee.lunch_end_time || "12:30";
+    const totalMins = toMins(globalEnd) - toMins(globalStart);
+    const clickedMins = toMins(globalStart) + Math.round((pct * totalMins) / 15) * 15;
+    // Only allow clicks within my shift
+    if (clickedMins < toMins(meStart) || clickedMins >= toMins(meEnd)) return;
+    const lunchStart = me.lunch_start_time || "12:00";
+    const lunchEnd = me.lunch_end_time || "12:30";
     if (clickedMins >= toMins(lunchStart) && clickedMins < toMins(lunchEnd)) return;
     const isAM = clickedMins < toMins(lunchStart);
     const breakType = isAM ? "AM_15_min" : "PM_15_min";
     if (isAM && amBreak) return;
     if (!isAM && pmBreak) return;
     const clickedTime = fromMins(clickedMins);
-    const conflict = checkConflict(clickedTime, groupBreaks, meEmployee.email);
+    const conflict = checkConflict(clickedTime, groupBreaks, me.email);
     setPopover({ time: clickedTime, type: breakType, conflict, pct: pct * 100 });
-    setHover(null);
-  };
-
-  const handleMouseMove = (e) => {
-    if (popover) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    const totalMins = toMins(meShiftEnd) - toMins(meShiftStart);
-    const clickedMins = toMins(meShiftStart) + Math.round((pct * totalMins) / 15) * 15;
-    setHover({ pct: pct * 100, time: fromMins(clickedMins) });
   };
 
   return (
     <div className="px-4 py-3">
-      {/* Single bar */}
-      <div className="relative" style={{ height: '18px' }}>
+      <div className="relative" style={{ height: '20px' }}>
 
-        {/* Base track */}
+        {/* === BASE TRACK === */}
         <div
-          className="absolute inset-0 rounded-full overflow-hidden"
+          className="absolute inset-0 rounded-full overflow-visible"
           style={{
-            background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)',
-            cursor: meEmployee ? 'crosshair' : 'default',
+            background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
+            cursor: me ? 'crosshair' : 'default',
           }}
           onClick={handleBarClick}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => setHover(null)}
         >
-          {/* My progress (purple) */}
-          {meShift && (
-            <div className="absolute top-0 h-full"
-              style={{
-                left: `${toPct(meShiftStart, globalStart, globalEnd)}%`,
-                width: `${(progressPct / 100) * widthPct(meShiftStart, meShiftEnd, globalStart, globalEnd)}%`,
-                background: 'linear-gradient(90deg, #7c3aed, #6d28d9)',
-              }} />
-          )}
+          {/* Green "clock" progress fill */}
+          <div className="absolute top-0 left-0 h-full rounded-full"
+            style={{
+              left: `${meShiftLeftPct}%`,
+              width: `${greenWidthPct}%`,
+              background: 'linear-gradient(90deg, #22c55e, #16a34a)',
+              transition: 'width 1s linear',
+            }} />
 
-          {/* My future shift (dim purple) */}
-          {meShift && (
-            <div className="absolute top-0 h-full"
-              style={{
-                left: `${toPct(meShiftStart, globalStart, globalEnd) + (progressPct / 100) * widthPct(meShiftStart, meShiftEnd, globalStart, globalEnd)}%`,
-                width: `${((100 - progressPct) / 100) * widthPct(meShiftStart, meShiftEnd, globalStart, globalEnd)}%`,
-                background: isDark ? 'rgba(139,92,246,0.2)' : 'rgba(139,92,246,0.15)',
-              }} />
-          )}
+          {/* Remaining my-shift (dim) */}
+          <div className="absolute top-0 h-full"
+            style={{
+              left: `${meShiftLeftPct + greenWidthPct}%`,
+              width: `${meShiftWidthPct - greenWidthPct}%`,
+              background: isDark ? 'rgba(139,92,246,0.18)' : 'rgba(139,92,246,0.12)',
+            }} />
 
-          {/* Teammate bars (grey shades, offset vertically within the bar) */}
+          {/* === LUNCH BLOCKS === */}
+
+          {/* Teammate lunches — grey gradient (lighter = earlier index) */}
           {teammates.map((emp, i) => {
-            const s = shifts.find(sh => sh.employee_email === emp.email);
-            if (!s) return null;
-            const color = TEAMMATE_COLORS[i % TEAMMATE_COLORS.length];
-            return (
-              <div key={emp.id} className="absolute pointer-events-none"
-                style={{
-                  left: `${toPct(s.start_time, globalStart, globalEnd)}%`,
-                  width: `${widthPct(s.start_time, s.end_time, globalStart, globalEnd)}%`,
-                  top: '30%',
-                  height: '40%',
-                  background: color,
-                  borderRadius: '2px',
-                }} />
-            );
-          })}
-
-          {/* My lunch block */}
-          {meShift && meEmployee?.lunch_start_time && (
-            <div className="absolute top-0 h-full pointer-events-none"
-              style={{
-                left: `${toPct(meEmployee.lunch_start_time, globalStart, globalEnd)}%`,
-                width: `${widthPct(meEmployee.lunch_start_time, meEmployee.lunch_end_time || "12:30", globalStart, globalEnd)}%`,
-                background: 'rgba(245,158,11,0.6)',
-              }} />
-          )}
-
-          {/* Teammate lunch blocks */}
-          {teammates.map((emp) => {
             if (!emp.lunch_start_time) return null;
-            const s = shifts.find(sh => sh.employee_email === emp.email);
-            if (!s) return null;
+            const lEnd = emp.lunch_end_time || fromMins(toMins(emp.lunch_start_time) + 60);
             return (
-              <div key={`lunch-${emp.id}`} className="absolute top-1 pointer-events-none"
+              <div key={`lunch-tm-${emp.id}`}
+                className="absolute top-1 pointer-events-none"
                 style={{
                   left: `${toPct(emp.lunch_start_time, globalStart, globalEnd)}%`,
-                  width: `${widthPct(emp.lunch_start_time, emp.lunch_end_time || "12:30", globalStart, globalEnd)}%`,
-                  height: '40%',
-                  background: 'rgba(245,158,11,0.35)',
-                  borderRadius: '2px',
+                  width: `${widthPct(emp.lunch_start_time, lEnd, globalStart, globalEnd)}%`,
+                  height: '60%',
+                  background: TEAMMATE_LUNCH_COLORS[i % TEAMMATE_LUNCH_COLORS.length],
+                  borderRadius: '3px',
                 }} />
             );
           })}
+
+          {/* My lunch — purple */}
+          {me?.lunch_start_time && (
+            <div className="absolute top-0 h-full pointer-events-none"
+              style={{
+                left: `${toPct(me.lunch_start_time, globalStart, globalEnd)}%`,
+                width: `${widthPct(me.lunch_start_time, me.lunch_end_time || fromMins(toMins(me.lunch_start_time) + 60), globalStart, globalEnd)}%`,
+                background: isDark ? 'rgba(139,92,246,0.55)' : 'rgba(109,40,217,0.45)',
+                borderRadius: '3px',
+              }} />
+          )}
         </div>
 
-        {/* Break dots for all employees */}
-        {breaks.filter(b => b.status !== "cancelled" && b.status !== "declined").map((brk) => {
-          const emp = employeesWithShifts.find(e => e.email === brk.employee_email);
-          const s = emp ? shifts.find(sh => sh.employee_email === emp.email) : null;
-          if (!emp || !s) return null;
-          const isMe = emp.email === currentUser?.email;
-          const bTime = brk.requested_start_time || brk.actual_start_time;
-          const pct = toPct(bTime, globalStart, globalEnd);
-          const taken = brk.status === "taken";
-          return (
-            <div key={brk.id}
-              className="absolute top-1/2 pointer-events-none"
-              style={{
-                left: `${pct}%`,
-                transform: 'translate(-50%, -50%)',
-                width: isMe ? '13px' : '9px',
-                height: isMe ? '13px' : '9px',
-                borderRadius: '50%',
-                background: taken ? (isMe ? '#8B5CF6' : 'rgba(160,160,180,0.7)') : 'transparent',
-                border: `2px solid ${isMe ? '#a78bfa' : 'rgba(160,160,180,0.6)'}`,
-                boxShadow: taken && isMe ? '0 0 8px rgba(139,92,246,0.9)' : 'none',
-                zIndex: 15,
-              }} />
-          );
-        })}
-
-        {/* Now needle (circle on the bar) */}
+        {/* === NOW CIRCLE (on top, outside overflow:hidden) === */}
         {meShift && progressPct > 0 && progressPct < 100 && (
           <div className="absolute top-1/2 pointer-events-none"
             style={{
-              left: `${toPct(meShiftStart, globalStart, globalEnd) + (progressPct / 100) * widthPct(meShiftStart, meShiftEnd, globalStart, globalEnd)}%`,
+              left: `${meShiftLeftPct + greenWidthPct}%`,
               transform: 'translate(-50%, -50%)',
               width: '16px',
               height: '16px',
               borderRadius: '50%',
-              background: isDark ? '#e9d5ff' : '#7c3aed',
+              background: isDark ? '#d4d4d8' : '#e4e4e7',
               border: '2.5px solid white',
-              boxShadow: '0 0 8px rgba(139,92,246,0.8)',
-              zIndex: 25,
+              boxShadow: '0 0 0 1px rgba(100,100,120,0.3), 0 2px 6px rgba(0,0,0,0.4)',
+              zIndex: 30,
             }} />
         )}
 
-        {/* Hover tooltip */}
-        {hover && !popover && meEmployee && (
-          <div className="absolute pointer-events-none z-30 text-[9px] font-bold px-1.5 py-0.5 rounded-md"
-            style={{
-              left: `${hover.pct}%`,
-              top: '-22px',
-              transform: 'translateX(-50%)',
-              background: isDark ? 'rgba(30,20,50,0.95)' : 'rgba(240,235,255,0.97)',
-              color: '#a78bfa',
-              border: '1px solid rgba(139,92,246,0.4)',
-              whiteSpace: 'nowrap',
-            }}>
-            {formatTime(hover.time)}
-          </div>
-        )}
+        {/* === BREAK DOTS === */}
 
-        {/* Popover */}
+        {/* Teammate break dots */}
+        {teammates.map((emp, i) => {
+          const empBreaks = breaks.filter(b =>
+            b.employee_email === emp.email &&
+            b.status !== "cancelled" && b.status !== "declined"
+          );
+          return empBreaks.map(brk => {
+            const bTime = brk.requested_start_time || brk.actual_start_time;
+            if (!bTime) return null;
+            const pct = toPct(bTime, globalStart, globalEnd);
+            const taken = brk.status === "taken";
+            const dotColor = TEAMMATE_DOT_COLORS[i % TEAMMATE_DOT_COLORS.length];
+            return (
+              <div key={brk.id}
+                className="absolute top-1/2 pointer-events-none"
+                style={{
+                  left: `${pct}%`,
+                  transform: 'translate(-50%, -50%)',
+                  width: '9px',
+                  height: '9px',
+                  borderRadius: '50%',
+                  background: taken ? dotColor : 'transparent',
+                  border: `2px solid ${dotColor}`,
+                  zIndex: 20,
+                }} />
+            );
+          });
+        })}
+
+        {/* My AM break dot */}
+        {amBreak && (() => {
+          const bTime = amBreak.requested_start_time || amBreak.actual_start_time;
+          const pct = toPct(bTime, globalStart, globalEnd);
+          const taken = amBreak.status === "taken";
+          return (
+            <div className="absolute top-1/2 pointer-events-none"
+              style={{
+                left: `${pct}%`,
+                transform: 'translate(-50%, -50%)',
+                width: '13px',
+                height: '13px',
+                borderRadius: '50%',
+                background: taken ? '#8B5CF6' : 'transparent',
+                border: '2.5px solid #a78bfa',
+                boxShadow: taken ? '0 0 8px rgba(139,92,246,0.9)' : '0 0 4px rgba(139,92,246,0.5)',
+                zIndex: 25,
+              }} />
+          );
+        })()}
+
+        {/* My PM break dot */}
+        {pmBreak && (() => {
+          const bTime = pmBreak.requested_start_time || pmBreak.actual_start_time;
+          const pct = toPct(bTime, globalStart, globalEnd);
+          const taken = pmBreak.status === "taken";
+          return (
+            <div className="absolute top-1/2 pointer-events-none"
+              style={{
+                left: `${pct}%`,
+                transform: 'translate(-50%, -50%)',
+                width: '13px',
+                height: '13px',
+                borderRadius: '50%',
+                background: taken ? '#8B5CF6' : 'transparent',
+                border: '2.5px solid #a78bfa',
+                boxShadow: taken ? '0 0 8px rgba(139,92,246,0.9)' : '0 0 4px rgba(139,92,246,0.5)',
+                zIndex: 25,
+              }} />
+          );
+        })()}
+
+        {/* === POPOVER === */}
         <AnimatePresence>
           {popover && (
             <motion.div
@@ -317,7 +317,7 @@ export default function ShiftFlowTimeline() {
               className="absolute z-50 rounded-xl p-3 shadow-xl"
               style={{
                 left: `${Math.min(85, Math.max(10, popover.pct))}%`,
-                bottom: '26px',
+                bottom: '28px',
                 transform: 'translateX(-50%)',
                 minWidth: '148px',
                 background: isDark ? 'rgba(18,10,36,0.98)' : 'rgba(250,248,255,0.98)',
@@ -330,7 +330,13 @@ export default function ShiftFlowTimeline() {
               </p>
               {!popover.conflict && (
                 <p className="text-[11px] mb-2" style={{ color: colors.text }}>
-                  {formatTime(popover.time)} – {formatTime(fromMins(toMins(popover.time) + 15))}
+                  {(() => {
+                    const [h, m] = popover.time.split(":").map(Number);
+                    const endMins = h * 60 + m + 15;
+                    const eh = Math.floor(endMins / 60), em = endMins % 60;
+                    const fmt = (hh, mm) => `${hh % 12 || 12}:${String(mm).padStart(2,"0")} ${hh >= 12 ? "PM" : "AM"}`;
+                    return `${fmt(h, m)} – ${fmt(eh, em)}`;
+                  })()}
                 </p>
               )}
               <div className="flex gap-1.5">
@@ -338,7 +344,7 @@ export default function ShiftFlowTimeline() {
                   <button
                     onClick={() => {
                       createBreakMutation.mutate({
-                        employee_email: meEmployee.email,
+                        employee_email: me.email,
                         break_date: TODAY,
                         break_type: popover.type,
                         requested_start_time: popover.time,
@@ -363,12 +369,6 @@ export default function ShiftFlowTimeline() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-      {/* Time labels below */}
-      <div className="flex justify-between mt-1">
-        <span className="text-[9px]" style={{ color: colors.textTertiary }}>{formatTime(globalStart)}</span>
-        <span className="text-[9px]" style={{ color: colors.textTertiary }}>{formatTime(globalEnd)}</span>
       </div>
     </div>
   );
