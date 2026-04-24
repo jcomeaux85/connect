@@ -81,7 +81,7 @@ function DockNav({ colors }) {
   return (
     <div
       ref={dockRef}
-      className="flex items-end absolute left-1/2 -translate-x-1/2"
+      className="flex items-end justify-center"
       style={{ top: 0, bottom: 0, gap: 'clamp(6px, 1vw, 14px)', overflow: 'visible', paddingBottom: '2px' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -278,7 +278,7 @@ function LayoutContent({ children, currentPageName }) {
         <nav className="flex-shrink-0 z-50"
         style={{ background: '#ffffff', borderBottom: `1px solid ${colors.border}`, overflow: 'visible', position: 'relative' }}>
           
-          <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible', clipPath: 'none' }}>
+          <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded grid items-stretch relative" style={{ height: 'clamp(40px, 5vw, 52px)', gridTemplateColumns: '1fr auto 1fr', overflow: 'visible', clipPath: 'none' }}>
 
             {/* LEFT: page tabs — raised up, drop down on hover */}
             <div className="flex items-end gap-0.5 flex-shrink-0" style={{ overflow: 'visible' }}>
@@ -325,7 +325,7 @@ function LayoutContent({ children, currentPageName }) {
             <DockNav colors={colors} />
 
             {/* RIGHT: Avatar with Phone/Messages/Notifications collapsed underneath */}
-            <div className="flex items-center flex-shrink-0">
+            <div className="flex items-center flex-shrink-0 justify-end">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
