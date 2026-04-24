@@ -28,6 +28,7 @@ import { format, isToday, parseISO } from "date-fns";
 import { useTheme } from "@/components/ThemeProvider";
 
 import DailyPlanner from "../components/dashboard/DailyPlanner";
+import ShiftFlowTimeline from "../components/dashboard/ShiftFlowTimeline";
 import CollapsiblePanel from "@/components/ui/CollapsiblePanel";
 import DraggableDashboard from "../components/dashboard/DraggableDashboard";
 import LayoutSelector from "../components/settings/LayoutSelector";
@@ -302,6 +303,12 @@ export default function Dashboard() {
       style={{ width: '100%', height: '180px', objectFit: 'contain', objectPosition: 'center', display: 'block', borderRadius: '1rem', filter: 'drop-shadow(4px 5px 1px rgba(0,0,0,0.35)) drop-shadow(6px 8px 16px rgba(0,0,0,0.5))' }} className="rounded" />
 
 
+  },
+  {
+    id: 'shiftflow',
+    defaultWidth: 3,
+    defaultHeight: 1,
+    content: <ShiftFlowTimeline />
   },
   {
     id: 'recent-cases',

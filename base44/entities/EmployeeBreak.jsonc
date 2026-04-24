@@ -1,0 +1,71 @@
+{
+  "name": "EmployeeBreak",
+  "type": "object",
+  "properties": {
+    "employee_email": {
+      "type": "string",
+      "description": "Email of the employee"
+    },
+    "shift_id": {
+      "type": "string",
+      "description": "Reference to CoreShift"
+    },
+    "break_group_id": {
+      "type": "string",
+      "description": "Reference to BreakGroup"
+    },
+    "break_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the break"
+    },
+    "break_type": {
+      "type": "string",
+      "enum": [
+        "AM_15_min",
+        "PM_15_min"
+      ],
+      "description": "Type of break"
+    },
+    "requested_start_time": {
+      "type": "string",
+      "description": "Requested start time (e.g. 10:15)"
+    },
+    "actual_start_time": {
+      "type": "string",
+      "description": "Actual start time when break began"
+    },
+    "actual_end_time": {
+      "type": "string",
+      "description": "Actual end time when break ended"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "reserved",
+        "approved",
+        "taken",
+        "declined",
+        "cancelled"
+      ],
+      "default": "reserved",
+      "description": "Current status of the break"
+    },
+    "buffer_start": {
+      "type": "string",
+      "description": "15-min buffer before this break (no other break can start here)"
+    },
+    "buffer_end": {
+      "type": "string",
+      "description": "15-min buffer after this break ends"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "employee_email",
+    "break_date",
+    "break_type"
+  ]
+}

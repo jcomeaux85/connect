@@ -68,6 +68,18 @@
     },
     "emergency_contact_relation": {
       "type": "string"
+    },
+    "lunch_start_time": {
+      "type": "string",
+      "description": "Fixed lunch start time (e.g. 12:00)"
+    },
+    "lunch_end_time": {
+      "type": "string",
+      "description": "Fixed lunch end time (e.g. 12:30)"
+    },
+    "break_group_id": {
+      "type": "string",
+      "description": "Reference to BreakGroup for break coordination"
     }
   },
   "required": [

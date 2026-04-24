@@ -1,0 +1,45 @@
+{
+  "name": "BreakGroup",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the break coordination group"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the group"
+    },
+    "member_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of employee emails in this break group"
+    },
+    "am_break_window_start": {
+      "type": "string",
+      "description": "Earliest allowed AM break start time (e.g. 09:30)"
+    },
+    "am_break_window_end": {
+      "type": "string",
+      "description": "Latest allowed AM break end time (e.g. 11:00)"
+    },
+    "pm_break_window_start": {
+      "type": "string",
+      "description": "Earliest allowed PM break start time (e.g. 14:00)"
+    },
+    "pm_break_window_end": {
+      "type": "string",
+      "description": "Latest allowed PM break end time (e.g. 15:30)"
+    },
+    "max_concurrent_breaks": {
+      "type": "number",
+      "default": 1,
+      "description": "Maximum number of employees on break at the same time"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
