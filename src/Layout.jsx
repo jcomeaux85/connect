@@ -225,7 +225,7 @@ function LayoutContent({ children, currentPageName }) {
                       height: '52px'
                     }}>
                     
-                    <span className="text-[#29025a] text-xs font-thin text-center lowercase whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
+                    <span className="bg-transparent text-[#29025a] text-xs font-thin text-center lowercase whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
                   </Link>);
 
               })}
