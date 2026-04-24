@@ -329,10 +329,11 @@ function LayoutContent({ children, currentPageName }) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full relative"
+                    className="p-0 overflow-hidden flex-shrink-0 rounded-full relative"
                     style={{
                       width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
-                      boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`
+                      boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                      border: '1px solid #ffffff'
                     }}>
                     <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
                     {(unreadNotifications + unreadMessages) > 0 && (
