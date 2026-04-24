@@ -342,7 +342,7 @@ function LayoutContent({ children, currentPageName }) {
                     )}
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-52" align="end" style={{ background: colors.bg, border: `1px solid ${colors.border}`, boxShadow: `4px 4px 10px ${colors.shadowDark}`, color: colors.text }}>
+                <DropdownMenuContent className="w-52" align="end" style={{ background: colors.bg, border: '1px solid #ffffff', boxShadow: `4px 4px 10px ${colors.shadowDark}`, color: colors.text }}>
                   <DropdownMenuLabel style={{ color: colors.text }}>
                     <div>{user?.full_name || 'My Account'}</div>
                     {user?.role === 'admin' && <div className="text-xs" style={{ color: colors.textSecondary }}>Administrator</div>}
