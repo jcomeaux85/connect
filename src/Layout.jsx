@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
@@ -42,6 +42,78 @@ const navigationItems = [
 { title: "Cases", url: createPageUrl("Cases"), icon: Folder },
 { title: "Customers", url: createPageUrl("Customers"), icon: Users }];
 
+
+const DOCK_ITEMS = [
+  { label: 'Connect', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: '/Dashboard' },
+  { label: 'DOC', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a0619203e_kling_20260422_Inpaint_make_the_D_3365_2.png', href: '/DOC' },
+  { label: 'Core', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: '/Core' },
+  { label: 'HelpHub', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: null },
+];
+
+const BASE_H = 42;
+const MAX_H = 78;
+const REACH = 110;
+
+function DockNav({ colors }) {
+  const dockRef = useRef(null);
+  const itemRefs = useRef([]);
+  const [sizes, setSizes] = useState(DOCK_ITEMS.map(() => BASE_H));
+
+  const handleMouseMove = (e) => {
+    const newSizes = DOCK_ITEMS.map((_, i) => {
+      const el = itemRefs.current[i];
+      if (!el) return BASE_H;
+      const rect = el.getBoundingClientRect();
+      const center = rect.left + rect.width / 2;
+      const dist = Math.abs(e.clientX - center);
+      if (dist >= REACH) return BASE_H;
+      const t = 1 - dist / REACH;
+      // cubic ease for smooth falloff
+      const ease = t * t * (3 - 2 * t);
+      return BASE_H + (MAX_H - BASE_H) * ease;
+    });
+    setSizes(newSizes);
+  };
+
+  const handleMouseLeave = () => setSizes(DOCK_ITEMS.map(() => BASE_H));
+
+  return (
+    <div
+      ref={dockRef}
+      className="flex items-end absolute left-1/2 -translate-x-1/2"
+      style={{ top: 0, bottom: 0, gap: 'clamp(6px, 1vw, 14px)', overflow: 'visible', paddingBottom: '4px' }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {DOCK_ITEMS.map((item, i) => {
+        const h = sizes[i];
+        const content = (
+          <img
+            src={item.src}
+            alt={item.label}
+            style={{
+              height: `${h}px`,
+              width: 'auto',
+              objectFit: 'contain',
+              display: 'block',
+              transition: 'height 0.12s cubic-bezier(0.34,1.4,0.64,1)',
+              transformOrigin: 'bottom center',
+              willChange: 'height',
+            }}
+          />
+        );
+        return (
+          <div key={item.label} ref={el => itemRefs.current[i] = el} style={{ display: 'flex', alignItems: 'flex-end' }}>
+            {item.href
+              ? <Link to={item.href} className="no-underline flex items-end">{content}</Link>
+              : <button className="border-0 bg-transparent p-0 flex items-end cursor-pointer">{content}</button>
+            }
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
@@ -207,7 +279,7 @@ function LayoutContent({ children, currentPageName }) {
           
           <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible' }}>
 
-            {/* LEFT: page tabs only */}
+            {/* LEFT: page tabs — clean real button look */}
             <div className="flex items-end gap-0.5 flex-shrink-0">
               {navigationItems.map((item) => {
                 const isActive = location.pathname === item.url;
@@ -218,19 +290,25 @@ function LayoutContent({ children, currentPageName }) {
                     className="flex items-end justify-center transition-all"
                     style={{
                       paddingBottom: 'clamp(4px, 0.8vw, 8px)',
-                      paddingLeft: 'clamp(6px, 1.2vw, 16px)',
-                      paddingRight: 'clamp(6px, 1.2vw, 16px)',
-                      boxShadow: isActive ?
-                        `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
-                        `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
-                      background: isActive ? isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)' : colors.bg,
-                      borderRadius: '0 0 10px 10px',
+                      paddingLeft: 'clamp(8px, 1.4vw, 18px)',
+                      paddingRight: 'clamp(8px, 1.4vw, 18px)',
+                      background: isActive
+                        ? isDark ? 'rgba(124,58,237,0.22)' : 'rgba(124,58,237,0.12)'
+                        : isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)',
+                      borderRadius: '0 0 8px 8px',
                       height: '100%',
+                      border: isActive
+                        ? '1px solid rgba(124,58,237,0.4)'
+                        : '1px solid rgba(255,255,255,0.25)',
+                      borderTop: 'none',
+                      boxShadow: isActive
+                        ? 'inset 0 -1px 0 rgba(124,58,237,0.3)'
+                        : 'inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.1)',
                     }}>
                     <span style={{
-                      color: isActive ? '#7c3aed' : colors.textSecondary,
+                      color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.7)',
                       fontSize: 'clamp(9px, 0.85vw, 12px)',
-                      fontWeight: 300,
+                      fontWeight: isActive ? 500 : 300,
                       textTransform: 'lowercase',
                       whiteSpace: 'nowrap',
                     }}>{item.title}</span>
@@ -238,58 +316,8 @@ function LayoutContent({ children, currentPageName }) {
               })}
             </div>
 
-            {/* CENTER: BEN|connect, DOC, Core, HelpHub */}
-            <div className="flex items-center absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0, paddingTop: 'clamp(3px, 0.5vw, 6px)', gap: 'clamp(4px, 1vw, 16px)', overflow: 'visible' }}>
-              {/* connect */}
-              <Link to={createPageUrl("Dashboard")} className="flex items-center justify-center no-underline" style={{ transformOrigin: 'center top' }}>
-                <img
-                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
-                  alt="Connect"
-                  className="mb-2 rounded-none"
-                  style={{ height: 'clamp(32px, 4vw, 54px)', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
-              </Link>
-
-              <span style={{ color: colors.border, fontSize: 'clamp(12px, 1.2vw, 18px)', fontWeight: 100 }}>|</span>
-
-              {/* DOC */}
-              <Link to="/DOC" className="flex items-center justify-center no-underline">
-                <img
-                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a0619203e_kling_20260422_Inpaint_make_the_D_3365_2.png"
-                  alt="DOC"
-                  className="mb-2"
-                  style={{ height: 'clamp(32px, 4vw, 54px)', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
-              </Link>
-
-              <span style={{ color: colors.border, fontSize: 'clamp(12px, 1.2vw, 18px)', fontWeight: 100 }}>|</span>
-
-              {/* Core */}
-              <Link to="/Core" className="flex items-center justify-center no-underline">
-                <img
-                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
-                  alt="Core"
-                  className="mb-1"
-                  style={{ height: 'clamp(32px, 4vw, 54px)', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
-              </Link>
-
-              <span style={{ color: colors.border, fontSize: 'clamp(12px, 1.2vw, 18px)', fontWeight: 100 }}>|</span>
-
-              {/* HelpHub */}
-              <button className="flex items-center justify-center border-0 bg-transparent">
-                <img
-                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
-                  alt="HelpHub"
-                  className="mb-1"
-                  style={{ height: 'clamp(32px, 4vw, 54px)', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
-              </button>
-            </div>
+            {/* CENTER: Mac-style Dock */}
+            <DockNav colors={colors} />
 
             {/* RIGHT: Phone, Messages, Notifications, Avatar */}
             <div className="flex items-center flex-shrink-0" style={{ gap: 'clamp(3px, 0.5vw, 6px)' }}>
