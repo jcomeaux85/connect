@@ -449,6 +449,9 @@ export default function Dashboard() {
             }} />
           
           <p className="text-center mt-2 font-light tracking-widest text-xs uppercase" style={{ color: '#9ca3af', letterSpacing: '0.25em' }}>dashboard</p>
+          <div className="w-full mt-1">
+            <ShiftFlowTimeline />
+          </div>
         </div>
         
         <DraggableDashboard panels={dashboardPanels} />
