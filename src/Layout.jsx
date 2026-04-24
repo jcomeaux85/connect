@@ -214,8 +214,8 @@ function LayoutContent({ children, currentPageName }) {
                 return (
                   <Link
                     key={item.title}
-                    to={item.url}
-                    className="flex items-end justify-center pb-2 px-4 no-underline transition-all"
+                    to={item.url} className="pb-2 px-4 no-underline rounded-md flex items-end justify-center transition-all"
+
                     style={{
                       boxShadow: isActive ?
                       `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
