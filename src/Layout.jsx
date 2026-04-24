@@ -205,169 +205,145 @@ function LayoutContent({ children, currentPageName }) {
 
         style={{ background: `url(https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9bc988c50_illusion-69e467683d302998c71d3fda.png) center top/cover no-repeat`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}>
           
-          <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-3 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px', overflow: 'visible' }}>
+          <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible' }}>
 
             {/* LEFT: page tabs only */}
-            <div className="flex items-end gap-1 flex-shrink-0">
+            <div className="flex items-end gap-0.5 flex-shrink-0">
               {navigationItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
                   <Link
                     key={item.title}
-                    to={item.url} className="pb-2 px-4 text-base font-thin text-center lowercase rounded-[0px_0px_4px_4px] flex items-end justify-center transition-all"
-
+                    to={item.url}
+                    className="flex items-end justify-center transition-all"
                     style={{
+                      paddingBottom: 'clamp(4px, 0.8vw, 8px)',
+                      paddingLeft: 'clamp(6px, 1.2vw, 16px)',
+                      paddingRight: 'clamp(6px, 1.2vw, 16px)',
                       boxShadow: isActive ?
-                      `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
-                      `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
+                        `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
+                        `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
                       background: isActive ? isDark ? 'rgba(124,58,237,0.15)' : 'rgba(124,58,237,0.08)' : colors.bg,
                       borderRadius: '0 0 10px 10px',
-                      height: '52px'
+                      height: '100%',
                     }}>
-                    
-                    <span className="bg-transparent text-[#29025a] text-xs font-thin text-center lowercase whitespace-nowrap" style={{ color: isActive ? '#7c3aed' : colors.textSecondary }}>{item.title}</span>
+                    <span style={{
+                      color: isActive ? '#7c3aed' : colors.textSecondary,
+                      fontSize: 'clamp(9px, 0.85vw, 12px)',
+                      fontWeight: 300,
+                      textTransform: 'lowercase',
+                      whiteSpace: 'nowrap',
+                    }}>{item.title}</span>
                   </Link>);
-
               })}
             </div>
 
-            {/* CENTER: BEN|connect, DOC, Core, HelpHub — no containers, raw tech feel */}
-            <div className="flex items-center gap-4 absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0, paddingTop: '6px', overflow: 'visible' }}>
+            {/* CENTER: BEN|connect, DOC, Core, HelpHub */}
+            <div className="flex items-center absolute left-1/2 -translate-x-1/2" style={{ top: 0, bottom: 0, paddingTop: 'clamp(3px, 0.5vw, 6px)', gap: 'clamp(4px, 1vw, 16px)', overflow: 'visible' }}>
               {/* connect */}
-              <Link
-                to={createPageUrl("Dashboard")}
-                className="flex items-center justify-center no-underline"
-                style={{ transformOrigin: 'center top' }}>
-                
+              <Link to={createPageUrl("Dashboard")} className="flex items-center justify-center no-underline" style={{ transformOrigin: 'center top' }}>
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
-                  alt="Connect" className="mb-2 rounded-none chip-nav-img"
-
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  alt="Connect"
+                  className="mb-2 rounded-none"
+                  style={{ height: 'clamp(32px, 4vw, 54px)', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
                   onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
-                
               </Link>
 
-              <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
+              <span style={{ color: colors.border, fontSize: 'clamp(12px, 1.2vw, 18px)', fontWeight: 100 }}>|</span>
 
               {/* DOC */}
-              <Link
-                to="/DOC"
-                className="flex items-center justify-center no-underline">
-                
-                <img src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a0619203e_kling_20260422_Inpaint_make_the_D_3365_2.png"
-
-                alt="DOC"
-                style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} className="mb-2" />
-                
+              <Link to="/DOC" className="flex items-center justify-center no-underline">
+                <img
+                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a0619203e_kling_20260422_Inpaint_make_the_D_3365_2.png"
+                  alt="DOC"
+                  className="mb-2"
+                  style={{ height: 'clamp(32px, 4vw, 54px)', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
               </Link>
 
-              <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
+              <span style={{ color: colors.border, fontSize: 'clamp(12px, 1.2vw, 18px)', fontWeight: 100 }}>|</span>
 
               {/* Core */}
-              <Link
-                to="/Core"
-                className="flex items-center justify-center no-underline">
-                
+              <Link to="/Core" className="flex items-center justify-center no-underline">
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="Core"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  className="mb-1"
+                  style={{ height: 'clamp(32px, 4vw, 54px)', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} className="mb-1" />
-                
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
               </Link>
 
-              <span style={{ color: colors.border, fontSize: '18px', fontWeight: 100 }}>|</span>
+              <span style={{ color: colors.border, fontSize: 'clamp(12px, 1.2vw, 18px)', fontWeight: 100 }}>|</span>
 
               {/* HelpHub */}
-              <button
-                className="flex items-center justify-center border-0 bg-transparent">
-                
+              <button className="flex items-center justify-center border-0 bg-transparent">
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg"
                   alt="HelpHub"
-                  style={{ height: '54px', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
+                  className="mb-1"
+                  style={{ height: 'clamp(32px, 4vw, 54px)', width: 'auto', objectFit: 'contain', display: 'block', transition: 'transform 0.2s ease', transformOrigin: 'center top' }}
                   onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.5)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} className="mb-1" />
-                
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} />
               </button>
             </div>
 
             {/* RIGHT: Phone, Messages, Notifications, Avatar */}
-            <div className="flex items-center gap-1.5 flex-shrink-0">
+            <div className="flex items-center flex-shrink-0" style={{ gap: 'clamp(3px, 0.5vw, 6px)' }}>
               {/* Phone */}
               <button
-                className="flex items-center justify-center rounded-xl border-0 w-9 h-9"
+                className="flex items-center justify-center rounded-xl border-0"
                 onClick={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
                 style={{
-                  boxShadow: showCalls ?
-                  `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
-                  `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
+                  boxShadow: showCalls ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
                   background: colors.bg
                 }}>
-                
-                <Phone className="w-4 h-4" style={{ color: showCalls ? '#7c3aed' : colors.iconColor }} />
+                <Phone style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showCalls ? '#7c3aed' : colors.iconColor }} />
               </button>
 
               {/* Messages */}
               <button
-                className="flex items-center justify-center rounded-xl border-0 w-9 h-9 relative"
+                className="flex items-center justify-center rounded-xl border-0 relative"
                 onClick={() => {setShowMessages((p) => !p);setShowCalls(false);setShowNotifications(false);}}
                 style={{
-                  boxShadow: showMessages ?
-                  `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
-                  `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
+                  boxShadow: showMessages ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
                   background: colors.bg
                 }}>
-                
-                <MessageSquare className="w-4 h-4" style={{ color: showMessages ? '#7c3aed' : colors.iconColor }} />
-                {unreadMessages > 0 &&
-                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-green-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
-                    {unreadMessages > 9 ? '9+' : unreadMessages}
-                  </span>
-                }
+                <MessageSquare style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showMessages ? '#7c3aed' : colors.iconColor }} />
+                {unreadMessages > 0 && <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-green-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">{unreadMessages > 9 ? '9+' : unreadMessages}</span>}
               </button>
 
               {/* Notifications */}
               <button
-                className="flex items-center justify-center rounded-xl border-0 w-9 h-9 relative"
+                className="flex items-center justify-center rounded-xl border-0 relative"
                 onClick={() => {setShowNotifications((p) => !p);setShowMessages(false);setShowCalls(false);}}
                 style={{
-                  boxShadow: showNotifications ?
-                  `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` :
-                  `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
+                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
+                  boxShadow: showNotifications ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
                   background: colors.bg
                 }}>
-                
-                <Bell className="w-4 h-4" style={{ color: showNotifications ? '#7c3aed' : colors.iconColor }} />
-                {unreadNotifications > 0 &&
-                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] rounded-full flex items-center justify-center font-bold">
-                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                  </span>
-                }
+                <Bell style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showNotifications ? '#7c3aed' : colors.iconColor }} />
+                {unreadNotifications > 0 && <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-red-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>}
               </button>
 
               {/* User avatar */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full w-9 h-9"
+                    className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full"
                     style={{
+                      width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
                       boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`
                     }}>
-                    
                     <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48" align="end" style={{
-                  background: colors.bg, border: 'none',
-                  boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`,
-                  color: colors.text
-                }}>
+                <DropdownMenuContent className="w-48" align="end" style={{ background: colors.bg, border: 'none', boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`, color: colors.text }}>
                   <DropdownMenuLabel style={{ color: colors.text }}>
                     <div>{user?.full_name || 'My Account'}</div>
                     {user?.role === 'admin' && <div className="text-xs" style={{ color: colors.textSecondary }}>Administrator</div>}
