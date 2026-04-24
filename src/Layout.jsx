@@ -294,8 +294,8 @@ function LayoutContent({ children, currentPageName }) {
                       paddingLeft: 'clamp(8px, 1.4vw, 18px)',
                       paddingRight: 'clamp(8px, 1.4vw, 18px)',
                       background: isActive
-                        ? 'rgba(124,58,237,0.22)'
-                        : 'rgba(255,255,255,0.08)',
+                        ? 'rgba(237,233,254,0.95)'
+                        : 'rgba(255,255,255,0.92)',
                       borderRadius: '0 0 8px 8px',
                       height: '100%',
                       border: isActive
@@ -310,11 +310,12 @@ function LayoutContent({ children, currentPageName }) {
                       transition: 'transform 0.25s cubic-bezier(0.34,1.4,0.64,1)',
                     }}>
                     <span style={{
-                      color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.75)',
+                      color: isActive ? '#6d28d9' : '#7c3aed',
                       fontSize: 'clamp(9px, 0.85vw, 12px)',
-                      fontWeight: isActive ? 500 : 300,
+                      fontWeight: isActive ? 700 : 400,
                       textTransform: 'lowercase',
                       whiteSpace: 'nowrap',
+                      textShadow: isActive ? 'inset 0 1px 2px rgba(109,40,217,0.4)' : 'none',
                     }}>{item.title}</span>
                   </Link>);
               })}
@@ -323,63 +324,56 @@ function LayoutContent({ children, currentPageName }) {
             {/* CENTER: Mac-style Dock */}
             <DockNav colors={colors} />
 
-            {/* RIGHT: Phone, Messages, Notifications, Avatar */}
-            <div className="flex items-center flex-shrink-0" style={{ gap: 'clamp(3px, 0.5vw, 6px)' }}>
-              {/* Phone */}
-              <button
-                className="flex items-center justify-center rounded-xl border-0"
-                onClick={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
-                style={{
-                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
-                  boxShadow: showCalls ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg
-                }}>
-                <Phone style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showCalls ? '#7c3aed' : colors.iconColor }} />
-              </button>
-
-              {/* Messages */}
-              <button
-                className="flex items-center justify-center rounded-xl border-0 relative"
-                onClick={() => {setShowMessages((p) => !p);setShowCalls(false);setShowNotifications(false);}}
-                style={{
-                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
-                  boxShadow: showMessages ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg
-                }}>
-                <MessageSquare style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showMessages ? '#7c3aed' : colors.iconColor }} />
-                {unreadMessages > 0 && <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-green-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">{unreadMessages > 9 ? '9+' : unreadMessages}</span>}
-              </button>
-
-              {/* Notifications */}
-              <button
-                className="flex items-center justify-center rounded-xl border-0 relative"
-                onClick={() => {setShowNotifications((p) => !p);setShowMessages(false);setShowCalls(false);}}
-                style={{
-                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
-                  boxShadow: showNotifications ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg
-                }}>
-                <Bell style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showNotifications ? '#7c3aed' : colors.iconColor }} />
-                {unreadNotifications > 0 && <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-red-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>}
-              </button>
-
-              {/* User avatar */}
+            {/* RIGHT: Avatar with Phone/Messages/Notifications collapsed underneath */}
+            <div className="flex items-center flex-shrink-0">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full"
+                    className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full relative"
                     style={{
                       width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
                       boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`
                     }}>
                     <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
+                    {(unreadNotifications + unreadMessages) > 0 && (
+                      <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">
+                        {unreadNotifications + unreadMessages > 9 ? '9+' : unreadNotifications + unreadMessages}
+                      </span>
+                    )}
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48" align="end" style={{ background: colors.bg, border: 'none', boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`, color: colors.text }}>
+                <DropdownMenuContent className="w-52" align="end" style={{ background: colors.bg, border: 'none', boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`, color: colors.text }}>
                   <DropdownMenuLabel style={{ color: colors.text }}>
                     <div>{user?.full_name || 'My Account'}</div>
                     {user?.role === 'admin' && <div className="text-xs" style={{ color: colors.textSecondary }}>Administrator</div>}
                   </DropdownMenuLabel>
+                  <DropdownMenuSeparator style={{ background: colors.border }} />
+                  {/* Quick action icons */}
+                  <div className="flex items-center gap-2 px-2 py-2">
+                    <button
+                      onClick={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
+                      className="flex-1 flex flex-col items-center gap-1 py-1.5 rounded-xl border-0"
+                      style={{ background: showCalls ? `inset 2px 2px 4px ${colors.shadowDark}` : colors.bg, boxShadow: showCalls ? `inset 2px 2px 5px ${colors.shadowDark}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}` }}>
+                      <Phone style={{ width: '14px', height: '14px', color: showCalls ? '#7c3aed' : colors.iconColor }} />
+                      <span style={{ fontSize: '9px', color: colors.textSecondary }}>Phone</span>
+                    </button>
+                    <button
+                      onClick={() => {setShowMessages((p) => !p);setShowCalls(false);setShowNotifications(false);}}
+                      className="flex-1 flex flex-col items-center gap-1 py-1.5 rounded-xl border-0 relative"
+                      style={{ background: colors.bg, boxShadow: showMessages ? `inset 2px 2px 5px ${colors.shadowDark}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}` }}>
+                      <MessageSquare style={{ width: '14px', height: '14px', color: showMessages ? '#7c3aed' : colors.iconColor }} />
+                      {unreadMessages > 0 && <span className="absolute top-0.5 right-1 w-3 h-3 bg-green-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">{unreadMessages > 9 ? '9+' : unreadMessages}</span>}
+                      <span style={{ fontSize: '9px', color: colors.textSecondary }}>Msgs</span>
+                    </button>
+                    <button
+                      onClick={() => {setShowNotifications((p) => !p);setShowMessages(false);setShowCalls(false);}}
+                      className="flex-1 flex flex-col items-center gap-1 py-1.5 rounded-xl border-0 relative"
+                      style={{ background: colors.bg, boxShadow: showNotifications ? `inset 2px 2px 5px ${colors.shadowDark}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}` }}>
+                      <Bell style={{ width: '14px', height: '14px', color: showNotifications ? '#7c3aed' : colors.iconColor }} />
+                      {unreadNotifications > 0 && <span className="absolute top-0.5 right-1 w-3 h-3 bg-red-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>}
+                      <span style={{ fontSize: '9px', color: colors.textSecondary }}>Alerts</span>
+                    </button>
+                  </div>
                   <DropdownMenuSeparator style={{ background: colors.border }} />
                   <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Your Profile</Link></DropdownMenuItem>
                   <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Settings</Link></DropdownMenuItem>
