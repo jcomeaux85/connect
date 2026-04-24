@@ -205,7 +205,7 @@ function LayoutContent({ children, currentPageName }) {
           className="flex-shrink-0 z-50"
           style={{ background: `url(https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/9bc988c50_illusion-69e467683d302998c71d3fda.png) center top/cover no-repeat`, borderBottom: `1px solid ${colors.border}`, overflow: 'visible' }}>
           
-          <div className="bg-purple-950 my-1 px-3 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px', overflow: 'visible' }}>
+          <div className="bg-[#310057] text-[hsl(var(--chart-4))] my-1 px-3 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: '52px', gap: '8px', overflow: 'visible' }}>
 
             {/* LEFT: page tabs only */}
             <div className="flex items-end gap-1 flex-shrink-0">
