@@ -45,24 +45,25 @@ export default function ChipWithLights() {
         }}
       />
 
-      {/* Indicator lights — stacked vertically, right side */}
+      {/* Indicator lights — top-right corner, horizontal row */}
       <div
-        className="absolute flex flex-col gap-2 items-center"
-        style={{ right: '-14px', top: '50%', transform: 'translateY(-50%)' }}
+        className="absolute flex flex-row gap-1.5 items-center"
+        style={{ top: '8px', right: '10px' }}
       >
         {/* White light */}
         <div
           onClick={toggle}
           style={{
-            width: '9px',
-            height: '9px',
+            width: '7px',
+            height: '7px',
             borderRadius: '50%',
             cursor: 'pointer',
             background: lightsOn && whiteBlink
-              ? 'rgba(240,240,255,1)'
-              : 'rgba(80,80,100,0.4)',
+              ? 'rgba(235,238,255,1)'
+              : 'rgba(70,70,90,0.35)',
+            border: '0.5px solid rgba(160,165,190,0.55)',
             boxShadow: lightsOn && whiteBlink
-              ? '0 0 6px 2px rgba(200,210,255,0.9), 0 0 12px 4px rgba(180,190,255,0.4)'
+              ? '0 0 5px 2px rgba(200,210,255,0.85), 0 0 10px 3px rgba(180,190,255,0.35)'
               : 'none',
             transition: 'background 0.06s, box-shadow 0.06s',
           }}
@@ -71,15 +72,16 @@ export default function ChipWithLights() {
         <div
           onClick={toggle}
           style={{
-            width: '9px',
-            height: '9px',
+            width: '7px',
+            height: '7px',
             borderRadius: '50%',
             cursor: 'pointer',
             background: lightsOn
-              ? 'rgba(60,220,100,1)'
-              : 'rgba(40,80,50,0.4)',
+              ? 'rgba(55,215,95,1)'
+              : 'rgba(35,70,45,0.35)',
+            border: '0.5px solid rgba(80,160,100,0.55)',
             boxShadow: lightsOn
-              ? '0 0 6px 2px rgba(60,220,100,0.9), 0 0 14px 5px rgba(30,180,70,0.4)'
+              ? '0 0 5px 2px rgba(55,215,95,0.85), 0 0 12px 4px rgba(30,180,70,0.35)'
               : 'none',
             transition: 'background 0.3s, box-shadow 0.3s',
           }}
