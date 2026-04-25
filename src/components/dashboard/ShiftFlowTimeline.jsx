@@ -100,29 +100,68 @@ export default function ShiftFlowTimeline() {
   const nowTime = fromMins(nowMins);
 
   if (employeesWithShifts.length === 0) {
+    // Demo timeline: 8am–5pm with sample dots to show the design
     const defaultStart = "08:00";
     const defaultEnd = "17:00";
-    const lunchStart = "12:00";
-    const lunchEnd = "12:30";
     const totalMins = toMins(defaultEnd) - toMins(defaultStart);
-    const progressPct = Math.max(0, Math.min(100, ((nowMins - toMins(defaultStart)) / totalMins) * 100));
-    const lunchLeftPct = ((toMins(lunchStart) - toMins(defaultStart)) / totalMins) * 100;
-    const lunchWidthPct = ((toMins(lunchEnd) - toMins(lunchStart)) / totalMins) * 100;
+    const pct = (t) => Math.max(0, Math.min(100, ((toMins(t) - toMins(defaultStart)) / totalMins) * 100));
+    const progressPct = pct(fromMins(nowMins));
+    const lunchLeftPct = pct("12:00");
+    const lunchWidthPct = ((toMins("12:30") - toMins("12:00")) / totalMins) * 100;
+
+    // Sample demo dots (teammates + user) spaced across the day
+    const demoDots = [
+      { at: "09:15", color: "#E8621A", size: 11 },  // burnt orange teammate
+      { at: "10:00", color: "#E8621A", size: 11 },  // burnt orange teammate
+      { at: "10:30", color: "#8B5CF6", size: 14, filled: true },  // purple = me
+      { at: "11:00", color: "#8B5CF6", size: 14 },  // purple = me
+      { at: "13:30", color: "#1DA8E0", size: 11 },  // sky blue
+      { at: "14:15", color: "#1DA8E0", size: 11 },  // sky blue
+      { at: "14:45", color: "#50B464", size: 11 },  // aloe green
+      { at: "15:30", color: "#8B5CF6", size: 14, filled: true }, // purple = me (pm break)
+      { at: "15:45", color: "#50B464", size: 11 },  // aloe green
+    ];
+
     return (
       <div className="px-4 py-3">
         <div className="relative" style={{ height: '20px' }}>
           {/* Track */}
           <div className="absolute inset-0 rounded-full overflow-hidden" style={{ background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}>
-            {/* Green progress */}
-            <div className="absolute top-0 left-0 h-full rounded-full" style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg, #8B5CF6, #7C3AED)', transition: 'width 1s linear' }} />
-            {/* Remaining shift (dim purple) */}
-            <div className="absolute top-0 h-full" style={{ left: `${progressPct}%`, width: `${100 - progressPct}%`, background: isDark ? 'rgba(139,92,246,0.18)' : 'rgba(139,92,246,0.12)' }} />
+            {/* Green progress up to now */}
+            <div className="absolute top-0 left-0 h-full" style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg, #22c55e, #16a34a)' }} />
+            {/* Purple remaining shift */}
+            <div className="absolute top-0 h-full" style={{ left: `${progressPct}%`, width: `${100 - progressPct}%`, background: isDark ? 'rgba(139,92,246,0.25)' : 'rgba(139,92,246,0.15)' }} />
             {/* Lunch block */}
-            <div className="absolute top-0 h-full pointer-events-none" style={{ left: `${lunchLeftPct}%`, width: `${lunchWidthPct}%`, background: isDark ? 'rgba(139,92,246,0.55)' : 'rgba(109,40,217,0.45)' }} />
+            <div className="absolute top-0 h-full" style={{ left: `${lunchLeftPct}%`, width: `${lunchWidthPct}%`, background: isDark ? 'rgba(139,92,246,0.6)' : 'rgba(109,40,217,0.5)' }} />
           </div>
+
+          {/* Demo dots */}
+          {demoDots.map((d, i) => (
+            <div key={i} className="absolute top-1/2 pointer-events-none" style={{
+              left: `${pct(d.at)}%`,
+              transform: 'translate(-50%, -50%)',
+              width: `${d.size}px`,
+              height: `${d.size}px`,
+              borderRadius: '50%',
+              background: d.filled ? d.color : 'transparent',
+              border: `2.5px solid ${d.color}`,
+              boxShadow: d.filled ? `0 0 8px ${d.color}cc` : `0 0 4px ${d.color}88`,
+              zIndex: 20,
+            }} />
+          ))}
+
           {/* Now circle */}
           {progressPct > 0 && progressPct < 100 && (
-            <div className="absolute top-1/2 pointer-events-none" style={{ left: `${progressPct}%`, transform: 'translate(-50%, -50%)', width: '16px', height: '16px', borderRadius: '50%', background: isDark ? '#d4d4d8' : '#e4e4e7', border: '2.5px solid white', boxShadow: '0 0 0 1px rgba(100,100,120,0.3), 0 2px 6px rgba(0,0,0,0.4)', zIndex: 30 }} />
+            <div className="absolute top-1/2 pointer-events-none" style={{
+              left: `${progressPct}%`,
+              transform: 'translate(-50%, -50%)',
+              width: '18px', height: '18px',
+              borderRadius: '50%',
+              background: isDark ? '#d4d4d8' : '#e4e4e7',
+              border: '3px solid white',
+              boxShadow: '0 0 0 1px rgba(100,100,120,0.3), 0 2px 8px rgba(0,0,0,0.5)',
+              zIndex: 30,
+            }} />
           )}
         </div>
       </div>
