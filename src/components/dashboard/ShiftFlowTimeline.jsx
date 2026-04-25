@@ -100,7 +100,26 @@ export default function ShiftFlowTimeline() {
     [employees, shifts]
   );
 
-  if (employeesWithShifts.length === 0) return null;
+  const nowTime = fromMins(nowMins);
+
+  if (employeesWithShifts.length === 0) {
+    // Show a minimal 8am–5pm timeline with just the current time indicator
+    const defaultStart = "08:00";
+    const defaultEnd = "17:00";
+    const defaultProgress = Math.max(0, Math.min(100, ((nowMins - toMins(defaultStart)) / (toMins(defaultEnd) - toMins(defaultStart))) * 100));
+    return (
+      <div className="px-4 py-3">
+        <div className="relative" style={{ height: '20px' }}>
+          <div className="absolute inset-0 rounded-full" style={{ background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}>
+            <div className="absolute top-0 left-0 h-full rounded-full" style={{ width: `${defaultProgress}%`, background: 'linear-gradient(90deg, #22c55e, #16a34a)', transition: 'width 1s linear' }} />
+          </div>
+          {defaultProgress > 0 && defaultProgress < 100 && (
+            <div className="absolute top-1/2 pointer-events-none" style={{ left: `${defaultProgress}%`, transform: 'translate(-50%, -50%)', width: '16px', height: '16px', borderRadius: '50%', background: isDark ? '#d4d4d8' : '#e4e4e7', border: '2.5px solid white', boxShadow: '0 0 0 1px rgba(100,100,120,0.3), 0 2px 6px rgba(0,0,0,0.4)', zIndex: 30 }} />
+          )}
+        </div>
+      </div>
+    );
+  }
 
   // Global time window = widest shift span
   const allStartMins = employeesWithShifts.map(e => toMins(shifts.find(s => s.employee_email === e.email)?.start_time || "08:00"));
