@@ -29,6 +29,7 @@ import { format, isToday, parseISO } from "date-fns";
 import { useTheme } from "@/components/ThemeProvider";
 
 import DailyPlanner from "../components/dashboard/DailyPlanner";
+import ChipWithLights from "../components/dashboard/ChipWithLights";
 import ShiftFlowTimeline from "../components/dashboard/ShiftFlowTimeline";
 import CollapsiblePanel from "@/components/ui/CollapsiblePanel";
 import DraggableDashboard from "../components/dashboard/DraggableDashboard";
@@ -269,14 +270,7 @@ export default function Dashboard() {
     id: 'chip-image',
     defaultWidth: 1,
     defaultHeight: 1,
-    content:
-    <img
-      src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/10b930afa_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
-      alt="BEN|CONNECT chip"
-      style={{ width: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block', borderRadius: '1rem', filter: 'drop-shadow(4px 5px 1px rgba(0,0,0,0.35)) drop-shadow(6px 8px 16px rgba(0,0,0,0.5))' }}
-      className="rounded h-[120px] sm:h-[150px] lg:h-[180px]" />
-
-
+    content: <ChipWithLights />,
   },
   {
     id: 'recent-cases',

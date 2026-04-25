@@ -510,7 +510,7 @@ export default function CasePage() {
 
         {/* ── AI TOOLS BAR ── */}
         <div className="flex items-center gap-2 flex-wrap mb-5 p-3 rounded-2xl" style={{ boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`, background: colors.bg }}>
-          <span className="text-xs font-bold mr-1" style={{ color: colors.textTertiary }}>AI</span>
+          <span className="text-[10px] font-bold mr-1" style={{ color: colors.textTertiary }}>Ai</span>
           {[
             { label: 'Summarize', icon: Brain, fn: handleSummarizeCall, disabled: aiLoading || !calls.length },
             { label: 'Priority', icon: Target, fn: handleDetectPriority, disabled: aiLoading },
@@ -518,8 +518,8 @@ export default function CasePage() {
             { label: 'Quality', icon: TrendingUp, fn: handleScoreQuality, disabled: aiLoading || !notes.length },
             { label: 'Compliance', icon: Shield, fn: handleCheckCompliance, disabled: aiLoading || !newNote.trim() },
           ].map(({ label, icon: Icon, fn, disabled }) => (
-            <button key={label} onClick={fn} disabled={disabled} className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium border-0 disabled:opacity-40" style={{ ...getButtonStyle('2px'), color: '#8B5CF6' }}>
-              <Icon className="w-3 h-3" />{label}
+            <button key={label} onClick={fn} disabled={disabled} className="flex items-center gap-1 h-6 px-2 rounded-md text-[10px] font-medium border-0 disabled:opacity-40" style={{ ...getButtonStyle('2px'), color: '#8B5CF6' }}>
+              <Icon className="w-2.5 h-2.5" />{label}
             </button>
           ))}
         </div>
