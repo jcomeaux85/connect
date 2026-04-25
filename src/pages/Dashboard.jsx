@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/components/hooks/useUser";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,31 +37,14 @@ import { LayoutGrid } from 'lucide-react';
 
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
+  const { data: user } = useUser();
   const [weather, setWeather] = useState(null);
   const [showLayoutSelector, setShowLayoutSelector] = useState(false);
   const { colors, getTransitionDuration } = useTheme();
 
   useEffect(() => {
-    loadUser();
     loadWeather();
   }, []);
-
-  const PROFILE_PHOTO = "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png";
-
-  const loadUser = async () => {
-    try {
-      const userData = await base44.auth.me();
-      // Set profile photo if not already set
-      if (!userData.profile_photo_url) {
-        await base44.auth.updateMe({ profile_photo_url: PROFILE_PHOTO });
-        userData.profile_photo_url = PROFILE_PHOTO;
-      }
-      setUser(userData);
-    } catch (error) {
-      console.error("Error loading user:", error);
-    }
-  };
 
   const loadWeather = async () => {
     try {
@@ -137,17 +121,6 @@ export default function Dashboard() {
     if (conditionLower.includes('cloud')) return Cloud;
     return Sun;
   };
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.bg }}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: colors.text }}></div>
-          <p style={{ color: colors.textSecondary }}>Loading...</p>
-        </div>
-      </div>);
-
-  }
 
   const WeatherIcon = weather ? getWeatherIcon(weather.condition) : Sun;
 

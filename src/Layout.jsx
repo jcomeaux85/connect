@@ -90,11 +90,11 @@ function DockNav({ colors, currentPath }) {
           <span style={{
             fontSize: `${sizes[i]}px`,
             fontWeight: isActive ? 700 : 400,
-            color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.8)',
+            color: isActive ? '#c084fc' : 'rgba(255,255,255,0.8)',
             transition: 'font-size 0.13s cubic-bezier(0.34,1.4,0.64,1), color 0.15s',
             whiteSpace: 'nowrap',
             letterSpacing: sizes[i] > 15 ? '-0.02em' : '0',
-            textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none',
+            textShadow: isActive ? '0 0 16px rgba(192,132,252,0.9)' : 'none',
           }}>{item.label}</span>
         );
         return (
