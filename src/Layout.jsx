@@ -90,11 +90,11 @@ function DockNav({ colors, currentPath }) {
           <span style={{
             fontSize: `${sizes[i]}px`,
             fontWeight: isActive ? 700 : 400,
-            color: isActive ? '#c084fc' : 'rgba(255,255,255,0.8)',
+            color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.8)',
             transition: 'font-size 0.13s cubic-bezier(0.34,1.4,0.64,1), color 0.15s',
             whiteSpace: 'nowrap',
             letterSpacing: sizes[i] > 15 ? '-0.02em' : '0',
-            textShadow: isActive ? '0 0 16px rgba(192,132,252,0.9)' : 'none',
+            textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none',
           }}>{item.label}</span>
         );
         return (
@@ -115,7 +115,6 @@ function LayoutContent({ children, currentPageName }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [showCalls, setShowCalls] = useState(false);
-  const [isOnActiveCall, setIsOnActiveCall] = useState(false);
   const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
   const [dispositionData, setDispositionData] = useState(null);
   const [showDOC, setShowDOC] = useState(false);
@@ -215,7 +214,6 @@ function LayoutContent({ children, currentPageName }) {
     const handleToggleBackgroundCustomizer = () => setShowBackgroundCustomizer((p) => !p);
     const handleToggleDoc = () => setShowDOC((p) => !p);
     const handleShowDisposition = (e) => setDispositionData(e.detail || {});
-    const handleCallStateChange = (e) => setIsOnActiveCall(e.detail?.isOnCall ?? false);
 
     // Ctrl+Alt+Enter (or Ctrl+Alt+D) to toggle DOC
     const handleKeyDown = (e) => {
@@ -231,7 +229,6 @@ function LayoutContent({ children, currentPageName }) {
     window.addEventListener('show-disposition-form', handleShowDisposition);
     window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('call-state-change', handleCallStateChange);
 
     return () => {
       window.removeEventListener('toggle-messages', handleToggleMessages);
@@ -240,7 +237,6 @@ function LayoutContent({ children, currentPageName }) {
       window.removeEventListener('show-disposition-form', handleShowDisposition);
       window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
       window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('call-state-change', handleCallStateChange);
     };
   }, []);
 
@@ -418,7 +414,7 @@ function LayoutContent({ children, currentPageName }) {
 
       <NotificationCenter user={user} isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
       <MessagingPanel user={user} isOpen={showMessages} onClose={() => setShowMessages(false)} />
-      <CallsPanel user={user} isOpen={showCalls} onClose={() => setShowCalls(false)} isOnCall={isOnActiveCall} />
+      {showCalls && <CallsPanel user={user} isOpen={showCalls} onClose={() => setShowCalls(false)} />}
       <BackgroundCustomizer isOpen={showBackgroundCustomizer} onClose={() => setShowBackgroundCustomizer(false)} />
       <AIAssistantOrb />
       <DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} />
