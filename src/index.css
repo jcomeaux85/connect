@@ -157,7 +157,6 @@ button:focus-visible {
   }
 }
 
-/* Apply 90% zoom to the whole app for better screen fit */
 html, body {
   height: 100%;
   overflow: hidden;
@@ -165,7 +164,6 @@ html, body {
 
 #root {
   height: 100%;
-  zoom: 0.75;
 }
 
 /* Ultra-thin scrollbar — only visible on scroll */
