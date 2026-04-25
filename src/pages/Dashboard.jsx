@@ -430,7 +430,7 @@ export default function Dashboard() {
 
 
   return (
-    <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
+    <div className="p-4 md:p-8" style={{ background: colors.bg }}>
 
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex flex-col items-center">

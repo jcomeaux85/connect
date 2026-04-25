@@ -417,7 +417,7 @@ function LayoutContent({ children, currentPageName }) {
         </nav>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden" style={{ scrollbarWidth: 'thin' }}>
+        <main className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ scrollbarWidth: 'thin' }}>
           {children}
         </main>
 
