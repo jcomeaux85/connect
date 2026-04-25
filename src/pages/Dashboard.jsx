@@ -306,12 +306,6 @@ export default function Dashboard() {
 
   },
   {
-    id: 'shiftflow',
-    defaultWidth: 3,
-    defaultHeight: 1,
-    content: <ShiftFlowTimeline />
-  },
-  {
     id: 'recent-cases',
     defaultWidth: 3,
     defaultHeight: 1,

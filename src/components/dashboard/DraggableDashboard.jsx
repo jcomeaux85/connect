@@ -39,7 +39,7 @@ export default function DraggableDashboard({ panels }) {
       </div>
 
       {/* Recent Cases Row */}
-      {panels.slice(6).map((panel, index) => (
+      {panels.slice(5).map((panel, index) => (
         <motion.div
           key={panel.id}
           initial={{ opacity: 0, scale: 0.95 }}
