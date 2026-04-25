@@ -44,11 +44,11 @@ const navigationItems = [
 
 
 const DOCK_ITEMS = [
-  { label: 'Connect', href: '/Dashboard' },
-  { label: 'DOC', href: '/DOC' },
-  { label: 'Core', href: '/Core' },
-  { label: 'HelpHub', href: null },
-];
+{ label: 'Connect', href: '/Dashboard' },
+{ label: 'DOC', href: '/DOC' },
+{ label: 'Core', href: '/Core' },
+{ label: 'HelpHub', href: null }];
+
 
 const BASE_FS = 13;
 const MAX_FS = 20;
@@ -82,32 +82,32 @@ function DockNav({ colors, currentPath }) {
       className="flex items-center absolute left-1/2 -translate-x-1/2"
       style={{ top: 0, bottom: 0, gap: 'clamp(8px, 1.5vw, 20px)', overflow: 'visible' }}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
+      onMouseLeave={handleMouseLeave}>
+      
       {DOCK_ITEMS.map((item, i) => {
         const isActive = item.href && currentPath === item.href;
-        const content = (
-          <span style={{
-            fontSize: `${sizes[i]}px`,
-            fontWeight: isActive ? 700 : 400,
-            color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.8)',
-            transition: 'font-size 0.13s cubic-bezier(0.34,1.4,0.64,1), color 0.15s',
-            whiteSpace: 'nowrap',
-            letterSpacing: sizes[i] > 15 ? '-0.02em' : '0',
-            textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none',
-          }}>{item.label}</span>
-        );
+        const content =
+        <span style={{
+          fontSize: `${sizes[i]}px`,
+          fontWeight: isActive ? 700 : 400,
+          color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.8)',
+          transition: 'font-size 0.13s cubic-bezier(0.34,1.4,0.64,1), color 0.15s',
+          whiteSpace: 'nowrap',
+          letterSpacing: sizes[i] > 15 ? '-0.02em' : '0',
+          textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none'
+        }}>{item.label}</span>;
+
         return (
-          <div key={item.label} ref={el => itemRefs.current[i] = el} style={{ display: 'flex', alignItems: 'center' }}>
-            {item.href
-              ? <Link to={item.href} className="no-underline flex items-center">{content}</Link>
-              : <button className="border-0 bg-transparent p-0 flex items-center cursor-not-allowed opacity-40">{content}</button>
+          <div key={item.label} ref={(el) => itemRefs.current[i] = el} style={{ display: 'flex', alignItems: 'center' }}>
+            {item.href ?
+            <Link to={item.href} className="no-underline flex items-center">{content}</Link> :
+            <button className="border-0 bg-transparent p-0 flex items-center cursor-not-allowed opacity-40">{content}</button>
             }
-          </div>
-        );
+          </div>);
+
       })}
-    </div>
-  );
+    </div>);
+
 }
 
 function LayoutContent({ children, currentPageName }) {
@@ -274,40 +274,40 @@ function LayoutContent({ children, currentPageName }) {
           <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible', clipPath: 'none' }}>
 
             {/* LEFT: page tabs — raised up, drop down on hover */}
-            <div className="flex items-end gap-0.5 flex-shrink-0" style={{ overflow: 'visible' }}>
+            <div className="bg-transparent flex items-end gap-0.5 flex-shrink-0" style={{ overflow: 'visible' }}>
               {navigationItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
                   <Link
                     key={item.title}
-                    to={item.url}
-                    className="flex items-end justify-center nav-tab-drop"
+                    to={item.url} className="bg-[hsl(var(--background))] flex items-end justify-center nav-tab-drop"
+
                     style={{
                       paddingBottom: 'clamp(4px, 0.8vw, 8px)',
                       paddingLeft: 'clamp(8px, 1.4vw, 18px)',
                       paddingRight: 'clamp(8px, 1.4vw, 18px)',
-                      background: isActive
-                        ? 'rgba(124,58,237,0.22)'
-                        : 'rgba(255,255,255,0.08)',
+                      background: isActive ?
+                      'rgba(124,58,237,0.22)' :
+                      'rgba(255,255,255,0.08)',
                       borderRadius: '0 0 8px 8px',
                       height: '100%',
-                      border: isActive
-                        ? '1px solid rgba(124,58,237,0.4)'
-                        : '1px solid rgba(255,255,255,0.18)',
+                      border: isActive ?
+                      '1px solid rgba(124,58,237,0.4)' :
+                      '1px solid rgba(255,255,255,0.18)',
                       borderTop: 'none',
-                      boxShadow: isActive
-                        ? 'inset 0 -1px 0 rgba(124,58,237,0.3)'
-                        : 'inset 0 1px 0 rgba(255,255,255,0.3)',
+                      boxShadow: isActive ?
+                      'inset 0 -1px 0 rgba(124,58,237,0.3)' :
+                      'inset 0 1px 0 rgba(255,255,255,0.3)',
                       // start raised above nav, transition down on hover
                       transform: isActive ? 'translateY(0)' : 'translateY(-60%)',
-                      transition: 'transform 0.25s cubic-bezier(0.34,1.4,0.64,1)',
+                      transition: 'transform 0.25s cubic-bezier(0.34,1.4,0.64,1)'
                     }}>
                     <span style={{
                       color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.75)',
                       fontSize: 'clamp(9px, 0.85vw, 12px)',
                       fontWeight: isActive ? 500 : 300,
                       textTransform: 'lowercase',
-                      whiteSpace: 'nowrap',
+                      whiteSpace: 'nowrap'
                     }}>{item.title}</span>
                   </Link>);
               })}
