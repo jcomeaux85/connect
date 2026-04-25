@@ -276,6 +276,7 @@ export default function CasePage() {
   };
   const handleStartCall = () => {
     setIsOnCall(true); setCallDuration(0); setShowActiveCallPanel(true); setCallTranscriptEntries([]);
+    window.dispatchEvent(new CustomEvent('call-state-change', { detail: { isOnCall: true } }));
     const timer = setInterval(() => setCallDuration(p => p + 1), 1000);
     setCallTimer(timer);
     createCallMutation.mutate({ case_id: caseId, customer_phone: phoneNumber, direction: 'outbound', call_start_time: new Date().toISOString(), status: 'in_progress', recording_url: 'transcript_enabled' }, { onSuccess: d => setCurrentCallId(d.id) });
@@ -288,6 +289,7 @@ export default function CasePage() {
       await generateCallTranscript(currentCallId);
     }
     setCallDuration(0); setRecordTranscript(true); setThirdPartyNumber(""); setCurrentCallId(null);
+    window.dispatchEvent(new CustomEvent('call-state-change', { detail: { isOnCall: false } }));
     setTimeout(() => handleSummarizeCall(), 1000);
   };
   const generateCallTranscript = async (callId) => {
