@@ -300,7 +300,8 @@ export default function Dashboard() {
     <img
       src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/10b930afa_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
       alt="BEN|CONNECT chip"
-      style={{ width: '100%', height: '180px', objectFit: 'contain', objectPosition: 'center', display: 'block', borderRadius: '1rem', filter: 'drop-shadow(4px 5px 1px rgba(0,0,0,0.35)) drop-shadow(6px 8px 16px rgba(0,0,0,0.5))' }} className="rounded" />
+      style={{ width: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block', borderRadius: '1rem', filter: 'drop-shadow(4px 5px 1px rgba(0,0,0,0.35)) drop-shadow(6px 8px 16px rgba(0,0,0,0.5))' }}
+      className="rounded h-[120px] sm:h-[150px] lg:h-[180px]" />
 
 
   },
