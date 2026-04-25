@@ -100,69 +100,123 @@ export default function ShiftFlowTimeline() {
   const nowTime = fromMins(nowMins);
 
   if (employeesWithShifts.length === 0) {
-    // Demo timeline: 8am–5pm with sample dots to show the design
-    const defaultStart = "08:00";
-    const defaultEnd = "17:00";
-    const totalMins = toMins(defaultEnd) - toMins(defaultStart);
-    const pct = (t) => Math.max(0, Math.min(100, ((toMins(t) - toMins(defaultStart)) / totalMins) * 100));
+    // Demo timeline: 8am–6pm
+    const dStart = "08:00";
+    const dEnd = "18:00";
+    const dTotalMins = toMins(dEnd) - toMins(dStart);
+    const pct = (t) => Math.max(0, Math.min(100, ((toMins(t) - toMins(dStart)) / dTotalMins) * 100));
+    const wPct = (s, e) => Math.max(0, ((toMins(e) - toMins(s)) / dTotalMins) * 100);
     const progressPct = pct(fromMins(nowMins));
-    const lunchLeftPct = pct("12:00");
-    const lunchWidthPct = ((toMins("12:30") - toMins("12:00")) / totalMins) * 100;
 
-    // Sample demo dots (teammates + user) spaced across the day
-    const demoDots = [
-      { at: "09:15", color: "#E8621A", size: 11 },  // burnt orange teammate
-      { at: "10:00", color: "#E8621A", size: 11 },  // burnt orange teammate
-      { at: "10:30", color: "#8B5CF6", size: 14, filled: true },  // purple = me
-      { at: "11:00", color: "#8B5CF6", size: 14 },  // purple = me
-      { at: "13:30", color: "#1DA8E0", size: 11 },  // sky blue
-      { at: "14:15", color: "#1DA8E0", size: 11 },  // sky blue
-      { at: "14:45", color: "#50B464", size: 11 },  // aloe green
-      { at: "15:30", color: "#8B5CF6", size: 14, filled: true }, // purple = me (pm break)
-      { at: "15:45", color: "#50B464", size: 11 },  // aloe green
+    // Teammate lunches (orange, sky blue, aloe green) — all before my 1pm lunch
+    const teammLunches = [
+      { start: "11:00", end: "12:00", color: "rgba(232,98,26,0.5)",  dot: "#E8621A" }, // orange
+      { start: "11:15", end: "12:15", color: "rgba(29,168,224,0.5)", dot: "#1DA8E0" }, // sky blue
+      { start: "11:30", end: "12:30", color: "rgba(80,180,100,0.5)", dot: "#50B464" }, // aloe green
+    ];
+    // My lunch: 1pm–2pm purple
+    const myLunch = { start: "13:00", end: "14:00" };
+
+    // Dots: each lunch gets a dot on each side. filled=taken, hollow=reserved
+    // Teammates: hollow (reserved). Mine: hollow (reserved)
+    const allDots = [
+      // Teammate orange
+      { at: teammLunches[0].start, color: "#E8621A", size: 10, filled: false },
+      { at: teammLunches[0].end,   color: "#E8621A", size: 10, filled: true  },
+      // Teammate sky blue
+      { at: teammLunches[1].start, color: "#1DA8E0", size: 10, filled: false },
+      { at: teammLunches[1].end,   color: "#1DA8E0", size: 10, filled: true  },
+      // Teammate aloe green
+      { at: teammLunches[2].start, color: "#50B464", size: 10, filled: false },
+      { at: teammLunches[2].end,   color: "#50B464", size: 10, filled: false },
+      // My purple lunch dots
+      { at: myLunch.start, color: "#a78bfa", size: 13, filled: false },
+      { at: myLunch.end,   color: "#a78bfa", size: 13, filled: false },
     ];
 
     return (
       <div className="px-4 py-3">
-        <div className="relative" style={{ height: '20px' }}>
-          {/* Track */}
-          <div className="absolute inset-0 rounded-full overflow-hidden" style={{ background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}>
+        {/* Outer wrapper taller to give room for the bar + green line below */}
+        <div className="relative" style={{ height: '28px' }}>
+
+          {/* Track — vertically centered in top half */}
+          <div className="absolute rounded-full overflow-hidden" style={{
+            top: '6px', left: 0, right: 0, height: '14px',
+            background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'
+          }}>
             {/* Green progress up to now */}
             <div className="absolute top-0 left-0 h-full" style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg, #22c55e, #16a34a)' }} />
-            {/* Purple remaining shift */}
-            <div className="absolute top-0 h-full" style={{ left: `${progressPct}%`, width: `${100 - progressPct}%`, background: isDark ? 'rgba(139,92,246,0.25)' : 'rgba(139,92,246,0.15)' }} />
-            {/* Lunch block */}
-            <div className="absolute top-0 h-full" style={{ left: `${lunchLeftPct}%`, width: `${lunchWidthPct}%`, background: isDark ? 'rgba(139,92,246,0.6)' : 'rgba(109,40,217,0.5)' }} />
+            {/* Purple remaining */}
+            <div className="absolute top-0 h-full" style={{ left: `${progressPct}%`, width: `${100 - progressPct}%`, background: isDark ? 'rgba(139,92,246,0.22)' : 'rgba(139,92,246,0.14)' }} />
+
+            {/* Teammate lunch blocks */}
+            {teammLunches.map((l, i) => (
+              <div key={i} className="absolute pointer-events-none" style={{
+                top: '20%', height: '60%',
+                left: `${pct(l.start)}%`,
+                width: `${wPct(l.start, l.end)}%`,
+                background: l.color,
+                borderRadius: '3px',
+              }} />
+            ))}
+
+            {/* My purple lunch block — full height */}
+            <div className="absolute top-0 h-full pointer-events-none" style={{
+              left: `${pct(myLunch.start)}%`,
+              width: `${wPct(myLunch.start, myLunch.end)}%`,
+              background: isDark ? 'rgba(139,92,246,0.65)' : 'rgba(109,40,217,0.55)',
+              borderRadius: '3px',
+            }} />
           </div>
 
-          {/* Demo dots */}
-          {demoDots.map((d, i) => (
-            <div key={i} className="absolute top-1/2 pointer-events-none" style={{
-              left: `${pct(d.at)}%`,
-              transform: 'translate(-50%, -50%)',
-              width: `${d.size}px`,
-              height: `${d.size}px`,
-              borderRadius: '50%',
-              background: d.filled ? d.color : 'transparent',
-              border: `2.5px solid ${d.color}`,
-              boxShadow: d.filled ? `0 0 8px ${d.color}cc` : `0 0 4px ${d.color}88`,
-              zIndex: 20,
-            }} />
-          ))}
-
-          {/* Now circle */}
+          {/* Thin green vertical "now" line — full bar height */}
           {progressPct > 0 && progressPct < 100 && (
-            <div className="absolute top-1/2 pointer-events-none" style={{
+            <div className="absolute pointer-events-none" style={{
               left: `${progressPct}%`,
+              top: '4px',
+              bottom: '4px',
+              width: '2px',
+              background: '#22c55e',
+              boxShadow: '0 0 6px rgba(34,197,94,0.8)',
+              transform: 'translateX(-50%)',
+              zIndex: 25,
+              borderRadius: '1px',
+            }} />
+          )}
+
+          {/* Now circle on the bar center */}
+          {progressPct > 0 && progressPct < 100 && (
+            <div className="absolute pointer-events-none" style={{
+              left: `${progressPct}%`,
+              top: '50%',
               transform: 'translate(-50%, -50%)',
-              width: '18px', height: '18px',
+              marginTop: '-2px',
+              width: '16px', height: '16px',
               borderRadius: '50%',
               background: isDark ? '#d4d4d8' : '#e4e4e7',
-              border: '3px solid white',
+              border: '2.5px solid white',
               boxShadow: '0 0 0 1px rgba(100,100,120,0.3), 0 2px 8px rgba(0,0,0,0.5)',
               zIndex: 30,
             }} />
           )}
+
+          {/* Dots on each side of lunches */}
+          {allDots.map((d, i) => (
+            <div key={i} className="absolute pointer-events-none" style={{
+              left: `${pct(d.at)}%`,
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              marginTop: '-1px',
+              width: `${d.size}px`,
+              height: `${d.size}px`,
+              borderRadius: '50%',
+              background: d.filled ? d.color : 'transparent',
+              border: `2px solid ${d.color}`,
+              boxShadow: d.filled ? `0 0 7px ${d.color}bb` : `0 0 4px ${d.color}77`,
+              zIndex: 22,
+            }} />
+          ))}
+
         </div>
       </div>
     );
