@@ -44,97 +44,71 @@ const navigationItems = [
 
 
 const DOCK_ITEMS = [
-  { label: 'connect', color: '#a855f7', href: '/Dashboard' },
-  { label: 'doc',     color: '#ef4444', href: '/DOC' },
-  { label: 'core',    color: '#22c55e', href: '/Core' },
-  { label: 'help',    color: '#3b82f6', href: null },
+  { label: 'Connect', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: '/Dashboard' },
+  { label: 'DOC', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a0619203e_kling_20260422_Inpaint_make_the_D_3365_2.png', href: '/DOC' },
+  { label: 'Core', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: '/Core' },
+  { label: 'HelpHub', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: null },
 ];
 
-const BASE_FONT = 15;
-const MAX_FONT = 24;
-const REACH = 130;
+// NAV_H must match the nav bar height so images grow up to exactly the top edge
+const NAV_H = 54; // px — matches clamp max of the nav bar
+const BASE_H = 40;
+const MAX_H = NAV_H - 2; // image top sits just 2px below the screen top
+const REACH = 120;
 
 function DockNav({ colors }) {
   const dockRef = useRef(null);
   const itemRefs = useRef([]);
-  const [scales, setScales] = useState(DOCK_ITEMS.map(() => 0));
-  const [pressed, setPressed] = useState(null);
-  const [active, setActive] = useState(null);
+  const [sizes, setSizes] = useState(DOCK_ITEMS.map(() => BASE_H));
 
   const handleMouseMove = (e) => {
-    const newScales = DOCK_ITEMS.map((_, i) => {
+    const newSizes = DOCK_ITEMS.map((_, i) => {
       const el = itemRefs.current[i];
-      if (!el) return 0;
+      if (!el) return BASE_H;
       const rect = el.getBoundingClientRect();
       const center = rect.left + rect.width / 2;
       const dist = Math.abs(e.clientX - center);
-      if (dist >= REACH) return 0;
+      if (dist >= REACH) return BASE_H;
       const t = 1 - dist / REACH;
-      return t * t * (3 - 2 * t);
+      const ease = t * t * (3 - 2 * t);
+      return BASE_H + (MAX_H - BASE_H) * ease;
     });
-    setScales(newScales);
+    setSizes(newSizes);
   };
 
-  const handleMouseLeave = () => setScales(DOCK_ITEMS.map(() => 0));
+  const handleMouseLeave = () => setSizes(DOCK_ITEMS.map(() => BASE_H));
 
   return (
     <div
       ref={dockRef}
-      className="flex items-center justify-center flex-1"
-      style={{ gap: 'clamp(10px, 2vw, 28px)', overflow: 'visible' }}
+      className="flex items-end absolute left-1/2 -translate-x-1/2"
+      style={{ top: 0, bottom: 0, gap: 'clamp(6px, 1vw, 14px)', overflow: 'visible', paddingBottom: '2px' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       {DOCK_ITEMS.map((item, i) => {
-        const t = scales[i];
-        const fontSize = BASE_FONT + (MAX_FONT - BASE_FONT) * t;
-        const shadowOffset = 1 + t * 9;
-        const shadowBlur = 4 + t * 18;
-        const shadowOpacity = 0.25 + t * 0.45;
-        const isActive = active === item.label;
-        const isPressed = pressed === item.label;
-
-        const textColor = isActive ? item.color : '#ffffff';
-        const outlineGlow = isActive
-          ? `-1px -1px 0 rgba(255,255,255,0.7), 1px -1px 0 rgba(255,255,255,0.7), -1px 1px 0 rgba(255,255,255,0.7), 1px 1px 0 rgba(255,255,255,0.7), 0 0 6px ${item.color}66`
-          : '';
-        const depthShadow = `0 ${shadowOffset}px ${shadowBlur}px rgba(0,0,0,${shadowOpacity})`;
-        const textShadow = isActive ? `${outlineGlow}, ${depthShadow}` : depthShadow;
-
-        const inner = (
-          <span
+        const h = sizes[i];
+        const content = (
+          <img
+            src={item.src}
+            alt={item.label}
             style={{
-              fontSize: `${fontSize}px`,
-              fontWeight: 700,
-              letterSpacing: '0.01em',
-              color: textColor,
-              textShadow,
-              transform: isPressed ? 'scale(0.82)' : 'scale(1)',
-              display: 'inline-block',
-              transition: isPressed
-                ? 'transform 0.08s ease-in, font-size 0.13s cubic-bezier(0.34,1.4,0.64,1)'
-                : 'transform 0.22s cubic-bezier(0.34,1.4,0.64,1), font-size 0.13s cubic-bezier(0.34,1.4,0.64,1), color 0.18s ease, text-shadow 0.18s ease',
-              cursor: 'pointer',
-              userSelect: 'none',
-              lineHeight: 1,
+              height: `${h}px`,
+              width: 'auto',
+              objectFit: 'contain',
+              display: 'block',
+              // grow from bottom — top clips at nav top edge
+              transition: 'height 0.13s cubic-bezier(0.34,1.4,0.64,1)',
+              transformOrigin: 'bottom center',
+              willChange: 'height',
             }}
-          >
-            {item.label}
-          </span>
+          />
         );
-
         return (
-          <div
-            key={item.label}
-            ref={el => itemRefs.current[i] = el}
-            style={{ display: 'flex', alignItems: 'center' }}
-            onMouseDown={() => setPressed(item.label)}
-            onMouseUp={() => { setPressed(null); setActive(item.label); }}
-            onMouseLeave={() => setPressed(null)}
-          >
+          <div key={item.label} ref={el => itemRefs.current[i] = el} style={{ display: 'flex', alignItems: 'flex-end' }}>
             {item.href
-              ? <Link to={item.href} className="no-underline">{inner}</Link>
-              : <button className="border-0 bg-transparent p-0">{inner}</button>
+              ? <Link to={item.href} className="no-underline flex items-end">{content}</Link>
+              : <button className="border-0 bg-transparent p-0 flex items-end cursor-pointer">{content}</button>
             }
           </div>
         );
@@ -417,7 +391,7 @@ function LayoutContent({ children, currentPageName }) {
         </nav>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ scrollbarWidth: 'thin' }}>
+        <main className="flex-1 overflow-y-auto overflow-x-hidden" style={{ scrollbarWidth: 'thin' }}>
           {children}
         </main>
 
