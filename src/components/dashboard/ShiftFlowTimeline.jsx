@@ -37,19 +37,16 @@ function checkConflict(requestedStart, existingBreaks, myEmail) {
   return false;
 }
 
-// Grey gradient shades for teammates (lightest to darkest)
-const TEAMMATE_LUNCH_COLORS = [
-  "rgba(200,195,220,0.55)",
-  "rgba(170,165,190,0.5)",
-  "rgba(140,135,160,0.45)",
-  "rgba(110,105,130,0.4)",
+// Teammate colors: burnt orange, sky blue, aloe green, then repeat
+const TEAMMATE_COLORS = [
+  { lunch: "rgba(210,100,30,0.45)", dot: "#E8621A" },   // burnt orange
+  { lunch: "rgba(30,160,220,0.45)", dot: "#1DA8E0" },   // sky blue
+  { lunch: "rgba(80,180,100,0.45)", dot: "#50B464" },   // aloe green
+  { lunch: "rgba(210,100,30,0.35)", dot: "#E8621A" },
 ];
-const TEAMMATE_DOT_COLORS = [
-  "rgba(210,205,230,0.9)",
-  "rgba(175,170,195,0.9)",
-  "rgba(145,140,165,0.9)",
-  "rgba(115,110,135,0.9)",
-];
+// Keep for backward compat
+const TEAMMATE_LUNCH_COLORS = TEAMMATE_COLORS.map(c => c.lunch);
+const TEAMMATE_DOT_COLORS = TEAMMATE_COLORS.map(c => c.dot);
 
 export default function ShiftFlowTimeline() {
   const { colors, isDark } = useTheme();
@@ -103,18 +100,29 @@ export default function ShiftFlowTimeline() {
   const nowTime = fromMins(nowMins);
 
   if (employeesWithShifts.length === 0) {
-    // Show a minimal 8am–5pm timeline with just the current time indicator
     const defaultStart = "08:00";
     const defaultEnd = "17:00";
-    const defaultProgress = Math.max(0, Math.min(100, ((nowMins - toMins(defaultStart)) / (toMins(defaultEnd) - toMins(defaultStart))) * 100));
+    const lunchStart = "12:00";
+    const lunchEnd = "12:30";
+    const totalMins = toMins(defaultEnd) - toMins(defaultStart);
+    const progressPct = Math.max(0, Math.min(100, ((nowMins - toMins(defaultStart)) / totalMins) * 100));
+    const lunchLeftPct = ((toMins(lunchStart) - toMins(defaultStart)) / totalMins) * 100;
+    const lunchWidthPct = ((toMins(lunchEnd) - toMins(lunchStart)) / totalMins) * 100;
     return (
       <div className="px-4 py-3">
         <div className="relative" style={{ height: '20px' }}>
-          <div className="absolute inset-0 rounded-full" style={{ background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}>
-            <div className="absolute top-0 left-0 h-full rounded-full" style={{ width: `${defaultProgress}%`, background: 'linear-gradient(90deg, #22c55e, #16a34a)', transition: 'width 1s linear' }} />
+          {/* Track */}
+          <div className="absolute inset-0 rounded-full overflow-hidden" style={{ background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)' }}>
+            {/* Green progress */}
+            <div className="absolute top-0 left-0 h-full rounded-full" style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg, #8B5CF6, #7C3AED)', transition: 'width 1s linear' }} />
+            {/* Remaining shift (dim purple) */}
+            <div className="absolute top-0 h-full" style={{ left: `${progressPct}%`, width: `${100 - progressPct}%`, background: isDark ? 'rgba(139,92,246,0.18)' : 'rgba(139,92,246,0.12)' }} />
+            {/* Lunch block */}
+            <div className="absolute top-0 h-full pointer-events-none" style={{ left: `${lunchLeftPct}%`, width: `${lunchWidthPct}%`, background: isDark ? 'rgba(139,92,246,0.55)' : 'rgba(109,40,217,0.45)' }} />
           </div>
-          {defaultProgress > 0 && defaultProgress < 100 && (
-            <div className="absolute top-1/2 pointer-events-none" style={{ left: `${defaultProgress}%`, transform: 'translate(-50%, -50%)', width: '16px', height: '16px', borderRadius: '50%', background: isDark ? '#d4d4d8' : '#e4e4e7', border: '2.5px solid white', boxShadow: '0 0 0 1px rgba(100,100,120,0.3), 0 2px 6px rgba(0,0,0,0.4)', zIndex: 30 }} />
+          {/* Now circle */}
+          {progressPct > 0 && progressPct < 100 && (
+            <div className="absolute top-1/2 pointer-events-none" style={{ left: `${progressPct}%`, transform: 'translate(-50%, -50%)', width: '16px', height: '16px', borderRadius: '50%', background: isDark ? '#d4d4d8' : '#e4e4e7', border: '2.5px solid white', boxShadow: '0 0 0 1px rgba(100,100,120,0.3), 0 2px 6px rgba(0,0,0,0.4)', zIndex: 30 }} />
           )}
         </div>
       </div>
@@ -194,7 +202,7 @@ export default function ShiftFlowTimeline() {
             style={{
               left: `${meShiftLeftPct}%`,
               width: `${greenWidthPct}%`,
-              background: 'linear-gradient(90deg, #22c55e, #16a34a)',
+              background: 'linear-gradient(90deg, #8B5CF6, #7C3AED)',
               transition: 'width 1s linear',
             }} />
 
