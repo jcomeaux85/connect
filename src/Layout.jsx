@@ -280,7 +280,7 @@ function LayoutContent({ children, currentPageName }) {
                 return (
                   <Link
                     key={item.title}
-                    to={item.url} className="bg-transparent flex items-end justify-center nav-tab-drop"
+                    to={item.url} className="bg-[hsl(var(--background))] flex items-end justify-center nav-tab-drop"
 
                     style={{
                       paddingBottom: 'clamp(4px, 0.8vw, 8px)',
