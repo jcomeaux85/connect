@@ -54,10 +54,9 @@ const BASE_FS = 13;
 const MAX_FS = 20;
 const REACH = 120;
 
-function DockNav({ colors }) {
+function DockNav({ colors, currentPath }) {
   const dockRef = useRef(null);
   const itemRefs = useRef([]);
-  const location = useLocation();
   const [sizes, setSizes] = useState(DOCK_ITEMS.map(() => BASE_FS));
 
   const handleMouseMove = (e) => {
@@ -86,7 +85,7 @@ function DockNav({ colors }) {
       onMouseLeave={handleMouseLeave}
     >
       {DOCK_ITEMS.map((item, i) => {
-        const isActive = item.href && location.pathname === item.href;
+        const isActive = item.href && currentPath === item.href;
         const content = (
           <span style={{
             fontSize: `${sizes[i]}px`,
@@ -315,7 +314,7 @@ function LayoutContent({ children, currentPageName }) {
             </div>
 
             {/* CENTER: Mac-style Dock */}
-            <DockNav colors={colors} />
+            <DockNav colors={colors} currentPath={location.pathname} />
 
             {/* RIGHT: Phone, Messages, Notifications, Avatar */}
             <div className="flex items-center flex-shrink-0" style={{ gap: 'clamp(3px, 0.5vw, 6px)' }}>
