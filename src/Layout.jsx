@@ -287,23 +287,23 @@ function LayoutContent({ children, currentPageName }) {
                       paddingLeft: 'clamp(8px, 1.4vw, 18px)',
                       paddingRight: 'clamp(8px, 1.4vw, 18px)',
                       background: isActive ?
-                      'rgba(124,58,237,0.22)' :
+                      'linear-gradient(135deg, rgba(139,92,246,0.95) 0%, rgba(124,58,237,0.95) 100%)' :
                       'rgba(255,255,255,0.08)',
                       borderRadius: '0 0 8px 8px',
                       height: '100%',
                       border: isActive ?
-                      '1px solid rgba(124,58,237,0.4)' :
+                      '1px solid rgba(139,92,246,0.5)' :
                       '1px solid rgba(255,255,255,0.18)',
                       borderTop: 'none',
                       boxShadow: isActive ?
-                      'inset 0 -1px 0 rgba(124,58,237,0.3)' :
+                      '0 4px 12px rgba(139,92,246,0.4)' :
                       'inset 0 1px 0 rgba(255,255,255,0.3)',
                       // start raised above nav, transition down on hover
                       transform: isActive ? 'translateY(0)' : 'translateY(-60%)',
                       transition: 'transform 0.25s cubic-bezier(0.34,1.4,0.64,1)'
                     }}>
                     <span style={{
-                      color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.75)',
+                      color: isActive ? '#ffffff' : 'rgba(255,255,255,0.75)',
                       fontSize: 'clamp(9px, 0.85vw, 12px)',
                       fontWeight: isActive ? 500 : 300,
                       textTransform: 'lowercase',

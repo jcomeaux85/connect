@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -176,15 +175,15 @@ Provide a helpful, friendly response. Cite sources when applicable.`,
           >
             <button
               onClick={() => setIsOpen(true)}
-              className="w-16 h-16 rounded-full border-0 p-0 overflow-hidden group hover:scale-110 transition-transform flex items-center justify-center"
+              className="w-10 h-10 rounded-full border-0 p-0 overflow-hidden group hover:scale-110 transition-transform flex items-center justify-center"
               style={{
                 background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%)',
                 border: '2px solid rgba(255, 255, 255, 0.3)',
                 boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
               }}
             >
-              <span className="text-white font-bold text-lg">AI</span>
-            </button>
+              <span className="text-white font-bold text-xs">Ai</span>
+                     </button>
           </motion.div>
         )}
       </AnimatePresence>
