@@ -44,71 +44,65 @@ const navigationItems = [
 
 
 const DOCK_ITEMS = [
-  { label: 'Connect', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: '/Dashboard' },
-  { label: 'DOC', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a0619203e_kling_20260422_Inpaint_make_the_D_3365_2.png', href: '/DOC' },
-  { label: 'Core', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: '/Core' },
-  { label: 'HelpHub', src: 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/1fd155177_hBkNL1.jpg', href: null },
+  { label: 'Connect', href: '/Dashboard' },
+  { label: 'DOC', href: '/DOC' },
+  { label: 'Core', href: '/Core' },
+  { label: 'HelpHub', href: null },
 ];
 
-// NAV_H must match the nav bar height so images grow up to exactly the top edge
-const NAV_H = 54; // px — matches clamp max of the nav bar
-const BASE_H = 40;
-const MAX_H = NAV_H - 2; // image top sits just 2px below the screen top
+const BASE_FS = 13;
+const MAX_FS = 20;
 const REACH = 120;
 
 function DockNav({ colors }) {
   const dockRef = useRef(null);
   const itemRefs = useRef([]);
-  const [sizes, setSizes] = useState(DOCK_ITEMS.map(() => BASE_H));
+  const location = useLocation();
+  const [sizes, setSizes] = useState(DOCK_ITEMS.map(() => BASE_FS));
 
   const handleMouseMove = (e) => {
     const newSizes = DOCK_ITEMS.map((_, i) => {
       const el = itemRefs.current[i];
-      if (!el) return BASE_H;
+      if (!el) return BASE_FS;
       const rect = el.getBoundingClientRect();
       const center = rect.left + rect.width / 2;
       const dist = Math.abs(e.clientX - center);
-      if (dist >= REACH) return BASE_H;
+      if (dist >= REACH) return BASE_FS;
       const t = 1 - dist / REACH;
       const ease = t * t * (3 - 2 * t);
-      return BASE_H + (MAX_H - BASE_H) * ease;
+      return BASE_FS + (MAX_FS - BASE_FS) * ease;
     });
     setSizes(newSizes);
   };
 
-  const handleMouseLeave = () => setSizes(DOCK_ITEMS.map(() => BASE_H));
+  const handleMouseLeave = () => setSizes(DOCK_ITEMS.map(() => BASE_FS));
 
   return (
     <div
       ref={dockRef}
-      className="flex items-end absolute left-1/2 -translate-x-1/2"
-      style={{ top: 0, bottom: 0, gap: 'clamp(6px, 1vw, 14px)', overflow: 'visible', paddingBottom: '2px' }}
+      className="flex items-center absolute left-1/2 -translate-x-1/2"
+      style={{ top: 0, bottom: 0, gap: 'clamp(8px, 1.5vw, 20px)', overflow: 'visible' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       {DOCK_ITEMS.map((item, i) => {
-        const h = sizes[i];
+        const isActive = item.href && location.pathname === item.href;
         const content = (
-          <img
-            src={item.src}
-            alt={item.label}
-            style={{
-              height: `${h}px`,
-              width: 'auto',
-              objectFit: 'contain',
-              display: 'block',
-              // grow from bottom — top clips at nav top edge
-              transition: 'height 0.13s cubic-bezier(0.34,1.4,0.64,1)',
-              transformOrigin: 'bottom center',
-              willChange: 'height',
-            }}
-          />
+          <span style={{
+            fontSize: `${sizes[i]}px`,
+            fontWeight: isActive ? 700 : 400,
+            color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.8)',
+            transition: 'font-size 0.13s cubic-bezier(0.34,1.4,0.64,1), color 0.15s',
+            whiteSpace: 'nowrap',
+            letterSpacing: sizes[i] > 15 ? '-0.02em' : '0',
+            textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none',
+          }}>{item.label}</span>
         );
         return (
-          <div key={item.label} ref={el => itemRefs.current[i] = el} style={{ display: 'flex', alignItems: 'flex-end' }}>
+          <div key={item.label} ref={el => itemRefs.current[i] = el} style={{ display: 'flex', alignItems: 'center' }}>
             {item.href
-              ? <Link to={item.href} className="no-underline flex items-end">{content}</Link>
-              : <button className="border-0 bg-transparent p-0 flex items-end cursor-pointer">{content}</button>
+              ? <Link to={item.href} className="no-underline flex items-center">{content}</Link>
+              : <button className="border-0 bg-transparent p-0 flex items-center cursor-not-allowed opacity-40">{content}</button>
             }
           </div>
         );
