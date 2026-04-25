@@ -280,7 +280,7 @@ function LayoutContent({ children, currentPageName }) {
                 return (
                   <Link
                     key={item.title}
-                    to={item.url} className="bg-[hsl(var(--background))] flex items-end justify-center nav-tab-drop"
+                    to={item.url} className="bg-transparent flex items-end justify-center nav-tab-drop"
 
                     style={{
                       paddingBottom: 'clamp(4px, 0.8vw, 8px)',
@@ -308,7 +308,7 @@ function LayoutContent({ children, currentPageName }) {
                       fontWeight: isActive ? 500 : 300,
                       textTransform: 'lowercase',
                       whiteSpace: 'nowrap'
-                    }}>{item.title}</span>
+                    }} className="bg-transparent">{item.title}</span>
                   </Link>);
               })}
             </div>
