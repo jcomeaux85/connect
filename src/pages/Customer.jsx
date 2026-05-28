@@ -1014,6 +1014,12 @@ export default function CustomerPage() {
 
               {/* Right Column - Employment and Carrier Info */}
               <div className="space-y-6">
+                {/* Provider Map */}
+                <CustomerProviderMap
+                  customer={customer}
+                  clientCompany={customerClientCompanyEntity}
+                />
+
                 {/* Employment Information */}
                 <Card
                   className="border-0"
@@ -1252,12 +1258,6 @@ export default function CustomerPage() {
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* Provider Map */}
-                <CustomerProviderMap
-                  customer={customer}
-                  clientCompany={customerClientCompanyEntity}
-                />
 
                 {/* Carrier Information */}
                 <Card
