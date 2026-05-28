@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/components/hooks/useUser";
-import { Phone, PhoneIncoming, CheckSquare, Folder, Clock } from "lucide-react";
-import { isToday, parseISO, format } from "date-fns";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { Phone, PhoneIncoming, CheckSquare, Clock } from "lucide-react";
+import { isToday, parseISO } from "date-fns";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import ShiftFlowTimeline from "@/components/dashboard/ShiftFlowTimeline";
 import CallQueuePanel from "@/components/dashboard/CallQueuePanel";
 import AgentActivityPanel from "@/components/dashboard/AgentActivityPanel";
 import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
+import StatSlidePanel from "@/components/dashboard/StatSlidePanel";
 
 const CALL_VOLUME_DATA = [
   { time: '9AM', incoming: 12, resolved: 8 },
@@ -24,8 +23,69 @@ const CALL_VOLUME_DATA = [
   { time: 'Now', incoming: 24, resolved: 20 },
 ];
 
+// Tilt card with glare
+function TiltCard({ children, onClick, className, style }) {
+  const ref = useRef(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [glare, setGlare] = useState({ mx: 50, my: 50, op: 0 });
+  const [locked, setLocked] = useState(false);
+
+  const onMove = useCallback((e) => {
+    if (locked) return;
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const fx = (e.clientX - r.left) / r.width - 0.5;
+    const fy = (e.clientY - r.top) / r.height - 0.5;
+    setTilt({ x: -fy * 10, y: fx * 10 });
+    setGlare({ mx: (fx + 0.5) * 100, my: (fy + 0.5) * 100, op: 0.12 });
+  }, [locked]);
+
+  const onLeave = useCallback(() => {
+    if (locked) return;
+    setTilt({ x: 0, y: 0 });
+    setGlare(g => ({ ...g, op: 0 }));
+  }, [locked]);
+
+  const handleClick = useCallback(() => {
+    setLocked(true);
+    setTilt({ x: 0, y: 0 });
+    setGlare(g => ({ ...g, op: 0 }));
+    onClick && onClick();
+    // Unlock after panel closes (user will click away)
+    setTimeout(() => setLocked(false), 300);
+  }, [onClick]);
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        ...style,
+        transform: locked ? 'perspective(600px) rotateX(0deg) rotateY(0deg)' : `perspective(600px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out',
+        willChange: 'transform',
+        position: 'relative',
+        overflow: 'hidden',
+        cursor: 'pointer',
+      }}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      onClick={handleClick}
+    >
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1,
+        background: `radial-gradient(circle at ${glare.mx}% ${glare.my}%, rgba(255,255,255,${glare.op}) 0%, transparent 60%)`,
+        transition: 'opacity 0.15s',
+      }} />
+      <div style={{ position: 'relative', zIndex: 2 }}>{children}</div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { data: user } = useUser();
+  const [openPanel, setOpenPanel] = useState(null); // statType string
 
   const { data: cases = [] } = useQuery({
     queryKey: ['cases'],
@@ -51,11 +111,11 @@ export default function Dashboard() {
     enabled: !!user,
   });
 
-  const myCases = cases.filter(c => c.assigned_to === user?.email);
-  const activeCases = cases.filter(c => c.status !== 'closed' && c.status !== 'resolved').length;
-  const inQueue = cases.filter(c => c.status === 'new').length;
-  const resolvedToday = cases.filter(c => c.status === 'resolved' && c.updated_date && isToday(parseISO(c.updated_date))).length;
+  const activeCases = cases.filter(c => c.status !== 'closed' && c.status !== 'resolved');
+  const inQueueCases = cases.filter(c => c.status === 'new');
+  const resolvedTodayCases = cases.filter(c => c.status === 'resolved' && c.updated_date && isToday(parseISO(c.updated_date)));
   const todayCalls = calls.filter(c => c.created_date && isToday(parseISO(c.created_date)));
+
   const avgHandleTime = todayCalls.length > 0
     ? todayCalls.reduce((a, c) => a + (c.duration || 0), 0) / todayCalls.length
     : 0;
@@ -63,11 +123,30 @@ export default function Dashboard() {
   const avgSec = Math.floor(avgHandleTime % 60);
 
   const stats = [
-    { label: 'Active Calls', value: activeCases, sub: `${inQueue} on hold`, change: '+12%', changePos: true, color: '#7C3AED', icon: Phone },
-    { label: 'In Queue', value: inQueue, sub: `Avg wait 1:34`, change: '-8%', changePos: false, color: '#3B82F6', icon: PhoneIncoming },
-    { label: 'Resolved Today', value: resolvedToday || 127, sub: '94% satisfaction', change: '+23%', changePos: true, color: '#10B981', icon: CheckSquare },
-    { label: 'Avg Handle Time', value: `${avgMin || 4}:${String(avgSec || 32).padStart(2, '0')}`, sub: 'Target: 5:00', change: '-15%', changePos: false, color: '#F59E0B', icon: Clock },
+    {
+      label: 'Active Calls', value: activeCases.length, sub: `${inQueueCases.length} on hold`,
+      change: '+12%', changePos: true, color: '#7C3AED', icon: Phone,
+      panelData: activeCases,
+    },
+    {
+      label: 'In Queue', value: inQueueCases.length, sub: 'Avg wait 1:34',
+      change: '-8%', changePos: false, color: '#3B82F6', icon: PhoneIncoming,
+      panelData: inQueueCases,
+    },
+    {
+      label: 'Resolved Today', value: resolvedTodayCases.length || 127, sub: '94% satisfaction',
+      change: '+23%', changePos: true, color: '#10B981', icon: CheckSquare,
+      panelData: resolvedTodayCases,
+    },
+    {
+      label: 'Avg Handle Time', value: `${avgMin || 4}:${String(avgSec || 32).padStart(2, '0')}`,
+      sub: 'Target: 5:00', change: '-15%', changePos: false, color: '#F59E0B', icon: Clock,
+      panelData: todayCalls,
+    },
   ];
+
+  const panelDataMap = {};
+  stats.forEach(s => { panelDataMap[s.label] = s.panelData; });
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-full">
@@ -83,12 +162,17 @@ export default function Dashboard() {
       {/* Shift timeline */}
       <ShiftFlowTimeline />
 
-      {/* Stats row */}
+      {/* Stats row — tilt + click to open panel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => {
           const StatIcon = s.icon;
           return (
-            <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+            <TiltCard
+              key={i}
+              onClick={() => setOpenPanel(s.label)}
+              className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm"
+              style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}
+            >
               <div className="flex items-start justify-between mb-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}15` }}>
                   <StatIcon className="w-5 h-5" style={{ color: s.color }} />
@@ -100,7 +184,8 @@ export default function Dashboard() {
               <p className="text-2xl font-bold text-gray-900">{s.value}</p>
               <p className="text-xs font-semibold text-gray-500 mt-0.5">{s.label}</p>
               <p className="text-[11px] text-gray-400 mt-0.5">{s.sub}</p>
-            </div>
+              <p className="text-[9px] mt-2 font-medium" style={{ color: s.color, opacity: 0.7 }}>Click to view →</p>
+            </TiltCard>
           );
         })}
       </div>
@@ -129,6 +214,14 @@ export default function Dashboard() {
       {/* Agent Activity + AI Insights */}
       <AgentActivityPanel users={users} />
       <AIInsightsPanel />
+
+      {/* Slide-out detail panel */}
+      <StatSlidePanel
+        open={!!openPanel}
+        onClose={() => setOpenPanel(null)}
+        statType={openPanel}
+        data={panelDataMap[openPanel] || []}
+      />
     </div>
   );
 }

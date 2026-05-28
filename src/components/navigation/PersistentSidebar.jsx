@@ -48,8 +48,8 @@ function LitButton({ children, isActive, style, className, onClick, as: Tag = 'd
     const mx = ((fx + 0.5) * 100);
     const my = ((fy + 0.5) * 100);
 
-    const tiltY = fx * (isActive ? 0 : 4);   // active: flat
-    const tiltX = -fy * (isActive ? 0 : 4);
+    const tiltY = fx * (isActive ? 0 : 10);   // active: flat, inactive: more tilt
+    const tiltX = -fy * (isActive ? 0 : 10);
 
     const shadowDist = isActive ? 2 : Math.sqrt(fx * fx + fy * fy) * 10 + 2;
     const shadowBlur = shadowDist * 2;
@@ -153,7 +153,7 @@ export default function PersistentSidebar({
   isDark, user
 }) {
   const location = useLocation();
-  const { colors } = useTheme();
+  const { colors, toggleTheme, isDark: themeDark } = useTheme();
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const [panelGlare, setPanelGlare] = useState({ mx: 50, my: 50 });
@@ -186,7 +186,7 @@ export default function PersistentSidebar({
   const isFull = level === 3;
 
   const handleLogout = () => base44.auth.logout();
-  const actions = quickActions({ onToggleMessages, onTogglePhone, onToggleBackgroundCustomizer, onToggleTheme, onLogout: handleLogout }, isDark);
+  const actions = quickActions({ onToggleMessages, onTogglePhone, onToggleBackgroundCustomizer, onToggleTheme: toggleTheme, onLogout: handleLogout }, themeDark);
 
   // Deep purple glass panel
   const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
