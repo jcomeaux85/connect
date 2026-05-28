@@ -32,6 +32,50 @@ export default function DOCModal({ isOpen, onClose }) {
       .dark-mode-overrides { display: none !important; }
     ` : '';
 
+    const ebmDark = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/50a03fe25_ebm.jpg';
+    const ebmLight = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/7258f1cbd_ebm_white.png';
+    const ebmSrc = light ? ebmDark : ebmLight;
+
+    // Script to patch footer after DOM is ready
+    const footerScript = `
+<script>
+(function patchFooter() {
+  function doFix() {
+    // Replace any text node containing "a " or "company" near footer / ebm elements
+    // and swap <ebm> text for the logo image
+    const ebmSrc = ${JSON.stringify(ebmSrc)};
+    // Find footer element — try common selectors
+    const candidates = document.querySelectorAll('.footer, .doc-footer, footer, [class*="footer"]');
+    candidates.forEach(el => {
+      // Replace inner HTML: strip "a " prefix and "company", replace <ebm> with img
+      el.innerHTML = el.innerHTML
+        .replace(/\\ba\\s+company\\b/gi, '')
+        .replace(/\\ba\\s+/gi, '')
+        .replace(/\\bcompany\\b/gi, '')
+        .replace(/<ebm>/gi, '<img src="' + ebmSrc + '" style="height:18px;vertical-align:middle;display:inline-block;margin:0 3px;filter:${light ? 'none' : 'invert(1)'}" alt="ebm">')
+        .replace(/&lt;ebm&gt;/gi, '<img src="' + ebmSrc + '" style="height:18px;vertical-align:middle;display:inline-block;margin:0 3px;filter:${light ? 'none' : 'invert(1)'}" alt="ebm">');
+    });
+    // Also patch footer-ebm spans specifically
+    document.querySelectorAll('.footer-ebm, [class*="footer-ebm"]').forEach(el => {
+      el.innerHTML = '<img src="' + ebmSrc + '" style="height:18px;vertical-align:middle;filter:${light ? 'none' : 'invert(1)'}" alt="ebm">';
+    });
+    // Patch any element whose text is literally "<ebm>"
+    document.querySelectorAll('*:not(script):not(style)').forEach(el => {
+      if (el.children.length === 0 && el.textContent.trim() === '<ebm>') {
+        el.innerHTML = '<img src="' + ebmSrc + '" style="height:18px;vertical-align:middle;filter:${light ? 'none' : 'invert(1)'}" alt="ebm">';
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(doFix, 300); });
+  } else {
+    setTimeout(doFix, 300);
+  }
+  // Also run after a delay in case footer is rendered by JS
+  setTimeout(doFix, 1200);
+})();
+<\/script>`;
+
     return htmlContent.replace('</head>', `
 <style>
   /* ── Slide-out overrides ── */
@@ -71,6 +115,7 @@ export default function DOCModal({ isOpen, onClose }) {
   }
   ${forceLight}
 </style>
+${footerScript}
 </head>`);
   };
 
