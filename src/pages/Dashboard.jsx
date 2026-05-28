@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/components/hooks/useUser";
 import { Phone, PhoneIncoming, CheckSquare, Clock } from "lucide-react";
 import { isToday, parseISO } from "date-fns";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import AgentCallTimeline from "@/components/dashboard/AgentCallTimeline";
 import ShiftFlowTimeline from "@/components/dashboard/ShiftFlowTimeline";
 import CallQueuePanel from "@/components/dashboard/CallQueuePanel";
 import AgentActivityPanel from "@/components/dashboard/AgentActivityPanel";
@@ -12,17 +12,6 @@ import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
 import StatSlidePanel from "@/components/dashboard/StatSlidePanel";
 import { useTheme } from "@/components/ThemeProvider";
 
-const CALL_VOLUME_DATA = [
-  { time: '9AM', incoming: 12, resolved: 8 },
-  { time: '10AM', incoming: 18, resolved: 15 },
-  { time: '11AM', incoming: 22, resolved: 18 },
-  { time: '12PM', incoming: 16, resolved: 14 },
-  { time: '1PM', incoming: 20, resolved: 16 },
-  { time: '2PM', incoming: 28, resolved: 22 },
-  { time: '3PM', incoming: 35, resolved: 28 },
-  { time: '4PM', incoming: 30, resolved: 26 },
-  { time: 'Now', incoming: 24, resolved: 20 },
-];
 
 // Tilt card with glare
 function TiltCard({ children, onClick, className, style }) {
@@ -95,7 +84,6 @@ export default function Dashboard() {
   const textPrimary = isDark ? '#f0f0f0' : '#111827';
   const textSecondary = isDark ? '#9ca3af' : '#6b7280';
   const textTertiary = isDark ? '#6b7280' : '#9ca3af';
-  const chartGrid = isDark ? '#2d3148' : '#f3f4f6';
 
   const { data: cases = [] } = useQuery({
     queryKey: ['cases'],
@@ -204,19 +192,9 @@ export default function Dashboard() {
       <div className="grid lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Call Volume</h3>
+            <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Call Volume — Today</h3>
           </div>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={CALL_VOLUME_DATA}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="time" tick={{ fontSize: 11, fill: textTertiary }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: textTertiary }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ borderRadius: '12px', border: `1px solid ${cardBorder}`, background: cardBg, color: textPrimary, fontSize: 12 }} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, color: textSecondary }} />
-              <Line type="monotone" dataKey="incoming" name="Incoming" stroke="#7C3AED" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="resolved" name="Resolved" stroke="#10B981" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
+          <AgentCallTimeline calls={calls} />
         </div>
         <CallQueuePanel cases={cases} />
       </div>
