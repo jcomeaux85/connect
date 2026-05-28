@@ -134,7 +134,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
       {/* B|C Logo */}
       <Link to="/" className="flex items-center flex-shrink-0 mr-1 select-none">
         <img
-          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/3d909380f_image.png"
+          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a12a64796_image.png"
           alt="B|C"
           className="h-9 w-9 rounded-xl object-cover"
           style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
