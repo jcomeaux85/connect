@@ -1,0 +1,133 @@
+{
+  "name": "Employer",
+  "type": "object",
+  "properties": {
+    "employer_name": {
+      "type": "string",
+      "description": "Name of the employer organization"
+    },
+    "company_logo_url": {
+      "type": "string",
+      "description": "URL to the company logo image"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Industry sector"
+    },
+    "employee_count": {
+      "type": "number",
+      "description": "Total number of employees"
+    },
+    "ceo_name": {
+      "type": "string",
+      "description": "CEO name"
+    },
+    "cfo_name": {
+      "type": "string",
+      "description": "CFO name"
+    },
+    "hr_director_name": {
+      "type": "string",
+      "description": "HR Director name"
+    },
+    "key_contacts": {
+      "type": "string",
+      "description": "Other key contacts or persons of interest (comma-separated)"
+    },
+    "address_street": {
+      "type": "string",
+      "description": "Street address"
+    },
+    "address_city": {
+      "type": "string",
+      "description": "City"
+    },
+    "address_state": {
+      "type": "string",
+      "description": "State"
+    },
+    "address_zip": {
+      "type": "string",
+      "description": "ZIP code"
+    },
+    "contact_person": {
+      "type": "string",
+      "description": "Primary contact person"
+    },
+    "contact_phone": {
+      "type": "string",
+      "description": "Contact phone number"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Contact email address"
+    },
+    "benefit_guide_url": {
+      "type": "string",
+      "description": "URL to the company's benefit guide document"
+    },
+    "portal_link_1_url": {
+      "type": "string",
+      "description": "First benefits portal URL"
+    },
+    "portal_link_1_label": {
+      "type": "string",
+      "description": "Label for first portal link"
+    },
+    "portal_link_2_url": {
+      "type": "string",
+      "description": "Second benefits portal URL"
+    },
+    "portal_link_2_label": {
+      "type": "string",
+      "description": "Label for second portal link"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the employer"
+    },
+    "map_medical_carrier": {
+      "type": "string",
+      "description": "Medical insurance carrier name for map network"
+    },
+    "map_medical_group": {
+      "type": "string",
+      "description": "Medical insurance group number for map network"
+    },
+    "map_dental_carrier": {
+      "type": "string",
+      "description": "Dental insurance carrier name for map network"
+    },
+    "map_dental_group": {
+      "type": "string",
+      "description": "Dental insurance group number for map network"
+    },
+    "map_vision_carrier": {
+      "type": "string",
+      "description": "Vision insurance carrier name for map network"
+    },
+    "map_vision_group": {
+      "type": "string",
+      "description": "Vision insurance group number for map network"
+    },
+    "map_life_carrier": {
+      "type": "string",
+      "description": "Life insurance carrier name for map network"
+    },
+    "map_life_group": {
+      "type": "string",
+      "description": "Life insurance group number for map network"
+    },
+    "map_disability_carrier": {
+      "type": "string",
+      "description": "Disability insurance carrier name for map network"
+    },
+    "map_disability_group": {
+      "type": "string",
+      "description": "Disability insurance group number for map network"
+    }
+  },
+  "required": [
+    "employer_name"
+  ]
+}

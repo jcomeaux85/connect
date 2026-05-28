@@ -1018,6 +1018,7 @@ export default function CustomerPage() {
                 <CustomerProviderMap
                   customer={customer}
                   clientCompany={customerClientCompanyEntity}
+                  employer={customerEmployerEntity}
                 />
 
                 {/* Employment Information */}

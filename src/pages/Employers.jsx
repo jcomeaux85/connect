@@ -12,7 +12,8 @@ import {
   Save,
   Users,
   Phone,
-  FileText
+  FileText,
+  Map
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/components/ThemeProvider";
@@ -37,7 +38,12 @@ export default function EmployersPage() {
     contact_phone: "",
     contact_email: "",
     benefit_guide_url: "",
-    notes: ""
+    notes: "",
+    map_medical_carrier: "", map_medical_group: "",
+    map_dental_carrier: "", map_dental_group: "",
+    map_vision_carrier: "", map_vision_group: "",
+    map_life_carrier: "", map_life_group: "",
+    map_disability_carrier: "", map_disability_group: ""
   });
 
   const { colors, getButtonStyle, getInsetStyle } = useTheme();
@@ -83,9 +89,14 @@ export default function EmployersPage() {
       contact_phone: "",
       contact_email: "",
       benefit_guide_url: "",
-      notes: ""
-    });
-    setEditingEmployer(null);
+      notes: "",
+      map_medical_carrier: "", map_medical_group: "",
+      map_dental_carrier: "", map_dental_group: "",
+      map_vision_carrier: "", map_vision_group: "",
+      map_life_carrier: "", map_life_group: "",
+      map_disability_carrier: "", map_disability_group: ""
+      });
+      setEditingEmployer(null);
   };
 
   const handleEdit = (employer) => {
@@ -452,6 +463,58 @@ export default function EmployersPage() {
                         className="rounded-2xl border-0 min-h-24"
                         style={getInsetStyle()}
                       />
+                    </div>
+
+                    {/* Map Network Settings */}
+                    <div className="md:col-span-2 mt-2">
+                      <div className="flex items-center gap-2 mb-4 pt-4" style={{ borderTop: `1px solid ${colors.border || "#e5e7eb"}` }}>
+                        <Map className="w-4 h-4" style={{ color: "#3b82f6" }} />
+                        <span className="text-base font-semibold" style={{ color: colors.text }}>Map Network Settings</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#dbeafe", color: "#1e40af" }}>
+                          Applied to all employees at this company
+                        </span>
+                      </div>
+                      <p className="text-xs mb-4" style={{ color: colors.textSecondary }}>
+                        Define the carrier and group number for each benefit type. These will be used to display in-network providers on the customer provider map.
+                      </p>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {[
+                          { key: "medical",    label: "Medical",    color: "#ef4444" },
+                          { key: "dental",     label: "Dental",     color: "#3b82f6" },
+                          { key: "vision",     label: "Vision",     color: "#8b5cf6" },
+                          { key: "life",       label: "Life",       color: "#10b981" },
+                          { key: "disability", label: "Disability", color: "#f59e0b" },
+                        ].map(({ key, label, color }) => (
+                          <div key={key} className="rounded-2xl p-4" style={{ background: `${color}08`, border: `1px solid ${color}25` }}>
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="w-2.5 h-2.5 rounded-full" style={{ background: color }} />
+                              <span className="text-sm font-semibold" style={{ color: colors.text }}>{label}</span>
+                            </div>
+                            <div className="space-y-2">
+                              <div>
+                                <label className="text-xs font-medium mb-1 block" style={{ color: colors.textSecondary }}>Carrier Name</label>
+                                <Input
+                                  placeholder={`e.g. Blue Cross Blue Shield`}
+                                  value={formData[`map_${key}_carrier`] || ""}
+                                  onChange={(e) => setFormData({ ...formData, [`map_${key}_carrier`]: e.target.value })}
+                                  className="rounded-xl border-0 h-10 text-sm"
+                                  style={getInsetStyle()}
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs font-medium mb-1 block" style={{ color: colors.textSecondary }}>Group Number</label>
+                                <Input
+                                  placeholder={`e.g. GRP-00123`}
+                                  value={formData[`map_${key}_group`] || ""}
+                                  onChange={(e) => setFormData({ ...formData, [`map_${key}_group`]: e.target.value })}
+                                  className="rounded-xl border-0 h-10 text-sm"
+                                  style={getInsetStyle()}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
 

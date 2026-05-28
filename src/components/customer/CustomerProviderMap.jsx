@@ -54,7 +54,7 @@ async function geocodeAddress(addressStr) {
   return null;
 }
 
-export default function CustomerProviderMap({ customer, clientCompany }) {
+export default function CustomerProviderMap({ customer, clientCompany, employer }) {
   const { colors, getButtonStyle } = useTheme();
   const [homeCoords, setHomeCoords] = useState(null);
   const [geocoding, setGeocoding] = useState(false);
@@ -146,14 +146,17 @@ export default function CustomerProviderMap({ customer, clientCompany }) {
         <div className="flex flex-wrap gap-2 px-4 py-2.5" style={{ borderBottom: `1px solid ${colors.border || "#e5e7eb"}` }}>
           {FILTER_CATEGORIES.map(({ key, label, color, Icon }) => {
             const active = activeFilters.has(key);
+            const carrier = employer?.[`map_${key}_carrier`];
+            const group = employer?.[`map_${key}_group`];
             return (
               <button key={key} onClick={() => toggleFilter(key)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all"
                 style={{ borderColor: active ? color : "transparent", background: active ? `${color}18` : (colors.cardBg || "#f9fafb"), color: active ? color : colors.textSecondary }}>
-                <Icon className="w-3 h-3" />{label}
+                <Icon className="w-3 h-3" />
+                <span>{label}</span>
+                {carrier && <span className="opacity-70 font-normal">· {carrier}{group ? ` (${group})` : ""}</span>}
               </button>
             );
           })}
-          <span className="text-xs self-center ml-1 opacity-60" style={{ color: colors.textSecondary }}>In-network providers auto-populate by group</span>
         </div>
       )}
 
@@ -198,12 +201,16 @@ export default function CustomerProviderMap({ customer, clientCompany }) {
           <div className="w-3 h-3 rounded-full bg-blue-700 border border-white shadow-sm" />
           <span>Home</span>
         </div>
-        {FILTER_CATEGORIES.filter((c) => activeFilters.has(c.key)).map(({ key, label, color }) => (
-          <div key={key} className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ background: color }} />
-            <span>{label}</span>
-          </div>
-        ))}
+        {FILTER_CATEGORIES.filter((c) => activeFilters.has(c.key)).map(({ key, label, color }) => {
+          const carrier = employer?.[`map_${key}_carrier`];
+          const group = employer?.[`map_${key}_group`];
+          return (
+            <div key={key} className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ background: color }} />
+              <span>{label}{carrier ? `: ${carrier}` : ""}{group ? ` · ${group}` : ""}</span>
+            </div>
+          );
+        })}
         <span className="ml-auto opacity-60">OpenStreetMap</span>
       </div>
     </div>
