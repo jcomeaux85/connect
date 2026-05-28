@@ -16,6 +16,7 @@ import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 import DOCModal from "@/components/doc/DOCModal";
 import TopBar from "@/components/layout/TopBar";
 import ActiveCallBar from "@/components/calls/ActiveCallBar";
+import PersistentCallPanel from "@/components/calls/PersistentCallPanel";
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
@@ -191,8 +192,7 @@ function LayoutContent({ children, currentPageName }) {
           showCalls={showCalls}
         />
 
-        {/* Active Call Bar — pushes content down when on a call */}
-        <ActiveCallBar />
+        {/* Active Call Bar — minimal top strip */}
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ scrollbarWidth: 'thin' }}>
@@ -230,6 +230,7 @@ function LayoutContent({ children, currentPageName }) {
       <AIAssistantOrb />
       <DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} />
       <DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} />
+      <PersistentCallPanel />
 
       {/* Incoming Call Popups */}
       {incomingCalls.map((call, index) =>
