@@ -2,13 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  LayoutGrid,
   Bell,
-  Folder,
-  Users,
   MessageSquare,
-  Phone,
-  FileText } from
+  Phone } from
 "lucide-react";
 import {
   DropdownMenu,
@@ -37,10 +33,7 @@ import IncomingCallPopup from "@/components/notifications/IncomingCallPopup";
 import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
 import { AnimatePresence, motion } from "framer-motion";
 
-const navigationItems = [
-{ title: "Dashboard", url: createPageUrl("Dashboard"), icon: LayoutGrid },
-{ title: "Cases", url: createPageUrl("Cases"), icon: Folder },
-{ title: "Customers", url: createPageUrl("Customers"), icon: Users }];
+// Left-side tabs removed — replaced with logo lockup
 
 
 const DOCK_ITEMS = [
@@ -93,8 +86,10 @@ function DockNav({ colors, currentPath }) {
           color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.8)',
           transition: 'font-size 0.13s cubic-bezier(0.34,1.4,0.64,1), color 0.15s',
           whiteSpace: 'nowrap',
-          letterSpacing: sizes[i] > 15 ? '-0.02em' : '0',
-          textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none'
+          letterSpacing: sizes[i] > 15 ? '0.08em' : '0.12em',
+          textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none',
+          fontFamily: '"Cinzel", "Trajan Pro", "Times New Roman", serif',
+          textTransform: 'uppercase'
         }}>{item.label}</span>;
 
         return (
@@ -143,9 +138,7 @@ function LayoutContent({ children, currentPageName }) {
       return {
         background: colors.bg,
         backgroundImage: backgroundSettings.value,
-        backgroundSize: backgroundSettings.preset === 'dots' ? '20px 20px' :
-        backgroundSettings.preset === 'grid' ? '40px 40px' :
-        backgroundSettings.preset === 'diagonal' ? '10px 10px' : 'auto'
+        backgroundSize: backgroundSettings.size || '20px 20px'
       };
     }
     return { background: colors.bg };
@@ -273,44 +266,29 @@ function LayoutContent({ children, currentPageName }) {
           
           <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible', clipPath: 'none' }}>
 
-            {/* LEFT: page tabs — raised up, drop down on hover */}
-            <div className="bg-transparent flex items-end gap-0.5 flex-shrink-0" style={{ overflow: 'visible' }}>
-              {navigationItems.map((item) => {
-                const isActive = location.pathname === item.url;
-                return (
-                  <Link
-                    key={item.title}
-                    to={item.url} className="bg-[hsl(var(--background))] flex items-end justify-center nav-tab-drop"
-
-                    style={{
-                      paddingBottom: 'clamp(4px, 0.8vw, 8px)',
-                      paddingLeft: 'clamp(8px, 1.4vw, 18px)',
-                      paddingRight: 'clamp(8px, 1.4vw, 18px)',
-                      background: isActive ?
-                      'linear-gradient(135deg, rgba(139,92,246,0.95) 0%, rgba(124,58,237,0.95) 100%)' :
-                      'rgba(255,255,255,0.08)',
-                      borderRadius: '0 0 8px 8px',
-                      height: '100%',
-                      border: isActive ?
-                      '1px solid rgba(139,92,246,0.5)' :
-                      '1px solid rgba(255,255,255,0.18)',
-                      borderTop: 'none',
-                      boxShadow: isActive ?
-                      '0 4px 12px rgba(139,92,246,0.4)' :
-                      'inset 0 1px 0 rgba(255,255,255,0.3)',
-                      // start raised above nav, transition down on hover
-                      transform: isActive ? 'translateY(0)' : 'translateY(-60%)',
-                      transition: 'transform 0.25s cubic-bezier(0.34,1.4,0.64,1)'
-                    }}>
-                    <span style={{
-                      color: isActive ? '#ffffff' : 'rgba(255,255,255,0.75)',
-                      fontSize: 'clamp(9px, 0.85vw, 12px)',
-                      fontWeight: isActive ? 500 : 300,
-                      textTransform: 'lowercase',
-                      whiteSpace: 'nowrap'
-                    }} className="bg-transparent">{item.title}</span>
-                  </Link>);
-              })}
+            {/* LEFT: B|C Logo + BEN|connect wordmark */}
+            <div className="flex items-center flex-shrink-0 gap-2 pl-1">
+              {/* B|C chip */}
+              <div style={{
+                width: '30px', height: '30px',
+                borderRadius: '7px',
+                background: 'linear-gradient(135deg, rgba(139,92,246,0.95) 0%, rgba(124,58,237,0.95) 100%)',
+                boxShadow: '0 2px 8px rgba(139,92,246,0.5)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <span style={{ color: '#fff', fontSize: '9px', fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1 }}>B|C</span>
+              </div>
+              {/* BEN|connect wordmark */}
+              <span style={{
+                color: '#ffffff',
+                fontSize: 'clamp(10px, 1vw, 13px)',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                whiteSpace: 'nowrap'
+              }}>
+                BEN<span style={{ color: 'rgba(167,139,250,0.8)' }}>|</span><span style={{ fontWeight: 300 }}>connect</span>
+              </span>
             </div>
 
             {/* CENTER: Mac-style Dock */}
@@ -391,7 +369,7 @@ function LayoutContent({ children, currentPageName }) {
         {/* Footer */}
         <footer className="flex-shrink-0 py-2 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.bg }}>
           <p className="text-xs font-bold" style={{ color: colors.text }}>
-            BEN<span style={{ color: colors.textSecondary }}>|</span>CONNECT<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
+            BEN<span style={{ color: colors.textSecondary }}>|</span>connect<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
             <span className="mx-2" style={{ color: colors.textTertiary }}>·</span>
             <span style={{ color: colors.textSecondary }}>indie<span style={{ color: colors.textTertiary }}>|</span>render<sup className="text-[6px]" style={{ color: colors.textTertiary }}>™</sup></span>
           </p>

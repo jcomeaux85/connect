@@ -7,10 +7,10 @@ import { Button } from '@/components/ui/button';
 
 const TEXTURE_PRESETS = [
   { id: 'none', label: 'None', value: null },
-  { id: 'noise', label: 'Subtle Noise', value: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")' },
-  { id: 'dots', label: 'Dots', value: 'radial-gradient(circle, currentColor 1px, transparent 1px)' },
-  { id: 'grid', label: 'Grid', value: 'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)' },
-  { id: 'diagonal', label: 'Diagonal Lines', value: 'repeating-linear-gradient(45deg, currentColor 0, currentColor 1px, transparent 0, transparent 50%)' },
+  { id: 'dots', label: 'Dots', value: 'radial-gradient(circle, rgba(120,120,120,0.25) 1px, transparent 1px)', size: '20px 20px' },
+  { id: 'grid', label: 'Grid', value: 'linear-gradient(to right, rgba(120,120,120,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(120,120,120,0.15) 1px, transparent 1px)', size: '40px 40px' },
+  { id: 'diagonal', label: 'Diagonal', value: 'repeating-linear-gradient(45deg, rgba(120,120,120,0.12) 0, rgba(120,120,120,0.12) 1px, transparent 0, transparent 10px)', size: 'auto' },
+  { id: 'crosshatch', label: 'Crosshatch', value: 'repeating-linear-gradient(0deg, rgba(120,120,120,0.1) 0, rgba(120,120,120,0.1) 1px, transparent 0, transparent 20px), repeating-linear-gradient(90deg, rgba(120,120,120,0.1) 0, rgba(120,120,120,0.1) 1px, transparent 0, transparent 20px)', size: 'auto' },
 ];
 
 export default function BackgroundCustomizer({ isOpen, onClose }) {
@@ -37,7 +37,7 @@ export default function BackgroundCustomizer({ isOpen, onClose }) {
     if (preset.id === 'none') {
       updateBackgroundSettings({ type: 'solid', value: null, preset: 'none' });
     } else {
-      updateBackgroundSettings({ type: 'texture', value: preset.value, preset: preset.id });
+      updateBackgroundSettings({ type: 'texture', value: preset.value, preset: preset.id, size: preset.size });
     }
   };
 
