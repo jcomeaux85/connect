@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Clock, Phone, Moon, Bell, ChevronDown, PhoneCall } from 'lucide-react';
+import { Search, Clock, Phone, Moon, Sun, Bell, ChevronDown, PhoneCall } from 'lucide-react';
 import { format } from 'date-fns';
 import { Link, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { base44 as b44 } from '@/api/base44Client';
+import { useTheme } from '@/components/ThemeProvider';
 
 const STATUS_OPTIONS = [
   { label: 'Available', color: '#10B981' },
@@ -14,6 +14,7 @@ const STATUS_OPTIONS = [
 ];
 
 export default function TopBar({ user, unreadNotifications, unreadMessages, onToggleNotifications, onToggleMessages, onToggleCalls, showCalls }) {
+  const { toggleTheme, isDark } = useTheme();
   const [now, setNow] = useState(new Date());
   const [status, setStatus] = useState('Available');
   const [showStatus, setShowStatus] = useState(false);
@@ -63,6 +64,13 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
 
   return (
     <div className="flex items-center gap-3 px-4 h-[52px] bg-white border-b border-gray-100 flex-shrink-0 relative z-50">
+      {/* Logo */}
+      <Link to="/" className="flex items-center gap-0.5 flex-shrink-0 mr-1 select-none">
+        <span className="text-sm font-black tracking-tight text-gray-800">B</span>
+        <span className="text-sm font-thin text-gray-400">|</span>
+        <span className="text-sm font-black tracking-tight text-violet-600">C</span>
+      </Link>
+
       {/* Search */}
       <div className="relative flex-1 max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
@@ -111,9 +119,13 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           <span className="text-xs font-medium" style={{ color: showCalls ? '#7C3AED' : '#9CA3AF' }}>No Active Call</span>
         </button>
 
-        {/* Dark mode / moon placeholder */}
-        <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors">
-          <Moon className="w-3.5 h-3.5 text-gray-500" />
+        {/* Dark mode toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
+          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {isDark ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-gray-500" />}
         </button>
 
         {/* Notifications */}
