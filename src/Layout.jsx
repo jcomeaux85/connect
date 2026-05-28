@@ -43,8 +43,8 @@ const DOCK_ITEMS = [
 { label: 'HelpHub', href: null }];
 
 
-const BASE_FS = 13;
-const MAX_FS = 20;
+const BASE_FS = 20;
+const MAX_FS = 30;
 const REACH = 120;
 
 function DockNav({ colors, currentPath }) {
