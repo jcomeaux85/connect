@@ -13,7 +13,7 @@ import DispositionForm from "@/components/calls/DispositionForm";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import PersistentSidebar, { SIDEBAR_WIDTHS } from "@/components/navigation/PersistentSidebar";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
-import DOCModal from "@/components/doc/DOCModal";
+import DOCModal from "@/components/doc/DOCModal.jsx";
 import TopBar from "@/components/layout/TopBar";
 import ActiveCallBar from "@/components/calls/ActiveCallBar";
 import PersistentCallPanel from "@/components/calls/PersistentCallPanel";
@@ -33,7 +33,7 @@ function LayoutContent({ children, currentPageName }) {
   const [showCalls, setShowCalls] = useState(false);
   const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
   const [dispositionData, setDispositionData] = useState(null);
-  const [showDOC, setShowDOC] = useState(false);
+  const [showDOC, setShowDOC] = useState(false); // DOC slide-out panel
   const [sidebarLevel, setSidebarLevel] = useState(() => {
     const saved = localStorage.getItem('sidebarLevel');
     return saved ? parseInt(saved) : 1;
@@ -190,6 +190,8 @@ function LayoutContent({ children, currentPageName }) {
           onToggleMessages={() => {setShowMessages((p) => !p);setShowCalls(false);setShowNotifications(false);}}
           onToggleCalls={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
           showCalls={showCalls}
+          onToggleDOC={() => setShowDOC((p) => !p)}
+          showDOC={showDOC}
         />
 
         {/* Active Call Bar — minimal top strip */}

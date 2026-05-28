@@ -76,7 +76,7 @@ const NAV_BTN = {
   borderRadius: '8px',
 };
 
-export default function TopBar({ user, unreadNotifications, unreadMessages, onToggleNotifications, onToggleMessages, onToggleCalls, showCalls }) {
+export default function TopBar({ user, unreadNotifications, unreadMessages, onToggleNotifications, onToggleMessages, onToggleCalls, showCalls, onToggleDOC, showDOC }) {
   const { toggleTheme, isDark } = useTheme();
   const [now, setNow] = useState(new Date());
   const [status, setStatus] = useState('Available');
@@ -198,6 +198,32 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
             <p className="text-[9px] leading-none mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{format(now, 'EEE, MMM d')}</p>
           </div>
         </div>
+
+        {/* DOC™ button */}
+        <TiltBtn
+          onClick={onToggleDOC}
+          title="DOC™ — Directory of Coverage"
+          style={{
+            ...(showDOC
+              ? { background: 'rgba(220,38,38,0.25)', border: '1px solid rgba(220,38,38,0.5)' }
+              : NAV_BTN),
+            borderRadius: '8px',
+            height: '32px',
+            display: 'flex', alignItems: 'center', gap: '5px', padding: '0 10px',
+            flexShrink: 0,
+          }}
+        >
+          <span style={{
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: '13px',
+            fontWeight: 700,
+            color: showDOC ? '#f87171' : 'rgba(255,255,255,0.7)',
+            letterSpacing: '-0.5px',
+            lineHeight: 1,
+          }}>
+            DOC<sup style={{ fontSize: '5px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
+          </span>
+        </TiltBtn>
 
         {/* Active Call button */}
         <TiltBtn

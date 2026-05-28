@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ExternalLink } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
-const DOC_URL = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/837165c78_DOC.html';
+const DOC_HTML_URL = 'https://media.base44.com/files/public/68fa7c4cb70fe91d38015eba/c1547e610_DOC_.html';
 
 export default function DOC() {
   const { colors, isDark } = useTheme();
@@ -10,7 +10,7 @@ export default function DOC() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(DOC_URL)
+    fetch(DOC_HTML_URL)
       .then(res => res.text())
       .then(html => {
         setHtmlContent(html);
@@ -19,132 +19,63 @@ export default function DOC() {
       .catch(() => setLoading(false));
   }, []);
 
-  // Inject BC theme + purple sidebar/client bar overrides
-  const themedHtml = htmlContent ? htmlContent.replace(
-    '</head>',
-    `<style>
-      :root {
-        --bc-bg: ${colors.bg};
-        --bc-text: ${colors.text};
-        --bc-border: ${colors.border};
-        --doc-purple: #6d28d9;
-        --doc-purple-light: #8b5cf6;
-        --doc-purple-dark: #4c1d95;
-      }
-
-      html, body {
-        background-color: ${colors.bg} !important;
-        color: ${colors.text} !important;
-      }
-
-      /* ── SIDEBAR / LEFT RAIL → purple ── */
-      .left-rail, #leftRail, [class*="left-rail"], [class*="sidebar"], [id*="sidebar"],
-      .nav-rail, #navRail {
-        background: linear-gradient(180deg, #3b0764 0%, #4c1d95 100%) !important;
-        border-right: 1px solid rgba(139,92,246,0.4) !important;
-      }
-      .left-rail *, .nav-rail *, #leftRail * {
-        color: rgba(255,255,255,0.85) !important;
-      }
-      .left-rail .active, .nav-rail .active, #leftRail .active {
-        background: rgba(139,92,246,0.4) !important;
-        color: #ffffff !important;
-      }
-
-      /* ── COMPANY/CLIENT INFO BAR → purple ── */
-      .company-info, #companyInfo {
-        background: linear-gradient(135deg, #3b0764 0%, #5b21b6 100%) !important;
-        border-radius: 10px !important;
-        padding: 10px 14px !important;
-        border: 1px solid rgba(139,92,246,0.4) !important;
-        box-shadow: 0 4px 20px rgba(109,40,217,0.35) !important;
-      }
-      .company-info *, #companyInfo * {
-        color: rgba(255,255,255,0.9) !important;
-      }
-      .company-info a, #companyInfo a {
-        color: #c4b5fd !important;
-      }
-      .ci-label {
-        color: rgba(196,181,253,0.7) !important;
-        font-weight: 600 !important;
-        font-size: 9px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.08em !important;
-      }
-      .ci-accent {
-        border-left: 3px solid #8b5cf6 !important;
-        padding-left: 8px !important;
-      }
-
-      /* ── CARRIER / CLIENT BAR → purple strip ── */
-      .sticky-bar, #stickyBar {
-        background: linear-gradient(135deg, rgba(59,7,100,0.95) 0%, rgba(91,33,182,0.95) 100%) !important;
-        border-top: 1px solid rgba(139,92,246,0.3) !important;
-        border-bottom: 1px solid rgba(139,92,246,0.3) !important;
-        padding: 4px 12px !important;
-      }
-      .carrier-strip, #carrierStrip {
-        background: transparent !important;
-      }
-      .carrier-link img {
-        filter: brightness(1.1) !important;
-        opacity: 0.9 !important;
-      }
-      .carrier-link:hover img {
-        opacity: 1 !important;
-      }
-
-      /* ── STICKY HEADER → deep purple ── */
-      .sticky-header, #stickyHeader {
-        background: linear-gradient(180deg, #14004d 0%, #1e0066 100%) !important;
-        border-bottom: 1px solid rgba(139,92,246,0.3) !important;
-        box-shadow: 0 4px 20px rgba(20,0,77,0.5) !important;
-      }
-
-      /* ── CAT NAV LINKS → purple accent ── */
-      .cat-link {
-        color: rgba(196,181,253,0.85) !important;
-        border: none !important;
-        background: transparent !important;
-      }
-      .cat-link:hover, .cat-link.active {
-        color: #ffffff !important;
-        background: rgba(139,92,246,0.25) !important;
-        border-radius: 4px !important;
-      }
-
-      /* ── MODE TOGGLE → purple ── */
-      .mode-btn.active, .mode-btn:focus {
-        background: rgba(139,92,246,0.4) !important;
-        border-color: rgba(139,92,246,0.6) !important;
-        color: #ffffff !important;
-      }
-
-      ${isDark ? `
-        input, select, textarea {
-          background: rgba(255,255,255,0.08) !important;
-          color: ${colors.text} !important;
-          border-color: rgba(139,92,246,0.3) !important;
-        }
-      ` : ''}
-    </style>
-    </head>`
-  ) : null;
+  const handlePopOut = () => {
+    window.open(DOC_HTML_URL, '_blank', 'width=1200,height=860,menubar=no,toolbar=no,location=no');
+  };
 
   return (
-    <div style={{ height: '100%', background: colors.bg, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100%', background: isDark ? '#1a1a1e' : '#e0e0e0', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      {/* Minimal top strip */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '6px 20px', flexShrink: 0,
+        background: isDark ? '#111114' : '#d0d0d0',
+        borderBottom: `1px solid ${isDark ? '#2a2a2e' : '#c0c0c0'}`,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+          <span style={{
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: '1.5rem', fontWeight: 700, color: '#dc2626',
+            letterSpacing: '-1px', lineHeight: 1,
+          }}>
+            DOC<sup style={{ fontSize: '.4rem', opacity: .5, verticalAlign: 'super' }}>™</sup>
+          </span>
+          <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: isDark ? '#555' : '#888', letterSpacing: '1px', textTransform: 'uppercase' }}>
+            Directory of Coverage
+          </span>
+        </div>
+        <button
+          onClick={handlePopOut}
+          title="Open in new window"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            padding: '4px 10px', borderRadius: 8, border: 'none', cursor: 'pointer',
+            background: isDark ? '#2a2a2e' : '#d8d8d8',
+            boxShadow: isDark ? '3px 3px 6px #101013,-3px -3px 6px #242428' : '3px 3px 6px #bebebe,-3px -3px 6px #fff',
+            color: isDark ? '#888' : '#666', fontSize: '11px', fontFamily: 'IBM Plex Mono, monospace',
+          }}
+        >
+          <ExternalLink size={12} /> Pop out
+        </button>
+      </div>
+
       {loading && (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Loader2 className="w-8 h-8 animate-spin" style={{ color: colors.textSecondary }} />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
+          <div style={{
+            fontFamily: 'IBM Plex Mono, monospace', fontSize: '13px',
+            letterSpacing: '3px', color: '#dc2626', textTransform: 'uppercase',
+          }}>
+            Loading DOC™…
+          </div>
+          <Loader2 size={20} style={{ color: '#dc2626', animation: 'spin 1s linear infinite' }} />
         </div>
       )}
-      {themedHtml && !loading && (
+      {htmlContent && !loading && (
         <iframe
-          srcDoc={themedHtml}
+          srcDoc={htmlContent}
           style={{ flex: 1, width: '100%', border: 'none', display: 'block', minHeight: 0 }}
           title="DOC Directory"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
         />
       )}
     </div>
