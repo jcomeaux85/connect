@@ -40,6 +40,7 @@ import CreateCaseModal from "@/components/cases/CreateCaseModal";
 import { useTheme } from "@/components/ThemeProvider";
 import PDFViewer from "@/components/PDFViewer";
 import EmailComposerModal from "@/components/email/EmailComposerModal";
+import CustomerProviderMap from "@/components/customer/CustomerProviderMap.jsx";
 
 export default function CustomerPage() {
   const [searchParams] = useSearchParams();
@@ -1250,6 +1251,12 @@ export default function CustomerPage() {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Provider Map */}
+                <CustomerProviderMap
+                  customer={customer}
+                  clientCompany={customerClientCompanyEntity}
+                />
 
                 {/* Carrier Information */}
                 <Card
