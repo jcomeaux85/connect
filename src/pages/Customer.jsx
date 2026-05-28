@@ -42,6 +42,7 @@ import PDFViewer from "@/components/PDFViewer";
 import EmailComposerModal from "@/components/email/EmailComposerModal";
 import CustomerProviderMap from "@/components/customer/CustomerProviderMap.jsx";
 
+
 export default function CustomerPage() {
   const [searchParams] = useSearchParams();
   const customerId = searchParams.get('id');
