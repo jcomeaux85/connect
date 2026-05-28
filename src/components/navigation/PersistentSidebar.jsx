@@ -202,7 +202,7 @@ export default function PersistentSidebar({
                         {!isMin &&
                           <motion.span
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="text-[10px] font-semibold whitespace-nowrap"
+                            className="text-[15px] font-semibold whitespace-nowrap"
                             style={{ color: isActive ? colors.text : colors.textSecondary }}>
                             
                             {item.title}
@@ -243,7 +243,7 @@ export default function PersistentSidebar({
                     <Icon className="w-4 h-4 flex-shrink-0" style={{ color: colors.textSecondary }} />
                     <AnimatePresence>
                       {!isMin &&
-                      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-[10px] font-semibold whitespace-nowrap" style={{ color: colors.textSecondary }}>
+                      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-[15px] font-semibold whitespace-nowrap" style={{ color: colors.textSecondary }}>
                           {label}
                         </motion.span>
                       }
