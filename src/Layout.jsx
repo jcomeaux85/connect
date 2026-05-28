@@ -88,7 +88,7 @@ function DockNav({ colors, currentPath }) {
           whiteSpace: 'nowrap',
           letterSpacing: sizes[i] > 15 ? '0.08em' : '0.12em',
           textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none',
-          fontFamily: '"Cinzel", "Trajan Pro", "Times New Roman", serif',
+          fontFamily: '"Barlow Condensed", "Arial Narrow", sans-serif',
           textTransform: 'uppercase'
         }}>{item.label}</span>;
 

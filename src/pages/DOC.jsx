@@ -23,8 +23,6 @@ export default function DOC() {
   const themedHtml = htmlContent ? htmlContent.replace(
     '</head>',
     `<style>
-      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
-
       :root {
         --bc-bg: ${colors.bg};
         --bc-text: ${colors.text};
