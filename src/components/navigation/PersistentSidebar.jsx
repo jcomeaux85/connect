@@ -428,18 +428,24 @@ export default function PersistentSidebar({
             </div>
           </div>
 
-          {/* User footer */}
-          <div className="flex-shrink-0 p-1.5 border-t" style={{ borderColor: PANEL_BORDER }}>
+          {/* User footer — larger photo */}
+          <div className="flex-shrink-0 p-2 border-t" style={{ borderColor: PANEL_BORDER }}>
             <div
-              className="flex items-center gap-2 px-1.5 py-1 rounded-xl"
+              className="flex items-center gap-2.5 px-2 py-2 rounded-xl"
               style={{
                 background: 'rgba(255,255,255,0.07)',
                 border: '1px solid rgba(255,255,255,0.10)',
               }}
             >
               <div
-                className="w-6 h-6 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0"
-                style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.12)' }}
+                className="rounded-xl overflow-hidden flex-shrink-0"
+                style={{
+                  width: isMin ? '28px' : '36px',
+                  height: isMin ? '28px' : '36px',
+                  background: 'rgba(0,0,0,0.3)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  transition: 'width 0.2s, height 0.2s',
+                }}
               >
                 <img
                   src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"}
@@ -450,10 +456,10 @@ export default function PersistentSidebar({
               <AnimatePresence>
                 {!isMin && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="overflow-hidden min-w-0">
-                    <p style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.85)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <p style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.9)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {user?.full_name || 'User'}
                     </p>
-                    <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)' }}>
+                    <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>
                       {user?.role === 'admin' ? 'Admin' : 'Agent'}
                     </p>
                   </motion.div>
