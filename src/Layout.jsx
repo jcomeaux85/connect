@@ -200,8 +200,8 @@ function LayoutContent({ children, currentPageName }) {
         </main>
 
         {/* Footer */}
-        <footer className="flex-shrink-0 py-1.5 px-6 border-t text-center" style={{ borderColor: '#F3F4F6', background: '#fff' }}>
-          <p className="text-[10px] font-semibold text-gray-400">
+        <footer className="flex-shrink-0 py-1.5 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.cardBg }}>
+          <p className="text-[10px] font-semibold" style={{ color: colors.textTertiary }}>
             BEN<span className="text-gray-300">|</span>connect™ 2026
             <span className="mx-2 text-gray-200">·</span>
             indie<span className="text-gray-300">|</span>render™

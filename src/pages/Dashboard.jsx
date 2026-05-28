@@ -10,6 +10,7 @@ import CallQueuePanel from "@/components/dashboard/CallQueuePanel";
 import AgentActivityPanel from "@/components/dashboard/AgentActivityPanel";
 import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
 import StatSlidePanel from "@/components/dashboard/StatSlidePanel";
+import { useTheme } from "@/components/ThemeProvider";
 
 const CALL_VOLUME_DATA = [
   { time: '9AM', incoming: 12, resolved: 8 },
@@ -85,7 +86,16 @@ function TiltCard({ children, onClick, className, style }) {
 
 export default function Dashboard() {
   const { data: user } = useUser();
+  const { isDark } = useTheme();
   const [openPanel, setOpenPanel] = useState(null); // statType string
+
+  const pageBg = isDark ? '#1a1d27' : '#f3f4f6';
+  const cardBg = isDark ? '#23263a' : '#ffffff';
+  const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#e5e7eb';
+  const textPrimary = isDark ? '#f0f0f0' : '#111827';
+  const textSecondary = isDark ? '#9ca3af' : '#6b7280';
+  const textTertiary = isDark ? '#6b7280' : '#9ca3af';
+  const chartGrid = isDark ? '#2d3148' : '#f3f4f6';
 
   const { data: cases = [] } = useQuery({
     queryKey: ['cases'],
@@ -149,7 +159,7 @@ export default function Dashboard() {
   stats.forEach(s => { panelDataMap[s.label] = s.panelData; });
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-full">
+    <div className="p-6 space-y-6 min-h-full" style={{ background: pageBg, transition: 'background 0.3s' }}>
       {/* Hero video */}
       <video
         src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
@@ -170,20 +180,20 @@ export default function Dashboard() {
             <TiltCard
               key={i}
               onClick={() => setOpenPanel(s.label)}
-              className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm"
-              style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}
+              className="rounded-2xl p-4"
+              style={{ background: cardBg, border: `1px solid ${cardBorder}`, boxShadow: isDark ? '0 2px 12px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.07)', transition: 'background 0.3s' }}
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}15` }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}20` }}>
                   <StatIcon className="w-5 h-5" style={{ color: s.color }} />
                 </div>
                 <span className="text-xs font-bold" style={{ color: s.changePos ? '#10B981' : '#EF4444' }}>
                   {s.changePos ? '↑' : '↓'} {s.change}
                 </span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-              <p className="text-xs font-semibold text-gray-500 mt-0.5">{s.label}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">{s.sub}</p>
+              <p className="text-2xl font-bold" style={{ color: textPrimary }}>{s.value}</p>
+              <p className="text-xs font-semibold mt-0.5" style={{ color: textSecondary }}>{s.label}</p>
+              <p className="text-[11px] mt-0.5" style={{ color: textTertiary }}>{s.sub}</p>
               <p className="text-[9px] mt-2 font-medium" style={{ color: s.color, opacity: 0.7 }}>Click to view →</p>
             </TiltCard>
           );
@@ -192,17 +202,17 @@ export default function Dashboard() {
 
       {/* Call Volume + Queue */}
       <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+        <div className="lg:col-span-2 rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-gray-800">Call Volume</h3>
+            <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Call Volume</h3>
           </div>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={CALL_VOLUME_DATA}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-              <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #E5E7EB', fontSize: 12 }} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+              <XAxis dataKey="time" tick={{ fontSize: 11, fill: textTertiary }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: textTertiary }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ borderRadius: '12px', border: `1px solid ${cardBorder}`, background: cardBg, color: textPrimary, fontSize: 12 }} />
+              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, color: textSecondary }} />
               <Line type="monotone" dataKey="incoming" name="Incoming" stroke="#7C3AED" strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="resolved" name="Resolved" stroke="#10B981" strokeWidth={2} dot={false} />
             </LineChart>
