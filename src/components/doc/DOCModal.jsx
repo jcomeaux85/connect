@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink } from 'lucide-react';
-import { useTheme } from '@/components/ThemeProvider';
+import { X, ExternalLink, Sun, Moon } from 'lucide-react';
 
 const DOC_HTML_URL = 'https://media.base44.com/files/public/68fa7c4cb70fe91d38015eba/c1547e610_DOC_.html';
 
 export default function DOCModal({ isOpen, onClose }) {
-  const { isDark } = useTheme();
+  const [docLight, setDocLight] = useState(true); // start in light mode
   const [htmlContent, setHtmlContent] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [blobUrl, setBlobUrl] = useState(null);
   const iframeRef = useRef(null);
 
   useEffect(() => {
@@ -17,38 +17,106 @@ export default function DOCModal({ isOpen, onClose }) {
       fetch(DOC_HTML_URL)
         .then(r => r.text())
         .then(html => {
-          // Inject theme sync + hide the original left sidebar rail (we're in slide-out mode)
-          const patched = html.replace('</head>', `
-<style>
-  /* ── Slide-out overrides ── */
-  .side-rail { display: none !important; }
-  .main-wrap { margin-left: 0 !important; }
-  .client-rail {
-    padding-left: 12px !important;
-    top: 0 !important;
-  }
-  .container { padding: 16px 14px 30px !important; }
-  .clock-weather { position: static !important; margin-bottom: 8px; }
-  html, body { overflow-x: hidden !important; }
-  /* compact benefit nav */
-  .benefit-nav { gap: 5px !important; }
-  .ben-btn { padding: 7px 12px !important; font-size: .75rem !important; }
-  /* results always visible */
-  .result-details { grid-template-columns: 1fr !important; }
-  /* mobile-friendly result cards */
-  .result-card { padding-right: 22px !important; }
-  .result-pin, .quick-copy { position: static; opacity: 1; display: inline-flex; margin-top: 8px; margin-right: 4px; }
-</style>
-</head>`);
-          setHtmlContent(patched);
+          setHtmlContent(html);
           setLoading(false);
         })
         .catch(() => setLoading(false));
     }
   }, [isOpen]);
 
+  // Build patched HTML whenever content or theme changes
+  const getPatchedHtml = (light) => {
+    if (!htmlContent) return null;
+    const forceLight = light ? `
+      html, body { background: #f0f4f8 !important; color: #1a202c !important; }
+      .dark-mode-overrides { display: none !important; }
+    ` : '';
+
+    return htmlContent.replace('</head>', `
+<style>
+  /* ── Slide-out overrides ── */
+  .side-rail { display: none !important; }
+  .main-wrap { margin-left: 0 !important; }
+  .client-rail { padding-left: 12px !important; top: 0 !important; }
+  .container { padding: 16px 14px 30px !important; }
+  /* Hide weather and star/favorite */
+  .clock-weather, .weather-widget, .weather-block, .fav-btn, .favorite-btn,
+  [class*="weather"], [class*="favorite"], [class*="fav-star"],
+  .pin-btn, .result-pin { display: none !important; }
+  html, body { overflow-x: hidden !important; }
+  /* compact benefit nav */
+  .benefit-nav { gap: 5px !important; }
+  .ben-btn { padding: 7px 12px !important; font-size: .75rem !important; }
+  /* results always visible */
+  .result-details { grid-template-columns: 1fr !important; }
+  /* move copy button inline with source citation */
+  .result-card { position: relative; padding-right: 8px !important; }
+  .quick-copy {
+    position: static !important;
+    opacity: 1 !important;
+    display: inline-flex !important;
+    margin-left: 8px !important;
+    vertical-align: middle !important;
+    flex-shrink: 0 !important;
+  }
+  .source-line {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+  ${forceLight}
+</style>
+</head>`);
+  };
+
+  // Sync theme changes to already-loaded iframe
+  useEffect(() => {
+    if (!iframeRef.current || !htmlContent) return;
+    const patched = getPatchedHtml(docLight);
+    if (patched) {
+      // revoke old blob
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      const blob = new Blob([patched], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      setBlobUrl(url);
+    }
+  }, [docLight, htmlContent]);
+
+  // Initial blob creation
+  useEffect(() => {
+    if (htmlContent && !blobUrl) {
+      const patched = getPatchedHtml(docLight);
+      const blob = new Blob([patched], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      setBlobUrl(url);
+    }
+  }, [htmlContent]);
+
+  // Cleanup blob on unmount
+  useEffect(() => {
+    return () => { if (blobUrl) URL.revokeObjectURL(blobUrl); };
+  }, [blobUrl]);
+
   const handlePopOut = () => {
-    window.open(DOC_HTML_URL, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
+    if (blobUrl) {
+      window.open(blobUrl, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
+    } else {
+      window.open(DOC_HTML_URL, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
+    }
+  };
+
+  const isDark = !docLight;
+
+  const btnStyle = {
+    width: 28, height: 28, borderRadius: 8, border: 'none',
+    background: isDark ? '#2a2a2e' : '#dde3ea',
+    boxShadow: isDark
+      ? '3px 3px 6px #101013, -3px -3px 6px #242428'
+      : '3px 3px 6px #b8c0cc, -3px -3px 6px #fff',
+    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    color: isDark ? '#888' : '#555',
+    flexShrink: 0,
   };
 
   return (
@@ -67,7 +135,7 @@ export default function DOCModal({ isOpen, onClose }) {
             onClick={onClose}
           />
 
-          {/* Slide-out panel — mobile phone width */}
+          {/* Slide-out panel */}
           <motion.div
             key="doc-panel"
             initial={{ x: '100%' }}
@@ -78,7 +146,7 @@ export default function DOCModal({ isOpen, onClose }) {
             style={{
               width: 'min(420px, 100vw)',
               boxShadow: '-8px 0 48px rgba(0,0,0,0.5)',
-              background: isDark ? '#1a1a1e' : '#e0e0e0',
+              background: isDark ? '#1a1a1e' : '#eef1f6',
             }}
             onClick={e => e.stopPropagation()}
           >
@@ -86,8 +154,8 @@ export default function DOCModal({ isOpen, onClose }) {
             <div
               className="flex items-center justify-between flex-shrink-0 px-4 py-2"
               style={{
-                background: isDark ? '#111114' : '#d0d0d0',
-                borderBottom: `1px solid ${isDark ? '#2a2a2e' : '#c0c0c0'}`,
+                background: isDark ? '#111114' : '#dde3ea',
+                borderBottom: `1px solid ${isDark ? '#2a2a2e' : '#c8d0da'}`,
                 minHeight: '44px',
               }}
             >
@@ -102,44 +170,38 @@ export default function DOCModal({ isOpen, onClose }) {
                   lineHeight: 1,
                   textShadow: isDark
                     ? '2px 2px 4px #101013, -1px -1px 2px #242428'
-                    : '2px 2px 4px #bebebe, -1px -1px 2px #fff',
+                    : '2px 2px 4px #b8c0cc, -1px -1px 2px #fff',
                 }}>
                   DOC<sup style={{ fontSize: '.45rem', opacity: .5, verticalAlign: 'super' }}>™</sup>
                 </span>
-                <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: isDark ? '#666' : '#999', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: isDark ? '#666' : '#8a96a3', letterSpacing: '1px', textTransform: 'uppercase' }}>
                   Directory of Coverage
                 </span>
               </div>
 
               {/* Controls */}
               <div className="flex items-center gap-2">
+                {/* Light/dark toggle */}
+                <button
+                  onClick={() => setDocLight(p => !p)}
+                  title={docLight ? 'Switch to dark mode' : 'Switch to light mode'}
+                  style={btnStyle}
+                >
+                  {docLight ? <Moon size={13} /> : <Sun size={13} />}
+                </button>
+                {/* Pop-out */}
                 <button
                   onClick={handlePopOut}
                   title="Open in new window"
-                  style={{
-                    width: 28, height: 28, borderRadius: 8, border: 'none',
-                    background: isDark ? '#2a2a2e' : '#d8d8d8',
-                    boxShadow: isDark
-                      ? '3px 3px 6px #101013, -3px -3px 6px #242428'
-                      : '3px 3px 6px #bebebe, -3px -3px 6px #fff',
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: isDark ? '#888' : '#666',
-                  }}
+                  style={btnStyle}
                 >
                   <ExternalLink size={13} />
                 </button>
+                {/* Close */}
                 <button
                   onClick={onClose}
                   title="Close"
-                  style={{
-                    width: 28, height: 28, borderRadius: 8, border: 'none',
-                    background: isDark ? '#2a2a2e' : '#d8d8d8',
-                    boxShadow: isDark
-                      ? '3px 3px 6px #101013, -3px -3px 6px #242428'
-                      : '3px 3px 6px #bebebe, -3px -3px 6px #fff',
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: isDark ? '#888' : '#666',
-                  }}
+                  style={btnStyle}
                 >
                   <X size={14} />
                 </button>
@@ -149,7 +211,7 @@ export default function DOCModal({ isOpen, onClose }) {
             {/* Content area */}
             <div className="flex-1 overflow-hidden relative">
               {loading && (
-                <div className="absolute inset-0 flex items-center justify-center" style={{ background: isDark ? '#1a1a1e' : '#e0e0e0' }}>
+                <div className="absolute inset-0 flex items-center justify-center" style={{ background: isDark ? '#1a1a1e' : '#eef1f6' }}>
                   <div style={{
                     fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: '11px',
@@ -162,10 +224,10 @@ export default function DOCModal({ isOpen, onClose }) {
                   </div>
                 </div>
               )}
-              {htmlContent && !loading && (
+              {blobUrl && !loading && (
                 <iframe
                   ref={iframeRef}
-                  srcDoc={htmlContent}
+                  src={blobUrl}
                   className="w-full h-full"
                   style={{ border: 'none', display: 'block' }}
                   title="DOC Directory of Coverage"
