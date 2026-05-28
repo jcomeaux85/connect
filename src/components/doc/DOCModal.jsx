@@ -39,10 +39,14 @@ export default function DOCModal({ isOpen, onClose }) {
   .main-wrap { margin-left: 0 !important; }
   .client-rail { padding-left: 12px !important; top: 0 !important; }
   .container { padding: 16px 14px 30px !important; }
-  /* Hide weather and star/favorite */
+  /* Hide weather, star/favorite, and original light/dark toggle */
   .clock-weather, .weather-widget, .weather-block, .fav-btn, .favorite-btn,
   [class*="weather"], [class*="favorite"], [class*="fav-star"],
-  .pin-btn, .result-pin { display: none !important; }
+  .pin-btn, .result-pin,
+  .theme-toggle, .dark-toggle, .light-toggle, [class*="theme-btn"],
+  [class*="dark-mode-btn"], [class*="toggle-theme"], button[title*="dark"],
+  button[title*="light"], button[title*="Dark"], button[title*="Light"],
+  .mode-toggle, [class*="mode-toggle"] { display: none !important; }
   html, body { overflow-x: hidden !important; }
   /* compact benefit nav */
   .benefit-nav { gap: 5px !important; }
