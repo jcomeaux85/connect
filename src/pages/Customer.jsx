@@ -40,7 +40,7 @@ import CreateCaseModal from "@/components/cases/CreateCaseModal";
 import { useTheme } from "@/components/ThemeProvider";
 import PDFViewer from "@/components/PDFViewer";
 import EmailComposerModal from "@/components/email/EmailComposerModal";
-import CustomerProviderMap from "@/components/customer/CustomerProviderMap.jsx";
+import CustomerProviderMap from "@/components/customer/CustomerProviderMap";
 
 
 export default function CustomerPage() {

@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "@/components/ThemeProvider";
-import { Badge } from "@/components/ui/badge";
-import {
-  MapPin, Maximize2, Minimize2, Download, Filter,
-  Home, Stethoscope, Eye, Smile, Heart, X
-} from "lucide-react";
+import { MapPin, Maximize2, Minimize2, Download, Filter, Home, Stethoscope, Eye, Smile, Heart, X } from "lucide-react";
 
 // Fix leaflet default icon issue with bundlers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -41,15 +37,16 @@ const FILTER_CATEGORIES = [
 function MapFlyTo({ position }) {
   const map = useMap();
   useEffect(() => {
-    if (position) map.flyTo(position, 13, { duration: 1.2 });
+    if (position) map.flyTo(position, 12, { duration: 1.2 });
   }, [position, map]);
   return null;
 }
 
 async function geocodeAddress(addressStr) {
   if (!addressStr) return null;
+  const encoded = encodeURIComponent(addressStr);
   const res = await fetch(
-    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addressStr)}&format=json&limit=1`,
+    `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1`,
     { headers: { "Accept-Language": "en" } }
   );
   const data = await res.json();
@@ -66,12 +63,8 @@ export default function CustomerProviderMap({ customer, clientCompany }) {
   const [activeFilters, setActiveFilters] = useState(new Set(["medical", "dental", "vision", "life", "disability"]));
   const [showFilters, setShowFilters] = useState(false);
 
-  const address = [
-    customer?.address_street,
-    customer?.address_city,
-    customer?.address_state,
-    customer?.address_zip,
-  ].filter(Boolean).join(", ");
+  const address = [customer?.address_street, customer?.address_city, customer?.address_state, customer?.address_zip]
+    .filter(Boolean).join(", ");
 
   useEffect(() => {
     if (!address) return;
@@ -93,11 +86,11 @@ export default function CustomerProviderMap({ customer, clientCompany }) {
 
   const handleExport = useCallback(() => {
     import("html2canvas").then(({ default: html2canvas }) => {
-      const el = document.getElementById("customer-map-container");
-      if (!el) return;
-      html2canvas(el, { useCORS: true }).then((canvas) => {
+      const mapEl = document.getElementById("customer-map-container");
+      if (!mapEl) return;
+      html2canvas(mapEl, { useCORS: true }).then((canvas) => {
         const link = document.createElement("a");
-        link.download = `${customer?.first_name || "customer"}_map.png`;
+        link.download = `${customer?.first_name || "customer"}_${customer?.last_name || "map"}_map.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
       });
@@ -105,7 +98,7 @@ export default function CustomerProviderMap({ customer, clientCompany }) {
   }, [customer]);
 
   const defaultCenter = homeCoords ? [homeCoords.lat, homeCoords.lng] : [39.5, -98.35];
-  const defaultZoom = homeCoords ? 13 : 4;
+  const defaultZoom = homeCoords ? 12 : 4;
   const mapHeight = expanded ? "520px" : "280px";
 
   return (
@@ -124,18 +117,14 @@ export default function CustomerProviderMap({ customer, clientCompany }) {
           <MapPin className="w-4 h-4" style={{ color: "#3b82f6" }} />
           <span className="font-semibold text-sm" style={{ color: colors.text }}>Provider Map</span>
           {geocoding && <span className="text-xs animate-pulse" style={{ color: colors.textSecondary }}>Locating…</span>}
-          {homeCoords && (
-            <Badge className="text-xs border-0 px-2 py-0.5" style={{ background: "#dbeafe", color: "#1e40af" }}>
-              <Home className="w-3 h-3 mr-1 inline" />Plotted
-            </Badge>
+          {homeCoords && !geocoding && (
+            <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "#dbeafe", color: "#1e40af" }}>
+              <Home className="w-3 h-3 inline mr-1" />Plotted
+            </span>
           )}
         </div>
         <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => setShowFilters((p) => !p)}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium"
-            style={{ ...getButtonStyle(), color: showFilters ? "#8b5cf6" : colors.textSecondary }}
-          >
+          <button onClick={() => setShowFilters((p) => !p)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: showFilters ? "#8b5cf6" : colors.textSecondary }}>
             <Filter className="w-3.5 h-3.5" /> Filter
           </button>
           <button onClick={handleExport} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: "#10b981" }} title="Export PNG">
@@ -145,32 +134,26 @@ export default function CustomerProviderMap({ customer, clientCompany }) {
             {expanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
           </button>
           {expanded && (
-            <button onClick={() => setExpanded(false)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: "#ef4444" }}>
+            <button onClick={() => setExpanded(false)} className="flex items-center px-2.5 py-1.5 rounded-xl text-xs" style={{ ...getButtonStyle(), color: "#ef4444" }}>
               <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filter pills */}
       {showFilters && (
         <div className="flex flex-wrap gap-2 px-4 py-2.5" style={{ borderBottom: `1px solid ${colors.border || "#e5e7eb"}` }}>
           {FILTER_CATEGORIES.map(({ key, label, color, Icon }) => {
             const active = activeFilters.has(key);
             return (
-              <button
-                key={key}
-                onClick={() => toggleFilter(key)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all"
-                style={{ borderColor: active ? color : "transparent", background: active ? `${color}18` : (colors.cardBg || "#f9fafb"), color: active ? color : colors.textSecondary }}
-              >
+              <button key={key} onClick={() => toggleFilter(key)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all"
+                style={{ borderColor: active ? color : "transparent", background: active ? `${color}18` : (colors.cardBg || "#f9fafb"), color: active ? color : colors.textSecondary }}>
                 <Icon className="w-3 h-3" />{label}
               </button>
             );
           })}
-          <span className="text-xs self-center ml-1 opacity-60" style={{ color: colors.textSecondary }}>
-            In-network providers auto-populate by group
-          </span>
+          <span className="text-xs self-center ml-1 opacity-60" style={{ color: colors.textSecondary }}>In-network providers auto-populate by group</span>
         </div>
       )}
 
@@ -185,7 +168,7 @@ export default function CustomerProviderMap({ customer, clientCompany }) {
         ) : geocodeError ? (
           <div className="flex flex-col items-center justify-center h-full gap-2" style={{ background: colors.cardBg || "#f9fafb" }}>
             <MapPin className="w-10 h-10 text-red-400" />
-            <p className="text-sm font-medium text-red-500">Could not locate address</p>
+            <p className="text-sm font-medium text-red-500">Could not geocode address</p>
             <p className="text-xs" style={{ color: colors.textSecondary }}>{address}</p>
           </div>
         ) : (
