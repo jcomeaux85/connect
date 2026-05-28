@@ -1,19 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import {
-  Bell,
-  MessageSquare,
-  Phone } from
-"lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger } from
-"@/components/ui/dropdown-menu";
+// Icons and dropdowns now handled by TopBar component
 import { base44 } from "@/api/base44Client";
 import { useQuery } from '@tanstack/react-query';
 import { useUser } from "@/components/hooks/useUser";
@@ -26,6 +14,8 @@ import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import PersistentSidebar, { SIDEBAR_WIDTHS } from "@/components/navigation/PersistentSidebar";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 import DOCModal from "@/components/doc/DOCModal";
+import TopBar from "@/components/layout/TopBar";
+import ActiveCallBar from "@/components/calls/ActiveCallBar";
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
@@ -33,77 +23,7 @@ import IncomingCallPopup from "@/components/notifications/IncomingCallPopup";
 import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
 import { AnimatePresence, motion } from "framer-motion";
 
-// Left-side tabs removed — replaced with logo lockup
-
-
-const DOCK_ITEMS = [
-{ label: 'Connect', href: '/Dashboard' },
-{ label: 'DOC', href: '/DOC' },
-{ label: 'Core', href: '/Core' },
-{ label: 'HelpHub', href: null }];
-
-
-const BASE_FS = 20;
-const MAX_FS = 30;
-const REACH = 120;
-
-function DockNav({ colors, currentPath }) {
-  const dockRef = useRef(null);
-  const itemRefs = useRef([]);
-  const [sizes, setSizes] = useState(DOCK_ITEMS.map(() => BASE_FS));
-
-  const handleMouseMove = (e) => {
-    const newSizes = DOCK_ITEMS.map((_, i) => {
-      const el = itemRefs.current[i];
-      if (!el) return BASE_FS;
-      const rect = el.getBoundingClientRect();
-      const center = rect.left + rect.width / 2;
-      const dist = Math.abs(e.clientX - center);
-      if (dist >= REACH) return BASE_FS;
-      const t = 1 - dist / REACH;
-      const ease = t * t * (3 - 2 * t);
-      return BASE_FS + (MAX_FS - BASE_FS) * ease;
-    });
-    setSizes(newSizes);
-  };
-
-  const handleMouseLeave = () => setSizes(DOCK_ITEMS.map(() => BASE_FS));
-
-  return (
-    <div
-      ref={dockRef}
-      className="flex items-center absolute left-1/2 -translate-x-1/2"
-      style={{ top: 0, bottom: 0, gap: 'clamp(8px, 1.5vw, 20px)', overflow: 'visible' }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}>
-      
-      {DOCK_ITEMS.map((item, i) => {
-        const isActive = item.href && currentPath === item.href;
-        const content =
-        <span style={{
-          fontSize: `${sizes[i]}px`,
-          fontWeight: isActive ? 700 : 400,
-          color: isActive ? '#a78bfa' : 'rgba(255,255,255,0.8)',
-          transition: 'font-size 0.13s cubic-bezier(0.34,1.4,0.64,1), color 0.15s',
-          whiteSpace: 'nowrap',
-          letterSpacing: sizes[i] > 15 ? '0.08em' : '0.12em',
-          textShadow: isActive ? '0 0 12px rgba(167,139,250,0.6)' : 'none',
-          fontFamily: '"Barlow Condensed", "Arial Narrow", sans-serif',
-          textTransform: 'uppercase'
-        }}>{item.label}</span>;
-
-        return (
-          <div key={item.label} ref={(el) => itemRefs.current[i] = el} style={{ display: 'flex', alignItems: 'center' }}>
-            {item.href ?
-            <Link to={item.href} className="no-underline flex items-center">{content}</Link> :
-            <button className="border-0 bg-transparent p-0 flex items-center cursor-not-allowed opacity-40">{content}</button>
-            }
-          </div>);
-
-      })}
-    </div>);
-
-}
+// Dock navigation removed — now using TopBar component
 
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
@@ -260,106 +180,19 @@ function LayoutContent({ children, currentPageName }) {
       {/* Main area: nav + content — never pushed by sidebar */}
       <div className="flex flex-col flex-1 overflow-hidden">
 
-        {/* Top Nav — always visible */}
-        <nav className="flex-shrink-0 z-50"
-        style={{ background: '#ffffff', borderBottom: `1px solid ${colors.border}`, overflow: 'visible', position: 'relative' }}>
-          
-          <div className="bg-[#14004d] text-[hsl(var(--chart-4))] my-1 px-2 opacity-100 rounded flex items-stretch justify-between relative" style={{ height: 'clamp(40px, 5vw, 52px)', gap: 'clamp(4px, 0.5vw, 8px)', overflow: 'visible', clipPath: 'none' }}>
+        {/* Top Bar — 8x8 style */}
+        <TopBar
+          user={user}
+          unreadNotifications={unreadNotifications}
+          unreadMessages={unreadMessages}
+          onToggleNotifications={() => {setShowNotifications((p) => !p);setShowMessages(false);setShowCalls(false);}}
+          onToggleMessages={() => {setShowMessages((p) => !p);setShowCalls(false);setShowNotifications(false);}}
+          onToggleCalls={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
+          showCalls={showCalls}
+        />
 
-            {/* LEFT: B|C Logo + BEN|connect wordmark */}
-            <div className="flex items-center flex-shrink-0 gap-2 pl-1">
-              {/* B|C chip */}
-              <div style={{
-                width: '30px', height: '30px',
-                borderRadius: '7px',
-                background: 'linear-gradient(135deg, rgba(139,92,246,0.95) 0%, rgba(124,58,237,0.95) 100%)',
-                boxShadow: '0 2px 8px rgba(139,92,246,0.5)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0
-              }}>
-                <span style={{ color: '#fff', fontSize: '9px', fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1 }}>B|C</span>
-              </div>
-              {/* BEN|connect wordmark */}
-              <span style={{
-                color: '#ffffff',
-                fontSize: 'clamp(10px, 1vw, 13px)',
-                fontWeight: 700,
-                letterSpacing: '0.04em',
-                whiteSpace: 'nowrap'
-              }}>
-                BEN<span style={{ color: 'rgba(167,139,250,0.8)' }}>|</span><span style={{ fontWeight: 300 }}>connect</span>
-              </span>
-            </div>
-
-            {/* CENTER: Mac-style Dock */}
-            <DockNav colors={colors} currentPath={location.pathname} />
-
-            {/* RIGHT: Phone, Messages, Notifications, Avatar */}
-            <div className="flex items-center flex-shrink-0" style={{ gap: 'clamp(3px, 0.5vw, 6px)' }}>
-              {/* Phone */}
-              <button
-                className="flex items-center justify-center rounded-xl border-0"
-                onClick={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
-                style={{
-                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
-                  boxShadow: showCalls ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg
-                }}>
-                <Phone style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showCalls ? '#7c3aed' : colors.iconColor }} />
-              </button>
-
-              {/* Messages */}
-              <button
-                className="flex items-center justify-center rounded-xl border-0 relative"
-                onClick={() => {setShowMessages((p) => !p);setShowCalls(false);setShowNotifications(false);}}
-                style={{
-                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
-                  boxShadow: showMessages ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg
-                }}>
-                <MessageSquare style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showMessages ? '#7c3aed' : colors.iconColor }} />
-                {unreadMessages > 0 && <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-green-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">{unreadMessages > 9 ? '9+' : unreadMessages}</span>}
-              </button>
-
-              {/* Notifications */}
-              <button
-                className="flex items-center justify-center rounded-xl border-0 relative"
-                onClick={() => {setShowNotifications((p) => !p);setShowMessages(false);setShowCalls(false);}}
-                style={{
-                  width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
-                  boxShadow: showNotifications ? `inset 2px 2px 5px ${colors.shadowDark}, inset -2px -2px 5px ${colors.shadowLight}` : `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`,
-                  background: colors.bg
-                }}>
-                <Bell style={{ width: 'clamp(12px, 1.2vw, 16px)', height: 'clamp(12px, 1.2vw, 16px)', color: showNotifications ? '#7c3aed' : colors.iconColor }} />
-                {unreadNotifications > 0 && <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-red-500 text-white text-[7px] rounded-full flex items-center justify-center font-bold">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>}
-              </button>
-
-              {/* User avatar */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className="p-0 border-0 overflow-hidden flex-shrink-0 rounded-full"
-                    style={{
-                      width: 'clamp(28px, 2.5vw, 36px)', height: 'clamp(28px, 2.5vw, 36px)',
-                      boxShadow: `2px 2px 5px ${colors.shadowDark}, -2px -2px 5px ${colors.shadowLight}`
-                    }}>
-                    <img src={user?.profile_photo_url || "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/77ac5f78c_kling_20260419__Could_you__3685_5.png"} alt={user?.full_name || 'User'} className="w-full h-full object-cover" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48" align="end" style={{ background: colors.bg, border: 'none', boxShadow: `8px 8px 16px ${colors.shadowDark}, -8px -8px 16px ${colors.shadowLight}`, color: colors.text }}>
-                  <DropdownMenuLabel style={{ color: colors.text }}>
-                    <div>{user?.full_name || 'My Account'}</div>
-                    {user?.role === 'admin' && <div className="text-xs" style={{ color: colors.textSecondary }}>Administrator</div>}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator style={{ background: colors.border }} />
-                  <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Your Profile</Link></DropdownMenuItem>
-                  <DropdownMenuItem asChild><Link to="#" style={{ color: colors.text }}>Settings</Link></DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => base44.auth.logout()} style={{ color: colors.text }}>Sign out</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </nav>
+        {/* Active Call Bar — pushes content down when on a call */}
+        <ActiveCallBar />
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ scrollbarWidth: 'thin' }}>
@@ -367,11 +200,11 @@ function LayoutContent({ children, currentPageName }) {
         </main>
 
         {/* Footer */}
-        <footer className="flex-shrink-0 py-2 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.bg }}>
-          <p className="text-xs font-bold" style={{ color: colors.text }}>
-            BEN<span style={{ color: colors.textSecondary }}>|</span>connect<sup className="text-[8px] ml-0.5" style={{ color: colors.textTertiary }}>™</sup> 2026
-            <span className="mx-2" style={{ color: colors.textTertiary }}>·</span>
-            <span style={{ color: colors.textSecondary }}>indie<span style={{ color: colors.textTertiary }}>|</span>render<sup className="text-[6px]" style={{ color: colors.textTertiary }}>™</sup></span>
+        <footer className="flex-shrink-0 py-1.5 px-6 border-t text-center" style={{ borderColor: '#F3F4F6', background: '#fff' }}>
+          <p className="text-[10px] font-semibold text-gray-400">
+            BEN<span className="text-gray-300">|</span>connect™ 2026
+            <span className="mx-2 text-gray-200">·</span>
+            indie<span className="text-gray-300">|</span>render™
           </p>
         </footer>
       </div>

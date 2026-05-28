@@ -1,455 +1,255 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MessageSquare, Search, Filter, Download, Send } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, Send, Phone, Video, MoreHorizontal, Sparkles } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
-import { useTheme } from "@/components/ThemeProvider";
+import { motion } from "framer-motion";
 
-export default function MessagesPage() {
+const TABS = ['All', 'SMS', 'Email', 'Internal'];
+
+export default function Messages() {
   const [user, setUser] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterSender, setFilterSender] = useState("all");
-  const [filterRecipient, setFilterRecipient] = useState("all");
-  const [filterReadStatus, setFilterReadStatus] = useState("all");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const [activeTab, setActiveTab] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedThread, setSelectedThread] = useState(null);
-  const [newMessage, setNewMessage] = useState("");
-  
-  const { colors, isDark, getButtonStyle, getInsetStyle } = useTheme();
+  const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    loadUser();
+    base44.auth.me().then(setUser).catch(() => {});
   }, []);
 
-  const loadUser = async () => {
-    try {
-      const userData = await base44.auth.me();
-      setUser(userData);
-    } catch (error) {
-      console.error("Error loading user:", error);
-    }
-  };
-
-  const { data: messages = [], isLoading } = useQuery({
+  const { data: messages = [] } = useQuery({
     queryKey: ['all-messages'],
-    queryFn: () => base44.entities.Message.list('-created_date', 500),
+    queryFn: () => base44.entities.Message.list('-created_date', 200),
+    enabled: !!user,
+    refetchInterval: 5000,
+  });
+
+  const { data: smsList = [] } = useQuery({
+    queryKey: ['all-sms'],
+    queryFn: () => base44.entities.SMS.list('-created_date', 100),
+    enabled: !!user,
+    refetchInterval: 5000,
+  });
+
+  const { data: customers = [] } = useQuery({
+    queryKey: ['customers-messages'],
+    queryFn: () => base44.entities.Customer.list('-updated_date', 100),
     enabled: !!user,
   });
 
-  const { data: users = [] } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => base44.entities.User.list(),
-    enabled: !!user,
+  const sendMsgMutation = useMutation({
+    mutationFn: (d) => base44.entities.Message.create(d),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['all-messages'] }); setNewMessage(''); },
   });
 
-  const sendMessageMutation = useMutation({
-    mutationFn: (messageData) => base44.entities.Message.create(messageData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['all-messages'] });
-      setNewMessage("");
-    },
+  const sendSmsMutation = useMutation({
+    mutationFn: (d) => base44.entities.SMS.create(d),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['all-sms'] }); setNewMessage(''); },
   });
 
-  const markAsReadMutation = useMutation({
-    mutationFn: ({ id }) => base44.entities.Message.update(id, { 
-      is_read: true,
-      read_at: new Date().toISOString()
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['all-messages'] });
-    },
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [selectedThread, messages, smsList]);
+
+  // Build unified conversation threads
+  const threads = [];
+
+  // Internal messages
+  const msgThreads = {};
+  messages.forEach(m => {
+    const tid = m.thread_id || [m.sender_email, m.recipient_email].sort().join('_');
+    if (!msgThreads[tid]) msgThreads[tid] = [];
+    msgThreads[tid].push(m);
+  });
+  Object.entries(msgThreads).forEach(([tid, msgs]) => {
+    const sorted = [...msgs].sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    const latest = sorted[0];
+    const otherEmail = latest.sender_email === user?.email ? latest.recipient_email : latest.sender_email;
+    const otherName = latest.sender_email === user?.email ? latest.recipient_name : latest.sender_name;
+    const unread = sorted.filter(m => m.recipient_email === user?.email && !m.is_read).length;
+    threads.push({ id: tid, type: 'internal', name: otherName || otherEmail, email: otherEmail, latest, messages: msgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)), unread });
   });
 
-  // Apply filters
-  const filteredMessages = messages.filter(message => {
-    // Search filter
-    if (searchQuery) {
-      const searchLower = searchQuery.toLowerCase();
-      const matchesSender = message.sender_name?.toLowerCase().includes(searchLower);
-      const matchesRecipient = message.recipient_name?.toLowerCase().includes(searchLower);
-      const matchesContent = message.content?.toLowerCase().includes(searchLower);
-      if (!matchesSender && !matchesRecipient && !matchesContent) return false;
-    }
+  // SMS threads by phone
+  const smsThreads = {};
+  smsList.forEach(s => {
+    const tid = `sms_${s.customer_phone}`;
+    if (!smsThreads[tid]) smsThreads[tid] = [];
+    smsThreads[tid].push(s);
+  });
+  Object.entries(smsThreads).forEach(([tid, smsMsgs]) => {
+    const sorted = [...smsMsgs].sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    const latest = sorted[0];
+    const customer = customers.find(c => c.primary_phone === latest.customer_phone);
+    const name = customer ? `${customer.first_name} ${customer.last_name}` : latest.customer_phone;
+    threads.push({ id: tid, type: 'sms', name, phone: latest.customer_phone, latest, messages: smsMsgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)), unread: 0 });
+  });
 
-    // Sender filter
-    if (filterSender !== "all" && message.sender_email !== filterSender) return false;
+  threads.sort((a, b) => new Date(b.latest.created_date) - new Date(a.latest.created_date));
 
-    // Recipient filter
-    if (filterRecipient !== "all" && message.recipient_email !== filterRecipient) return false;
-
-    // Read status filter
-    if (filterReadStatus === "read" && !message.is_read) return false;
-    if (filterReadStatus === "unread" && message.is_read) return false;
-
-    // Date range filter
-    if (dateFrom && new Date(message.created_date) < new Date(dateFrom)) return false;
-    if (dateTo && new Date(message.created_date) > new Date(dateTo)) return false;
-
+  const filteredThreads = threads.filter(t => {
+    if (activeTab === 'SMS' && t.type !== 'sms') return false;
+    if (activeTab === 'Internal' && t.type !== 'internal') return false;
+    if (searchQuery && !t.name?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
-  // Group messages by thread
-  const threads = {};
-  filteredMessages.forEach(msg => {
-    const threadId = msg.thread_id || [msg.sender_email, msg.recipient_email].sort().join('_');
-    if (!threads[threadId]) {
-      threads[threadId] = [];
+  const selectedData = filteredThreads.find(t => t.id === selectedThread) || filteredThreads[0];
+
+  const handleSend = () => {
+    if (!newMessage.trim() || !selectedData) return;
+    if (selectedData.type === 'sms') {
+      sendSmsMutation.mutate({ customer_phone: selectedData.phone, message: newMessage, direction: 'sent', status: 'sent', sent_at: new Date().toISOString() });
+    } else {
+      sendMsgMutation.mutate({ sender_email: user.email, sender_name: user.full_name, recipient_email: selectedData.email, recipient_name: selectedData.name, content: newMessage, thread_id: selectedData.id });
     }
-    threads[threadId].push(msg);
-  });
-
-  // Get thread list with latest message
-  const threadList = Object.entries(threads).map(([threadId, msgs]) => {
-    const sortedMsgs = msgs.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
-    const latestMsg = sortedMsgs[0];
-    const otherPersonEmail = latestMsg.sender_email === user?.email ? latestMsg.recipient_email : latestMsg.sender_email;
-    const otherPersonName = latestMsg.sender_email === user?.email ? latestMsg.recipient_name : latestMsg.sender_name;
-    const unreadCount = sortedMsgs.filter(m => m.recipient_email === user?.email && !m.is_read).length;
-    
-    return {
-      threadId,
-      messages: sortedMsgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)),
-      latestMessage: latestMsg,
-      otherPersonEmail,
-      otherPersonName,
-      unreadCount
-    };
-  }).sort((a, b) => new Date(b.latestMessage.created_date) - new Date(a.latestMessage.created_date));
-
-  const handleSendMessage = () => {
-    if (!newMessage.trim() || !selectedThread) return;
-
-    const thread = threadList.find(t => t.threadId === selectedThread);
-    if (!thread) return;
-
-    sendMessageMutation.mutate({
-      sender_email: user.email,
-      sender_name: user.full_name,
-      recipient_email: thread.otherPersonEmail,
-      recipient_name: thread.otherPersonName,
-      content: newMessage,
-      thread_id: selectedThread
-    });
   };
 
-  const handleSelectThread = (thread) => {
-    setSelectedThread(thread.threadId);
-    // Mark unread messages as read
-    thread.messages
-      .filter(m => m.recipient_email === user.email && !m.is_read)
-      .forEach(m => markAsReadMutation.mutate({ id: m.id }));
-  };
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.bg }}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: colors.text }}></div>
-          <p style={{ color: colors.textSecondary }}>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const selectedThreadData = threadList.find(t => t.threadId === selectedThread);
+  const getInitials = (name) => (name || '?').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="min-h-screen p-4 md:p-8" style={{ background: colors.bg }}>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-3xl font-bold mb-2" style={{ color: colors.text }}>
-              Messages
-            </h1>
-            <p style={{ color: colors.textSecondary }}>
-              {filteredMessages.length} {filteredMessages.length === 1 ? 'message' : 'messages'}
-            </p>
+    <div className="flex h-full bg-gray-50">
+      {/* Left panel */}
+      <div className="w-72 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col">
+        <div className="p-4 border-b border-gray-100">
+          <h1 className="text-lg font-bold text-gray-900 mb-1">Messages</h1>
+          <p className="text-xs text-gray-400 mb-3">SMS, email, and internal messaging</p>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            <input
+              className="w-full pl-9 pr-3 h-8 rounded-xl bg-gray-50 border border-gray-200 text-xs text-gray-700 placeholder-gray-400 outline-none focus:border-violet-400"
+              placeholder="Search messages..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
           </div>
-          <Button
-            className="rounded-2xl h-12 px-6 border-0"
-            style={{ ...getButtonStyle('6px'), color: colors.textSecondary }}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Left Column - Filters & Thread List */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Filters */}
-            <Card
-              className="border-0"
-              style={{
-                background: colors.bg,
-                boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
+        {/* Tabs */}
+        <div className="flex items-center gap-1 px-3 py-2 border-b border-gray-100">
+          {TABS.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className="flex-1 h-7 rounded-lg text-xs font-semibold transition-all"
+              style={activeTab === tab ? { background: '#7C3AED', color: '#fff' } : { color: '#9CA3AF' }}
             >
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
-                  <Filter className="w-5 h-5" />
-                  Filters
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Search */}
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: colors.textTertiary }} />
-                  <Input
-                    placeholder="Search messages..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 rounded-2xl border-0 h-12"
-                    style={{ ...getInsetStyle('4px'), color: colors.text }}
-                  />
-                </div>
+              {tab}
+            </button>
+          ))}
+        </div>
 
-                <Select value={filterSender} onValueChange={setFilterSender}>
-                  <SelectTrigger className="rounded-2xl border-0 h-12" style={{ ...getInsetStyle('3px'), color: colors.text }}>
-                    <SelectValue placeholder="Sender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Senders</SelectItem>
-                    {users.map(u => (
-                      <SelectItem key={u.email} value={u.email}>{u.full_name || u.email}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={filterRecipient} onValueChange={setFilterRecipient}>
-                  <SelectTrigger className="rounded-2xl border-0 h-12" style={{ ...getInsetStyle('3px'), color: colors.text }}>
-                    <SelectValue placeholder="Recipient" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Recipients</SelectItem>
-                    {users.map(u => (
-                      <SelectItem key={u.email} value={u.email}>{u.full_name || u.email}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={filterReadStatus} onValueChange={setFilterReadStatus}>
-                  <SelectTrigger className="rounded-2xl border-0 h-12" style={{ ...getInsetStyle('3px'), color: colors.text }}>
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Messages</SelectItem>
-                    <SelectItem value="unread">Unread Only</SelectItem>
-                    <SelectItem value="read">Read Only</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* Date Range */}
-                <div>
-                  <label className="text-sm mb-2 block" style={{ color: colors.textSecondary }}>From Date</label>
-                  <Input
-                    type="date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                    className="rounded-2xl border-0 h-12"
-                    style={{ ...getInsetStyle('3px'), color: colors.text }}
-                  />
-                </div>
-                <div>
-                  <label className="text-sm mb-2 block" style={{ color: colors.textSecondary }}>To Date</label>
-                  <Input
-                    type="date"
-                    value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
-                    className="rounded-2xl border-0 h-12"
-                    style={{ ...getInsetStyle('3px'), color: colors.text }}
-                  />
-                </div>
-
-                {/* Clear Filters */}
-                {(searchQuery || filterSender !== "all" || filterRecipient !== "all" || filterReadStatus !== "all" || dateFrom || dateTo) && (
-                  <Button
-                    onClick={() => {
-                      setSearchQuery("");
-                      setFilterSender("all");
-                      setFilterRecipient("all");
-                      setFilterReadStatus("all");
-                      setDateFrom("");
-                      setDateTo("");
-                    }}
-                    variant="outline"
-                    className="rounded-2xl h-10 w-full"
-                  >
-                    Clear Filters
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Thread List */}
-            <Card
-              className="border-0"
-              style={{
-                background: colors.bg,
-                boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
+        {/* Thread list */}
+        <div className="flex-1 overflow-y-auto">
+          {filteredThreads.length === 0 && (
+            <div className="text-center py-8 text-sm text-gray-400">No conversations</div>
+          )}
+          {filteredThreads.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setSelectedThread(t.id)}
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 text-left transition-colors"
+              style={selectedData?.id === t.id ? { background: '#F5F3FF' } : {}}
             >
-              <CardHeader>
-                <CardTitle style={{ color: colors.text }}>Conversations</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-[600px] overflow-y-auto">
-                  {threadList.length === 0 ? (
-                    <p className="text-center text-sm py-4" style={{ color: colors.textSecondary }}>
-                      No conversations found
-                    </p>
-                  ) : (
-                    threadList.map((thread) => (
-                      <button
-                        key={thread.threadId}
-                        onClick={() => handleSelectThread(thread)}
-                        className={`w-full p-3 rounded-2xl text-left transition-all ${
-                          selectedThread === thread.threadId ? 'ring-2 ring-blue-500' : ''
-                        }`}
-                        style={{
-                          ...getButtonStyle('4px'),
-                          background: selectedThread === thread.threadId 
-                            ? isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)'
-                            : colors.bg
-                        }}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="font-semibold text-sm truncate" style={{ color: colors.text }}>
-                                {thread.otherPersonName}
-                              </p>
-                              {thread.unreadCount > 0 && (
-                                <Badge className="bg-blue-500 text-white text-xs px-2 py-0.5">
-                                  {thread.unreadCount}
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-xs truncate" style={{ color: colors.textSecondary }}>
-                              {thread.latestMessage.content}
-                            </p>
-                            <p className="text-xs mt-1" style={{ color: colors.textTertiary }}>
-                              {formatDistanceToNow(new Date(thread.latestMessage.created_date), { addSuffix: true })}
-                            </p>
-                          </div>
-                        </div>
-                      </button>
-                    ))
-                  )}
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: t.type === 'sms' ? 'linear-gradient(135deg,#10B981,#059669)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
+                {getInitials(t.name)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-gray-800 truncate">{t.name}</p>
+                  <p className="text-[10px] text-gray-400 flex-shrink-0 ml-1">{formatDistanceToNow(new Date(t.latest.created_date), { addSuffix: false })}</p>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Message Thread */}
-          <div className="lg:col-span-2">
-            <Card
-              className="border-0 h-[calc(100vh-200px)]"
-              style={{
-                background: colors.bg,
-                boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-              }}
-            >
-              {selectedThreadData ? (
-                <>
-                  <CardHeader className="border-b" style={{ borderColor: colors.border }}>
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center"
-                        style={{
-                          background: isDark ? 'linear-gradient(145deg, #1f2937, #111827)' : 'linear-gradient(145deg, #dbeafe, #bfdbfe)',
-                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                        }}
-                      >
-                        <span className="font-bold" style={{ color: isDark ? '#93c5fd' : '#3b82f6' }}>
-                          {selectedThreadData.otherPersonName?.charAt(0) || 'U'}
-                        </span>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold" style={{ color: colors.text }}>
-                          {selectedThreadData.otherPersonName}
-                        </h3>
-                        <p className="text-xs" style={{ color: colors.textSecondary }}>
-                          {selectedThreadData.otherPersonEmail}
-                        </p>
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="flex-1 overflow-y-auto p-6 space-y-4 h-[calc(100%-200px)]">
-                    {selectedThreadData.messages.map((msg, index) => (
-                      <motion.div
-                        key={msg.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className={`flex ${msg.sender_email === user.email ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div
-                          className={`max-w-[70%] p-4 rounded-2xl ${
-                            msg.sender_email === user.email
-                              ? 'bg-blue-500 text-white'
-                              : ''
-                          }`}
-                          style={msg.sender_email !== user.email ? {
-                            ...getButtonStyle('4px')
-                          } : {}}
-                        >
-                          <p className="text-sm mb-1">{msg.content}</p>
-                          <p 
-                            className="text-xs"
-                            style={{ 
-                              color: msg.sender_email === user.email ? '#dbeafe' : colors.textTertiary 
-                            }}
-                          >
-                            {format(new Date(msg.created_date), 'MMM d, h:mm a')}
-                          </p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </CardContent>
-
-                  <div className="p-4 border-t" style={{ borderColor: colors.border }}>
-                    <div className="flex gap-2">
-                      <Input
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
-                        onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                        className="rounded-2xl border-0 h-12"
-                        style={{ ...getInsetStyle('4px'), color: colors.text }}
-                      />
-                      <Button
-                        onClick={handleSendMessage}
-                        disabled={!newMessage.trim()}
-                        className="rounded-2xl h-12 px-6 border-0"
-                        style={{ ...getButtonStyle('6px'), color: colors.textSecondary }}
-                      >
-                        <Send className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <CardContent className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <MessageSquare className="w-16 h-16 mx-auto mb-4" style={{ color: colors.textTertiary }} />
-                    <p style={{ color: colors.textSecondary }}>Select a conversation to view messages</p>
-                  </div>
-                </CardContent>
+                <div className="flex items-center gap-1 mt-0.5">
+                  {t.type === 'sms' && <span className="text-[9px] text-gray-400">☑</span>}
+                  <p className="text-xs text-gray-400 truncate">{t.latest.content || t.latest.message || ''}</p>
+                </div>
+              </div>
+              {t.unread > 0 && (
+                <span className="w-4 h-4 bg-violet-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                  {t.unread}
+                </span>
               )}
-            </Card>
-          </div>
+            </button>
+          ))}
         </div>
+      </div>
+
+      {/* Conversation view */}
+      <div className="flex-1 min-w-0 flex flex-col bg-white">
+        {selectedData ? (
+          <>
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: selectedData.type === 'sms' ? 'linear-gradient(135deg,#10B981,#059669)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
+                  {getInitials(selectedData.name)}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-800">{selectedData.name}</p>
+                  <p className="text-xs text-gray-400">via {selectedData.type === 'sms' ? 'SMS' : 'Internal'} · AI Demo</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
+                  <Phone className="w-3.5 h-3.5 text-gray-500" />
+                </button>
+                <button className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
+                  <Video className="w-3.5 h-3.5 text-gray-500" />
+                </button>
+                <button className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
+                  <MoreHorizontal className="w-3.5 h-3.5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+              {selectedData.messages.map((m, i) => {
+                const isMe = (m.sender_email === user?.email) || (m.direction === 'sent');
+                const text = m.content || m.message || '';
+                const time = m.created_date ? format(new Date(m.created_date), 'h:mm aa') : '';
+                return (
+                  <motion.div key={m.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[65%]`}>
+                      <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${isMe ? 'bg-violet-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
+                        {text}
+                      </div>
+                      <p className={`text-[10px] text-gray-400 mt-1 ${isMe ? 'text-right' : 'text-left'}`}>{time}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input */}
+            <div className="px-5 py-3 border-t border-gray-100">
+              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5">
+                <button className="text-gray-400 hover:text-violet-500 transition-colors">
+                  <Sparkles className="w-4 h-4" />
+                </button>
+                <input
+                  className="flex-1 text-sm bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                  placeholder="Type a message... (Enter to send, AI will reply)"
+                  value={newMessage}
+                  onChange={e => setNewMessage(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
+                />
+                <button onClick={handleSend} className="text-violet-500 hover:text-violet-700 transition-colors">
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-[10px] text-gray-400 text-center mt-1.5">AI Demo Mode — customer replies are simulated by AI</p>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+            Select a conversation
+          </div>
+        )}
       </div>
     </div>
   );
