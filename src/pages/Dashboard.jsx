@@ -189,7 +189,7 @@ export default function Dashboard() {
 
       {/* Call Volume + Queue */}
       <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
+        <div className="lg:col-span-2 rounded-2xl p-4" style={{ background: isDark ? '#555555' : cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Call Volume — Today</h3>
           </div>
