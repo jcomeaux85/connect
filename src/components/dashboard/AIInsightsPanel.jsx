@@ -1,5 +1,5 @@
-import React from 'react';
-import { Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, ChevronDown } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
 const INSIGHTS = [
@@ -22,6 +22,7 @@ const INSIGHTS = [
 
 export default function AIInsightsPanel() {
   const { isDark } = useTheme();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const cardBg = isDark ? '#555555' : '#ffffff';
   const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#f3f4f6';
@@ -32,11 +33,33 @@ export default function AIInsightsPanel() {
   const textPrimary = isDark ? '#f0f0f0' : '#1f2937';
   const textSecondary = isDark ? '#d1d5db' : '#6b7280';
 
+  if (isCollapsed) {
+    return (
+      <div className="rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderTop: '2px solid #fb923c' }}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-4 h-4 text-violet-500" />
+            <h3 className="text-sm font-bold" style={{ color: textPrimary }}>AI Insights</h3>
+            <span className="text-xs" style={{ color: textSecondary }}>3 alerts • 96.4% compliance • +8% resolution</span>
+          </div>
+          <button onClick={() => setIsCollapsed(false)} className="p-1">
+            <ChevronDown className="w-4 h-4" style={{ color: textSecondary }} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderTop: '2px solid #fb923c' }}>
-      <div className="flex items-center gap-2 mb-4 -mx-4 px-4 py-2 rounded-t-2xl" style={{ background: headerBg, borderBottom: `1px solid ${headerBorder}` }}>
-        <Sparkles className="w-4 h-4 text-violet-500" />
-        <h3 className="text-sm font-bold" style={{ color: textPrimary }}>AI Insights</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-violet-500" />
+          <h3 className="text-sm font-bold" style={{ color: textPrimary }}>AI Insights</h3>
+        </div>
+        <button onClick={() => setIsCollapsed(true)} className="p-1">
+          <ChevronDown className="w-4 h-4 transform rotate-180" style={{ color: textSecondary }} />
+        </button>
       </div>
       <div className="grid md:grid-cols-3 gap-3">
         {INSIGHTS.map((ins, i) => (
