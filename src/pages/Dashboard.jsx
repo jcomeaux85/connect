@@ -189,19 +189,19 @@ export default function Dashboard() {
 
       {/* Call Volume + Queue */}
       <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-2xl p-4 relative flex flex-col" style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderBottom: 'none', transition: 'background 0.3s', minHeight: '480px' }}>
+        <div className="lg:col-span-2 rounded-2xl p-4 relative flex flex-col" style={{ background: cardBg, borderTop: `1px solid ${cardBorder}`, borderLeft: `1px solid ${cardBorder}`, borderRight: `1px solid ${cardBorder}`, transition: 'background 0.3s', minHeight: '480px' }}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Call Volume — Today</h3>
           </div>
           <div className="flex-1 overflow-y-auto">
             <AgentCallTimeline calls={calls} />
           </div>
-          {/* Chip bottom-right corner, small */}
-          <div className="absolute right-4 bottom-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+          {/* Chip centered horizontally, positioned at bottom */}
+          <div className="absolute left-1/2 bottom-6" style={{ transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
            <img
              src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
              alt="BenConnect chip"
-             style={{ width: '140px', height: 'auto', opacity: 0.6 }}
+             style={{ width: '300px', height: 'auto', opacity: 0.85 }}
            />
           </div>
         </div>
