@@ -197,7 +197,7 @@ export default function Dashboard() {
             <AgentCallTimeline incomingCalls={calls} />
           </div>
           {/* Chip left-justified, positioned at bottom */}
-          <div className="absolute left-4 bottom-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', pointerEvents: 'none' }}>
+          <div className="absolute left-8 bottom-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', pointerEvents: 'none' }}>
            <img
              src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
              alt="BenConnect chip"
