@@ -31,7 +31,7 @@ export default function AgentActivityPanel({ users = [] }) {
       }))
     : MOCK_AGENTS;
 
-  const cardBg = isDark ? '#23263a' : '#ffffff';
+  const cardBg = isDark ? '#555555' : '#ffffff';
   const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#e5e7eb';
   const headerBg = isDark ? 'rgba(59,130,246,0.15)' : 'linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%)';
   const headerBorder = isDark ? 'rgba(59,130,246,0.25)' : '#bfdbfe';

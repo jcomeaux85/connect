@@ -22,7 +22,7 @@ export default function CallQueuePanel({ cases = [] }) {
   const realQueue = cases.filter(c => c.status !== 'closed' && c.status !== 'resolved').slice(0, 8);
   const queue = realQueue.length > 0 ? realQueue : DEMO_QUEUE;
 
-  const cardBg = isDark ? '#23263a' : '#ffffff';
+  const cardBg = isDark ? '#555555' : '#ffffff';
   const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#e5e7eb';
   const headerBg = isDark ? 'rgba(124,58,237,0.15)' : 'linear-gradient(90deg, #ede9fe 0%, #f5f3ff 100%)';
   const headerBorder = isDark ? 'rgba(124,58,237,0.25)' : '#ddd6fe';
