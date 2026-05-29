@@ -151,7 +151,7 @@ export default function Dashboard() {
       {/* Hero video */}
       <video
         src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
-        autoPlay muted playsInline loop
+        autoPlay muted playsInline
         className="w-full rounded-2xl object-cover"
         style={{ maxHeight: '180px', objectPosition: 'center' }}
       />

@@ -8,9 +8,17 @@ const PRIORITY_COLORS = {
   low: '#10B981',
 };
 
+const DEMO_QUEUE = [
+  { id: 'd1', customer_name: 'Maria Gonzalez', call_reason: 'Claim Assistance', priority: 'urgent', created_date: new Date(Date.now() - 4 * 60000).toISOString() },
+  { id: 'd2', customer_name: 'James Thornton', call_reason: 'Benefits Inquiry', priority: 'high', created_date: new Date(Date.now() - 9 * 60000).toISOString() },
+  { id: 'd3', customer_name: 'Aisha Patel', call_reason: 'Provider Search', priority: 'medium', created_date: new Date(Date.now() - 14 * 60000).toISOString() },
+  { id: 'd4', customer_name: 'Robert Kim', call_reason: 'General Inquiry', priority: 'low', created_date: new Date(Date.now() - 21 * 60000).toISOString() },
+  { id: 'd5', customer_name: 'Sandra Lee', call_reason: 'Enrollment Help', priority: 'medium', created_date: new Date(Date.now() - 27 * 60000).toISOString() },
+];
+
 export default function CallQueuePanel({ cases = [] }) {
-  // Show open/in-progress cases as "queue"
-  const queue = cases.filter(c => c.status !== 'closed' && c.status !== 'resolved').slice(0, 8);
+  const realQueue = cases.filter(c => c.status !== 'closed' && c.status !== 'resolved').slice(0, 8);
+  const queue = realQueue.length > 0 ? realQueue : DEMO_QUEUE;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm h-full" style={{ borderTop: '2px solid #a78bfa' }}>
