@@ -26,11 +26,11 @@ function BlinkLight({ color, on }) {
   return (
     <div
       style={{
-        width: 7,
-        height: 7,
+        width: 4,
+        height: 4,
         borderRadius: '50%',
         background: lit ? color : 'rgba(255,255,255,0.10)',
-        boxShadow: lit ? `0 0 6px 2px ${color}cc, 0 0 2px 1px ${color}` : 'none',
+        boxShadow: lit ? `0 0 4px 1px ${color}aa` : 'none',
         transition: 'background 0.08s, box-shadow 0.08s',
       }}
     />
@@ -84,22 +84,22 @@ export default function ChipHeader() {
       <div
         style={{
           position: 'absolute',
-          top: '24px',
-          right: '4px',
+          top: '22px',
+          right: '5px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '7px',
+          gap: '5px',
           alignItems: 'center',
         }}
       >
         {/* white — static, stays on (off only when chip clicked) */}
         <div
           style={{
-            width: 7,
-            height: 7,
+            width: 4,
+            height: 4,
             borderRadius: '50%',
             background: lightsOn ? '#ffffff' : 'rgba(255,255,255,0.10)',
-            boxShadow: lightsOn ? '0 0 6px 2px rgba(255,255,255,0.85), 0 0 2px 1px #fff' : 'none',
+            boxShadow: lightsOn ? '0 0 4px 1px rgba(255,255,255,0.7)' : 'none',
             transition: 'background 0.12s, box-shadow 0.12s',
           }}
         />
