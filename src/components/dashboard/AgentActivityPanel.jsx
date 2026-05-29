@@ -30,7 +30,9 @@ export default function AgentActivityPanel({ users = [] }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm" style={{ borderTop: '2px solid #60a5fa' }}>
-      <h3 className="text-sm font-bold text-gray-800 mb-4">Agent Activity</h3>
+      <div className="-mx-4 px-4 py-2 mb-4 rounded-t-2xl" style={{ background: 'linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%)', borderBottom: '1px solid #bfdbfe' }}>
+        <h3 className="text-sm font-bold text-gray-800">Agent Activity</h3>
+      </div>
       <div className="grid grid-cols-2 gap-2">
         {agents.map((agent, i) => (
           <div key={i} className="flex items-center gap-2 p-3 rounded-xl bg-gray-50 border border-gray-100">

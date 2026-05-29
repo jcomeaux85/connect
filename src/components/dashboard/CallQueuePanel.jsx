@@ -22,10 +22,10 @@ export default function CallQueuePanel({ cases = [] }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm h-full" style={{ borderTop: '2px solid #a78bfa' }}>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 -mx-4 px-4 py-2 rounded-t-2xl" style={{ background: 'linear-gradient(90deg, #ede9fe 0%, #f5f3ff 100%)', borderBottom: '1px solid #ddd6fe' }}>
         <h3 className="text-sm font-bold text-gray-800">Call Queue</h3>
         {queue.length > 0 && (
-          <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#EDE9FE', color: '#7C3AED' }}>
+          <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#7C3AED', color: '#fff' }}>
             {queue.length} waiting
           </span>
         )}
