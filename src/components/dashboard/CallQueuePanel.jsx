@@ -15,6 +15,9 @@ const DEMO_QUEUE = [
   { id: 'd3', customer_name: 'Aisha Patel', call_reason: 'Provider Search', priority: 'medium', created_date: new Date(Date.now() - 14 * 60000).toISOString() },
   { id: 'd4', customer_name: 'Robert Kim', call_reason: 'General Inquiry', priority: 'low', created_date: new Date(Date.now() - 21 * 60000).toISOString() },
   { id: 'd5', customer_name: 'Sandra Lee', call_reason: 'Enrollment Help', priority: 'medium', created_date: new Date(Date.now() - 27 * 60000).toISOString() },
+  { id: 'd6', customer_name: 'David Chen', call_reason: 'Billing Issue', priority: 'high', created_date: new Date(Date.now() - 32 * 60000).toISOString() },
+  { id: 'd7', customer_name: 'Michelle Brown', call_reason: 'Document Request', priority: 'low', created_date: new Date(Date.now() - 38 * 60000).toISOString() },
+  { id: 'd8', customer_name: 'Carlos Rodriguez', call_reason: 'Authorization Request', priority: 'medium', created_date: new Date(Date.now() - 45 * 60000).toISOString() },
 ];
 
 export default function CallQueuePanel({ cases = [] }) {
