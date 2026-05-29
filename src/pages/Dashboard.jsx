@@ -197,11 +197,11 @@ export default function Dashboard() {
             <AgentCallTimeline calls={calls} />
           </div>
           {/* Chip at bottom left */}
-          <div className="absolute bottom-4 left-4 pt-4">
+          <div className="absolute bottom-6 pt-4" style={{ left: '16px' }}>
             <img
               src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
               alt="BenConnect chip"
-              style={{ width: '160px', height: 'auto', opacity: 0.85 }}
+              style={{ width: '240px', height: 'auto', opacity: 0.85 }}
             />
           </div>
         </div>
