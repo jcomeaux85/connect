@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import ChipHeader from '@/components/navigation/ChipHeader';
 
 export const SIDEBAR_WIDTHS = [52, 160, 220];
 
@@ -254,29 +255,12 @@ export default function PersistentSidebar({
 
         <div className="flex flex-col h-full overflow-hidden" style={{ position: 'relative', zIndex: 2 }}>
 
-          {/* Header: B|C logo — always visible, centered */}
+          {/* Header: embedded BEN|CONNECT chip with status lights */}
           <div
-            className="flex items-center justify-center flex-shrink-0"
-            style={{
-              height: '64px',
-              borderBottom: `1px solid ${PANEL_BORDER}`,
-              background: 'transparent',
-            }}
+            className="flex-shrink-0"
+            style={{ borderBottom: `1px solid ${PANEL_BORDER}` }}
           >
-            <img
-              src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a12a64796_image.png"
-              alt="B|C"
-              style={{
-                width: isMin ? '42px' : '130px',
-                height: isMin ? '42px' : '52px',
-                objectFit: 'contain',
-                objectPosition: 'center',
-                transition: 'width 0.2s, height 0.2s',
-                display: 'block',
-                mixBlendMode: 'normal',
-                filter: 'none',
-              }}
-            />
+            <ChipHeader />
           </div>
 
           {/* Nav items — flex column, fill all space */}
