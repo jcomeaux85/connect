@@ -193,7 +193,7 @@ ${footerScript}
             style={{
               width: 'min(420px, 100vw)',
               boxShadow: '-8px 0 48px rgba(0,0,0,0.5)',
-              background: isDark ? '#1a1a1e' : '#eef1f6',
+              background: isDark ? 'rgba(26, 26, 30, 0.95)' : 'rgba(238, 241, 246, 0.95)',
             }}
             onClick={e => e.stopPropagation()}
           >
