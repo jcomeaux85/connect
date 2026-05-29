@@ -1,5 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 
 const AGENTS = ['Ryan', 'Vanessa', 'Chris', 'Jarrad'];
 
@@ -119,13 +122,49 @@ const HOUR_LABELS = Array.from({ length: TOTAL_HOURS + 1 }, (_, i) => {
   return h === 12 ? '12PM' : h < 12 ? `${h}AM` : `${h - 12}PM`;
 });
 
+// Map agent names to their call_start_time hours/minutes for matching
+const AGENT_CALL_MAP = {
+  Ryan:    ['08:11','08:44','09:08','09:31','09:52','11:07','11:29','11:54','12:18','12:46','13:14','13:41','14:09','14:38','15:05','15:44','16:22','17:08'],
+  Vanessa: ['08:19','08:52','09:17','09:43','10:06','10:34','12:04','12:31','12:58','13:22','13:51','14:17','14:49','15:16','15:52','16:28','17:14','17:43'],
+  Chris:   ['08:28','09:03','09:26','09:58','10:21','10:49','11:15','11:44','13:07','13:33','13:58','14:26','14:55','15:23','16:01','16:39','17:18'],
+  Jarrad:  ['08:36','09:11','09:38','10:04','10:33','11:02','11:28','11:57','12:22','14:08','14:37','15:04','15:31','15:59','16:34','17:12','17:46'],
+};
+
 export default function AgentCallTimeline({ calls: liveCalls }) {
   const { isDark } = useTheme();
+  const navigate = useNavigate();
 
-  const demoCalls = useMemo(() => generateDemoCalls(), []);
+  const today = new Date().toISOString().split('T')[0];
 
-  // Always use demo data — this is a demo environment
-  const allCalls = demoCalls;
+  const { data: realCalls = [] } = useQuery({
+    queryKey: ['calls-today-timeline'],
+    queryFn: () => base44.entities.Call.list('-call_start_time', 200),
+    refetchInterval: 60000,
+  });
+
+  // Match real Call records to agents by time
+  const allCalls = useMemo(() => {
+    const todayCalls = realCalls.filter(c => c.call_start_time && c.call_start_time.startsWith(today));
+    if (todayCalls.length === 0) return generateDemoCalls().map(c => ({ ...c, callId: null, caseId: null }));
+
+    const result = [];
+    Object.entries(AGENT_CALL_MAP).forEach(([agent, times]) => {
+      times.forEach(t => {
+        const [th, tm] = t.split(':').map(Number);
+        // Find matching real call within ±2 min
+        const match = todayCalls.find(c => {
+          const d = new Date(c.call_start_time);
+          return Math.abs(d.getHours() - th) === 0 && Math.abs(d.getMinutes() - tm) <= 2;
+        });
+        if (match) {
+          result.push({ agent, hour: th, minute: tm, direction: match.direction || 'inbound', callId: match.id, caseId: match.case_id });
+        } else {
+          result.push({ agent, hour: th, minute: tm, direction: t, callId: null, caseId: null });
+        }
+      });
+    });
+    return result;
+  }, [realCalls, today]);
 
   const textPrimary = isDark ? '#f0f0f0' : '#111827';
   const textSecondary = isDark ? '#9ca3af' : '#6b7280';
@@ -225,11 +264,13 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
                   const isInbound = call.direction === 'inbound';
                   const color = isInbound ? '#38bdf8' : '#fb923c';
                   const timeStr = `${String(call.hour).padStart(2, '0')}:${String(call.minute).padStart(2, '0')}`;
+                  const hasLink = !!call.caseId;
                   return (
                     <div
                       key={idx}
-                      onMouseEnter={(e) => setTooltip({ agent, time: timeStr, direction: call.direction, x: pct })}
+                      onMouseEnter={() => setTooltip({ agent, time: timeStr, direction: call.direction, hasLink })}
                       onMouseLeave={() => setTooltip(null)}
+                      onClick={() => call.caseId && navigate(`/Case?id=${call.caseId}`)}
                       style={{
                         position: 'absolute',
                         left: `${pct}%`,
@@ -240,9 +281,10 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
                         borderRadius: '50%',
                         background: color,
                         boxShadow: `0 0 6px ${color}99`,
-                        cursor: 'pointer',
+                        cursor: hasLink ? 'pointer' : 'default',
                         zIndex: 2,
                         transition: 'transform 0.15s',
+                        outline: hasLink ? `2px solid ${color}55` : 'none',
                       }}
                       onMouseOver={e => e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.5)'}
                       onMouseOut={e => e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'}
@@ -312,6 +354,7 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
           <span style={{ color: tooltip.direction === 'inbound' ? '#38bdf8' : '#fb923c' }}>
             {tooltip.direction}
           </span>
+          {tooltip.hasLink && <span style={{ color: '#a3e635', marginLeft: '6px' }}>→ open case</span>}
         </div>
       )}
     </div>
