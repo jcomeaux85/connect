@@ -118,7 +118,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
 
   const today = new Date().toISOString().split('T')[0];
 
-  const realCalls = incomingCalls.length > 0 ? incomingCalls : [];
+  const realCalls = Array.isArray(incomingCalls) ? incomingCalls : [];
   const callsLoading = false;
 
   const { data: employers = [] } = useQuery({
