@@ -203,7 +203,7 @@ export default function Dashboard() {
       <AIInsightsPanel />
 
       {/* Blank space with chip left 50%, empty right 50% */}
-      <div className="flex gap-0 mt-12 h-48">
+      <div className="mt-20 pb-40 flex">
         <div className="w-1/2">
           <img
             src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
