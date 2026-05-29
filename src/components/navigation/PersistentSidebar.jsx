@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/ThemeProvider';
 import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
-  MessageSquare, Settings, LogOut, Palette, Building2,
-  Sun, Moon, HelpCircle, FileText, Minus, Square, Maximize2
+  MessageSquare, LogOut, Palette, Building2,
+  Sun, Moon, ChevronsRight, ChevronsLeft
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 
-export const SIDEBAR_WIDTHS = [32, 160, 220];
+export const SIDEBAR_WIDTHS = [52, 160, 220];
 
 const navItems = [
   { title: 'Dashboard', url: createPageUrl('Dashboard'), icon: LayoutGrid },
@@ -254,38 +254,24 @@ export default function PersistentSidebar({
 
         <div className="flex flex-col h-full overflow-hidden" style={{ position: 'relative', zIndex: 2 }}>
 
-          {/* Header: BEN|connect logo — tastefully larger, recessed */}
+          {/* Header: B|C logo — always visible, centered */}
           <div
-            className="px-2 flex items-center flex-shrink-0"
+            className="flex items-center justify-center flex-shrink-0"
             style={{
               height: '64px',
               borderBottom: `1px solid ${PANEL_BORDER}`,
             }}
           >
-            <AnimatePresence>
-              {!isMin && (
-                <motion.div
-                  initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}
-                  transition={{ duration: 0.15 }}
-                  className="flex flex-col leading-none"
-                  style={{
-                    padding: '6px 10px',
-                    borderRadius: '10px',
-                    background: 'rgba(0,0,0,0.25)',
-                    boxShadow: 'inset 2px 2px 6px rgba(0,0,0,0.4), inset -1px -1px 3px rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                  }}
-                >
-                  <span style={{ fontSize: '15px', fontWeight: 900, letterSpacing: '-0.5px', color: '#a78bfa' }}>
-                    BEN<span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 300 }}>|</span>
-                    <span style={{ color: '#fff' }}>connect</span>
-                  </span>
-                  <span style={{ fontSize: '8px', fontWeight: 500, color: 'rgba(255,255,255,0.3)', letterSpacing: '1.5px', marginTop: '1px' }}>
-                    BENEFITS PLATFORM
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <img
+              src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/02a5e4baa_image.png"
+              alt="B|C"
+              style={{
+                width: isMin ? '36px' : '120px',
+                height: isMin ? '36px' : '44px',
+                objectFit: 'contain',
+                transition: 'width 0.2s, height 0.2s',
+              }}
+            />
           </div>
 
           {/* Nav items — flex column, fill all space */}
@@ -396,36 +382,32 @@ export default function PersistentSidebar({
             </div>
           </div>
 
-          {/* Size switcher */}
-          <div className="flex-shrink-0 p-1.5 border-t" style={{ borderColor: PANEL_BORDER }}>
-            <div
-              className="flex rounded-xl overflow-hidden"
+          {/* Size cycle button */}
+          <div className="flex-shrink-0 p-1.5 border-t flex justify-center" style={{ borderColor: PANEL_BORDER }}>
+            <button
+              onClick={() => onSidebarLevelChange(level === 3 ? 1 : level + 1)}
+              title={level === 3 ? 'Collapse' : 'Expand'}
               style={{
-                background: 'rgba(0,0,0,0.3)',
-                border: `1px solid ${PANEL_BORDER}`,
+                width: '36px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: 'rgba(255,255,255,0.5)',
+                transition: 'background 0.15s, color 0.15s',
               }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(124,58,237,0.35)'; e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
             >
-              {[1, 2, 3].map((l) => (
-                <button
-                  key={l}
-                  onClick={() => onSidebarLevelChange(l)}
-                  className="flex-1 flex items-center justify-center transition-all"
-                  style={{
-                    height: '28px',
-                    background: level === l ? 'linear-gradient(135deg, #7c3aed, #6d28d9)' : 'transparent',
-                    color: level === l ? '#fff' : 'rgba(255,255,255,0.4)',
-                    fontSize: '10px',
-                    fontWeight: 700,
-                    border: 'none',
-                    borderRadius: level === l ? '8px' : '0',
-                    boxShadow: level === l ? '2px 2px 6px rgba(0,0,0,0.4)' : 'none',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {l === 1 ? <Minus className="w-3 h-3" /> : l === 2 ? <Square className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
-                </button>
-              ))}
-            </div>
+              {level === 3
+                ? <ChevronsLeft className="w-3.5 h-3.5" />
+                : <ChevronsRight className="w-3.5 h-3.5" />
+              }
+            </button>
           </div>
 
           {/* User footer — larger photo */}
