@@ -190,7 +190,7 @@ export default function Dashboard() {
 
       {/* Call Volume + Queue */}
       <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-2xl overflow-hidden" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
+        <div className="lg:col-span-2 rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
           <AgentCallTimeline incomingCalls={calls} />
         </div>
         <CallQueuePanel cases={cases} />
