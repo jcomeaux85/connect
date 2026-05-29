@@ -5,13 +5,37 @@ import { X, ExternalLink, Sun, Moon } from 'lucide-react';
 const DOC_HTML_URL = 'https://media.base44.com/files/public/68fa7c4cb70fe91d38015eba/c1547e610_DOC_.html';
 const EBM_SRC = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/5c7593e2c_im.png';
 
-// ── Kept outside component so JSX parser never sees the raw CSS/script strings ──
+// ── Outside component — no JSX parser issues with raw CSS strings ──
 function buildPatchedHtml(htmlContent, light) {
   if (!htmlContent) return null;
 
   const forceLight = light
-    ? 'html, body { background: #f0f4f8 !important; color: #1a202c !important; } .dark-mode-overrides { display: none !important; }'
-    : '';
+    ? 'html, body { background: #eef1f6 !important; color: #1a202c !important; }'
+    : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
+
+  const darkOverrides = light ? '' : [
+    // Dark: medium-dark grey base with neumorphic shadow (only darker — no light reversal)
+    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] {',
+    '  background: #252529 !important; color: #c8ccd2 !important;',
+    '  box-shadow: 4px 4px 10px #1a1a1e, 2px 2px 5px #1c1c20 !important;',
+    '  border: none !important; border-radius: 10px !important; }',
+    '.ben-btn, [class*="ben-btn"], .benefit-nav button, .client-tab, [class*="client-tab"] {',
+    '  background: #333338 !important; color: #aab0bb !important;',
+    '  box-shadow: 3px 3px 8px #1e1e22, 1px 1px 3px #1a1a1e !important;',
+    '  border: none !important; border-radius: 22px !important; }',
+    '.ben-btn.active, [class*="ben-btn"].active, .client-tab.active {',
+    '  background: #dc2626 !important; color: #fff !important;',
+    '  box-shadow: 3px 3px 8px #1a1a1e !important; }',
+    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] {',
+    '  background: #303035 !important;',
+    '  box-shadow: 4px 4px 10px #1e1e22, 1px 1px 3px #1a1a1e !important;',
+    '  border: none !important; border-radius: 12px !important; }',
+    'button:not(.ben-btn):not([class*="client-tab"]) {',
+    '  background: #333338 !important; color: #aab0bb !important;',
+    '  box-shadow: 3px 3px 7px #1e1e22 !important; border: none !important; }',
+    'a { color: #dc2626 !important; }',
+    '.doc-footer, .footer, footer { background: #272729 !important; color: #666 !important; }',
+  ].join('\n');
 
   const styleBlock = [
     '<style>',
@@ -34,6 +58,7 @@ function buildPatchedHtml(htmlContent, light) {
     '.quick-copy { position: static !important; opacity: 1 !important; display: inline-flex !important; margin-left: 8px !important; vertical-align: middle !important; flex-shrink: 0 !important; }',
     '.source-line { display: flex !important; align-items: center !important; flex-wrap: wrap !important; gap: 4px !important; }',
     forceLight,
+    darkOverrides,
     '</style>',
   ].join('\n');
 
@@ -68,7 +93,6 @@ function buildPatchedHtml(htmlContent, light) {
     '  }\n' +
     '  setTimeout(doFix, 1200);\n' +
     '})();\n' +
-    // postMessage listener to focus search
     'window.addEventListener("message", function(e) {\n' +
     '  if (e.data && e.data.type === "doc-focus-search") {\n' +
     '    var input = document.querySelector(\'input[type="search"], input[type="text"], input[placeholder*="earch"], .search-input, #search, #searchInput, [id*="search"], [class*="search-input"]\');\n' +
@@ -78,6 +102,38 @@ function buildPatchedHtml(htmlContent, light) {
     '<\/script>';
 
   return htmlContent.replace('</head>', styleBlock + '\n' + footerScript + '\n</head>');
+}
+
+// Mouse-pointer SVG shadow shape — fuzzy dark dropshadow, pointer-cursor outline
+function CursorShadow() {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        bottom: 60,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        pointerEvents: 'none',
+        zIndex: 0,
+        width: 120,
+        height: 140,
+        opacity: 0.13,
+      }}
+    >
+      <svg
+        viewBox="0 0 60 72"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ width: '100%', height: '100%', filter: 'blur(18px)' }}
+      >
+        {/* Arrow cursor shape filled solid — blur creates the fuzzy shadow */}
+        <path
+          d="M4 2 L4 56 L16 44 L26 68 L34 64 L24 40 L40 40 Z"
+          fill="#2c2c31"
+        />
+      </svg>
+    </div>
+  );
 }
 
 export default function DOCModal({ isOpen, onClose }) {
@@ -97,17 +153,14 @@ export default function DOCModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  // Rebuild blob when theme or content changes
   useEffect(() => {
     if (!htmlContent) return;
     if (blobUrl) URL.revokeObjectURL(blobUrl);
     const patched = buildPatchedHtml(htmlContent, docLight);
     const blob = new Blob([patched], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    setBlobUrl(url);
+    setBlobUrl(URL.createObjectURL(blob));
   }, [docLight, htmlContent]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => { if (blobUrl) URL.revokeObjectURL(blobUrl); };
   }, [blobUrl]);
@@ -118,14 +171,10 @@ export default function DOCModal({ isOpen, onClose }) {
     }
   };
 
-  // Focus search when panel opens or blob is ready
   useEffect(() => {
-    if (isOpen && blobUrl) {
-      setTimeout(focusIframeSearch, 500);
-    }
+    if (isOpen && blobUrl) setTimeout(focusIframeSearch, 500);
   }, [isOpen, blobUrl]);
 
-  // Respond to global Ctrl+K event (when already open)
   useEffect(() => {
     const handler = () => setTimeout(focusIframeSearch, 300);
     window.addEventListener('doc-focus-search', handler);
@@ -133,23 +182,28 @@ export default function DOCModal({ isOpen, onClose }) {
   }, []);
 
   const handlePopOut = () => {
-    if (blobUrl) {
-      window.open(blobUrl, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
-    } else {
-      window.open(DOC_HTML_URL, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
-    }
+    if (blobUrl) window.open(blobUrl, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
+    else window.open(DOC_HTML_URL, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
   };
 
   const isDark = !docLight;
 
+  // Dark: medium dark grey base (#2c2c31), panels are just a bit darker — no light shadow
+  const panelBg    = isDark ? '#2c2c31' : 'rgba(238, 241, 246, 0.97)';
+  const headerBg   = isDark ? '#232327' : '#dde3ea';
+  const headerBdr  = isDark ? '#1e1e22' : '#c8d0da';
+  const btnBg      = isDark ? '#333338' : '#dde3ea';
+  const btnShadow  = isDark
+    ? '3px 3px 7px #1a1a1e, 1px 1px 2px #171719'   // shade only, darker surface
+    : '3px 3px 6px #b8c0cc, -3px -3px 6px #fff';
+  const btnColor   = isDark ? '#888' : '#555';
+
   const btnStyle = {
     width: 28, height: 28, borderRadius: 8, border: 'none',
-    background: isDark ? '#2a2a2e' : '#dde3ea',
-    boxShadow: isDark
-      ? '3px 3px 6px #101013, -3px -3px 6px #242428'
-      : '3px 3px 6px #b8c0cc, -3px -3px 6px #fff',
+    background: btnBg,
+    boxShadow: btnShadow,
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    color: isDark ? '#888' : '#555',
+    color: btnColor,
     flexShrink: 0,
   };
 
@@ -164,7 +218,7 @@ export default function DOCModal({ isOpen, onClose }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             className="fixed inset-0 z-[200]"
-            style={{ backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', background: 'rgba(0,0,0,0.55)' }}
+            style={{ backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', background: 'rgba(0,0,0,0.5)' }}
             onClick={onClose}
           />
 
@@ -176,18 +230,20 @@ export default function DOCModal({ isOpen, onClose }) {
             transition={{ type: 'spring', damping: 30, stiffness: 280 }}
             className="fixed top-0 right-0 bottom-0 z-[201] flex flex-col overflow-hidden"
             style={{
-              width: 'min(420px, 100vw)',
-              boxShadow: '-8px 0 48px rgba(0,0,0,0.5)',
-              background: isDark ? 'rgba(26, 26, 30, 0.95)' : 'rgba(238, 241, 246, 0.95)',
+              width: 'min(460px, 100vw)',
+              boxShadow: isDark
+                ? '-6px 0 40px #0d0d10'
+                : '-6px 0 40px rgba(0,0,0,0.22)',
+              background: panelBg,
             }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Header bar */}
+            {/* Header */}
             <div
               className="flex items-center justify-between flex-shrink-0 px-4 py-2"
               style={{
-                background: isDark ? '#111114' : '#dde3ea',
-                borderBottom: `1px solid ${isDark ? '#2a2a2e' : '#c8d0da'}`,
+                background: headerBg,
+                borderBottom: `1px solid ${headerBdr}`,
                 minHeight: '44px',
               }}
             >
@@ -200,12 +256,12 @@ export default function DOCModal({ isOpen, onClose }) {
                   letterSpacing: '-1px',
                   lineHeight: 1,
                   textShadow: isDark
-                    ? '2px 2px 4px #101013, -1px -1px 2px #242428'
+                    ? '2px 2px 5px #101013'
                     : '2px 2px 4px #b8c0cc, -1px -1px 2px #fff',
                 }}>
                   DOC<sup style={{ fontSize: '.45rem', opacity: .5, verticalAlign: 'super' }}>™</sup>
                 </span>
-                <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: isDark ? '#666' : '#8a96a3', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: isDark ? '#555' : '#8a96a3', letterSpacing: '1px', textTransform: 'uppercase' }}>
                   Directory of Coverage
                 </span>
               </div>
@@ -225,8 +281,11 @@ export default function DOCModal({ isOpen, onClose }) {
 
             {/* Content area */}
             <div className="flex-1 overflow-hidden relative">
+              {/* Cursor shadow — light mode only, decorative ambient glow */}
+              {docLight && <CursorShadow />}
+
               {loading && (
-                <div className="absolute inset-0 flex items-center justify-center" style={{ background: isDark ? '#1a1a1e' : '#eef1f6' }}>
+                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: isDark ? '#2c2c31' : '#eef1f6' }}>
                   <div style={{
                     fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: '11px',
@@ -244,7 +303,7 @@ export default function DOCModal({ isOpen, onClose }) {
                   ref={iframeRef}
                   src={blobUrl}
                   className="w-full h-full"
-                  style={{ border: 'none', display: 'block' }}
+                  style={{ border: 'none', display: 'block', position: 'relative', zIndex: 1 }}
                   title="DOC Directory of Coverage"
                   sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
                 />
