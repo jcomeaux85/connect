@@ -109,9 +109,9 @@ function toPercent(hour, minute) {
   return ((hour - START_HOUR) * 60 + minute) / TOTAL_MINS * 100;
 }
 
-// Duration in seconds → % of timeline width
+// Duration in seconds → % of timeline width. Minimum visible = 1.5%
 function durToPercent(seconds) {
-  return (seconds / 60) / TOTAL_MINS * 100;
+  return Math.max((seconds / 60) / TOTAL_MINS * 100, 1.5);
 }
 
 const HOUR_LABELS = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => {
@@ -223,7 +223,7 @@ export default function AgentCallTimeline() {
             </div>
 
             {/* Lane */}
-            <div style={{ flex: 1, height: '100%', position: 'relative', background: laneBg, borderRadius: 8, border: `1px solid ${laneBorder}`, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '4px 0' }}>
+            <div style={{ flex: 1, height: '100%', position: 'relative', background: laneBg, borderRadius: 8, border: `1px solid ${laneBorder}`, overflow: 'visible', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: GAP, padding: '4px 0' }}>
 
               {/* Hour grid lines */}
               {HOUR_LABELS.slice(0, -1).map((_, i) => (
@@ -234,7 +234,7 @@ export default function AgentCallTimeline() {
               <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, background: centerLine, pointerEvents: 'none' }} />
 
               {/* Inbound track (top half) */}
-              <div style={{ position: 'relative', height: TRACK_H, marginBottom: GAP }}>
+              <div style={{ position: 'relative', height: TRACK_H, flexShrink: 0 }}>
                 {inbound.map((c, idx) => {
                   const left = toPercent(c.hour, c.minute);
                   const width = Math.max(durToPercent(c.duration), 0.4);
@@ -267,7 +267,7 @@ export default function AgentCallTimeline() {
               </div>
 
               {/* Outbound track (bottom half) */}
-              <div style={{ position: 'relative', height: TRACK_H }}>
+              <div style={{ position: 'relative', height: TRACK_H, flexShrink: 0 }}>
                 {outbound.map((c, idx) => {
                   const left = toPercent(c.hour, c.minute);
                   const width = Math.max(durToPercent(c.duration), 0.4);
