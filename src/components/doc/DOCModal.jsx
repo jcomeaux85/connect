@@ -32,7 +32,7 @@ export default function DOCModal({ isOpen, onClose }) {
       .dark-mode-overrides { display: none !important; }
     ` : '';
 
-    const ebmSrc = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/7258f1cbd_ebm_white.png';
+    const ebmSrc = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/5c7593e2c_im.png';
 
     // Script to patch footer after DOM is ready
     const footerScript = `
