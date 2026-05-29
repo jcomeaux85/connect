@@ -10,6 +10,14 @@
       "type": "string",
       "description": "URL to the company logo image"
     },
+    "dot_color_primary": {
+      "type": "string",
+      "description": "Primary dot color for call timeline (hex, e.g. #ef4444)"
+    },
+    "dot_color_secondary": {
+      "type": "string",
+      "description": "Secondary / glow color for call timeline dot (hex)"
+    },
     "industry": {
       "type": "string",
       "description": "Industry sector"
