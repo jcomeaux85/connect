@@ -168,7 +168,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const centerLine    = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', overflow: 'hidden' }}>
       {/* Legend */}
       <div className="flex items-center gap-3 mb-3 flex-wrap">
         {EMPLOYER_DEMO_COLORS.map(e => (
@@ -200,7 +200,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
             </div>
 
             {/* Lane */}
-            <div style={{ flex: 1, height: '100%', position: 'relative', background: laneBg, borderRadius: 8, border: `1px solid ${laneBorder}`, overflow: 'visible', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: GAP, padding: '4px 0' }}>
+            <div style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: laneBg, borderRadius: 8, border: `1px solid ${laneBorder}`, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: GAP, padding: '4px 0' }}>
 
               {/* Hour grid lines */}
               {HOUR_LABELS.slice(0, -1).map((_, i) => (
@@ -277,7 +277,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
               </div>
 
               {/* Count badge */}
-              <div style={{ position: 'absolute', right: -26, top: '50%', transform: 'translateY(-50%)', fontSize: 10, fontWeight: 700, color: textSecondary }}>
+              <div style={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: textSecondary, background: laneBg, lineHeight: 1 }}>
                 {blocks.length}
               </div>
             </div>
