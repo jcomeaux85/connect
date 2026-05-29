@@ -118,7 +118,7 @@ export default function AgentCallTimeline() {
 
   const today = new Date().toISOString().split('T')[0];
 
-  const { data: realCalls = [] } = useQuery({
+  const { data: realCalls = [], isLoading: callsLoading } = useQuery({
     queryKey: ['calls-today-timeline'],
     queryFn: () => base44.entities.Call.list('-call_start_time', 200),
     refetchInterval: 60000,
@@ -140,6 +140,7 @@ export default function AgentCallTimeline() {
 
   // Build per-agent call blocks
   const agentBlocks = useMemo(() => {
+    if (callsLoading) return {};
     const todayCalls = realCalls.filter(c => c.call_start_time?.startsWith(today));
     const useDemo = todayCalls.length === 0;
 
