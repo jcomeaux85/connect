@@ -35,6 +35,11 @@ function buildPatchedHtml(htmlContent, light) {
     '  box-shadow: 3px 3px 7px #1e1e22 !important; border: none !important; }',
     'a { color: #dc2626 !important; }',
     '.doc-footer, .footer, footer { background: #272729 !important; color: #666 !important; }',
+    // Client strip: darker bg + thin white lines above and below
+    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] {',
+    '  background: #1e1e22 !important;',
+    '  border-top: 1px solid rgba(255,255,255,0.1) !important;',
+    '  border-bottom: 1px solid rgba(255,255,255,0.1) !important; }',
   ].join('\n');
 
   const styleBlock = [
@@ -104,32 +109,31 @@ function buildPatchedHtml(htmlContent, light) {
   return htmlContent.replace('</head>', styleBlock + '\n' + footerScript + '\n</head>');
 }
 
-// Mouse-pointer SVG shadow shape — fuzzy dark dropshadow, pointer-cursor outline
+// Mouse-pointer SVG shadow shape — fuzzy dropshadow overlay above iframe
 function CursorShadow() {
   return (
     <div
       aria-hidden="true"
       style={{
         position: 'absolute',
-        bottom: 60,
+        bottom: 80,
         left: '50%',
         transform: 'translateX(-50%)',
         pointerEvents: 'none',
-        zIndex: 0,
-        width: 120,
-        height: 140,
-        opacity: 0.13,
+        zIndex: 2,   // above the iframe (z:1)
+        width: 160,
+        height: 190,
+        opacity: 0.09,
       }}
     >
       <svg
         viewBox="0 0 60 72"
         xmlns="http://www.w3.org/2000/svg"
-        style={{ width: '100%', height: '100%', filter: 'blur(18px)' }}
+        style={{ width: '100%', height: '100%', filter: 'blur(22px)' }}
       >
-        {/* Arrow cursor shape filled solid — blur creates the fuzzy shadow */}
         <path
           d="M4 2 L4 56 L16 44 L26 68 L34 64 L24 40 L40 40 Z"
-          fill="#2c2c31"
+          fill="#1a1820"
         />
       </svg>
     </div>
@@ -256,8 +260,8 @@ export default function DOCModal({ isOpen, onClose }) {
                   letterSpacing: '-1px',
                   lineHeight: 1,
                   textShadow: isDark
-                    ? '2px 2px 5px #101013'
-                    : '2px 2px 4px #b8c0cc, -1px -1px 2px #fff',
+                   ? '1px 2px 4px #0a0a0d'
+                   : '2px 2px 4px #b8c0cc, -1px -1px 2px #fff',
                 }}>
                   DOC<sup style={{ fontSize: '.45rem', opacity: .5, verticalAlign: 'super' }}>™</sup>
                 </span>
