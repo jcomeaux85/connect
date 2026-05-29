@@ -199,7 +199,7 @@ export default function Dashboard() {
       </div>
 
       {/* Blank space with chip left 50%, empty right 50% */}
-      <div className="mt-20 h-96 flex items-center">
+      <div className="mt-20 h-96 flex items-center rounded-2xl p-6" style={{ background: cardBg, border: `2px solid ${cardBorder}` }}>
         <div className="w-1/2 flex items-center justify-start">
           <img
             src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
