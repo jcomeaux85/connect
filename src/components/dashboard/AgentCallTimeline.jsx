@@ -118,25 +118,8 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
 
   const demoCalls = useMemo(() => generateDemoCalls(), []);
 
-  // Use live calls only if they have real call_start_time data, else demo
-  const allCalls = useMemo(() => {
-    const liveWithTime = (liveCalls || []).filter(c => c.call_start_time);
-    if (liveWithTime.length > 0) {
-      return liveWithTime
-        .map(c => {
-          const d = new Date(c.call_start_time);
-          const agentIdx = Math.abs(c.id?.charCodeAt(0) || 0) % AGENTS.length;
-          return {
-            agent: AGENTS[agentIdx],
-            hour: d.getHours(),
-            minute: d.getMinutes(),
-            direction: c.direction || 'inbound',
-          };
-        })
-        .filter(c => c.hour >= START_HOUR && c.hour < END_HOUR);
-    }
-    return demoCalls;
-  }, [liveCalls, demoCalls]);
+  // Always use demo data — this is a demo environment
+  const allCalls = demoCalls;
 
   const textPrimary = isDark ? '#f0f0f0' : '#111827';
   const textSecondary = isDark ? '#9ca3af' : '#6b7280';
