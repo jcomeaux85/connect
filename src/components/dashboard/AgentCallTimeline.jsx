@@ -6,6 +6,20 @@ import { useNavigate } from 'react-router-dom';
 
 const AGENTS = ['Ryan', 'Vanessa', 'Chris', 'Jarrad'];
 
+// Fallback employer colors (used for demo rotation when no employer_id on call)
+const EMPLOYER_DEMO_COLORS = [
+  { name: 'Lazer',           primary: '#ef4444', secondary: '#fca5a5' },
+  { name: 'Orbital',         primary: '#f97316', secondary: '#fdba74' },
+  { name: 'PSP',             primary: '#22c55e', secondary: '#86efac' },
+  { name: 'PAM',             primary: '#3b82f6', secondary: '#93c5fd' },
+  { name: 'Dohrn',           primary: '#8b5cf6', secondary: '#c4b5fd' },
+  { name: 'Tekni-Plex',      primary: '#06b6d4', secondary: '#67e8f9' },
+  { name: "Buddy's",         primary: '#f43f5e', secondary: '#fda4af' },
+  { name: 'GCL/Rock-it',     primary: '#eab308', secondary: '#fde047' },
+  { name: 'SwimUSA',         primary: '#14b8a6', secondary: '#5eead4' },
+  { name: 'Brandywine',      primary: '#ec4899', secondary: '#f9a8d4' },
+];
+
 // Generate demo calls for today spread across 8am–6pm
 function generateDemoCalls() {
   const calls = [];
@@ -142,29 +156,70 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
     refetchInterval: 60000,
   });
 
+  const { data: employers = [] } = useQuery({
+    queryKey: ['employers-for-timeline'],
+    queryFn: () => base44.entities.Employer.list(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Build employer color map keyed by id
+  const employerColorMap = useMemo(() => {
+    const map = {};
+    employers.forEach(e => {
+      map[e.id] = {
+        name: e.employer_name,
+        primary: e.dot_color_primary || '#94a3b8',
+        secondary: e.dot_color_secondary || '#cbd5e1',
+      };
+    });
+    return map;
+  }, [employers]);
+
   // Match real Call records to agents by time
   const allCalls = useMemo(() => {
     const todayCalls = realCalls.filter(c => c.call_start_time && c.call_start_time.startsWith(today));
-    if (todayCalls.length === 0) return generateDemoCalls().map(c => ({ ...c, callId: null, caseId: null }));
+
+    // Assign demo employer colors by rotating through the list per-agent
+    const agentCounters = { Ryan: 0, Vanessa: 0, Chris: 0, Jarrad: 0 };
+
+    const assignEmployer = (agent, match) => {
+      if (match?.employer_id && employerColorMap[match.employer_id]) {
+        return employerColorMap[match.employer_id];
+      }
+      // Rotate through demo employers per agent for visual variety
+      const idx = agentCounters[agent] % EMPLOYER_DEMO_COLORS.length;
+      agentCounters[agent] = (agentCounters[agent] + 1);
+      // Offset each agent so they don't all start on Lazer
+      const agentOffset = { Ryan: 0, Vanessa: 3, Chris: 6, Jarrad: 1 };
+      return EMPLOYER_DEMO_COLORS[(idx + (agentOffset[agent] || 0)) % EMPLOYER_DEMO_COLORS.length];
+    };
+
+    if (todayCalls.length === 0) {
+      return generateDemoCalls().map(c => ({
+        ...c, callId: null, caseId: null,
+        employer: assignEmployer(c.agent, null),
+      }));
+    }
 
     const result = [];
     Object.entries(AGENT_CALL_MAP).forEach(([agent, times]) => {
       times.forEach(t => {
         const [th, tm] = t.split(':').map(Number);
-        // Find matching real call within ±2 min
         const match = todayCalls.find(c => {
           const d = new Date(c.call_start_time);
-          return Math.abs(d.getHours() - th) === 0 && Math.abs(d.getMinutes() - tm) <= 2;
+          return d.getHours() === th && Math.abs(d.getMinutes() - tm) <= 2;
         });
-        if (match) {
-          result.push({ agent, hour: th, minute: tm, direction: match.direction || 'inbound', callId: match.id, caseId: match.case_id });
-        } else {
-          result.push({ agent, hour: th, minute: tm, direction: t, callId: null, caseId: null });
-        }
+        result.push({
+          agent, hour: th, minute: tm,
+          direction: match?.direction || 'inbound',
+          callId: match?.id || null,
+          caseId: match?.case_id || null,
+          employer: assignEmployer(agent, match),
+        });
       });
     });
     return result;
-  }, [realCalls, today]);
+  }, [realCalls, today, employerColorMap]);
 
   const textPrimary = isDark ? '#f0f0f0' : '#111827';
   const textSecondary = isDark ? '#9ca3af' : '#6b7280';
@@ -179,16 +234,14 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
 
   return (
     <div style={{ width: '100%' }}>
-      {/* Legend */}
-      <div className="flex items-center gap-4 mb-3">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full" style={{ background: '#38bdf8' }} />
-          <span style={{ fontSize: '11px', color: textSecondary, fontWeight: 600 }}>Inbound</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full" style={{ background: '#fb923c' }} />
-          <span style={{ fontSize: '11px', color: textSecondary, fontWeight: 600 }}>Outbound</span>
-        </div>
+      {/* Legend — employer colors */}
+      <div className="flex items-center gap-3 mb-3 flex-wrap">
+        {EMPLOYER_DEMO_COLORS.map(e => (
+          <div key={e.name} className="flex items-center gap-1">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: e.primary, boxShadow: `0 0 4px ${e.primary}88` }} />
+            <span style={{ fontSize: '10px', color: textSecondary, fontWeight: 600 }}>{e.name}</span>
+          </div>
+        ))}
         <span style={{ fontSize: '10px', color: textSecondary, marginLeft: 'auto' }}>
           {allCalls.length} calls today
         </span>
@@ -258,17 +311,17 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
                   pointerEvents: 'none',
                 }} />
 
-                {/* Call dots */}
+                {/* Call dots — colored by employer */}
                 {agentCalls.map((call, idx) => {
                   const pct = timeToPercent(call.hour, call.minute);
-                  const isInbound = call.direction === 'inbound';
-                  const color = isInbound ? '#38bdf8' : '#fb923c';
+                  const color = call.employer?.primary || '#94a3b8';
                   const timeStr = `${String(call.hour).padStart(2, '0')}:${String(call.minute).padStart(2, '0')}`;
                   const hasLink = !!call.caseId;
+                  const employerName = call.employer?.name || '';
                   return (
                     <div
                       key={idx}
-                      onMouseEnter={() => setTooltip({ agent, time: timeStr, direction: call.direction, hasLink })}
+                      onMouseEnter={() => setTooltip({ agent, time: timeStr, direction: call.direction, hasLink, employer: employerName, color })}
                       onMouseLeave={() => setTooltip(null)}
                       onClick={() => call.caseId && navigate(`/Case?id=${call.caseId}`)}
                       style={{
@@ -284,9 +337,9 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
                         cursor: hasLink ? 'pointer' : 'default',
                         zIndex: 2,
                         transition: 'transform 0.15s',
-                        outline: hasLink ? `2px solid ${color}55` : 'none',
+                        border: `1.5px solid ${call.employer?.secondary || color}`,
                       }}
-                      onMouseOver={e => e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.5)'}
+                      onMouseOver={e => e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.6)'}
                       onMouseOut={e => e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'}
                     />
                   );
@@ -350,11 +403,14 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
             whiteSpace: 'nowrap',
           }}
         >
-          {tooltip.agent} · {tooltip.time} ·{' '}
-          <span style={{ color: tooltip.direction === 'inbound' ? '#38bdf8' : '#fb923c' }}>
+          {tooltip.agent} · {tooltip.time}
+          {tooltip.employer && (
+            <span style={{ color: tooltip.color, marginLeft: '6px', fontWeight: 700 }}>{tooltip.employer}</span>
+          )}
+          <span style={{ color: isDark ? '#9ca3af' : '#6b7280', marginLeft: '6px', fontSize: '11px' }}>
             {tooltip.direction}
           </span>
-          {tooltip.hasLink && <span style={{ color: '#a3e635', marginLeft: '6px' }}>→ open case</span>}
+          {tooltip.hasLink && <span style={{ color: '#a3e635', marginLeft: '6px' }}>→ case</span>}
         </div>
       )}
     </div>
