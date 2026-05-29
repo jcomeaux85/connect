@@ -196,14 +196,14 @@ export default function Dashboard() {
           <div className="flex-1 overflow-y-auto">
             <AgentCallTimeline calls={calls} />
           </div>
-          {/* Chip centered horizontally and vertically in lower area */}
-         <div className="absolute left-1/2 bottom-8" style={{ transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {/* Chip bottom-right corner, small */}
+          <div className="absolute right-4 bottom-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
            <img
              src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
              alt="BenConnect chip"
-             style={{ width: '320px', height: 'auto', opacity: 0.85 }}
+             style={{ width: '140px', height: 'auto', opacity: 0.6 }}
            />
-         </div>
+          </div>
         </div>
         <CallQueuePanel cases={cases} />
       </div>
