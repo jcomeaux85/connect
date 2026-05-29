@@ -264,7 +264,7 @@ export default function PersistentSidebar({
             }}
           >
             <img
-              src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/02a5e4baa_image.png"
+              src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/a12a64796_image.png"
               alt="B|C"
               style={{
                 width: isMin ? '42px' : '130px',
