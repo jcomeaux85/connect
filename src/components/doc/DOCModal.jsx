@@ -14,7 +14,6 @@ function buildPatchedHtml(htmlContent, light) {
     : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
 
   const darkOverrides = light ? '' : [
-    // Dark: medium-dark grey base with neumorphic shadow (only darker — no light reversal)
     'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] {',
     '  background: #252529 !important; color: #c8ccd2 !important;',
     '  box-shadow: 4px 4px 10px #1a1a1e, 2px 2px 5px #1c1c20 !important;',
@@ -34,13 +33,21 @@ function buildPatchedHtml(htmlContent, light) {
     '  background: #333338 !important; color: #aab0bb !important;',
     '  box-shadow: 3px 3px 7px #1e1e22 !important; border: none !important; }',
     'a { color: #dc2626 !important; }',
-    '.doc-footer, .footer, footer { background: #272729 !important; color: #666 !important; }',
-    // Client strip: darker bg + thin white lines above and below
+    // Footer: no box, no border, blend into bg
+    '.doc-footer, .footer, footer {',
+    '  background: transparent !important; color: #555 !important;',
+    '  border: none !important; box-shadow: none !important; }',
+    // Client strip: slightly darker + thin separator below
     '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] {',
     '  background: #1e1e22 !important;',
-    '  border-top: 1px solid rgba(255,255,255,0.1) !important;',
-    '  border-bottom: 1px solid rgba(255,255,255,0.1) !important; }',
+    '  border-bottom: 1px solid rgba(255,255,255,0.09) !important; }',
   ].join('\n');
+
+  // Light mode: client strip separator line below to match header grey
+  const lightClientSeparator = light ? [
+    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] {',
+    '  border-bottom: 1px solid #c8d0da !important; }',
+  ].join('\n') : '';
 
   const styleBlock = [
     '<style>',
@@ -64,14 +71,16 @@ function buildPatchedHtml(htmlContent, light) {
     '.source-line { display: flex !important; align-items: center !important; flex-wrap: wrap !important; gap: 4px !important; }',
     forceLight,
     darkOverrides,
+    lightClientSeparator,
     '</style>',
   ].join('\n');
 
   const ebmJson = JSON.stringify(EBM_SRC);
 
+  // Script: handle search focus + theme switching without clearing search
   const footerScript = '<script>\n' +
-    '(function patchFooter() {\n' +
-    '  function doFix() {\n' +
+    '(function() {\n' +
+    '  function patchFooter() {\n' +
     '    var ebmSrc = ' + ebmJson + ';\n' +
     '    var candidates = document.querySelectorAll(".footer, .doc-footer, footer, [class*=\\"footer\\"]");\n' +
     '    candidates.forEach(function(el) {\n' +
@@ -92,24 +101,56 @@ function buildPatchedHtml(htmlContent, light) {
     '    });\n' +
     '  }\n' +
     '  if (document.readyState === "loading") {\n' +
-    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(doFix, 300); });\n' +
+    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(patchFooter, 300); });\n' +
     '  } else {\n' +
-    '    setTimeout(doFix, 300);\n' +
+    '    setTimeout(patchFooter, 300);\n' +
     '  }\n' +
-    '  setTimeout(doFix, 1200);\n' +
+    '  setTimeout(patchFooter, 1200);\n' +
+    '\n' +
+    '  // Theme switch: inject new style block without reloading page\n' +
+    '  window.addEventListener("message", function(e) {\n' +
+    '    if (e.data && e.data.type === "doc-focus-search") {\n' +
+    '      var input = document.querySelector(\'input[type="search"], input[type="text"], input[placeholder*="earch"], .search-input, #search, #searchInput, [id*="search"], [class*="search-input"]\');\n' +
+    '      if (input) { input.focus(); input.select(); }\n' +
+    '    }\n' +
+    '    if (e.data && e.data.type === "doc-set-theme") {\n' +
+    '      var existing = document.getElementById("__theme_override__");\n' +
+    '      if (existing) existing.remove();\n' +
+    '      var s = document.createElement("style");\n' +
+    '      s.id = "__theme_override__";\n' +
+    '      s.textContent = e.data.css;\n' +
+    '      document.head.appendChild(s);\n' +
+    '    }\n' +
+    '  });\n' +
     '})();\n' +
-    'window.addEventListener("message", function(e) {\n' +
-    '  if (e.data && e.data.type === "doc-focus-search") {\n' +
-    '    var input = document.querySelector(\'input[type="search"], input[type="text"], input[placeholder*="earch"], .search-input, #search, #searchInput, [id*="search"], [class*="search-input"]\');\n' +
-    '    if (input) { input.focus(); input.select(); }\n' +
-    '  }\n' +
-    '});\n' +
     '<\/script>';
 
   return htmlContent.replace('</head>', styleBlock + '\n' + footerScript + '\n</head>');
 }
 
-// Mouse-pointer SVG shadow shape — fuzzy dropshadow overlay above iframe
+// Build only the theme-switching CSS to inject without a full reload
+function buildThemeCss(light) {
+  const base = light
+    ? 'html, body { background: #eef1f6 !important; color: #1a202c !important; }'
+    : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
+
+  const dark = light ? '' : [
+    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #252529 !important; color: #c8ccd2 !important; box-shadow: 4px 4px 10px #1a1a1e !important; border: none !important; border-radius: 10px !important; }',
+    '.ben-btn, [class*="ben-btn"], .benefit-nav button, .client-tab, [class*="client-tab"] { background: #333338 !important; color: #aab0bb !important; box-shadow: 3px 3px 8px #1e1e22 !important; border: none !important; border-radius: 22px !important; }',
+    '.ben-btn.active, [class*="ben-btn"].active, .client-tab.active { background: #dc2626 !important; color: #fff !important; }',
+    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] { background: #303035 !important; box-shadow: 4px 4px 10px #1e1e22 !important; border: none !important; border-radius: 12px !important; }',
+    'button:not(.ben-btn):not([class*="client-tab"]) { background: #333338 !important; color: #aab0bb !important; box-shadow: 3px 3px 7px #1e1e22 !important; border: none !important; }',
+    'a { color: #dc2626 !important; }',
+    '.doc-footer, .footer, footer { background: transparent !important; color: #555 !important; border: none !important; box-shadow: none !important; }',
+    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { background: #1e1e22 !important; border-bottom: 1px solid rgba(255,255,255,0.09) !important; }',
+  ].join('\n');
+
+  const lightClient = light ? '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { border-bottom: 1px solid #c8d0da !important; }' : '';
+
+  return [base, dark, lightClient].join('\n');
+}
+
+// Cursor shadow — light mode ambient pointer glow, sits above iframe
 function CursorShadow() {
   return (
     <div
@@ -120,10 +161,10 @@ function CursorShadow() {
         left: '50%',
         transform: 'translateX(-50%)',
         pointerEvents: 'none',
-        zIndex: 2,   // above the iframe (z:1)
+        zIndex: 2,
         width: 160,
         height: 190,
-        opacity: 0.09,
+        opacity: 0.08,
       }}
     >
       <svg
@@ -131,10 +172,7 @@ function CursorShadow() {
         xmlns="http://www.w3.org/2000/svg"
         style={{ width: '100%', height: '100%', filter: 'blur(22px)' }}
       >
-        <path
-          d="M4 2 L4 56 L16 44 L26 68 L34 64 L24 40 L40 40 Z"
-          fill="#1a1820"
-        />
+        <path d="M4 2 L4 56 L16 44 L26 68 L34 64 L24 40 L40 40 Z" fill="#8090a0" />
       </svg>
     </div>
   );
@@ -146,6 +184,7 @@ export default function DOCModal({ isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
   const [blobUrl, setBlobUrl] = useState(null);
   const iframeRef = useRef(null);
+  const initialLoadDone = useRef(false);
 
   useEffect(() => {
     if (isOpen && !htmlContent) {
@@ -157,12 +196,24 @@ export default function DOCModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
+  // Only build blob on first load — theme switches go via postMessage after that
   useEffect(() => {
     if (!htmlContent) return;
+    if (initialLoadDone.current) {
+      // Theme switch: inject CSS into existing iframe without reloading
+      if (iframeRef.current && iframeRef.current.contentWindow) {
+        iframeRef.current.contentWindow.postMessage(
+          { type: 'doc-set-theme', css: buildThemeCss(docLight) }, '*'
+        );
+      }
+      return;
+    }
+    // First load — build blob
     if (blobUrl) URL.revokeObjectURL(blobUrl);
     const patched = buildPatchedHtml(htmlContent, docLight);
     const blob = new Blob([patched], { type: 'text/html' });
     setBlobUrl(URL.createObjectURL(blob));
+    initialLoadDone.current = true;
   }, [docLight, htmlContent]);
 
   useEffect(() => {
@@ -192,15 +243,14 @@ export default function DOCModal({ isOpen, onClose }) {
 
   const isDark = !docLight;
 
-  // Dark: medium dark grey base (#2c2c31), panels are just a bit darker — no light shadow
-  const panelBg    = isDark ? '#2c2c31' : 'rgba(238, 241, 246, 0.97)';
-  const headerBg   = isDark ? '#232327' : '#dde3ea';
-  const headerBdr  = isDark ? '#1e1e22' : '#c8d0da';
-  const btnBg      = isDark ? '#333338' : '#dde3ea';
-  const btnShadow  = isDark
-    ? '3px 3px 7px #1a1a1e, 1px 1px 2px #171719'   // shade only, darker surface
+  const panelBg   = isDark ? '#2c2c31' : 'rgba(238, 241, 246, 0.97)';
+  const headerBg  = isDark ? '#232327' : '#dde3ea';
+  const headerBdr = isDark ? '#1e1e22' : '#c8d0da';
+  const btnBg     = isDark ? '#333338' : '#dde3ea';
+  const btnShadow = isDark
+    ? '3px 3px 7px #1a1a1e, 1px 1px 2px #171719'
     : '3px 3px 6px #b8c0cc, -3px -3px 6px #fff';
-  const btnColor   = isDark ? '#888' : '#555';
+  const btnColor  = isDark ? '#888' : '#555';
 
   const btnStyle = {
     width: 28, height: 28, borderRadius: 8, border: 'none',
@@ -235,9 +285,7 @@ export default function DOCModal({ isOpen, onClose }) {
             className="fixed top-0 right-0 bottom-0 z-[201] flex flex-col overflow-hidden"
             style={{
               width: 'min(460px, 100vw)',
-              boxShadow: isDark
-                ? '-6px 0 40px #0d0d10'
-                : '-6px 0 40px rgba(0,0,0,0.22)',
+              boxShadow: isDark ? '-6px 0 40px #0d0d10' : '-6px 0 40px rgba(0,0,0,0.22)',
               background: panelBg,
             }}
             onClick={e => e.stopPropagation()}
@@ -260,8 +308,8 @@ export default function DOCModal({ isOpen, onClose }) {
                   letterSpacing: '-1px',
                   lineHeight: 1,
                   textShadow: isDark
-                   ? '1px 2px 4px #0a0a0d'
-                   : '2px 2px 4px #b8c0cc, -1px -1px 2px #fff',
+                    ? '1px 2px 4px #0a0a0d'
+                    : '2px 2px 4px #b8c0cc, -1px -1px 2px #fff',
                 }}>
                   DOC<sup style={{ fontSize: '.45rem', opacity: .5, verticalAlign: 'super' }}>™</sup>
                 </span>
@@ -285,7 +333,7 @@ export default function DOCModal({ isOpen, onClose }) {
 
             {/* Content area */}
             <div className="flex-1 overflow-hidden relative">
-              {/* Cursor shadow — light mode only, decorative ambient glow */}
+              {/* Cursor shadow — light mode only */}
               {docLight && <CursorShadow />}
 
               {loading && (
