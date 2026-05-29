@@ -202,6 +202,13 @@ export default function Dashboard() {
       <AgentActivityPanel users={users} />
       <AIInsightsPanel />
 
+      {/* Chip in blank space */}
+      <img
+        src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+        alt="BenConnect chip"
+        style={{ width: '200px', height: 'auto', opacity: 0.85, marginTop: '60px' }}
+      />
+
       {/* Slide-out detail panel */}
       <StatSlidePanel
         open={!!openPanel}
@@ -209,15 +216,6 @@ export default function Dashboard() {
         statType={openPanel}
         data={panelDataMap[openPanel] || []}
       />
-
-      {/* Chip graphic — bottom left of blank space, 50% width */}
-      <div className="relative h-56 mt-12">
-        <img
-          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
-          alt="BenConnect chip"
-          style={{ width: '200px', height: 'auto', opacity: 0.85 }}
-        />
-      </div>
     </div>
   );
 }
