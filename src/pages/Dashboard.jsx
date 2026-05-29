@@ -79,7 +79,7 @@ export default function Dashboard() {
   const [openPanel, setOpenPanel] = useState(null); // statType string
 
   const pageBg = isDark ? '#1a1d27' : '#f3f4f6';
-  const cardBg = isDark ? '#555555' : '#ffffff';
+  const cardBg = isDark ? '#23263a' : '#ffffff';
   const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#e5e7eb';
   const textPrimary = isDark ? '#f0f0f0' : '#111827';
   const textSecondary = isDark ? '#9ca3af' : '#6b7280';
