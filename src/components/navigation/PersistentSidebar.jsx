@@ -260,16 +260,21 @@ export default function PersistentSidebar({
             style={{
               height: '64px',
               borderBottom: `1px solid ${PANEL_BORDER}`,
+              background: 'transparent',
             }}
           >
             <img
               src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/02a5e4baa_image.png"
               alt="B|C"
               style={{
-                width: isMin ? '36px' : '120px',
-                height: isMin ? '36px' : '44px',
+                width: isMin ? '42px' : '130px',
+                height: isMin ? '42px' : '52px',
                 objectFit: 'contain',
+                objectPosition: 'center',
                 transition: 'width 0.2s, height 0.2s',
+                display: 'block',
+                mixBlendMode: 'normal',
+                filter: 'none',
               }}
             />
           </div>
