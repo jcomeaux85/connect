@@ -218,19 +218,16 @@ export default function SlideOutMenu() {
               boxShadow: `12px 0 24px ${colors.shadowDark}`
             }}>
 
-            {/* Header chip + status lights */}
-            <div className="mb-6 px-1 flex items-start justify-between">
-              {/* Chip */}
-              <div className="flex flex-col">
-                <span style={{
-                  fontSize: 13, fontWeight: 900, letterSpacing: '0.04em',
-                  color: '#f0f0f0', lineHeight: 1.1,
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                }}>BEN<span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>connect™</span>
-                <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.35)', fontWeight: 600, letterSpacing: '0.12em' }}>BENEFITS NAVIGATOR</span>
-              </div>
+            {/* Header chip image + status lights */}
+            <div className="mb-4 flex items-center gap-3">
+              {/* Chip image */}
+              <img
+                src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/dceff7b0d_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+                alt="BEN|CONNECT chip"
+                style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 6, flexShrink: 0 }}
+              />
               {/* Status lights */}
-              <div className="flex items-end gap-2.5 pt-0.5">
+              <div className="flex items-end gap-3">
                 <StatusLight alwaysOn color="#ffffff" symbol={Power} label="pwr" />
                 <StatusLight alwaysOn={false} color="#22c55e" symbol={Wifi} label="net" />
                 <StatusLight alwaysOn={false} color="#f97316" symbol={AlertTriangle} label="alrt" />
