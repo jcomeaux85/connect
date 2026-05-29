@@ -9,52 +9,83 @@ function generateDemoCalls() {
   const now = new Date();
   const baseDate = now.toISOString().split('T')[0];
 
+  // Realistic call center cadence:
+  // Quiet open (8–9), mid-morning surge (9:30–11:30), lunch lull (12–13),
+  // afternoon peak (13:30–16), wind-down (16:30–18)
   const agentCalls = {
     Jarrad: [
-      { time: '08:12', direction: 'inbound' },
-      { time: '09:05', direction: 'outbound' },
-      { time: '09:47', direction: 'inbound' },
-      { time: '10:33', direction: 'inbound' },
-      { time: '11:20', direction: 'outbound' },
-      { time: '12:55', direction: 'inbound' },
-      { time: '13:40', direction: 'outbound' },
-      { time: '14:15', direction: 'inbound' },
-      { time: '15:02', direction: 'inbound' },
-      { time: '16:30', direction: 'outbound' },
+      { time: '08:22', direction: 'inbound' },   // quiet open
+      { time: '09:08', direction: 'inbound' },   // ramp up
+      { time: '09:34', direction: 'outbound' },
+      { time: '09:52', direction: 'inbound' },
+      { time: '10:18', direction: 'inbound' },   // morning surge
+      { time: '10:41', direction: 'inbound' },
+      { time: '11:03', direction: 'outbound' },
+      { time: '11:29', direction: 'inbound' },
+      { time: '11:54', direction: 'inbound' },
+      { time: '13:07', direction: 'inbound' },   // post-lunch ramp
+      { time: '13:38', direction: 'outbound' },
+      { time: '14:12', direction: 'inbound' },   // afternoon peak
+      { time: '14:44', direction: 'inbound' },
+      { time: '15:06', direction: 'outbound' },
+      { time: '15:33', direction: 'inbound' },
+      { time: '16:01', direction: 'inbound' },
+      { time: '16:48', direction: 'outbound' },  // wind-down
+      { time: '17:22', direction: 'inbound' },
     ],
     Vanessa: [
-      { time: '08:30', direction: 'outbound' },
-      { time: '09:15', direction: 'inbound' },
-      { time: '10:00', direction: 'inbound' },
-      { time: '10:45', direction: 'outbound' },
-      { time: '11:50', direction: 'inbound' },
-      { time: '13:10', direction: 'inbound' },
-      { time: '14:00', direction: 'outbound' },
-      { time: '15:25', direction: 'inbound' },
-      { time: '16:10', direction: 'inbound' },
-      { time: '17:05', direction: 'outbound' },
-      { time: '17:40', direction: 'inbound' },
+      { time: '08:35', direction: 'outbound' },  // quiet open
+      { time: '09:14', direction: 'inbound' },
+      { time: '09:42', direction: 'inbound' },   // ramp up
+      { time: '10:07', direction: 'outbound' },
+      { time: '10:29', direction: 'inbound' },   // morning surge
+      { time: '10:58', direction: 'inbound' },
+      { time: '11:17', direction: 'inbound' },
+      { time: '11:45', direction: 'outbound' },
+      { time: '13:02', direction: 'outbound' },  // post-lunch
+      { time: '13:31', direction: 'inbound' },
+      { time: '14:05', direction: 'inbound' },   // afternoon peak
+      { time: '14:37', direction: 'inbound' },
+      { time: '15:11', direction: 'outbound' },
+      { time: '15:48', direction: 'inbound' },
+      { time: '16:19', direction: 'inbound' },
+      { time: '17:04', direction: 'outbound' },  // wind-down
+      { time: '17:38', direction: 'inbound' },
     ],
     Ryan: [
-      { time: '08:05', direction: 'inbound' },
-      { time: '09:30', direction: 'inbound' },
-      { time: '10:10', direction: 'outbound' },
-      { time: '11:05', direction: 'inbound' },
-      { time: '12:00', direction: 'outbound' },
-      { time: '13:25', direction: 'inbound' },
-      { time: '14:45', direction: 'outbound' },
-      { time: '15:50', direction: 'inbound' },
+      { time: '08:18', direction: 'inbound' },   // quiet open
+      { time: '09:22', direction: 'inbound' },
+      { time: '09:49', direction: 'outbound' },  // ramp up
+      { time: '10:14', direction: 'inbound' },   // morning surge
+      { time: '10:47', direction: 'inbound' },
+      { time: '11:09', direction: 'inbound' },
+      { time: '11:38', direction: 'outbound' },
+      { time: '12:51', direction: 'inbound' },   // post-lunch
+      { time: '13:22', direction: 'inbound' },
+      { time: '13:55', direction: 'outbound' },  // afternoon peak
+      { time: '14:28', direction: 'inbound' },
+      { time: '15:03', direction: 'inbound' },
+      { time: '15:41', direction: 'outbound' },
+      { time: '16:14', direction: 'inbound' },
+      { time: '16:52', direction: 'inbound' },   // wind-down
+      { time: '17:29', direction: 'outbound' },
     ],
     Chris: [
-      { time: '08:45', direction: 'outbound' },
-      { time: '09:55', direction: 'inbound' },
-      { time: '10:55', direction: 'inbound' },
-      { time: '11:40', direction: 'outbound' },
-      { time: '13:00', direction: 'inbound' },
-      { time: '14:30', direction: 'inbound' },
-      { time: '15:15', direction: 'outbound' },
-      { time: '16:00', direction: 'inbound' },
-      { time: '16:50', direction: 'outbound' },
+      { time: '08:47', direction: 'outbound' },  // quiet open
+      { time: '09:17', direction: 'inbound' },
+      { time: '09:55', direction: 'inbound' },   // ramp up
+      { time: '10:22', direction: 'outbound' },  // morning surge
+      { time: '10:51', direction: 'inbound' },
+      { time: '11:13', direction: 'inbound' },
+      { time: '11:42', direction: 'inbound' },
+      { time: '13:15', direction: 'outbound' },  // post-lunch
+      { time: '13:44', direction: 'inbound' },
+      { time: '14:09', direction: 'inbound' },   // afternoon peak
+      { time: '14:52', direction: 'outbound' },
+      { time: '15:19', direction: 'inbound' },
+      { time: '15:57', direction: 'inbound' },
+      { time: '16:33', direction: 'outbound' },  // wind-down
+      { time: '17:11', direction: 'inbound' },
     ],
   };
 
