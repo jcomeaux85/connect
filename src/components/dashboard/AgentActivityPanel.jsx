@@ -37,7 +37,7 @@ export default function AgentActivityPanel({ users = [] }) {
   const headerBorder = isDark ? 'rgba(59,130,246,0.25)' : '#bfdbfe';
   const textPrimary = isDark ? '#f0f0f0' : '#111827';
   const textSecondary = isDark ? '#9ca3af' : '#6b7280';
-  const tileBg = isDark ? 'rgba(255,255,255,0.04)' : '#f9fafb';
+  const tileBg = isDark ? '#555555' : '#f9fafb';
   const tileBorder = isDark ? 'rgba(255,255,255,0.07)' : '#f3f4f6';
 
   return (
