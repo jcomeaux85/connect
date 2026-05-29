@@ -15,6 +15,7 @@ import PersistentSidebar, { SIDEBAR_WIDTHS } from "@/components/navigation/Persi
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
 import DOCModal from "@/components/doc/DOCModal.jsx";
 import TopBar from "@/components/layout/TopBar";
+import HangingNav from "@/components/layout/HangingNav";
 import ActiveCallBar from "@/components/calls/ActiveCallBar";
 import PersistentCallPanel from "@/components/calls/PersistentCallPanel";
 
@@ -200,6 +201,9 @@ function LayoutContent({ children, currentPageName }) {
           onToggleDOC={() => setShowDOC((p) => !p)}
           showDOC={showDOC}
         />
+
+        {/* Hanging Nav */}
+        <HangingNav />
 
         {/* Active Call Bar — minimal top strip */}
 

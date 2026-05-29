@@ -2,7 +2,6 @@ import React, { useState, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/components/hooks/useUser";
-import { Link } from "react-router-dom";
 import { Phone, PhoneIncoming, CheckSquare, Clock } from "lucide-react";
 import { isToday, parseISO } from "date-fns";
 import AgentCallTimeline from "@/components/dashboard/AgentCallTimeline";
@@ -149,19 +148,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s' }}>
-      {/* Hanging Nav */}
-      <div className="flex justify-center py-1.5 border-b" style={{ borderColor: cardBorder }} onMouseMove={(e) => { const navRect = e.currentTarget.getBoundingClientRect(); const mouseX = e.clientX; const mouseY = e.clientY; const links = e.currentTarget.querySelectorAll('a'); links.forEach(link => { const rect = link.getBoundingClientRect(); const closestX = Math.max(rect.left, Math.min(mouseX, rect.right)); const closestY = Math.max(rect.top, Math.min(mouseY, rect.bottom)); const distance = Math.hypot(mouseX - closestX, mouseY - closestY); const proximity = Math.max(0, 1 - distance / 150); link.style.color = `rgba(255,255,255,${0.4 + proximity * 0.6})`; link.style.textShadow = `-0.5px -0.5px 0 #4338ca, 0.5px -0.5px 0 #4338ca, -0.5px 0.5px 0 #4338ca, 0.5px 0.5px 0 #4338ca, 0 0 ${proximity * 20}px #00d4ff`; }); }} onMouseLeave={(e) => { const links = e.currentTarget.querySelectorAll('a'); links.forEach(link => { link.style.color = textPrimary; link.style.textShadow = '0 0 1px rgba(255,255,255,0.3)'; }); }}>
-        <div className="flex gap-16 w-4/5 justify-center">
-          <Link to="/Cases" className="text-base font-semibold tracking-widest transition-all duration-300" style={{ color: textPrimary, textShadow: '0 0 1px rgba(255,255,255,0.3)' }}>CASES</Link>
-          <Link to="/Tasks" className="text-base font-semibold tracking-widest transition-all duration-300" style={{ color: textPrimary, textShadow: '0 0 1px rgba(255,255,255,0.3)' }}>TASKS</Link>
-          <Link to="/Customers" className="text-base font-semibold tracking-widest transition-all duration-300" style={{ color: textPrimary, textShadow: '0 0 1px rgba(255,255,255,0.3)' }}>CUSTOMERS</Link>
-          <Link to="/Phone" className="text-base font-semibold tracking-widest transition-all duration-300" style={{ color: textPrimary, textShadow: '0 0 1px rgba(255,255,255,0.3)' }}>PHONE</Link>
-          <Link to="/Messages" className="text-base font-semibold tracking-widest transition-all duration-300" style={{ color: textPrimary, textShadow: '0 0 1px rgba(255,255,255,0.3)' }}>MESSAGES</Link>
-          <Link to="/Timeline" className="text-base font-semibold tracking-widest transition-all duration-300" style={{ color: textPrimary, textShadow: '0 0 1px rgba(255,255,255,0.3)' }}>TIMELINE</Link>
-        </div>
-      </div>
-      
-      <div className="p-6 space-y-4" style={{ minHeight: 'calc(100% - 60px)' }}>
+      <div className="p-6 space-y-4" style={{ minHeight: '100%' }}>
       {/* Hero video */}
       <video
         src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
