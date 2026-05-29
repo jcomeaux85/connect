@@ -111,18 +111,15 @@ const TRACK_H = 14; // px height for each inbound/outbound bar
 const GAP = 3;      // px gap between tracks
 const ROW_H = TRACK_H * 2 + GAP + 16; // total row height with padding
 
-export default function AgentCallTimeline() {
+export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const [tooltip, setTooltip] = React.useState(null);
 
   const today = new Date().toISOString().split('T')[0];
 
-  const { data: realCalls = [], isLoading: callsLoading } = useQuery({
-    queryKey: ['calls-today-timeline'],
-    queryFn: () => base44.entities.Call.list('-call_start_time', 200),
-    refetchInterval: 60000,
-  });
+  const realCalls = incomingCalls.length > 0 ? incomingCalls : [];
+  const callsLoading = false;
 
   const { data: employers = [] } = useQuery({
     queryKey: ['employers-for-timeline'],

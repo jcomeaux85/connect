@@ -196,8 +196,8 @@ export default function Dashboard() {
           <div className="flex-1 overflow-y-auto">
             <AgentCallTimeline calls={calls} />
           </div>
-          {/* Chip at bottom left */}
-          <div className="absolute bottom-6 pt-4" style={{ left: '16px' }}>
+          {/* Chip at bottom left, centered vertically */}
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 pt-4">
             <img
               src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
               alt="BenConnect chip"
