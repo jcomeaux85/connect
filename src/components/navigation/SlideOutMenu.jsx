@@ -23,8 +23,40 @@ import {
   Sun,
   Moon,
   HelpCircle,
-  FileText
+  FileText,
+  Power,
+  Wifi,
+  AlertTriangle
 } from 'lucide-react';
+
+// Randomly blinking status light
+function StatusLight({ color, alwaysOn, symbol: Symbol, label }) {
+  const [on, setOn] = useState(alwaysOn ? true : Math.random() > 0.3);
+
+  useEffect(() => {
+    if (alwaysOn) return;
+    // random blink interval between 800ms and 4200ms — no pattern
+    const tick = () => {
+      setOn(prev => !prev);
+      const next = 800 + Math.random() * 3400;
+      return setTimeout(tick, next);
+    };
+    const t = setTimeout(tick, 600 + Math.random() * 2000);
+    return () => clearTimeout(t);
+  }, [alwaysOn]);
+
+  return (
+    <div className="flex flex-col items-center gap-0.5">
+      <div style={{
+        width: 8, height: 8, borderRadius: '50%',
+        background: on ? color : 'rgba(255,255,255,0.12)',
+        boxShadow: on ? `0 0 6px 2px ${color}99` : 'none',
+        transition: 'background 0.12s, box-shadow 0.12s',
+      }} />
+      <Symbol style={{ width: 7, height: 7, color: 'rgba(255,255,255,0.35)' }} strokeWidth={2.5} />
+    </div>
+  );
+}
 import { Input } from '@/components/ui/input';
 
 export default function SlideOutMenu() {
@@ -186,39 +218,23 @@ export default function SlideOutMenu() {
               boxShadow: `12px 0 24px ${colors.shadowDark}`
             }}>
 
-            {/* User Profile */}
-            <div className="mb-8 px-2">
-              <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto overflow-hidden"
-                style={{
-                  background: colors.bg,
-                  boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
-                }}>
-
-                {user?.profile_photo_url ?
-                <img
-                  src={user.profile_photo_url}
-                  alt={user.full_name}
-                  className="w-full h-full object-cover" /> :
-
-
-                <User className="w-6 h-6" style={{ color: colors.iconColor }} />
-                }
+            {/* Header chip + status lights */}
+            <div className="mb-6 px-1 flex items-start justify-between">
+              {/* Chip */}
+              <div className="flex flex-col">
+                <span style={{
+                  fontSize: 13, fontWeight: 900, letterSpacing: '0.04em',
+                  color: '#f0f0f0', lineHeight: 1.1,
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                }}>BEN<span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>connect™</span>
+                <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.35)', fontWeight: 600, letterSpacing: '0.12em' }}>BENEFITS NAVIGATOR</span>
               </div>
-              {isExpanded &&
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-3 text-center">
-
-                  <p className="font-semibold text-sm" style={{ color: colors.text }}>
-                    {user?.full_name || 'User'}
-                  </p>
-                  <p className="text-xs" style={{ color: colors.textSecondary }}>
-                    {user?.role === 'admin' ? 'Administrator' : 'Agent'}
-                  </p>
-                </motion.div>
-              }
+              {/* Status lights */}
+              <div className="flex items-end gap-2.5 pt-0.5">
+                <StatusLight alwaysOn color="#ffffff" symbol={Power} label="pwr" />
+                <StatusLight alwaysOn={false} color="#22c55e" symbol={Wifi} label="net" />
+                <StatusLight alwaysOn={false} color="#f97316" symbol={AlertTriangle} label="alrt" />
+              </div>
             </div>
 
             {/* Search (only when expanded) */}
