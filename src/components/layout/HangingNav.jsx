@@ -15,8 +15,7 @@ export default function HangingNav() {
   const { isDark } = useTheme();
   const location = useLocation();
   
-  const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#e5e7eb';
-  const textPrimary = isDark ? '#f0f0f0' : '#111827';
+  const textPrimary = 'rgba(255,255,255,0.55)';
 
   const handleLinkHover = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -36,13 +35,17 @@ export default function HangingNav() {
       e.currentTarget.style.color = '#ffffff';
       e.currentTarget.style.textShadow = '-0.5px -0.5px 0 #2563eb, 0.5px -0.5px 0 #2563eb, -0.5px 0.5px 0 #2563eb, 0.5px 0.5px 0 #2563eb, 0 0 15px #00d4ff';
     } else {
-      e.currentTarget.style.color = textPrimary;
-      e.currentTarget.style.textShadow = '0 0 1px rgba(255,255,255,0.3)';
+      e.currentTarget.style.color = 'rgba(255,255,255,0.55)';
+      e.currentTarget.style.textShadow = 'none';
     }
   };
 
   return (
-    <div className="flex justify-center py-1.5 border-b" style={{ borderColor: cardBorder }}>
+    <div className="flex justify-center py-1.5 border-b" style={{
+      borderColor: 'rgba(255,255,255,0.10)',
+      background: 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)',
+      backdropFilter: 'blur(24px)',
+    }}>
       <div className="flex gap-16 w-4/5 justify-center">
         {NAV_LINKS.map((link) => {
           const isActive = location.pathname === link.path;
