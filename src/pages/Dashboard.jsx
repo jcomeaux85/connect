@@ -194,10 +194,10 @@ export default function Dashboard() {
             <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Call Volume — Today</h3>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <AgentCallTimeline calls={calls} />
+            <AgentCallTimeline incomingCalls={calls} />
           </div>
-          {/* Chip centered horizontally, positioned at bottom */}
-          <div className="absolute left-1/2 bottom-6" style={{ transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+          {/* Chip left-justified, positioned at bottom */}
+          <div className="absolute left-4 bottom-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', pointerEvents: 'none' }}>
            <img
              src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
              alt="BenConnect chip"
