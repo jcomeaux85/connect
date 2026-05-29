@@ -77,7 +77,7 @@ const NAV_BTN = {
 };
 
 export default function TopBar({ user, unreadNotifications, unreadMessages, onToggleNotifications, onToggleMessages, onToggleCalls, showCalls, onToggleDOC, showDOC }) {
-  const { toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark, colors } = useTheme();
   const [now, setNow] = useState(new Date());
   const [status, setStatus] = useState('Available');
   const [showStatus, setShowStatus] = useState(false);
@@ -158,8 +158,8 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         <input
           className="w-full pl-9 pr-3 h-8 rounded-lg text-sm outline-none"
           style={{
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: isDark ? '#555555' : 'rgba(255,255,255,0.08)',
+            border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.12)'}`,
             color: 'rgba(255,255,255,0.9)',
             caretColor: '#a78bfa',
           }}
