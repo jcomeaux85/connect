@@ -3,9 +3,85 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Sun, Moon } from 'lucide-react';
 
 const DOC_HTML_URL = 'https://media.base44.com/files/public/68fa7c4cb70fe91d38015eba/c1547e610_DOC_.html';
+const EBM_SRC = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/5c7593e2c_im.png';
+
+// ── Kept outside component so JSX parser never sees the raw CSS/script strings ──
+function buildPatchedHtml(htmlContent, light) {
+  if (!htmlContent) return null;
+
+  const forceLight = light
+    ? 'html, body { background: #f0f4f8 !important; color: #1a202c !important; } .dark-mode-overrides { display: none !important; }'
+    : '';
+
+  const styleBlock = [
+    '<style>',
+    '.side-rail { display: none !important; }',
+    '.main-wrap { margin-left: 0 !important; }',
+    '.client-rail { padding-left: 12px !important; top: 0 !important; }',
+    '.container { padding: 16px 14px 30px !important; }',
+    '.clock-weather, .weather-widget, .weather-block, .fav-btn, .favorite-btn,',
+    '[class*="weather"], [class*="favorite"], [class*="fav-star"],',
+    '.pin-btn, .result-pin,',
+    '.theme-toggle, .dark-toggle, .light-toggle, [class*="theme-btn"],',
+    '[class*="dark-mode-btn"], [class*="toggle-theme"], button[title*="dark"],',
+    'button[title*="light"], button[title*="Dark"], button[title*="Light"],',
+    '.mode-toggle, [class*="mode-toggle"] { display: none !important; }',
+    'html, body { overflow-x: hidden !important; }',
+    '.benefit-nav { gap: 5px !important; }',
+    '.ben-btn { padding: 7px 12px !important; font-size: .75rem !important; }',
+    '.result-details { grid-template-columns: 1fr !important; }',
+    '.result-card { position: relative; padding-right: 8px !important; }',
+    '.quick-copy { position: static !important; opacity: 1 !important; display: inline-flex !important; margin-left: 8px !important; vertical-align: middle !important; flex-shrink: 0 !important; }',
+    '.source-line { display: flex !important; align-items: center !important; flex-wrap: wrap !important; gap: 4px !important; }',
+    forceLight,
+    '</style>',
+  ].join('\n');
+
+  const ebmJson = JSON.stringify(EBM_SRC);
+
+  const footerScript = '<script>\n' +
+    '(function patchFooter() {\n' +
+    '  function doFix() {\n' +
+    '    var ebmSrc = ' + ebmJson + ';\n' +
+    '    var candidates = document.querySelectorAll(".footer, .doc-footer, footer, [class*=\\"footer\\"]");\n' +
+    '    candidates.forEach(function(el) {\n' +
+    '      el.innerHTML = el.innerHTML\n' +
+    '        .replace(/\\ba\\s+company\\b/gi, "")\n' +
+    '        .replace(/\\ba\\s+/gi, "")\n' +
+    '        .replace(/\\bcompany\\b/gi, "")\n' +
+    '        .replace(/<ebm>/gi, \'<img src="\' + ebmSrc + \'" style="height:18px;vertical-align:middle;display:inline-block;margin:0 3px" alt="ebm">\')\n' +
+    '        .replace(/&lt;ebm&gt;/gi, \'<img src="\' + ebmSrc + \'" style="height:18px;vertical-align:middle;display:inline-block;margin:0 3px" alt="ebm">\');\n' +
+    '    });\n' +
+    '    document.querySelectorAll(".footer-ebm, [class*=\\"footer-ebm\\"]").forEach(function(el) {\n' +
+    '      el.innerHTML = \'<img src="\' + ebmSrc + \'" style="height:18px;vertical-align:middle" alt="ebm">\';\n' +
+    '    });\n' +
+    '    document.querySelectorAll("*:not(script):not(style)").forEach(function(el) {\n' +
+    '      if (el.children.length === 0 && el.textContent.trim() === "<ebm>") {\n' +
+    '        el.innerHTML = \'<img src="\' + ebmSrc + \'" style="height:18px;vertical-align:middle" alt="ebm">\';\n' +
+    '      }\n' +
+    '    });\n' +
+    '  }\n' +
+    '  if (document.readyState === "loading") {\n' +
+    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(doFix, 300); });\n' +
+    '  } else {\n' +
+    '    setTimeout(doFix, 300);\n' +
+    '  }\n' +
+    '  setTimeout(doFix, 1200);\n' +
+    '})();\n' +
+    // postMessage listener to focus search
+    'window.addEventListener("message", function(e) {\n' +
+    '  if (e.data && e.data.type === "doc-focus-search") {\n' +
+    '    var input = document.querySelector(\'input[type="search"], input[type="text"], input[placeholder*="earch"], .search-input, #search, #searchInput, [id*="search"], [class*="search-input"]\');\n' +
+    '    if (input) { input.focus(); input.select(); }\n' +
+    '  }\n' +
+    '});\n' +
+    '<\/script>';
+
+  return htmlContent.replace('</head>', styleBlock + '\n' + footerScript + '\n</head>');
+}
 
 export default function DOCModal({ isOpen, onClose }) {
-  const [docLight, setDocLight] = useState(true); // start in light mode
+  const [docLight, setDocLight] = useState(true);
   const [htmlContent, setHtmlContent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [blobUrl, setBlobUrl] = useState(null);
@@ -16,134 +92,45 @@ export default function DOCModal({ isOpen, onClose }) {
       setLoading(true);
       fetch(DOC_HTML_URL)
         .then(r => r.text())
-        .then(html => {
-          setHtmlContent(html);
-          setLoading(false);
-        })
+        .then(html => { setHtmlContent(html); setLoading(false); })
         .catch(() => setLoading(false));
     }
   }, [isOpen]);
 
-  // Build patched HTML whenever content or theme changes
-  const getPatchedHtml = (light) => {
-    if (!htmlContent) return null;
-    const forceLight = light ? `
-      html, body { background: #f0f4f8 !important; color: #1a202c !important; }
-      .dark-mode-overrides { display: none !important; }
-    ` : '';
-
-    const ebmSrc = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/5c7593e2c_im.png';
-
-    // Script to patch footer after DOM is ready
-    const footerScript = `
-<script>
-(function patchFooter() {
-  function doFix() {
-    // Replace any text node containing "a " or "company" near footer / ebm elements
-    // and swap <ebm> text for the logo image
-    const ebmSrc = ${JSON.stringify(ebmSrc)};
-    // Find footer element — try common selectors
-    const candidates = document.querySelectorAll('.footer, .doc-footer, footer, [class*="footer"]');
-    candidates.forEach(el => {
-      // Replace inner HTML: strip "a " prefix and "company", replace <ebm> with img
-      el.innerHTML = el.innerHTML
-        .replace(/\\ba\\s+company\\b/gi, '')
-        .replace(/\\ba\\s+/gi, '')
-        .replace(/\\bcompany\\b/gi, '')
-        .replace(/<ebm>/gi, '<img src="' + ebmSrc + '" style="height:18px;vertical-align:middle;display:inline-block;margin:0 3px" alt="ebm">')
-        .replace(/&lt;ebm&gt;/gi, '<img src="' + ebmSrc + '" style="height:18px;vertical-align:middle;display:inline-block;margin:0 3px" alt="ebm">');
-    });
-    // Also patch footer-ebm spans specifically
-    document.querySelectorAll('.footer-ebm, [class*="footer-ebm"]').forEach(el => {
-      el.innerHTML = '<img src="' + ebmSrc + '" style="height:18px;vertical-align:middle" alt="ebm">';
-    });
-    // Patch any element whose text is literally "<ebm>"
-    document.querySelectorAll('*:not(script):not(style)').forEach(el => {
-      if (el.children.length === 0 && el.textContent.trim() === '<ebm>') {
-        el.innerHTML = '<img src="' + ebmSrc + '" style="height:18px;vertical-align:middle" alt="ebm">';
-      }
-    });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(doFix, 300); });
-  } else {
-    setTimeout(doFix, 300);
-  }
-  // Also run after a delay in case footer is rendered by JS
-  setTimeout(doFix, 1200);
-})();
-<\/script>`;
-
-    return htmlContent.replace('</head>', `
-<style>
-  /* ── Slide-out overrides ── */
-  .side-rail { display: none !important; }
-  .main-wrap { margin-left: 0 !important; }
-  .client-rail { padding-left: 12px !important; top: 0 !important; }
-  .container { padding: 16px 14px 30px !important; }
-  /* Hide weather, star/favorite, and original light/dark toggle */
-  .clock-weather, .weather-widget, .weather-block, .fav-btn, .favorite-btn,
-  [class*="weather"], [class*="favorite"], [class*="fav-star"],
-  .pin-btn, .result-pin,
-  .theme-toggle, .dark-toggle, .light-toggle, [class*="theme-btn"],
-  [class*="dark-mode-btn"], [class*="toggle-theme"], button[title*="dark"],
-  button[title*="light"], button[title*="Dark"], button[title*="Light"],
-  .mode-toggle, [class*="mode-toggle"] { display: none !important; }
-  html, body { overflow-x: hidden !important; }
-  /* compact benefit nav */
-  .benefit-nav { gap: 5px !important; }
-  .ben-btn { padding: 7px 12px !important; font-size: .75rem !important; }
-  /* results always visible */
-  .result-details { grid-template-columns: 1fr !important; }
-  /* move copy button inline with source citation */
-  .result-card { position: relative; padding-right: 8px !important; }
-  .quick-copy {
-    position: static !important;
-    opacity: 1 !important;
-    display: inline-flex !important;
-    margin-left: 8px !important;
-    vertical-align: middle !important;
-    flex-shrink: 0 !important;
-  }
-  .source-line {
-    display: flex !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-    gap: 4px !important;
-  }
-  ${forceLight}
-</style>
-${footerScript}
-</head>`);
-  };
-
-  // Sync theme changes to already-loaded iframe
+  // Rebuild blob when theme or content changes
   useEffect(() => {
-    if (!iframeRef.current || !htmlContent) return;
-    const patched = getPatchedHtml(docLight);
-    if (patched) {
-      // revoke old blob
-      if (blobUrl) URL.revokeObjectURL(blobUrl);
-      const blob = new Blob([patched], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      setBlobUrl(url);
-    }
+    if (!htmlContent) return;
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    const patched = buildPatchedHtml(htmlContent, docLight);
+    const blob = new Blob([patched], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    setBlobUrl(url);
   }, [docLight, htmlContent]);
 
-  // Initial blob creation
-  useEffect(() => {
-    if (htmlContent && !blobUrl) {
-      const patched = getPatchedHtml(docLight);
-      const blob = new Blob([patched], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      setBlobUrl(url);
-    }
-  }, [htmlContent]);
-
-  // Cleanup blob on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => { if (blobUrl) URL.revokeObjectURL(blobUrl); };
   }, [blobUrl]);
+
+  const focusIframeSearch = () => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({ type: 'doc-focus-search' }, '*');
+    }
+  };
+
+  // Focus search when panel opens or blob is ready
+  useEffect(() => {
+    if (isOpen && blobUrl) {
+      setTimeout(focusIframeSearch, 500);
+    }
+  }, [isOpen, blobUrl]);
+
+  // Respond to global Ctrl+K event (when already open)
+  useEffect(() => {
+    const handler = () => setTimeout(focusIframeSearch, 300);
+    window.addEventListener('doc-focus-search', handler);
+    return () => window.removeEventListener('doc-focus-search', handler);
+  }, []);
 
   const handlePopOut = () => {
     if (blobUrl) {
@@ -170,7 +157,6 @@ ${footerScript}
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             key="doc-backdrop"
             initial={{ opacity: 0 }}
@@ -182,7 +168,6 @@ ${footerScript}
             onClick={onClose}
           />
 
-          {/* Slide-out panel */}
           <motion.div
             key="doc-panel"
             initial={{ x: '100%' }}
@@ -206,7 +191,6 @@ ${footerScript}
                 minHeight: '44px',
               }}
             >
-              {/* DOC branding */}
               <div className="flex items-baseline gap-2">
                 <span style={{
                   fontFamily: "'Outfit', sans-serif",
@@ -226,30 +210,14 @@ ${footerScript}
                 </span>
               </div>
 
-              {/* Controls */}
               <div className="flex items-center gap-2">
-                {/* Light/dark toggle */}
-                <button
-                  onClick={() => setDocLight(p => !p)}
-                  title={docLight ? 'Switch to dark mode' : 'Switch to light mode'}
-                  style={btnStyle}
-                >
+                <button onClick={() => setDocLight(p => !p)} title={docLight ? 'Switch to dark mode' : 'Switch to light mode'} style={btnStyle}>
                   {docLight ? <Moon size={13} /> : <Sun size={13} />}
                 </button>
-                {/* Pop-out */}
-                <button
-                  onClick={handlePopOut}
-                  title="Open in new window"
-                  style={btnStyle}
-                >
+                <button onClick={handlePopOut} title="Open in new window" style={btnStyle}>
                   <ExternalLink size={13} />
                 </button>
-                {/* Close */}
-                <button
-                  onClick={onClose}
-                  title="Close"
-                  style={btnStyle}
-                >
+                <button onClick={onClose} title="Close" style={btnStyle}>
                   <X size={14} />
                 </button>
               </div>

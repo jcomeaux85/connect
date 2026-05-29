@@ -135,6 +135,13 @@ function LayoutContent({ children, currentPageName }) {
         e.preventDefault();
         setShowDOC((p) => !p);
       }
+      // Ctrl+K → open DOC and focus search
+      if (e.ctrlKey && !e.altKey && !e.shiftKey && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        setShowDOC(true);
+        // Signal DOC to focus search (DOCModal listens on isOpen change)
+        window.dispatchEvent(new CustomEvent('doc-focus-search'));
+      }
     };
 
     window.addEventListener('toggle-messages', handleToggleMessages);
