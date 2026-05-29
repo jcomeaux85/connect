@@ -21,62 +21,62 @@ const EMPLOYER_DEMO_COLORS = [
 
 // Each demo call: time, direction, duration (seconds) — no overlaps per agent, 12 each = 48 total
 // Long calls (30-60 min) are placed with enough gap so the next call starts after they end
+// Lunch block: 12:00-13:00 (no calls during this window)
 const DEMO_CALLS = {
   Ryan: [
     { time: '08:09', direction: 'inbound',  duration: 260  },  // ~4m
-    { time: '08:58', direction: 'outbound', duration: 1980 },  // 33m ← long
-    { time: '09:38', direction: 'inbound',  duration: 310  },  // ~5m  (starts after 08:58+33m=09:31)
+    { time: '08:58', direction: 'outbound', duration: 1980 },  // 33m ← long (ends ~09:31)
+    { time: '09:38', direction: 'inbound',  duration: 310  },  // ~5m
     { time: '10:22', direction: 'outbound', duration: 195  },  // ~3m
-    { time: '11:05', direction: 'inbound',  duration: 3600 },  // 60m ← long
-    { time: '12:12', direction: 'outbound', duration: 245  },  // ~4m  (starts after 11:05+60m=12:05)
-    { time: '13:04', direction: 'inbound',  duration: 280  },  // ~5m
-    { time: '13:52', direction: 'outbound', duration: 210  },  // ~3m
-    { time: '14:40', direction: 'inbound',  duration: 2700 },  // 45m ← long
-    { time: '15:32', direction: 'outbound', duration: 230  },  // ~4m  (starts after 14:40+45m=15:25)
-    { time: '16:18', direction: 'inbound',  duration: 265  },  // ~4m
-    { time: '17:06', direction: 'outbound', duration: 190  },  // ~3m
+    { time: '11:05', direction: 'inbound',  duration: 2340 },  // 39m ← long (ends ~11:44, before lunch)
+    // LUNCH 12:00-13:00
+    { time: '13:08', direction: 'outbound', duration: 280  },  // ~5m
+    { time: '14:02', direction: 'inbound',  duration: 2700 },  // 45m ← long (ends ~14:47)
+    { time: '14:55', direction: 'outbound', duration: 230  },  // ~4m
+    { time: '15:42', direction: 'inbound',  duration: 265  },  // ~4m
+    { time: '16:30', direction: 'outbound', duration: 210  },  // ~3m
+    { time: '17:18', direction: 'inbound',  duration: 240  },  // ~4m
   ],
   Vanessa: [
-    { time: '08:14', direction: 'outbound', duration: 2100 },  // 35m ← long
-    { time: '08:56', direction: 'inbound',  duration: 280  },  // ~5m  (starts after 08:14+35m=08:49)
+    { time: '08:14', direction: 'outbound', duration: 2100 },  // 35m ← long (ends ~08:49)
+    { time: '08:56', direction: 'inbound',  duration: 280  },  // ~5m
     { time: '09:48', direction: 'outbound', duration: 215  },  // ~4m
-    { time: '10:33', direction: 'inbound',  duration: 3300 },  // 55m ← long
-    { time: '11:35', direction: 'outbound', duration: 175  },  // ~3m  (starts after 10:33+55m=11:28)
-    { time: '12:22', direction: 'inbound',  duration: 255  },  // ~4m
-    { time: '13:16', direction: 'outbound', duration: 300  },  // ~5m
-    { time: '14:10', direction: 'inbound',  duration: 1800 },  // 30m ← long
-    { time: '14:46', direction: 'outbound', duration: 185  },  // ~3m  (starts after 14:10+30m=14:40)
+    { time: '10:33', direction: 'inbound',  duration: 2520 },  // 42m ← long (ends ~11:15, before lunch)
+    // LUNCH 12:00-13:00
+    { time: '13:04', direction: 'outbound', duration: 300  },  // ~5m
+    { time: '13:58', direction: 'inbound',  duration: 1800 },  // 30m ← long (ends ~14:28)
+    { time: '14:46', direction: 'outbound', duration: 185  },  // ~3m
     { time: '15:38', direction: 'inbound',  duration: 270  },  // ~5m
     { time: '16:30', direction: 'outbound', duration: 220  },  // ~4m
     { time: '17:22', direction: 'inbound',  duration: 195  },  // ~3m
   ],
   Chris: [
     { time: '08:28', direction: 'inbound',  duration: 245  },  // ~4m
-    { time: '09:12', direction: 'outbound', duration: 2400 },  // 40m ← long
-    { time: '09:58', direction: 'inbound',  duration: 195  },  // ~3m  (starts after 09:12+40m=09:52)
-    { time: '10:44', direction: 'outbound', duration: 260  },  // ~4m
-    { time: '11:36', direction: 'inbound',  duration: 3600 },  // 60m ← long
-    { time: '12:42', direction: 'outbound', duration: 225  },  // ~4m  (starts after 11:36+60m=12:36)
-    { time: '13:30', direction: 'inbound',  duration: 290  },  // ~5m
-    { time: '14:22', direction: 'outbound', duration: 205  },  // ~3m
-    { time: '15:14', direction: 'inbound',  duration: 1980 },  // 33m ← long
-    { time: '15:52', direction: 'outbound', duration: 180  },  // ~3m  (starts after 15:14+33m=15:47)
-    { time: '16:40', direction: 'inbound',  duration: 235  },  // ~4m
-    { time: '17:28', direction: 'outbound', duration: 160  },  // ~3m
+    { time: '09:12', direction: 'outbound', duration: 2400 },  // 40m ← long (ends ~09:52)
+    { time: '10:04', direction: 'inbound',  duration: 195  },  // ~3m
+    { time: '10:48', direction: 'outbound', duration: 260  },  // ~4m
+    { time: '11:36', direction: 'inbound',  duration: 2100 },  // 35m ← long (ends ~12:11, after lunch start)
+    // LUNCH 12:00-13:00
+    { time: '13:18', direction: 'outbound', duration: 290  },  // ~5m
+    { time: '14:10', direction: 'inbound',  duration: 1980 },  // 33m ← long (ends ~14:43)
+    { time: '14:55', direction: 'outbound', duration: 180  },  // ~3m
+    { time: '15:40', direction: 'inbound',  duration: 235  },  // ~4m
+    { time: '16:28', direction: 'outbound', duration: 210  },  // ~3m
+    { time: '17:16', direction: 'inbound',  duration: 160  },  // ~3m
   ],
   Jarrad: [
     { time: '08:21', direction: 'outbound', duration: 230  },  // ~4m
-    { time: '09:06', direction: 'inbound',  duration: 2700 },  // 45m ← long
-    { time: '09:58', direction: 'outbound', duration: 215  },  // ~4m  (starts after 09:06+45m=09:51)
+    { time: '09:06', direction: 'inbound',  duration: 2700 },  // 45m ← long (ends ~09:51)
+    { time: '10:04', direction: 'outbound', duration: 215  },  // ~4m
     { time: '10:48', direction: 'inbound',  duration: 270  },  // ~5m
-    { time: '11:38', direction: 'outbound', duration: 1800 },  // 30m ← long
-    { time: '12:14', direction: 'inbound',  duration: 310  },  // ~5m  (starts after 11:38+30m=12:08)
-    { time: '13:08', direction: 'outbound', duration: 245  },  // ~4m
-    { time: '14:00', direction: 'inbound',  duration: 3000 },  // 50m ← long
-    { time: '14:56', direction: 'outbound', duration: 200  },  // ~3m  (starts after 14:00+50m=14:50)
-    { time: '15:48', direction: 'inbound',  duration: 265  },  // ~4m
-    { time: '16:38', direction: 'outbound', duration: 185  },  // ~3m
-    { time: '17:24', direction: 'inbound',  duration: 220  },  // ~4m
+    { time: '11:38', direction: 'outbound', duration: 1440 },  // 24m ← (ends ~12:02, straddles lunch)
+    // LUNCH 12:00-13:00
+    { time: '13:08', direction: 'inbound',  duration: 245  },  // ~4m
+    { time: '14:00', direction: 'outbound', duration: 3000 },  // 50m ← long (ends ~14:50)
+    { time: '15:02', direction: 'inbound',  duration: 200  },  // ~3m
+    { time: '15:48', direction: 'outbound', duration: 265  },  // ~4m
+    { time: '16:38', direction: 'inbound',  duration: 185  },  // ~3m
+    { time: '17:24', direction: 'outbound', duration: 220  },  // ~4m
   ],
 };
 
