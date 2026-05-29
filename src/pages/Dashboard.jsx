@@ -147,14 +147,7 @@ export default function Dashboard() {
   stats.forEach(s => { panelDataMap[s.label] = s.panelData; });
 
   return (
-    <div className="p-6 space-y-6 min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s', paddingBottom: '280px' }}>
-      {/* Chip graphic — bottom left corner, 50% of blank area */}
-      <img
-        src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
-        alt="BenConnect chip"
-        className="fixed"
-        style={{ bottom: '60px', left: '60px', width: '200px', height: 'auto', zIndex: 10, opacity: 0.85 }}
-      />
+    <div className="p-6 space-y-6 min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s' }}>
       {/* Hero video */}
       <video
         src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
@@ -216,6 +209,15 @@ export default function Dashboard() {
         statType={openPanel}
         data={panelDataMap[openPanel] || []}
       />
+
+      {/* Chip graphic — bottom left of blank space, 50% width */}
+      <div className="relative h-56 mt-12">
+        <img
+          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+          alt="BenConnect chip"
+          style={{ width: '200px', height: 'auto', opacity: 0.85 }}
+        />
+      </div>
     </div>
   );
 }
