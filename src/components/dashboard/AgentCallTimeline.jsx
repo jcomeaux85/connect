@@ -118,11 +118,11 @@ export default function AgentCallTimeline({ calls: liveCalls }) {
 
   const demoCalls = useMemo(() => generateDemoCalls(), []);
 
-  // Use live calls if available and have data, else demo
+  // Use live calls only if they have real call_start_time data, else demo
   const allCalls = useMemo(() => {
-    if (liveCalls && liveCalls.length > 0) {
-      return liveCalls
-        .filter(c => c.call_start_time)
+    const liveWithTime = (liveCalls || []).filter(c => c.call_start_time);
+    if (liveWithTime.length > 0) {
+      return liveWithTime
         .map(c => {
           const d = new Date(c.call_start_time);
           const agentIdx = Math.abs(c.id?.charCodeAt(0) || 0) % AGENTS.length;
