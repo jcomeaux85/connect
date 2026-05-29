@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/components/hooks/useUser";
+import { Link } from "react-router-dom";
 import { Phone, PhoneIncoming, CheckSquare, Clock } from "lucide-react";
 import { isToday, parseISO } from "date-fns";
 import AgentCallTimeline from "@/components/dashboard/AgentCallTimeline";
@@ -147,7 +148,20 @@ export default function Dashboard() {
   stats.forEach(s => { panelDataMap[s.label] = s.panelData; });
 
   return (
-    <div className="p-6 space-y-6 min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s' }}>
+    <div className="min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s' }}>
+      {/* Hanging Nav */}
+      <div className="flex justify-center py-4 border-b" style={{ borderColor: cardBorder }}>
+        <div className="flex gap-8 w-4/5 justify-center">
+          <Link to="/Cases" className="text-sm font-medium tracking-wide hover:opacity-60 transition-opacity" style={{ color: textPrimary }}>CASES</Link>
+          <Link to="/Tasks" className="text-sm font-medium tracking-wide hover:opacity-60 transition-opacity" style={{ color: textPrimary }}>TASKS</Link>
+          <Link to="/Customers" className="text-sm font-medium tracking-wide hover:opacity-60 transition-opacity" style={{ color: textPrimary }}>CUSTOMERS</Link>
+          <Link to="/Phone" className="text-sm font-medium tracking-wide hover:opacity-60 transition-opacity" style={{ color: textPrimary }}>PHONE</Link>
+          <Link to="/Messages" className="text-sm font-medium tracking-wide hover:opacity-60 transition-opacity" style={{ color: textPrimary }}>MESSAGES</Link>
+          <Link to="/Timeline" className="text-sm font-medium tracking-wide hover:opacity-60 transition-opacity" style={{ color: textPrimary }}>TIMELINE</Link>
+        </div>
+      </div>
+      
+      <div className="p-6 space-y-6" style={{ minHeight: 'calc(100% - 60px)' }}>
       {/* Hero video */}
       <video
         src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
@@ -219,6 +233,7 @@ export default function Dashboard() {
         statType={openPanel}
         data={panelDataMap[openPanel] || []}
       />
+      </div>
     </div>
   );
 }
