@@ -41,6 +41,15 @@ function buildPatchedHtml(htmlContent, light) {
     '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] {',
     '  background: #1e1e22 !important;',
     '  border-bottom: 1px solid rgba(255,255,255,0.09) !important; }',
+    // Main result title: white in dark mode
+    '.result-name, .result-title, [class*="result-name"], [class*="result-title"], .card-title, [class*="card-title"] {',
+    '  color: #e8eaed !important; }',
+    // Category and source labels: muted grey instead of white
+    '.result-category, .result-source, [class*="result-category"], [class*="result-source"],',
+    '.category-label, .source-label, [class*="category"], [class*="source-label"] {',
+    '  color: #888 !important; }',
+    // Copy button: nudge away from title (margin-top)
+    '.quick-copy, [class*="quick-copy"] { margin-top: 4px !important; }',
   ].join('\n');
 
   // Light mode: client strip separator line below to match header grey
@@ -143,6 +152,9 @@ function buildThemeCss(light) {
     'a { color: #dc2626 !important; }',
     '.doc-footer, .footer, footer { background: transparent !important; color: #555 !important; border: none !important; box-shadow: none !important; }',
     '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { background: #1e1e22 !important; border-bottom: 1px solid rgba(255,255,255,0.09) !important; }',
+    '.result-name, .result-title, [class*="result-name"], [class*="result-title"], .card-title, [class*="card-title"] { color: #e8eaed !important; }',
+    '.result-category, .result-source, [class*="result-category"], [class*="result-source"], .category-label, .source-label, [class*="category"], [class*="source-label"] { color: #888 !important; }',
+    '.quick-copy, [class*="quick-copy"] { margin-top: 4px !important; }',
   ].join('\n');
 
   const lightClient = light ? '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { border-bottom: 1px solid #c8d0da !important; }' : '';
@@ -196,7 +208,14 @@ export default function DOCModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  // Only build blob on first load — theme switches go via postMessage after that
+  // Reset initialLoadDone when modal closes so next open rebuilds with correct theme
+  useEffect(() => {
+    if (!isOpen) {
+      initialLoadDone.current = false;
+    }
+  }, [isOpen]);
+
+  // Build blob on first open, then use postMessage for theme switches (preserves search state)
   useEffect(() => {
     if (!htmlContent) return;
     if (initialLoadDone.current) {
@@ -208,13 +227,13 @@ export default function DOCModal({ isOpen, onClose }) {
       }
       return;
     }
-    // First load — build blob
+    // First load — build blob with current theme
     if (blobUrl) URL.revokeObjectURL(blobUrl);
     const patched = buildPatchedHtml(htmlContent, docLight);
     const blob = new Blob([patched], { type: 'text/html' });
     setBlobUrl(URL.createObjectURL(blob));
     initialLoadDone.current = true;
-  }, [docLight, htmlContent]);
+  }, [docLight, htmlContent, isOpen]);
 
   useEffect(() => {
     return () => { if (blobUrl) URL.revokeObjectURL(blobUrl); };
