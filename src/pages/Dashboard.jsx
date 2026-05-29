@@ -147,7 +147,14 @@ export default function Dashboard() {
   stats.forEach(s => { panelDataMap[s.label] = s.panelData; });
 
   return (
-    <div className="p-6 space-y-6 min-h-full" style={{ background: pageBg, transition: 'background 0.3s' }}>
+    <div className="p-6 space-y-6 min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s' }}>
+      {/* Chip graphic — bottom left corner */}
+      <img
+        src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c99f7b418_Gemini_Generated_Image_1hvf8a1hvf8a1hvf.png"
+        alt="BenConnect chip"
+        className="fixed"
+        style={{ bottom: '50px', left: '50px', width: '180px', height: 'auto', zIndex: 10, opacity: 0.85 }}
+      />
       {/* Hero video */}
       <video
         src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
