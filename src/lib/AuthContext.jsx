@@ -113,12 +113,13 @@ export const AuthProvider = ({ children }) => {
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
+    // Clear login session so the intro video plays again on next login
+    localStorage.removeItem('ben_connect_login_ts');
+    localStorage.removeItem('ben_connect_intro_played_ts');
     
     if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
       base44.auth.logout(window.location.href);
     } else {
-      // Just remove the token without redirect
       base44.auth.logout();
     }
   };

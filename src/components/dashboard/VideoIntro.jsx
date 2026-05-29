@@ -2,28 +2,40 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const VIDEO_URL = 'https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4';
-const SESSION_KEY = 'ben_connect_intro_played';
+// Key is per-login-session: we store the login timestamp in localStorage on first visit,
+// and mark the video played for that session. Logging out clears the login key.
+const LOGIN_TS_KEY = 'ben_connect_login_ts';
+const PLAYED_TS_KEY = 'ben_connect_intro_played_ts';
+
+function getOrCreateLoginTs() {
+  let ts = localStorage.getItem(LOGIN_TS_KEY);
+  if (!ts) {
+    ts = Date.now().toString();
+    localStorage.setItem(LOGIN_TS_KEY, ts);
+  }
+  return ts;
+}
 
 export default function VideoIntro() {
   const [show, setShow] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
-    const alreadyPlayed = sessionStorage.getItem(SESSION_KEY);
-    if (!alreadyPlayed) {
+    const loginTs = getOrCreateLoginTs();
+    const playedTs = localStorage.getItem(PLAYED_TS_KEY);
+    if (playedTs !== loginTs) {
       setShow(true);
     }
   }, []);
 
-  const handleEnded = () => {
-    sessionStorage.setItem(SESSION_KEY, 'true');
+  const markPlayed = () => {
+    const loginTs = getOrCreateLoginTs();
+    localStorage.setItem(PLAYED_TS_KEY, loginTs);
     setShow(false);
   };
 
-  const handleSkip = () => {
-    sessionStorage.setItem(SESSION_KEY, 'true');
-    setShow(false);
-  };
+  const handleEnded = markPlayed;
+  const handleSkip = markPlayed;
 
   return (
     <AnimatePresence>
