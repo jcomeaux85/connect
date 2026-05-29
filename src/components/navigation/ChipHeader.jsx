@@ -57,12 +57,11 @@ export default function ChipHeader() {
           position: 'relative',
           width: '100%',
           aspectRatio: '1 / 1',
-          borderRadius: '14px',
+          borderRadius: '0px',
           cursor: 'pointer',
-          // recessed socket look — chip sits inside the panel
-          padding: '5px',
-          background: 'linear-gradient(145deg, rgba(0,0,0,0.55), rgba(0,0,0,0.25))',
-          boxShadow: 'inset 4px 4px 10px rgba(0,0,0,0.7), inset -3px -3px 8px rgba(255,255,255,0.08), 0 1px 0 rgba(255,255,255,0.06)',
+          padding: '0px',
+          background: 'transparent',
+          boxShadow: 'none',
         }}
       >
         <img
@@ -73,9 +72,9 @@ export default function ChipHeader() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            borderRadius: '10px',
+            borderRadius: '0px',
             display: 'block',
-            boxShadow: 'inset 0 0 12px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.5)',
+            boxShadow: 'none',
           }}
         />
       </div>
