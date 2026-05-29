@@ -13,7 +13,7 @@ export default function CallQueuePanel({ cases = [] }) {
   const queue = cases.filter(c => c.status !== 'closed' && c.status !== 'resolved').slice(0, 8);
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm h-full">
+    <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm h-full" style={{ borderTop: '2px solid #a78bfa' }}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-bold text-gray-800">Call Queue</h3>
         {queue.length > 0 && (

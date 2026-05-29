@@ -21,7 +21,7 @@ const INSIGHTS = [
 
 export default function AIInsightsPanel() {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+    <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm" style={{ borderTop: '2px solid #fb923c' }}>
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-4 h-4 text-violet-500" />
         <h3 className="text-sm font-bold text-gray-800">AI Insights</h3>
