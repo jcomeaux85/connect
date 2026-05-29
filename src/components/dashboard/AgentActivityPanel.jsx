@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useTheme } from '@/components/ThemeProvider';
+
 const STATUS_COLORS = {
   'On Call': '#10B981',
   'Available': '#3B82F6',
@@ -18,6 +20,7 @@ const MOCK_AGENTS = [
 ];
 
 export default function AgentActivityPanel({ users = [] }) {
+  const { isDark } = useTheme();
   const agents = users.length > 0
     ? users.slice(0, 6).map((u, i) => ({
         name: u.full_name || u.email,
@@ -28,24 +31,33 @@ export default function AgentActivityPanel({ users = [] }) {
       }))
     : MOCK_AGENTS;
 
+  const cardBg = isDark ? '#23263a' : '#ffffff';
+  const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#e5e7eb';
+  const headerBg = isDark ? 'rgba(59,130,246,0.15)' : 'linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%)';
+  const headerBorder = isDark ? 'rgba(59,130,246,0.25)' : '#bfdbfe';
+  const textPrimary = isDark ? '#f0f0f0' : '#111827';
+  const textSecondary = isDark ? '#9ca3af' : '#6b7280';
+  const tileBg = isDark ? 'rgba(255,255,255,0.04)' : '#f9fafb';
+  const tileBorder = isDark ? 'rgba(255,255,255,0.07)' : '#f3f4f6';
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm" style={{ borderTop: '2px solid #60a5fa' }}>
-      <div className="-mx-4 px-4 py-2 mb-4 rounded-t-2xl" style={{ background: 'linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%)', borderBottom: '1px solid #bfdbfe' }}>
-        <h3 className="text-sm font-bold text-gray-800">Agent Activity</h3>
+    <div className="rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderTop: '2px solid #60a5fa' }}>
+      <div className="-mx-4 px-4 py-2 mb-4 rounded-t-2xl" style={{ background: headerBg, borderBottom: `1px solid ${headerBorder}` }}>
+        <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Agent Activity</h3>
       </div>
       <div className="grid grid-cols-2 gap-2">
         {agents.map((agent, i) => (
-          <div key={i} className="flex items-center gap-2 p-3 rounded-xl bg-gray-50 border border-gray-100">
+          <div key={i} className="flex items-center gap-2 p-3 rounded-xl" style={{ background: tileBg, border: `1px solid ${tileBorder}` }}>
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
               {agent.initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-800 truncate">{agent.name}</p>
+              <p className="text-xs font-semibold truncate" style={{ color: textPrimary }}>{agent.name}</p>
               <p className="text-[10px] font-medium" style={{ color: STATUS_COLORS[agent.status] || '#9CA3AF' }}>{agent.status}</p>
             </div>
             <div className="text-right flex-shrink-0">
-              <p className="text-[10px] text-gray-400">{agent.calls} calls</p>
-              <p className="text-[10px] text-gray-500 font-mono">Avg {agent.avg}</p>
+              <p className="text-[10px]" style={{ color: textSecondary }}>{agent.calls} calls</p>
+              <p className="text-[10px] font-mono" style={{ color: textSecondary }}>Avg {agent.avg}</p>
             </div>
           </div>
         ))}
