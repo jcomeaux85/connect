@@ -233,7 +233,7 @@ export default function PersistentSidebar({
       <motion.div
         ref={panelRef}
         animate={{ width }}
-        transition={{ type: 'spring', damping: 35, stiffness: 120 }}
+        transition={{ type: 'spring', damping: 28, stiffness: 260 }}
         className="fixed left-0 top-0 h-full z-[60] flex flex-col select-none"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
