@@ -15,7 +15,6 @@ function BlinkLight({ color, on }) {
     }
     const tick = () => {
       setLit((p) => !p);
-      // random pace between 120ms and 900ms — irregular like data packets
       const next = 120 + Math.random() * 780;
       timer.current = setTimeout(tick, next);
     };
@@ -50,18 +49,14 @@ export default function ChipHeader() {
         justifyContent: 'center',
       }}
     >
-      {/* Embedded chip socket */}
+      {/* Chip */}
       <div
         onClick={() => setLightsOn((p) => !p)}
         style={{
           position: 'relative',
           width: '100%',
           aspectRatio: '1 / 1',
-          borderRadius: '0px',
           cursor: 'pointer',
-          padding: '0px',
-          background: 'transparent',
-          boxShadow: 'none',
         }}
       >
         <img
@@ -72,9 +67,7 @@ export default function ChipHeader() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            borderRadius: '0px',
             display: 'block',
-            boxShadow: 'none',
           }}
         />
       </div>
