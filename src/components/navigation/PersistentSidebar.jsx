@@ -166,7 +166,7 @@ export default function PersistentSidebar({
     setIsHovered(true);
   };
   const handleMouseLeave = () => {
-    hideTimer.current = setTimeout(() => setIsHovered(false), 800);
+    hideTimer.current = setTimeout(() => setIsHovered(false), 720);
   };
 
   // Panel-level glare (independent listener)
@@ -216,6 +216,19 @@ export default function PersistentSidebar({
         style={{ width: '12px' }}
         onMouseEnter={handleMouseEnter}
       />
+
+      {/* Off-click catcher — closes sidebar and swallows the click so it doesn't hit the page */}
+      {isHovered && (
+        <div
+          className="fixed inset-0 z-[58]"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (hideTimer.current) clearTimeout(hideTimer.current);
+            setIsHovered(false);
+          }}
+        />
+      )}
 
       <motion.div
         ref={panelRef}
