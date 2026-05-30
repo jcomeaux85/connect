@@ -6,7 +6,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
   MessageSquare, LogOut, Palette, Building2,
-  Sun, Moon, ChevronsRight, ChevronsLeft
+  Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -157,6 +157,7 @@ export default function PersistentSidebar({
   const { colors, toggleTheme, isDark: themeDark } = useTheme();
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isLocked, setIsLocked] = useState(() => localStorage.getItem('sidebarLocked') === '1');
   const [panelGlare, setPanelGlare] = useState({ mx: 50, my: 50 });
   const hasInteracted = useRef(false);
   const hideTimer = useRef(null);
@@ -168,7 +169,21 @@ export default function PersistentSidebar({
     setIsHovered(true);
   };
   const handleMouseLeave = () => {
+    if (isLocked) return;
     hideTimer.current = setTimeout(() => setIsHovered(false), 720);
+  };
+
+  const toggleLock = () => {
+    setIsLocked((prev) => {
+      const next = !prev;
+      localStorage.setItem('sidebarLocked', next ? '1' : '0');
+      if (next) {
+        hasInteracted.current = true;
+        if (hideTimer.current) clearTimeout(hideTimer.current);
+        setIsHovered(true);
+      }
+      return next;
+    });
   };
 
   // Panel-level glare (independent listener)
@@ -183,7 +198,8 @@ export default function PersistentSidebar({
   }, []);
 
   const level = sidebarLevel ?? 1;
-  const width = isHovered ? SIDEBAR_WIDTHS[level - 1] : 0;
+  const isOpen = isHovered || isLocked;
+  const width = isOpen ? SIDEBAR_WIDTHS[level - 1] : 0;
   const isMin = level === 1;
   const isMid = level === 2;
   const isFull = level === 3;
@@ -220,7 +236,7 @@ export default function PersistentSidebar({
       />
 
       {/* Off-click catcher — closes sidebar and swallows the click so it doesn't hit the page */}
-      {isHovered && (
+      {isHovered && !isLocked && (
         <div
           className="fixed inset-0 z-[58]"
           onMouseDown={(e) => {
@@ -248,7 +264,7 @@ export default function PersistentSidebar({
           borderRight: `1px solid ${PANEL_BG}`,
           boxShadow: '4px 0 40px rgba(0,0,0,0.45), inset -1px 0 0 rgba(255,255,255,0.08)',
           overflow: 'hidden',
-          pointerEvents: isHovered ? 'auto' : 'none',
+          pointerEvents: isOpen ? 'auto' : 'none',
         }}
       >
         {/* Panel background glare — independent of buttons */}
@@ -387,8 +403,8 @@ export default function PersistentSidebar({
             </div>
           </div>
 
-          {/* Size cycle button */}
-          <div className="flex-shrink-0 p-1.5 border-t flex justify-center" style={{ borderColor: PANEL_BORDER }}>
+          {/* Size cycle + pin/lock buttons */}
+          <div className="flex-shrink-0 p-1.5 border-t flex justify-center gap-1.5" style={{ borderColor: PANEL_BORDER }}>
             <button
               onClick={() => onSidebarLevelChange(level === 3 ? 1 : level + 1)}
               title={level === 3 ? 'Collapse' : 'Expand'}
@@ -411,6 +427,30 @@ export default function PersistentSidebar({
               {level === 3
                 ? <ChevronsLeft className="w-3.5 h-3.5" />
                 : <ChevronsRight className="w-3.5 h-3.5" />
+              }
+            </button>
+            <button
+              onClick={toggleLock}
+              title={isLocked ? 'Unlock sidebar' : 'Lock sidebar open'}
+              style={{
+                width: '36px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: isLocked ? 'rgba(124,58,237,0.45)' : 'rgba(255,255,255,0.07)',
+                border: isLocked ? '1px solid rgba(167,139,250,0.5)' : '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: isLocked ? '#fff' : 'rgba(255,255,255,0.5)',
+                transition: 'background 0.15s, color 0.15s',
+              }}
+              onMouseEnter={e => { if (!isLocked) { e.currentTarget.style.background = 'rgba(124,58,237,0.35)'; e.currentTarget.style.color = '#fff'; } }}
+              onMouseLeave={e => { if (!isLocked) { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; } }}
+            >
+              {isLocked
+                ? <Pin className="w-3.5 h-3.5" />
+                : <PinOff className="w-3.5 h-3.5" />
               }
             </button>
           </div>
