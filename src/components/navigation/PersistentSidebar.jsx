@@ -6,8 +6,9 @@ import { useTheme } from '@/components/ThemeProvider';
 import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
   MessageSquare, LogOut, Palette, Building2,
-  Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff
+  Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import ChipHeader from '@/components/navigation/ChipHeader';
@@ -154,6 +155,7 @@ export default function PersistentSidebar({
   isDark, user
 }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { colors, toggleTheme, isDark: themeDark } = useTheme();
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -458,6 +460,27 @@ export default function PersistentSidebar({
                 ? <Pin className="w-3.5 h-3.5" />
                 : <PinOff className="w-3.5 h-3.5" />
               }
+            </button>
+            <button
+              onClick={() => navigate('/CallQueueDemo')}
+              title="View demo"
+              style={{
+                width: '36px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: 'rgba(255,255,255,0.5)',
+                transition: 'background 0.15s, color 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(124,58,237,0.35)'; e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+            >
+              <Play className="w-3.5 h-3.5" />
             </button>
           </div>
 
