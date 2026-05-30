@@ -39,6 +39,7 @@ function LayoutContent({ children, currentPageName }) {
     const saved = localStorage.getItem('sidebarLevel');
     return saved ? parseInt(saved) : 1;
   });
+  const [lockedSidebarWidth, setLockedSidebarWidth] = useState(0);
 
   const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
   // isDark already destructured above
@@ -129,6 +130,7 @@ function LayoutContent({ children, currentPageName }) {
     const handleToggleBackgroundCustomizer = () => setShowBackgroundCustomizer((p) => !p);
     const handleToggleDoc = () => setShowDOC((p) => !p);
     const handleShowDisposition = (e) => setDispositionData(e.detail || {});
+    const handleSidebarLock = (e) => setLockedSidebarWidth(e.detail?.width || 0);
 
     // Ctrl+Alt+Enter (or Ctrl+Alt+D) to toggle DOC
     const handleKeyDown = (e) => {
@@ -149,6 +151,7 @@ function LayoutContent({ children, currentPageName }) {
     window.addEventListener('toggle-phone', handleTogglePhone);
     window.addEventListener('toggle-doc', handleToggleDoc);
     window.addEventListener('show-disposition-form', handleShowDisposition);
+    window.addEventListener('sidebar-lock-change', handleSidebarLock);
     window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
     window.addEventListener('keydown', handleKeyDown);
 
@@ -157,6 +160,7 @@ function LayoutContent({ children, currentPageName }) {
       window.removeEventListener('toggle-phone', handleTogglePhone);
       window.removeEventListener('toggle-doc', handleToggleDoc);
       window.removeEventListener('show-disposition-form', handleShowDisposition);
+      window.removeEventListener('sidebar-lock-change', handleSidebarLock);
       window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
       window.removeEventListener('keydown', handleKeyDown);
     };
@@ -186,8 +190,11 @@ function LayoutContent({ children, currentPageName }) {
         user={user} />
       
 
-      {/* Main area: nav + content — never pushed by sidebar */}
-      <div className="flex flex-col flex-1 overflow-hidden">
+      {/* Main area: nav + content — shifts right when sidebar is locked open */}
+      <div
+        className="flex flex-col flex-1 overflow-hidden"
+        style={{ marginLeft: lockedSidebarWidth, transition: 'margin-left 0.25s ease-out' }}
+      >
 
         {/* Top Bar — 8x8 style */}
         <TopBar

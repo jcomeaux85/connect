@@ -186,6 +186,12 @@ export default function PersistentSidebar({
     });
   };
 
+  // Tell the layout how wide to inset the page content when locked
+  useEffect(() => {
+    const lockedWidth = isLocked ? SIDEBAR_WIDTHS[(sidebarLevel ?? 1) - 1] : 0;
+    window.dispatchEvent(new CustomEvent('sidebar-lock-change', { detail: { width: lockedWidth } }));
+  }, [isLocked, sidebarLevel]);
+
   // Panel-level glare (independent listener)
   const handlePanelMouseMove = useCallback((e) => {
     const el = panelRef.current;
