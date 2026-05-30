@@ -158,10 +158,12 @@ export default function PersistentSidebar({
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const [panelGlare, setPanelGlare] = useState({ mx: 50, my: 50 });
+  const hasInteracted = useRef(false);
   const hideTimer = useRef(null);
   const panelRef = useRef(null);
 
   const handleMouseEnter = () => {
+    hasInteracted.current = true;
     if (hideTimer.current) clearTimeout(hideTimer.current);
     setIsHovered(true);
   };
@@ -232,8 +234,9 @@ export default function PersistentSidebar({
 
       <motion.div
         ref={panelRef}
+        initial={{ width: 0 }}
         animate={{ width }}
-        transition={{ type: 'spring', damping: 28, stiffness: 260 }}
+        transition={hasInteracted.current ? { type: 'spring', damping: 28, stiffness: 260 } : { duration: 0 }}
         className="fixed left-0 top-0 h-full z-[60] flex flex-col select-none"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
