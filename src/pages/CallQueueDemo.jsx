@@ -313,12 +313,12 @@ function ShortcutPanel({ state, visible, onToggle }) {
         State: {state}
       </div>
       {[
-        ['Ctrl+1', 'Next in queue'],
-        ['Ctrl+2', 'Incoming ring'],
-        ['Ctrl+3', 'Answer call'],
-        ['Ctrl+4', 'End call'],
-        ['Ctrl+0', 'Reset to idle'],
-        ['Ctrl+H', 'Hide this panel'],
+        ['Alt+1', 'Next in queue'],
+        ['Alt+2', 'Incoming ring'],
+        ['Alt+3', 'Answer call'],
+        ['Alt+4', 'End call'],
+        ['Alt+0', 'Reset to idle'],
+        ['Alt+H', 'Hide this panel'],
       ].map(([key, desc]) => (
         <div key={key} style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
           <span style={{ color: '#a78bfa', fontWeight: 600, flexShrink: 0 }}>{key}</span>
@@ -408,14 +408,14 @@ export default function CallQueueDemo() {
   // Keyboard shortcuts
   useEffect(() => {
     const handler = (e) => {
-      if (!e.ctrlKey) return;
-      switch (e.key) {
-        case '1': e.preventDefault(); goTo(STATES.NEXT); break;
-        case '2': e.preventDefault(); goTo(STATES.RINGING); break;
-        case '3': e.preventDefault(); if (state === STATES.RINGING) goTo(STATES.CONNECTED); break;
-        case '4': e.preventDefault(); if (state === STATES.CONNECTED) goTo(STATES.ENDED); break;
-        case '0': e.preventDefault(); goTo(STATES.IDLE); break;
-        case 'h': case 'H': e.preventDefault(); setShowPanel(p => !p); break;
+      if (!e.altKey) return;
+      switch (e.code) {
+        case 'Digit1': e.preventDefault(); goTo(STATES.NEXT); break;
+        case 'Digit2': e.preventDefault(); goTo(STATES.RINGING); break;
+        case 'Digit3': e.preventDefault(); if (state === STATES.RINGING) goTo(STATES.CONNECTED); break;
+        case 'Digit4': e.preventDefault(); if (state === STATES.CONNECTED) goTo(STATES.ENDED); break;
+        case 'Digit0': e.preventDefault(); goTo(STATES.IDLE); break;
+        case 'KeyH': e.preventDefault(); setShowPanel(p => !p); break;
         default: break;
       }
     };
