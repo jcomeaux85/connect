@@ -216,7 +216,7 @@ function MetricCard({ icon, delta, value, label, sub, positive }) {
       boxShadow: '4px 4px 10px rgba(0,0,0,0.07), -2px -2px 6px rgba(255,255,255,0.9)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-        <span style={{ fontSize: 16 }}>{icon}</span>
+        <div style={{ width: 8, height: 8, borderRadius: 2, background: '#c4b5fd' }} />
         <span style={{ fontSize: 11, fontWeight: 600, color: positive ? '#10B981' : '#EF4444' }}>{delta}</span>
       </div>
       <div style={{ fontSize: 32, fontWeight: 700, color: '#1e1b4b', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>{value}</div>
@@ -509,10 +509,10 @@ export default function CallQueueDemo() {
 
         {/* Metric cards */}
         <div style={{ padding: '24px 24px 0', display: 'flex', gap: 16 }}>
-          <MetricCard icon="📞" delta="+0%" value="0" label="Active Calls" sub="0 on hold" positive={true} />
-          <MetricCard icon="⏱" delta="+2" value="0" label="In Queue" sub="Avg wait 1:34" positive={false} />
-          <MetricCard icon="✓" delta="+12%" value="127" label="Resolved Today" sub="94% satisfaction" positive={true} />
-          <MetricCard icon="⌛" delta="-8%" value="4:32" label="Avg Handle Time" sub="Target: 5:00" positive={true} />
+          <MetricCard delta="+0%" value="0" label="Active Calls" sub="0 on hold" positive={true} />
+          <MetricCard delta="+2" value="0" label="In Queue" sub="Avg wait 1:34" positive={false} />
+          <MetricCard delta="+12%" value="127" label="Resolved Today" sub="94% satisfaction" positive={true} />
+          <MetricCard delta="-8%" value="4:32" label="Avg Handle Time" sub="Target: 5:00" positive={true} />
         </div>
 
         {/* Two-panel row */}
