@@ -222,10 +222,10 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         >
           <span style={{
             fontFamily: "'Outfit', sans-serif",
-            fontSize: '13px',
+            fontSize: '16px',
             fontWeight: 700,
             color: showDOC ? '#ff0000ff' : 'rgba(255,255,255,0.7)',
-            letterSpacing: '-0.5px',
+            letterSpacing: '-0.6px',
             lineHeight: 1,
           }}>
             DOC<sup style={{ fontSize: '7px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
