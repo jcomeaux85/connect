@@ -212,7 +212,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           <span style={{
             fontFamily: "'Outfit', sans-serif",
             fontSize: '16px',
-            fontWeight: 750,
+            fontWeight: 775,
             color: showDOC ? '#ffffffff' : 'rgba(255, 0, 0, 1)',
             letterSpacing: '-0.6px',
             lineHeight: 1
