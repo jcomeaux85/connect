@@ -195,36 +195,25 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         }
       </div>
 
-      <div className="flex items-center gap-2 ml-auto">
-        {/* Clock — not a button, no tilt */}
-        <div className="flex items-center gap-1.5 px-3 h-8 rounded-lg cursor-default select-none mx-5"
-        style={NAV_BTN}>
-          <Clock className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
-          <div className="text-right">
-            <p className="text-xs font-bold leading-none" style={{ color: 'rgba(255,255,255,0.85)' }}>{format(now, 'hh:mm:ss aa')}</p>
-            <p className="text-[9px] leading-none mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{format(now, 'EEE, MMM d')}</p>
-          </div>
-        </div>
-
         {/* DOC™ button */}
         <TiltBtn
           onClick={onToggleDOC}
           title="DOC™ — Directory of Coverage"
           style={{
             ...(showDOC ?
-            { background: 'rgba(220,38,38,0.25)', border: '1px solid rgba(220,38,38,0.5)' } :
+            { background: 'rgba(255, 255, 255, 1)', border: '1px solid rgba(255, 0, 0, 1)' } :
             NAV_BTN),
             borderRadius: '8px',
             height: '32px',
-            display: 'flex', alignItems: 'center', gap: '5px', padding: '0 10px',
+            display: 'flex', alignItems: 'center', gap: '5px', padding: '0 12px',
             flexShrink: 0
           }}>
           
           <span style={{
             fontFamily: "'Outfit', sans-serif",
             fontSize: '16px',
-            fontWeight: 700,
-            color: showDOC ? '#ff0000ff' : 'rgba(255,255,255,0.7)',
+            fontWeight: 800,
+            color: showDOC ? '#ffffffff' : 'rgba(255, 0, 0, 1)',
             letterSpacing: '-0.6px',
             lineHeight: 1
           }}>
@@ -295,6 +284,17 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
             )}
             </div>
           }
+        </div>
+        
+      <div className="flex items-center gap-2 ml-auto">
+        {/* Clock — not a button, no tilt */}
+        <div className="flex items-center gap-1.5 px-3 h-8 rounded-lg cursor-default select-none mx-5"
+        style={NAV_BTN}>
+          <Clock className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
+          <div className="text-right">
+            <p className="text-xs font-bold leading-none" style={{ color: 'rgba(255,255,255,0.85)' }}>{format(now, 'hh:mm:ss aa')}</p>
+            <p className="text-[9px] leading-none mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{format(now, 'EEE, MMM d')}</p>
+          </div>
         </div>
 
         {/* User avatar — initials only, no photo */}
