@@ -1,0 +1,67 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who receives notification"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "sms_reply",
+        "stale_case",
+        "stale_task",
+        "message",
+        "announcement",
+        "case_assigned",
+        "task_assigned"
+      ],
+      "description": "Type of notification"
+    },
+    "title": {
+      "type": "string",
+      "description": "Notification title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Notification message"
+    },
+    "link": {
+      "type": "string",
+      "description": "Link to related item"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether notification has been read"
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When notification was read"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "urgent"
+      ],
+      "default": "normal",
+      "description": "Notification priority"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional data",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "user_email",
+    "type",
+    "title",
+    "message"
+  ]
+}

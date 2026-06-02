@@ -1,0 +1,121 @@
+{
+  "name": "CallDisposition",
+  "type": "object",
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "Reference to associated case"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Agent who submitted"
+    },
+    "client_company": {
+      "type": "string",
+      "description": "Client company"
+    },
+    "caller_name": {
+      "type": "string",
+      "description": "Caller name"
+    },
+    "call_type": {
+      "type": "string",
+      "enum": [
+        "Inbound",
+        "Outbound"
+      ]
+    },
+    "is_vip": {
+      "type": "boolean",
+      "default": false
+    },
+    "benefit_area": {
+      "type": "string"
+    },
+    "service_reason": {
+      "type": "string"
+    },
+    "service_reason_custom": {
+      "type": "string"
+    },
+    "resolution_status": {
+      "type": "string"
+    },
+    "task_priority": {
+      "type": "string",
+      "enum": [
+        "Urgent",
+        "High",
+        "Normal",
+        "Low"
+      ],
+      "default": "Normal"
+    },
+    "follow_up_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "follow_up_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "follow_up_notes": {
+      "type": "string"
+    },
+    "compliance_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "actions_taken": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sentiment_start": {
+      "type": "string"
+    },
+    "sentiment_end": {
+      "type": "string"
+    },
+    "handling_rating": {
+      "type": "number"
+    },
+    "difficulty_rating": {
+      "type": "number"
+    },
+    "could_automate": {
+      "type": "boolean",
+      "default": false
+    },
+    "knowledge_gap": {
+      "type": "boolean",
+      "default": false
+    },
+    "knowledge_gap_notes": {
+      "type": "string"
+    },
+    "call_notes": {
+      "type": "string"
+    },
+    "enable_reminder": {
+      "type": "boolean",
+      "default": false
+    },
+    "completion_time_seconds": {
+      "type": "number"
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "client_company",
+    "benefit_area",
+    "service_reason",
+    "resolution_status"
+  ]
+}

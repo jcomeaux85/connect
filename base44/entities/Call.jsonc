@@ -1,0 +1,60 @@
+{
+  "name": "Call",
+  "type": "object",
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "Reference to case"
+    },
+    "customer_phone": {
+      "type": "string",
+      "description": "Phone number called"
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "inbound",
+        "outbound"
+      ],
+      "description": "Call direction"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Call duration in seconds"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "missed",
+        "busy",
+        "no_answer",
+        "failed"
+      ],
+      "description": "Call outcome"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Call notes"
+    },
+    "recording_url": {
+      "type": "string",
+      "description": "URL to call recording"
+    },
+    "call_start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When call started"
+    },
+    "call_end_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When call ended"
+    }
+  },
+  "required": [
+    "case_id",
+    "customer_phone",
+    "direction"
+  ]
+}

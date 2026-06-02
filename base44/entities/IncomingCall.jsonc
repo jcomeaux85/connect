@@ -1,0 +1,60 @@
+{
+  "name": "IncomingCall",
+  "type": "object",
+  "properties": {
+    "phone_number": {
+      "type": "string",
+      "description": "Incoming phone number"
+    },
+    "caller_name": {
+      "type": "string",
+      "description": "Caller name from caller ID"
+    },
+    "caller_city": {
+      "type": "string",
+      "description": "Caller city"
+    },
+    "caller_state": {
+      "type": "string",
+      "description": "Caller state"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Customer ID if profile exists"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Agent email this call is routed to"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ringing",
+        "answered",
+        "missed",
+        "declined",
+        "voicemail"
+      ],
+      "default": "ringing",
+      "description": "Call status"
+    },
+    "ring_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many times it has rung"
+    },
+    "answered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When call was answered"
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Created case ID if answered"
+    }
+  },
+  "required": [
+    "phone_number",
+    "assigned_to"
+  ]
+}

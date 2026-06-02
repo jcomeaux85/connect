@@ -1,0 +1,134 @@
+{
+  "name": "Customer",
+  "type": "object",
+  "properties": {
+    "first_name": {
+      "type": "string",
+      "description": "Customer first name"
+    },
+    "last_name": {
+      "type": "string",
+      "description": "Customer last name"
+    },
+    "is_vip": {
+      "type": "boolean",
+      "default": false,
+      "description": "VIP/Person of Interest flag - shows gold call interface"
+    },
+    "employment_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "terminated"
+      ],
+      "default": "active",
+      "description": "Employment status"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date",
+      "description": "Customer date of birth"
+    },
+    "primary_phone": {
+      "type": "string",
+      "description": "Primary phone number"
+    },
+    "secondary_phone": {
+      "type": "string",
+      "description": "Secondary phone number"
+    },
+    "primary_email": {
+      "type": "string",
+      "description": "Primary email address"
+    },
+    "secondary_email": {
+      "type": "string",
+      "description": "Secondary email address"
+    },
+    "address_street": {
+      "type": "string",
+      "description": "Street address"
+    },
+    "address_city": {
+      "type": "string",
+      "description": "City"
+    },
+    "address_state": {
+      "type": "string",
+      "description": "State"
+    },
+    "address_zip": {
+      "type": "string",
+      "description": "ZIP code"
+    },
+    "company_id": {
+      "type": "string",
+      "description": "Reference to Employer entity (customer's employer company)"
+    },
+    "client_id": {
+      "type": "string",
+      "description": "Reference to Company entity (insurance carrier)"
+    },
+    "hire_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Employee hire date"
+    },
+    "job_title": {
+      "type": "string",
+      "description": "Job title"
+    },
+    "employee_id": {
+      "type": "string",
+      "description": "Employee ID number"
+    },
+    "member_id": {
+      "type": "string",
+      "description": "Insurance member ID"
+    },
+    "group_number": {
+      "type": "string",
+      "description": "Insurance group number"
+    },
+    "escalation_flag": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this customer requires escalation"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about customer"
+    },
+    "call_category": {
+      "type": "string",
+      "enum": [
+        "dental",
+        "medical",
+        "vision",
+        "life",
+        "disability",
+        "other"
+      ],
+      "description": "Insurance category"
+    },
+    "call_type": {
+      "type": "string",
+      "enum": [
+        "claims_assistance",
+        "id_cards",
+        "benefits_inquiry",
+        "provider_search",
+        "authorization",
+        "billing",
+        "enrollment",
+        "other"
+      ],
+      "description": "Type of call/inquiry"
+    }
+  },
+  "required": [
+    "first_name",
+    "last_name",
+    "primary_phone"
+  ]
+}

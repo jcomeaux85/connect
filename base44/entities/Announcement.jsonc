@@ -1,0 +1,49 @@
+{
+  "name": "Announcement",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Announcement title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Announcement content"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "urgent"
+      ],
+      "default": "normal",
+      "description": "Announcement priority"
+    },
+    "target_audience": {
+      "type": "string",
+      "enum": [
+        "all",
+        "admins",
+        "agents"
+      ],
+      "default": "all",
+      "description": "Who should see this"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When announcement expires"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether announcement is active"
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "name": "CallTranscript",
+  "type": "object",
+  "properties": {
+    "call_id": {
+      "type": "string",
+      "description": "Reference to the call"
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Reference to the case"
+    },
+    "transcript_text": {
+      "type": "string",
+      "description": "Full transcript of the call"
+    },
+    "ai_summary": {
+      "type": "string",
+      "description": "AI-generated summary of the call"
+    },
+    "key_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Key points extracted from the call"
+    },
+    "action_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Action items identified in the call"
+    },
+    "sentiment": {
+      "type": "string",
+      "enum": [
+        "positive",
+        "neutral",
+        "negative"
+      ],
+      "description": "Overall sentiment of the call"
+    },
+    "compliance_score": {
+      "type": "number",
+      "description": "Compliance score from 0-100"
+    },
+    "quality_score": {
+      "type": "number",
+      "description": "Call quality score from 0-100"
+    }
+  },
+  "required": [
+    "call_id",
+    "case_id",
+    "transcript_text"
+  ]
+}

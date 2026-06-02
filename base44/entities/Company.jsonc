@@ -1,0 +1,125 @@
+{
+  "name": "Company",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "company_logo_url": {
+      "type": "string",
+      "description": "URL to company logo image"
+    },
+    "website": {
+      "type": "string",
+      "description": "Company website URL"
+    },
+    "hr_contact_name": {
+      "type": "string",
+      "description": "HR contact person name"
+    },
+    "hr_contact_phone": {
+      "type": "string",
+      "description": "HR contact phone number"
+    },
+    "hr_contact_email": {
+      "type": "string",
+      "description": "HR contact email address"
+    },
+    "broker_contact_name": {
+      "type": "string",
+      "description": "Broker contact person name"
+    },
+    "broker_contact_phone": {
+      "type": "string",
+      "description": "Broker contact phone number"
+    },
+    "broker_contact_email": {
+      "type": "string",
+      "description": "Broker contact email address"
+    },
+    "carrier_dental_name": {
+      "type": "string",
+      "description": "Dental insurance carrier name"
+    },
+    "carrier_dental_phone": {
+      "type": "string",
+      "description": "Dental carrier phone number"
+    },
+    "carrier_dental_logo_url": {
+      "type": "string",
+      "description": "URL to dental carrier logo"
+    },
+    "carrier_medical_name": {
+      "type": "string",
+      "description": "Medical insurance carrier name"
+    },
+    "carrier_medical_phone": {
+      "type": "string",
+      "description": "Medical carrier phone number"
+    },
+    "carrier_medical_logo_url": {
+      "type": "string",
+      "description": "URL to medical carrier logo"
+    },
+    "carrier_vision_name": {
+      "type": "string",
+      "description": "Vision insurance carrier name"
+    },
+    "carrier_vision_phone": {
+      "type": "string",
+      "description": "Vision carrier phone number"
+    },
+    "carrier_vision_logo_url": {
+      "type": "string",
+      "description": "URL to vision carrier logo"
+    },
+    "carrier_life_name": {
+      "type": "string",
+      "description": "Life insurance carrier name"
+    },
+    "carrier_life_phone": {
+      "type": "string",
+      "description": "Life carrier phone number"
+    },
+    "carrier_life_logo_url": {
+      "type": "string",
+      "description": "URL to life carrier logo"
+    },
+    "carrier_disability_name": {
+      "type": "string",
+      "description": "Disability insurance carrier name"
+    },
+    "carrier_disability_phone": {
+      "type": "string",
+      "description": "Disability carrier phone number"
+    },
+    "carrier_disability_logo_url": {
+      "type": "string",
+      "description": "URL to disability carrier logo"
+    },
+    "portal_link_1_url": {
+      "type": "string",
+      "description": "First carrier portal URL"
+    },
+    "portal_link_1_label": {
+      "type": "string",
+      "description": "Label for first portal link"
+    },
+    "portal_link_2_url": {
+      "type": "string",
+      "description": "Second carrier portal URL"
+    },
+    "portal_link_2_label": {
+      "type": "string",
+      "description": "Label for second portal link"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the company"
+    }
+  },
+  "required": [
+    "company_name"
+  ]
+}

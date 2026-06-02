@@ -1,0 +1,13 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "profile_photo_url": {
+      "type": "string",
+      "description": "URL to user's profile photo"
+    }
+  },
+  "required": [
+    "profile_photo_url"
+  ]
+}

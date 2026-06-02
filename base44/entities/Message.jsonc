@@ -1,0 +1,45 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "sender_email": {
+      "type": "string",
+      "description": "Email of sender"
+    },
+    "sender_name": {
+      "type": "string",
+      "description": "Full name of sender"
+    },
+    "recipient_email": {
+      "type": "string",
+      "description": "Email of recipient"
+    },
+    "recipient_name": {
+      "type": "string",
+      "description": "Full name of recipient"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether message has been read"
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When message was read"
+    },
+    "thread_id": {
+      "type": "string",
+      "description": "Conversation thread ID"
+    }
+  },
+  "required": [
+    "sender_email",
+    "recipient_email",
+    "content"
+  ]
+}

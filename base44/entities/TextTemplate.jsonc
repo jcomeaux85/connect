@@ -1,0 +1,37 @@
+{
+  "name": "TextTemplate",
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "string",
+      "description": "Label for the quick text button"
+    },
+    "message": {
+      "type": "string",
+      "description": "The text message content"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "greeting",
+        "follow_up",
+        "appointment",
+        "claims",
+        "benefits",
+        "general",
+        "other"
+      ],
+      "default": "general",
+      "description": "Category of the template"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this template is active"
+    }
+  },
+  "required": [
+    "label",
+    "message"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "SMS",
+  "type": "object",
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "Reference to case"
+    },
+    "customer_phone": {
+      "type": "string",
+      "description": "Recipient phone number"
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "received"
+      ],
+      "description": "SMS direction"
+    },
+    "message": {
+      "type": "string",
+      "description": "SMS message content"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "delivered",
+        "failed"
+      ],
+      "default": "pending",
+      "description": "SMS status"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When SMS was sent"
+    }
+  },
+  "required": [
+    "case_id",
+    "customer_phone",
+    "message"
+  ]
+}

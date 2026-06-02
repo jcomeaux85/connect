@@ -1,0 +1,44 @@
+{
+  "name": "Attachment",
+  "type": "object",
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "Reference to case"
+    },
+    "attachment_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "document",
+        "email",
+        "text"
+      ],
+      "description": "Type of attachment"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL to uploaded file (for image/document)"
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Original file name"
+    },
+    "text_content": {
+      "type": "string",
+      "description": "Text content (for email/text type)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title or description of attachment"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the attachment"
+    }
+  },
+  "required": [
+    "case_id",
+    "attachment_type"
+  ]
+}

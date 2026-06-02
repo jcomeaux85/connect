@@ -1,0 +1,21 @@
+{
+  "name": "Client",
+  "type": "object",
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "Client/franchise group name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the client"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "client_name"
+  ]
+}

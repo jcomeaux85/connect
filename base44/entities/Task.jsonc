@@ -1,0 +1,58 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "Reference to case"
+    },
+    "title": {
+      "type": "string",
+      "description": "Task title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Task description"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Task status"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Email of assigned agent"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Task due date"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When task was completed"
+    }
+  },
+  "required": [
+    "case_id",
+    "title"
+  ]
+}
