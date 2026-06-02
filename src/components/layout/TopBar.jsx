@@ -197,41 +197,41 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
 
         {/* DOC™ button */}
         <TiltBtn
-          onClick={onToggleDOC}
-          title="DOC™ — Directory of Coverage"
-          style={{
-            ...(showDOC ?
-            { background: 'rgba(255, 255, 255, 1)', border: '1px solid rgba(255, 0, 0, 1)' } :
-            NAV_BTN),
-            borderRadius: '8px',
-            height: '32px',
-            display: 'flex', alignItems: 'center', gap: '5px', padding: '0 12px',
-            flexShrink: 0
-          }}>
+        onClick={onToggleDOC}
+        title="DOC™ — Directory of Coverage"
+        style={{
+          ...(showDOC ?
+          { background: 'rgba(255, 255, 255, 1)', border: '1px solid rgba(255, 0, 0, 1)' } :
+          NAV_BTN),
+          borderRadius: '8px',
+          height: '32px',
+          display: 'flex', alignItems: 'center', gap: '5px', padding: '0 12px',
+          flexShrink: 0
+        }}>
           
           <span style={{
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: '16px',
-            fontWeight: 800,
-            color: showDOC ? '#ffffffff' : 'rgba(255, 0, 0, 1)',
-            letterSpacing: '-0.6px',
-            lineHeight: 1
-          }}>
+          fontFamily: "'Outfit', sans-serif",
+          fontSize: '16px',
+          fontWeight: 800,
+          color: showDOC ? '#ffffffff' : 'rgba(255, 0, 0, 1)',
+          letterSpacing: '-0.6px',
+          lineHeight: 1
+        }}>
             DOC<sup style={{ fontSize: '7px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
           </span>
         </TiltBtn>
 
         {/* Active Call button */}
         <TiltBtn
-          onClick={onToggleCalls}
-          style={{
-            ...(showCalls ?
-            { background: 'rgba(124,58,237,0.35)', border: '1px solid rgba(167,139,250,0.5)' } :
-            NAV_BTN),
-            borderRadius: '8px',
-            height: '32px',
-            display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px'
-          }}>
+        onClick={onToggleCalls}
+        style={{
+          ...(showCalls ?
+          { background: 'rgba(124,58,237,0.35)', border: '1px solid rgba(167,139,250,0.5)' } :
+          NAV_BTN),
+          borderRadius: '8px',
+          height: '32px',
+          display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px'
+        }}>
           
           <PhoneCall className="w-3.5 h-3.5" style={{ color: showCalls ? '#c4b5fd' : 'rgba(255,255,255,0.5)' }} />
           <span className="text-xs font-medium" style={{ color: showCalls ? '#c4b5fd' : 'rgba(255,255,255,0.5)' }}>No Active Call</span>
@@ -239,56 +239,56 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
 
         {/* Dark mode toggle */}
         <TiltBtn
-          onClick={toggleTheme}
-          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          style={{ ...NAV_BTN, width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        onClick={toggleTheme}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        style={{ ...NAV_BTN, width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           
           {isDark ?
-          <Sun className="w-3.5 h-3.5 text-amber-400" /> :
-          <Moon className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.6)' }} />}
+        <Sun className="w-3.5 h-3.5 text-amber-400" /> :
+        <Moon className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.6)' }} />}
         </TiltBtn>
 
         {/* Notifications */}
         <TiltBtn
-          onClick={onToggleNotifications}
-          style={{ ...NAV_BTN, width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        onClick={onToggleNotifications}
+        style={{ ...NAV_BTN, width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           
           <Bell className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.6)' }} />
           {unreadNotifications > 0 &&
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-violet-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center" style={{ zIndex: 10 }}>
+        <span className="absolute -top-1 -right-1 w-4 h-4 bg-violet-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center" style={{ zIndex: 10 }}>
               {unreadNotifications > 9 ? '9+' : unreadNotifications}
             </span>
-          }
+        }
         </TiltBtn>
 
         {/* Status */}
         <div className="relative">
           <TiltBtn
-            onClick={() => setShowStatus((s) => !s)}
-            style={{ ...NAV_BTN, height: '32px', display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px' }}>
+          onClick={() => setShowStatus((s) => !s)}
+          style={{ ...NAV_BTN, height: '32px', display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px' }}>
             
             <div className="w-2 h-2 rounded-full" style={{ background: currentStatus.color }} />
             <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>{status}</span>
             <ChevronDown className="w-3 h-3" style={{ color: 'rgba(255,255,255,0.4)' }} />
           </TiltBtn>
           {showStatus &&
-          <div className="absolute right-0 top-full mt-1 rounded-xl shadow-xl z-50 overflow-hidden min-w-[140px]"
-          style={{ background: 'rgba(38,20,72,0.97)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(16px)' }}>
+        <div className="absolute right-0 top-full mt-1 rounded-xl shadow-xl z-50 overflow-hidden min-w-[140px]"
+        style={{ background: 'rgba(38,20,72,0.97)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(16px)' }}>
               {STATUS_OPTIONS.map((opt) =>
-            <button key={opt.label}
-            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/10 text-left transition-colors"
-            onClick={() => {setStatus(opt.label);setShowStatus(false);}}>
+          <button key={opt.label}
+          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/10 text-left transition-colors"
+          onClick={() => {setStatus(opt.label);setShowStatus(false);}}>
                   <div className="w-2 h-2 rounded-full" style={{ background: opt.color }} />
                   <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>{opt.label}</span>
                 </button>
-            )}
+          )}
             </div>
-          }
+        }
         </div>
         
       <div className="flex items-center gap-2 ml-auto">
         {/* Clock — not a button, no tilt */}
-        <div className="flex items-center gap-1.5 px-3 h-8 rounded-lg cursor-default select-none mx-5"
+        <div className="flex items-center gap-1.5 px-3 h-8 rounded-lg cursor-default select-none mx-2"
         style={NAV_BTN}>
           <Clock className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
           <div className="text-right">
