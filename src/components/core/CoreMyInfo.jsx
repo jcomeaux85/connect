@@ -72,7 +72,7 @@ export default function CoreMyInfo() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">PROFILE</p>
-          <h1 className="text-2xl font-bold text-gray-900">My Information</h1>
+          <h1 className="text-3xl font-bold text-gray-900">My Information</h1>
         </div>
         {!editing ? (
           <button onClick={startEdit} className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50">

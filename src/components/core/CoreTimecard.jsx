@@ -66,7 +66,7 @@ export default function CoreTimecard() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">TIMECARD</p>
-          <h1 className="text-2xl font-bold text-gray-900">My Timecard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">My Timecard</h1>
         </div>
         <div className="flex gap-2">
           <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
@@ -137,16 +137,12 @@ export default function CoreTimecard() {
                   <span className="text-sm text-gray-400 capitalize">{entry.entry_type || 'Regular'}</span>
                 </>
               ) : (
-                <span className="text-sm text-gray-300 italic">No entry</span>
+                <span className="text-sm text-gray-300">No entries</span>
               )}
             </div>
             <div className="text-right flex-shrink-0">
-              {entry && (
-                <>
-                  <p className="text-xs text-gray-400 uppercase font-semibold">HOURS</p>
-                  <p className="text-xl font-bold text-gray-900">{(entry.hours || 0).toFixed(1)}</p>
-                </>
-              )}
+              <p className="text-xs text-gray-400 uppercase font-semibold">HOURS</p>
+              <p className="text-xl font-bold text-gray-900">{(entry?.hours || 0).toFixed(1)}</p>
             </div>
           </div>
         ))}

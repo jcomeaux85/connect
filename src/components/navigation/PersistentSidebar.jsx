@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/ThemeProvider';
 import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
-  MessageSquare, LogOut, Palette, Building2,
+  MessageSquare, LogOut, Palette, Building2, Briefcase,
   Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ const navItems = [
   { title: 'Tasks', url: createPageUrl('Boards'), icon: CheckSquare },
   { title: 'Call Log', url: createPageUrl('CallLog'), icon: Phone },
   { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock },
+  { title: 'CORPS', url: '/Core', icon: Briefcase },
 ];
 
 const quickActions = (handlers, isDark) => [

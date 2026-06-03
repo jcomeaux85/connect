@@ -3,7 +3,7 @@ import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { format, addDays, startOfWeek } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, ArrowLeftRight } from 'lucide-react';
 
 export default function CoreSchedule() {
   const { data: user } = useUser();
@@ -37,26 +37,36 @@ export default function CoreSchedule() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">SCHEDULE</p>
-          <h1 className="text-2xl font-bold text-gray-900">My Schedule</h1>
+          <h1 className="text-3xl font-bold text-gray-900">My Schedule</h1>
         </div>
-        <button
-          onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Add Shift
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Shift
+          </button>
+          <button
+            className="flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-semibold shadow-md hover:scale-105 transition-transform"
+            style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
+          >
+            <ArrowLeftRight className="w-4 h-4" />
+            Request Swap
+          </button>
+        </div>
       </div>
 
       {/* Week nav */}
-      <div className="bg-white rounded-2xl p-3 shadow-sm flex items-center justify-between">
-        <button onClick={() => setWeekStart(w => addDays(w, -7))} className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center hover:bg-gray-100">
+      <div className="bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <button onClick={() => setWeekStart(w => addDays(w, -7))} className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center hover:bg-gray-100">
           <ChevronLeft className="w-4 h-4 text-gray-500" />
         </button>
-        <p className="font-semibold text-gray-800">
-          {format(weekStart, 'MMM d')} – {format(addDays(weekStart, 6), 'MMM d, yyyy')}
-        </p>
-        <button onClick={() => setWeekStart(w => addDays(w, 7))} className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center hover:bg-gray-100">
+        <div className="text-center">
+          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">WEEK OF</p>
+          <p className="font-bold text-gray-900 text-lg">{format(weekStart, 'MMMM d, yyyy')}</p>
+        </div>
+        <button onClick={() => setWeekStart(w => addDays(w, 7))} className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center hover:bg-gray-100">
           <ChevronRight className="w-4 h-4 text-gray-500" />
         </button>
       </div>
@@ -67,11 +77,11 @@ export default function CoreSchedule() {
           const dayShifts = getShiftsForDay(day);
           const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
           return (
-            <div key={day.toISOString()} className={`bg-white rounded-2xl p-3 shadow-sm min-h-[120px] ${isToday ? 'ring-2 ring-purple-300' : ''}`}>
-              <p className={`text-xs font-bold uppercase mb-1 ${isToday ? 'text-purple-600' : 'text-gray-400'}`}>{format(day, 'EEE')}</p>
-              <p className={`text-2xl font-bold mb-2 ${isToday ? 'text-purple-700' : 'text-gray-800'}`}>{format(day, 'd')}</p>
+            <div key={day.toISOString()} className={`bg-white rounded-2xl p-4 shadow-sm min-h-[150px] text-center ${isToday ? 'ring-2 ring-purple-300' : ''}`}>
+              <p className={`text-[11px] font-bold uppercase mb-1 ${isToday ? 'text-purple-600' : 'text-gray-400'}`}>{format(day, 'EEE')}</p>
+              <p className={`text-3xl font-bold mb-3 ${isToday ? 'text-purple-700' : 'text-gray-800'}`}>{format(day, 'd')}</p>
               {dayShifts.length === 0 ? (
-                <p className="text-xs text-gray-300 italic">Off</p>
+                <p className="text-sm text-gray-300">Off</p>
               ) : (
                 dayShifts.map(s => (
                   <div key={s.id} className="bg-purple-50 rounded-lg p-2 mb-1">
