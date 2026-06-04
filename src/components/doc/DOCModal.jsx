@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Sun, Moon } from 'lucide-react';
+import DOCDockRail from './DOCDockRail';
 
 const DOC_HTML_URL = 'https://media.base44.com/files/public/68fa7c4cb70fe91d38015eba/c1547e610_DOC_.html';
 const EBM_SRC = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/5c7593e2c_im.png';
@@ -121,6 +122,17 @@ function buildPatchedHtml(htmlContent, light) {
     '    if (e.data && e.data.type === "doc-focus-search") {\n' +
     '      var input = document.querySelector(\'input[type="search"], input[type="text"], input[placeholder*="earch"], .search-input, #search, #searchInput, [id*="search"], [class*="search-input"]\');\n' +
     '      if (input) { input.focus(); input.select(); }\n' +
+    '    }\n' +
+    '    if (e.data && e.data.type === "doc-trigger-search") {\n' +
+    '      var term = (e.data.term || "").toLowerCase();\n' +
+    '      var btns = document.querySelectorAll(".ben-btn, .cat-row button, #catRow button, [class*=\\"ben-btn\\"], [class*=\\"cat-\\"] button");\n' +
+    '      var hit = null;\n' +
+    '      btns.forEach(function(b) { if (!hit && b.textContent.toLowerCase().indexOf(term) !== -1) hit = b; });\n' +
+    '      if (hit) { hit.click(); }\n' +
+    '      else {\n' +
+    '        var input = document.querySelector("#searchInput, .search-input, input[type=\\"text\\"]");\n' +
+    '        if (input) { input.value = e.data.term || ""; input.dispatchEvent(new Event("input", { bubbles: true })); input.focus(); }\n' +
+    '      }\n' +
     '    }\n' +
     '    if (e.data && e.data.type === "doc-set-theme") {\n' +
     '      var existing = document.getElementById("__theme_override__");\n' +
@@ -255,6 +267,12 @@ export default function DOCModal({ isOpen, onClose }) {
     return () => window.removeEventListener('doc-focus-search', handler);
   }, []);
 
+  const triggerSearch = (term) => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({ type: 'doc-trigger-search', term }, '*');
+    }
+  };
+
   const handlePopOut = () => {
     if (blobUrl) window.open(blobUrl, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
     else window.open(DOC_HTML_URL, '_blank', 'width=1100,height=820,menubar=no,toolbar=no,location=no');
@@ -301,14 +319,19 @@ export default function DOCModal({ isOpen, onClose }) {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 280 }}
-            className="fixed top-0 right-0 bottom-0 z-[201] flex flex-col overflow-hidden"
+            className="fixed top-0 right-0 bottom-0 z-[201] flex overflow-hidden"
             style={{
-              width: 'min(460px, 100vw)',
+              width: 'min(40vw, 100vw)',
               boxShadow: isDark ? '-6px 0 40px #0d0d10' : '-6px 0 40px rgba(0,0,0,0.22)',
               background: panelBg,
             }}
             onClick={e => e.stopPropagation()}
           >
+            {/* Mac-dock style search rail — sits on the left edge of DOC */}
+            <DOCDockRail isDark={isDark} onTrigger={triggerSearch} />
+
+            {/* Main column: header + content */}
+            <div className="flex flex-col flex-1 overflow-hidden min-w-0">
             {/* Header */}
             <div
               className="flex items-center justify-between flex-shrink-0 px-4 py-2"
@@ -379,6 +402,7 @@ export default function DOCModal({ isOpen, onClose }) {
                   sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
                 />
               )}
+            </div>
             </div>
           </motion.div>
         </>

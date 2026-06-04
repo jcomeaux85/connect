@@ -365,24 +365,8 @@ export default function PersistentSidebar({
               })}
             </div>
 
-            {/* CORPS + DOC brand buttons — match the nav header styling */}
-            <div className={`pt-2 border-t ${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`} style={{ borderColor: PANEL_BORDER, gap: '5px' }}>
-              <Link to="/Core" className="block">
-                <div
-                  className="w-full flex items-center justify-center"
-                  style={{
-                    height: '34px',
-                    background: '#2b2b30',
-                    border: '1px solid rgba(255,255,255,0.85)',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: '15px', fontWeight: 800, color: '#39ff14', textShadow: '0 0 8px rgba(57,255,20,0.55)', letterSpacing: '0.5px', lineHeight: 1 }}>
-                    {isMin ? 'C' : 'CORPS'}
-                  </span>
-                </div>
-              </Link>
+            {/* DOC brand button — match the nav header styling */}
+            <div className={`pt-2 border-t ${isFull ? 'flex' : 'flex flex-col'}`} style={{ borderColor: PANEL_BORDER, gap: '5px' }}>
               <div
                 onClick={onToggleDoc}
                 className="w-full flex items-center justify-center"
