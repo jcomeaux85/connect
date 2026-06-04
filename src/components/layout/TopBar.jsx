@@ -195,14 +195,39 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         }
       </div>
 
-        {/* DOC™ button */}
+        {/* CORPS logo button — dark grey bg, neon green letters, thin white outline */}
+        <TiltBtn
+        onClick={() => navigate('/Core')}
+        title="CORPS — Workforce Portal"
+        style={{
+          background: '#2b2b30',
+          border: '1px solid rgba(255,255,255,0.85)',
+          borderRadius: '8px',
+          height: '32px',
+          display: 'flex', alignItems: 'center', padding: '0 16px',
+          flexShrink: 0
+        }}>
+          
+          <span style={{
+          fontFamily: "'Outfit', sans-serif",
+          fontSize: '18px',
+          fontWeight: 800,
+          color: '#39ff14',
+          textShadow: '0 0 8px rgba(57,255,20,0.55)',
+          letterSpacing: '0.5px',
+          lineHeight: 1
+        }}>
+            CORPS
+          </span>
+        </TiltBtn>
+
+        {/* DOC™ button — white bg, thin grey border */}
         <TiltBtn
         onClick={onToggleDOC}
         title="DOC™ — Directory of Coverage"
         style={{
-          ...(showDOC ?
-          { background: 'rgba(255, 255, 255, 1)', border: '1px solid rgba(255, 0, 0, 1)' } :
-          NAV_BTN),
+          background: 'rgba(255, 255, 255, 1)',
+          border: '1px solid rgba(0,0,0,0.18)',
           borderRadius: '8px',
           height: '32px',
           display: 'flex', alignItems: 'center', gap: '5px', padding: '0 18px',
@@ -213,7 +238,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           fontFamily: "'Outfit', sans-serif",
           fontSize: '20px',
           fontWeight: 800,
-          color: showDOC ? '#ffffffff' : 'rgba(255, 0, 0, 1)',
+          color: 'rgba(255, 0, 0, 1)',
           letterSpacing: '-0.7px',
           lineHeight: 1
         }}>

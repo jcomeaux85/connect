@@ -39,20 +39,20 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
   return (
     <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0" style={{ background: BG }}>
       <div
-        className="flex flex-wrap items-center gap-3 rounded-full px-3 sm:px-5 py-2.5"
+        className="flex items-center gap-3 rounded-full px-3 sm:px-5 py-2.5"
         style={raised}
       >
         {/* Brand */}
-        <span className="text-[11px] font-bold text-purple-500 tracking-widest uppercase pl-1 flex-shrink-0 hidden sm:block">
+        <span className="text-[11px] font-bold text-purple-500 tracking-widest uppercase pl-1 flex-shrink-0 hidden lg:block">
           CORPS
         </span>
 
-        {/* Search pill — small by default, expands on focus */}
+        {/* Search pill — small by default, expands on focus (shrinking the buttons) */}
         <div
-          className="flex items-center gap-2 rounded-full px-3.5 py-2 transition-all duration-300"
+          className="flex items-center gap-2 rounded-full px-3.5 py-2 transition-all duration-300 flex-shrink-0"
           style={{
             ...pill,
-            width: focused ? 320 : 180,
+            width: focused ? 300 : 150,
             maxWidth: '100%',
           }}
         >
@@ -67,22 +67,23 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
           />
         </div>
 
-        {/* Section nav buttons with labels */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end ml-auto">
+        {/* Section nav buttons — stretch to fill remaining space, shrink as search expands */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
           {navItems.map(({ id, label, icon: Icon }) => {
             const isActive = activeSection === id;
             return (
               <button
                 key={id}
                 onClick={() => onNavigate(id)}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all"
+                className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all flex-1 min-w-0 overflow-hidden"
                 style={isActive ? pressed : raised}
+                title={label}
               >
                 <Icon
                   className="w-4 h-4 flex-shrink-0"
                   style={{ color: isActive ? '#7c3aed' : '#6b7280' }}
                 />
-                <span style={{ color: isActive ? '#7c3aed' : '#4b5563' }}>{label}</span>
+                <span className="truncate" style={{ color: isActive ? '#7c3aed' : '#4b5563' }}>{label}</span>
               </button>
             );
           })}
