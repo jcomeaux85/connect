@@ -209,8 +209,8 @@ function LayoutContent({ children, currentPageName }) {
           showDOC={showDOC}
         />
 
-        {/* Hanging Nav */}
-        <HangingNav />
+        {/* Hanging Nav — hidden on CORPS (it has its own pill header) */}
+        {location.pathname !== '/Core' && <HangingNav />}
 
         {/* Active Call Bar — minimal top strip */}
 
