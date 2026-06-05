@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import ChipHeader from '@/components/navigation/ChipHeader';
+import BrandButton from '@/components/navigation/BrandButton';
 
 export const SIDEBAR_WIDTHS = [52, 160, 220];
 
@@ -24,7 +25,6 @@ const navItems = [
   { title: 'Tasks', url: createPageUrl('Boards'), icon: CheckSquare },
   { title: 'Call Log', url: createPageUrl('CallLog'), icon: Phone },
   { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock },
-  { title: 'CORPS', url: '/Core', icon: Briefcase },
 ];
 
 const quickActions = (handlers, isDark) => [
@@ -237,11 +237,15 @@ export default function PersistentSidebar({
 
   return (
     <>
-      {/* Hover trigger strip */}
+      {/* Approach zone — wider strip that pre-warms the cursor light before the panel opens */}
       <div
         className="fixed left-0 top-0 h-full z-[59]"
-        style={{ width: '12px' }}
+        style={{ width: '34px' }}
         onMouseEnter={handleMouseEnter}
+        onMouseMove={(e) => {
+          // Feed vertical position so the panel hue follows the cursor on approach
+          setPanelGlare((g) => ({ ...g, my: (e.clientY / window.innerHeight) * 100, mx: 30 }));
+        }}
       />
 
       {/* Off-click catcher — closes sidebar and swallows the click so it doesn't hit the page */}
@@ -276,13 +280,14 @@ export default function PersistentSidebar({
           pointerEvents: isOpen ? 'auto' : 'none',
         }}
       >
-        {/* Panel background glare — independent of buttons */}
+        {/* Panel background glare — independent of buttons, slightly stronger + warm hue */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: `radial-gradient(circle at ${panelGlare.mx}% ${panelGlare.my}%, rgba(255,255,255,0.055) 0%, transparent 62%)`,
+            background: `radial-gradient(circle at ${panelGlare.mx}% ${panelGlare.my}%, rgba(214,190,255,0.13) 0%, rgba(255,255,255,0.07) 30%, transparent 66%)`,
             pointerEvents: 'none',
+            transition: 'background 0.5s ease',
             zIndex: 0,
           }}
         />
@@ -365,23 +370,21 @@ export default function PersistentSidebar({
               })}
             </div>
 
-            {/* DOC brand button — match the nav header styling */}
-            <div className={`pt-2 border-t ${isFull ? 'flex' : 'flex flex-col'}`} style={{ borderColor: PANEL_BORDER, gap: '5px' }}>
-              <div
+            {/* DOC + CORPS brand buttons — shiny pillowed, cursor-reactive */}
+            <div className={`pt-2 border-t ${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`} style={{ borderColor: PANEL_BORDER, gap: '6px' }}>
+              <BrandButton
+                title="DOC"
+                subtitle="Directory of Coverage v2.7"
+                titleColor="rgba(255,0,0,1)"
                 onClick={onToggleDoc}
-                className="w-full flex items-center justify-center"
-                style={{
-                  height: '34px',
-                  background: '#ffffff',
-                  border: '1px solid rgba(0,0,0,0.18)',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                }}
-              >
-                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: '17px', fontWeight: 800, color: 'rgba(255,0,0,1)', letterSpacing: '-0.7px', lineHeight: 1 }}>
-                  DOC<sup style={{ fontSize: '6px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
-                </span>
-              </div>
+              />
+              <BrandButton
+                title="CORPS"
+                subtitle="Can't Outsource Real Problem Solving"
+                titleColor="#16a34a"
+                titleFont="'JetBrains Mono', 'Fira Code', ui-monospace, monospace"
+                onClick={() => navigate('/Core')}
+              />
             </div>
 
             {/* Divider + Quick actions */}
