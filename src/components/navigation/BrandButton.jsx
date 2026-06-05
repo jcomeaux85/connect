@@ -18,8 +18,8 @@ export default function BrandButton({ title, subtitle, titleColor = '#ff0000', t
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width * 100;
-    const y = (e.clientY - r.top) / r.height * 100;
+    const x = ((e.clientX - r.left) / r.width) * 100;
+    const y = ((e.clientY - r.top) / r.height) * 100;
     setGlare({ x, y, opacity: 1 });
   }, []);
 
@@ -43,10 +43,10 @@ export default function BrandButton({ title, subtitle, titleColor = '#ff0000', t
         cursor: 'pointer',
         // Pillowed: soft outer drop + inner top sheen + inner bottom shade
         boxShadow:
-        '0 3px 6px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -3px 6px rgba(0,0,0,0.10)',
-        transition: 'box-shadow 0.2s ease'
-      }}>
-      
+          '0 3px 6px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -3px 6px rgba(0,0,0,0.10)',
+        transition: 'box-shadow 0.2s ease',
+      }}
+    >
       {/* Cursor-reactive specular glare — gradual fade */}
       <div
         style={{
@@ -57,9 +57,9 @@ export default function BrandButton({ title, subtitle, titleColor = '#ff0000', t
           transition: 'opacity 0.45s ease, background 0.12s linear',
           pointerEvents: 'none',
           mixBlendMode: 'soft-light',
-          zIndex: 2
-        }} />
-      
+          zIndex: 2,
+        }}
+      />
       {/* Top glossy sheen band */}
       <div
         style={{
@@ -71,9 +71,9 @@ export default function BrandButton({ title, subtitle, titleColor = '#ff0000', t
           background: 'linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0))',
           borderRadius: '12px 12px 40% 40%',
           pointerEvents: 'none',
-          zIndex: 1
-        }} />
-      
+          zIndex: 1,
+        }}
+      />
 
       {/* Title — centered vertically (TM not counted toward centering) */}
       <span
@@ -86,9 +86,9 @@ export default function BrandButton({ title, subtitle, titleColor = '#ff0000', t
           color: titleColor,
           letterSpacing: '-0.7px',
           lineHeight: 1,
-          display: 'inline-block'
-        }}>
-        
+          display: 'inline-block',
+        }}
+      >
         {title}
         <sup style={{ fontSize: '6px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
       </span>
@@ -100,17 +100,17 @@ export default function BrandButton({ title, subtitle, titleColor = '#ff0000', t
           zIndex: 3,
           marginTop: '3px',
           fontFamily: "'Inter', sans-serif",
-          fontSize: '6.5px',
+          fontSize: '5px',
           fontWeight: 700,
           letterSpacing: '0.6px',
           color: 'rgba(0,0,0,0.45)',
           textTransform: 'uppercase',
           whiteSpace: 'nowrap',
-          lineHeight: 1
-        }} className="font-extralight text-xs text-center lowercase">
-        
+          lineHeight: 1,
+        }}
+      >
         {subtitle}
       </span>
-    </div>);
-
+    </div>
+  );
 }
