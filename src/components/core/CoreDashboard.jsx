@@ -126,7 +126,7 @@ export default function CoreDashboard({ onNavigate }) {
 
       <div className="grid grid-cols-3 gap-4">
         {/* Clock widget */}
-        <div className="col-span-2 bg-white rounded-2xl p-6 shadow-sm">
+        <div className="spot-panel col-span-2 bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
             {isClockedIn ? 'TIME ELAPSED' : 'READY TO START'}
           </p>
@@ -165,7 +165,7 @@ export default function CoreDashboard({ onNavigate }) {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm">
+        <div className="spot-panel bg-white rounded-2xl p-5 shadow-sm">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">SHORTCUTS</p>
           <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
@@ -191,7 +191,7 @@ export default function CoreDashboard({ onNavigate }) {
           { label: 'OVERTIME', value: `${overtime.toFixed(1)} hrs`, change: '+12%', up: true },
           { label: 'YTD EARNINGS', value: `$${ytdEarnings.toLocaleString()}`, change: '+3.1%', up: true },
         ].map(({ label, value, change, up }) => (
-          <div key={label} className="bg-white rounded-2xl p-4 shadow-sm">
+          <div key={label} className="spot-panel bg-white rounded-2xl p-4 shadow-sm">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">{label}</p>
             <div className="flex items-end justify-between">
               <p className="text-2xl font-bold text-gray-900">{value}</p>
@@ -205,7 +205,7 @@ export default function CoreDashboard({ onNavigate }) {
 
       <div className="grid grid-cols-3 gap-4">
         {/* Hours chart */}
-        <div className="col-span-2 bg-white rounded-2xl p-5 shadow-sm">
+        <div className="spot-panel col-span-2 bg-white rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-1">
             <div>
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">THIS WEEK</p>
@@ -236,7 +236,7 @@ export default function CoreDashboard({ onNavigate }) {
         </div>
 
         {/* Upcoming shifts */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm">
+        <div className="spot-panel bg-white rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">SCHEDULE</p>

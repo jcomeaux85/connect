@@ -102,3 +102,24 @@ css
 .corps-neu .bg-white.rounded-2xl.shadow-2xl {
   box-shadow: 10px 10px 30px var(--neu-dark), -10px -10px 30px var(--neu-light) !important;
 }
+
+/* ─────────────────────────────────────────────────────────
+   SPOTLIGHT — concentration aid (brightness only, no layout change)
+   Reuses the same easing/feel as the existing hover hue transition.
+   OFF (no data-spotlight on body): zero visual change.
+   ON: panels dim slightly; the selected panel brightens slightly.
+   Subtle on purpose — everything stays fully legible.
+   ───────────────────────────────────────────────────────── */
+.spot-panel {
+  transition: filter 0.45s ease;
+}
+
+/* Only once a panel is actually selected do the others dim a touch */
+body[data-spotlight="on"][data-spotlight-active] .spot-panel {
+  filter: brightness(0.93);
+}
+
+/* The selected panel rises slightly */
+body[data-spotlight="on"][data-spotlight-active] .spot-panel[data-spot-selected] {
+  filter: brightness(1.06);
+}

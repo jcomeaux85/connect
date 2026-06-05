@@ -6,13 +6,14 @@ import { useTheme } from '@/components/ThemeProvider';
 import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
   MessageSquare, LogOut, Palette, Building2, Briefcase,
-  Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play
+  Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play, Lightbulb
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import ChipHeader from '@/components/navigation/ChipHeader';
 import BrandButton from '@/components/navigation/BrandButton';
+import { useSpotlight } from '@/components/spotlight/SpotlightContext';
 
 export const SIDEBAR_WIDTHS = [52, 160, 220];
 
@@ -158,6 +159,7 @@ export default function PersistentSidebar({
   const location = useLocation();
   const navigate = useNavigate();
   const { colors, toggleTheme, isDark: themeDark } = useTheme();
+  const { enabled: spotlightOn, toggle: toggleSpotlight } = useSpotlight();
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isLocked, setIsLocked] = useState(() => localStorage.getItem('sidebarLocked') === '1');
@@ -214,7 +216,14 @@ export default function PersistentSidebar({
   const isFull = level === 3;
 
   const handleLogout = () => base44.auth.logout();
-  const actions = quickActions({ onToggleMessages, onTogglePhone, onToggleBackgroundCustomizer, onToggleTheme: toggleTheme, onLogout: handleLogout }, themeDark);
+  const actions = [
+    { label: 'Messages', icon: MessageSquare, onClick: onToggleMessages },
+    { label: 'Phone', icon: Phone, onClick: onTogglePhone },
+    { label: spotlightOn ? 'Spotlight On' : 'Spotlight', icon: Lightbulb, onClick: toggleSpotlight, active: spotlightOn },
+    { label: 'Customize', icon: Palette, onClick: onToggleBackgroundCustomizer },
+    { label: themeDark ? 'Light' : 'Dark', icon: themeDark ? Sun : Moon, onClick: toggleTheme },
+    { label: 'Logout', icon: LogOut, onClick: handleLogout },
+  ];
 
   // Deep purple glass panel
   const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
@@ -370,8 +379,8 @@ export default function PersistentSidebar({
               })}
             </div>
 
-            {/* DOC + CORPS brand buttons — shiny pillowed, cursor-reactive */}
-            <div className={`pt-2 border-t ${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`} style={{ borderColor: PANEL_BORDER, gap: '6px' }}>
+            {/* DOC + CORPS brand buttons — shiny pillowed, cursor-reactive — always stacked, long */}
+            <div className="pt-2 border-t flex flex-col" style={{ borderColor: PANEL_BORDER, gap: '6px' }}>
               <BrandButton
                 title="DOC"
                 subtitle="Directory of Coverage v2.7"
@@ -392,7 +401,7 @@ export default function PersistentSidebar({
               className={`pt-2 border-t ${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
               style={{ borderColor: PANEL_BORDER, gap: '5px' }}
             >
-              {actions.map(({ label, icon: Icon, onClick, to }) => {
+              {actions.map(({ label, icon: Icon, onClick, to, active }) => {
                 const hovered = hoveredItem === `action-${label}`;
                 const btn = (
                   <div
@@ -401,18 +410,18 @@ export default function PersistentSidebar({
                     onMouseLeave={() => setHoveredItem(null)}
                   >
                     <LitButton
-                      isActive={false}
+                      isActive={!!active}
                       className="w-full flex items-center"
                       onClick={onClick}
                       style={{
-                        ...btnStyle(false),
+                        ...btnStyle(!!active),
                         height: '34px',
                         padding: isMin ? '0' : '0 10px',
                         justifyContent: isMin ? 'center' : 'flex-start',
                         gap: '8px',
                       }}
                     >
-                      <Icon className="w-4 h-4 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.65)' }} />
+                      <Icon className="w-4 h-4 flex-shrink-0" style={{ color: active ? '#fde68a' : 'rgba(255,255,255,0.65)' }} />
                       <AnimatePresence>
                         {!isMin && (
                           <motion.span
