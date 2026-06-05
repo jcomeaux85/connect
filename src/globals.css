@@ -50,3 +50,55 @@ css
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ─────────────────────────────────────────────────────────
+   CORPS Neumorphism — scoped soft-UI theme for the CORPS module
+   Soft base #e8e8ee, raised cards, inset inputs/chips.
+   ───────────────────────────────────────────────────────── */
+.corps-neu {
+  --neu-bg: #e8e8ee;
+  --neu-dark: #c5c5cf;
+  --neu-light: #ffffff;
+}
+
+/* Raised cards: any white rounded card with a soft shadow */
+.corps-neu .bg-white.rounded-2xl {
+  background: var(--neu-bg) !important;
+  box-shadow: 6px 6px 14px var(--neu-dark), -6px -6px 14px var(--neu-light) !important;
+  border: none !important;
+}
+
+/* Small inset chips/tiles (gray-50 blocks) become pressed-in */
+.corps-neu .bg-gray-50.rounded-lg,
+.corps-neu .bg-gray-50.rounded-xl {
+  background: var(--neu-bg) !important;
+  box-shadow: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light) !important;
+  border-color: transparent !important;
+}
+
+/* Inputs / textareas / selects become inset wells */
+.corps-neu input:not([type="checkbox"]):not([type="radio"]),
+.corps-neu textarea,
+.corps-neu select {
+  background: var(--neu-bg) !important;
+  box-shadow: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light) !important;
+  border-color: transparent !important;
+}
+
+/* Square icon buttons (gray-50) become raised soft buttons */
+.corps-neu button.bg-gray-50 {
+  background: var(--neu-bg) !important;
+  box-shadow: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light) !important;
+  border-color: transparent !important;
+}
+.corps-neu button.bg-gray-50:hover {
+  box-shadow: 2px 2px 5px var(--neu-dark), -2px -2px 5px var(--neu-light) !important;
+}
+.corps-neu button.bg-gray-50:active {
+  box-shadow: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light) !important;
+}
+
+/* Modal dialogs (centered white panels) get a soft raised look too */
+.corps-neu .bg-white.rounded-2xl.shadow-2xl {
+  box-shadow: 10px 10px 30px var(--neu-dark), -10px -10px 30px var(--neu-light) !important;
+}
