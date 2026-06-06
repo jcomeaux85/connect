@@ -36,9 +36,9 @@ export default function BrandButton({ title, subtitle, titleColor = '#ff0000', t
       className="w-full relative overflow-hidden flex flex-col items-center justify-center"
       style={{
         // ~10% taller than the old 34px button → ~50px to fit the tagline
-        height: '40px',
-        background: 'linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(244, 244, 246, 0) 52%, rgba(228, 228, 232, 0) 100%)',
-        border: '1px solid hsla(0, 0%, 0%, 0.00)',
+        height: '50px',
+        background: 'linear-gradient(180deg, #ffffff 0%, #f4f4f6 52%, #e4e4e8 100%)',
+        border: '1px solid rgba(0,0,0,0.16)',
         borderRadius: '12px',
         cursor: 'pointer',
         // Pillowed: soft outer drop + inner top sheen + inner bottom shade

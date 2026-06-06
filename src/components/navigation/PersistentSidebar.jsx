@@ -382,12 +382,14 @@ export default function PersistentSidebar({
             {/* DOC + CORPS brand buttons — shiny pillowed, cursor-reactive — always stacked, long */}
             <div className="pt-2 border-t flex flex-col" style={{ borderColor: PANEL_BORDER, gap: '6px' }}>
               <BrandButton
-                title="DOC Quick Research"
+                title="DOC"
+                subtitle="Directory of Coverage v2.7"
                 titleColor="rgba(255,0,0,1)"
                 onClick={onToggleDoc}
               />
               <BrandButton
-                title="CORPS // RME of ONE"
+                title="CORPS"
+                subtitle="Can't Outsource Real Problem Solving"
                 titleColor="#16a34a"
                 titleFont="'JetBrains Mono', 'Fira Code', ui-monospace, monospace"
                 onClick={() => navigate('/Core')}
