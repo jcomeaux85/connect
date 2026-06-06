@@ -1,60 +1,133 @@
-import React, { useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 /**
- * Sidebar brand buttons. Each logo is an SVG lockup that scales to the
- * rail width as a single unit. One line, never truncates, never clips.
+ * Brand button. Container-less: the styled word IS the button.
+ * Keeps the original default export + props so existing imports don't break.
+ *
+ * Use:  <BrandButton variant="doc" onClick={...} />
+ *       <BrandButton variant="corps" onClick={...} />
  *
  * Fonts (load once in app head):
  * <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;900&family=Zilla+Slab:wght@700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
  */
 export default function BrandButton({ variant = 'doc', onClick }) {
+  const ref = useRef(null);
   const [hover, setHover] = useState(false);
-  const enter = useCallback(() => setHover(true), []);
-  const leave = useCallback(() => setHover(false), []);
+  const handleEnter = useCallback(() => setHover(true), []);
+  const handleLeave = useCallback(() => setHover(false), []);
 
   const wrap = {
-    width: '100%',
     cursor: 'pointer',
     userSelect: 'none',
-    padding: '6px 4px',
+    lineHeight: 1,
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '11px',
+    padding: '6px 2px',
     background: 'transparent',
     border: 'none',
+    boxShadow: 'none',
+    borderRadius: 0,
     transform: hover ? 'translateX(1px)' : 'none',
     transition: 'transform 0.12s ease',
-    display: 'block',
   };
 
-  if (variant === 'corps') {
-    return (
-      <div onClick={onClick} onMouseEnter={enter} onMouseLeave={leave} style={wrap}>
-        <svg viewBox="0 0 320 60" width="100%" style={{ display: 'block', overflow: 'visible' }}>
-          <text x="0" y="46" fontFamily="'Zilla Slab', serif" fontWeight="700" fontSize="52"
-            letterSpacing="1" fill="#9ef060"
-            style={{ filter: hover
-              ? 'drop-shadow(0 0 5px rgba(158,240,96,0.85)) drop-shadow(0 0 12px rgba(158,240,96,0.45))'
-              : 'drop-shadow(0 0 4px rgba(158,240,96,0.7)) drop-shadow(0 0 10px rgba(158,240,96,0.35))',
-              transition: 'filter 0.15s ease' }}>
-            CORPS<tspan fill="#9ef060">/</tspan><tspan fill="#f2f2f2">/</tspan><tspan fill="#f2f2f2" fontSize="40"> RME of ONE</tspan>
-          </text>
-        </svg>
-      </div>
-    );
-  }
-
   return (
-    <div onClick={onClick} onMouseEnter={enter} onMouseLeave={leave} style={wrap}>
-      <svg viewBox="0 0 340 60" width="100%" style={{ display: 'block', overflow: 'visible' }}>
-        <text x="0" y="46" fontFamily="'Outfit', sans-serif" fontWeight="900" fontSize="52"
-          letterSpacing="-2" fill="#dc2626"
-          style={{ filter: hover
-            ? 'drop-shadow(2px 4px 4px rgba(0,0,0,0.4))'
-            : 'drop-shadow(2px 3px 3px rgba(0,0,0,0.3))',
-            transition: 'filter 0.15s ease' }}>
-          DOC<tspan fontSize="18" dy="-22" fontWeight="400">™</tspan>
-        </text>
-        <text x="150" y="44" fontFamily="'Outfit', sans-serif" fontWeight="300" fontSize="44" fill="#f2f2f2">|</text>
-        <text x="172" y="42" fontFamily="'JetBrains Mono', monospace" fontWeight="700" fontSize="30"
-          letterSpacing="2" fill="#f2f2f2">QUICK RESEARCH</text>
-      </svg>
+    <div
+      ref={ref}
+      onClick={onClick}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className="w-full relative flex items-baseline"
+      style={wrap}
+    >
+      {variant === 'corps' ? (
+        <>
+          <span
+            style={{
+              fontFamily: "'Zilla Slab', serif",
+              fontWeight: 700,
+              fontSize: '38px',
+              letterSpacing: '1px',
+              color: '#9ef060',
+              display: 'inline-block',
+              textShadow: hover
+                ? '0 0 9px rgba(158,240,96,0.75), 0 0 20px rgba(158,240,96,0.4)'
+                : '0 0 7px rgba(158,240,96,0.6), 0 0 16px rgba(158,240,96,0.35)',
+              transition: 'text-shadow 0.15s ease',
+            }}
+          >
+            CORPS
+          </span>
+          <span
+            style={{
+              fontFamily: "'Zilla Slab', serif",
+              fontWeight: 700,
+              fontSize: '38px',
+              color: '#9ef060',
+              textShadow: hover
+                ? '0 0 9px rgba(158,240,96,0.75)'
+                : '0 0 7px rgba(158,240,96,0.6)',
+            }}
+          >
+            /<span style={{ color: '#f2f2f2', textShadow: 'none' }}>/</span>
+          </span>
+          <span
+            style={{
+              fontFamily: "'Zilla Slab', serif",
+              fontWeight: 700,
+              fontSize: '30px',
+              color: '#f2f2f2',
+              letterSpacing: '0.5px',
+            }}
+          >
+            RME&nbsp;of&nbsp;ONE
+          </span>
+        </>
+      ) : (
+        <>
+          <span
+            style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 900,
+              fontSize: '36px',
+              letterSpacing: '-2px',
+              color: '#dc2626',
+              display: 'inline-block',
+              textShadow: hover
+                ? '2px 4px 4px rgba(0,0,0,0.4)'
+                : '2px 3px 3px rgba(0,0,0,0.3)',
+              transition: 'text-shadow 0.15s ease',
+            }}
+          >
+            DOC
+            <span
+              style={{
+                fontFamily: "'Outfit', sans-serif",
+                fontWeight: 400,
+                fontSize: '12px',
+                verticalAlign: 'super',
+                letterSpacing: 0,
+                marginLeft: '2px',
+              }}
+            >
+              &#8482;
+            </span>
+          </span>
+          <span style={{ color: '#f2f2f2', fontSize: '26px', fontWeight: 300, transform: 'translateY(-2px)' }}>|</span>
+          <span
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '24px',
+              letterSpacing: '2px',
+              fontWeight: 700,
+              color: '#f2f2f2',
+              textTransform: 'uppercase',
+            }}
+          >
+            Quick&nbsp;Research
+          </span>
+        </>
+      )}
     </div>
   );
 }
