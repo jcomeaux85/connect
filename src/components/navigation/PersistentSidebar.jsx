@@ -389,7 +389,6 @@ export default function PersistentSidebar({
               />
               <BrandButton
                 title="CORPS // RME of ONE"
-                subtitle="Can't Outsource Real Problem Solving"
                 titleColor="#16a34a"
                 titleFont="'JetBrains Mono', 'Fira Code', ui-monospace, monospace"
                 onClick={() => navigate('/Core')}
