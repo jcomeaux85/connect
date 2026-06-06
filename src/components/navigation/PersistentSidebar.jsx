@@ -388,7 +388,7 @@ export default function PersistentSidebar({
                 onClick={onToggleDoc}
               />
               <BrandButton
-                title="CORPS"
+                title="CORPS // RME of ONE"
                 subtitle="Can't Outsource Real Problem Solving"
                 titleColor="#16a34a"
                 titleFont="'JetBrains Mono', 'Fira Code', ui-monospace, monospace"
