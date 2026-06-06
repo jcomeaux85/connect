@@ -382,7 +382,7 @@ export default function PersistentSidebar({
             {/* DOC + CORPS brand buttons — shiny pillowed, cursor-reactive — always stacked, long */}
             <div className="pt-2 border-t flex flex-col" style={{ borderColor: PANEL_BORDER, gap: '6px' }}>
               <BrandButton
-                title="DOC Directory of Coverage"
+                title="DOC Quick Research"
                 titleColor="rgba(255,0,0,1)"
                 onClick={onToggleDoc}
               />
