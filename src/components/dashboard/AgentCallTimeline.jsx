@@ -7,16 +7,16 @@ import { useNavigate } from 'react-router-dom';
 const AGENTS = ['Ryan', 'Vanessa', 'Chris', 'Jarrad'];
 
 const EMPLOYER_DEMO_COLORS = [
-  { name: 'Lazer',       primary: '#ef4444', secondary: '#fca5a5' },
-  { name: 'Orbital',     primary: '#f97316', secondary: '#fdba74' },
-  { name: 'PSP',         primary: '#22c55e', secondary: '#86efac' },
-  { name: 'PAM',         primary: '#3b82f6', secondary: '#93c5fd' },
+  { name: 'Lazer',       primary: '#ff0000ff', secondary: '#fca5a5' },
+  { name: 'Orbital',     primary: '#dca900ff', secondary: '#fdba74' },
+  { name: 'PSP',         primary: '#009e3aff', secondary: '#86efac' },
+  { name: 'PAM',         primary: '#0062ffff', secondary: '#93c5fd' },
   { name: 'Dohrn',       primary: '#8b5cf6', secondary: '#c4b5fd' },
-  { name: 'Tekni-Plex',  primary: '#06b6d4', secondary: '#67e8f9' },
+  { name: 'Tekni-Plex',  primary: '#7c00b6ff', secondary: '#67e8f9' },
   { name: "Buddy's",     primary: '#f43f5e', secondary: '#fda4af' },
   { name: 'GCL',         primary: '#eab308', secondary: '#fde047' },
-  { name: 'SwimUSA',     primary: '#14b8a6', secondary: '#5eead4' },
-  { name: 'Brandywine',  primary: '#ec4899', secondary: '#f9a8d4' },
+  { name: 'SwimUSA',     primary: '#5d5d5dff', secondary: '#5eead4' },
+  { name: 'AOPS',        primary: '#aeff00ff', secondary: '#f9a8d4' },
 ];
 
 // Each demo call: time, direction, duration (seconds) — no overlaps per agent, 12 each = 48 total
