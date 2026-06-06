@@ -1,133 +1,116 @@
 import React, { useRef, useState, useCallback } from 'react';
-/**
- * Brand button. Container-less: the styled word IS the button.
- * Keeps the original default export + props so existing imports don't break.
- *
- * Use:  <BrandButton variant="doc" onClick={...} />
- *       <BrandButton variant="corps" onClick={...} />
- *
- * Fonts (load once in app head):
- * <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;900&family=Zilla+Slab:wght@700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
- */
-export default function BrandButton({ variant = 'doc', onClick }) {
-  const ref = useRef(null);
-  const [hover, setHover] = useState(false);
-  const handleEnter = useCallback(() => setHover(true), []);
-  const handleLeave = useCallback(() => setHover(false), []);
 
-  const wrap = {
-    cursor: 'pointer',
-    userSelect: 'none',
-    lineHeight: 1,
-    display: 'flex',
-    alignItems: 'baseline',
-    gap: '11px',
-    padding: '6px 2px',
-    background: 'transparent',
-    border: 'none',
-    boxShadow: 'none',
-    borderRadius: 0,
-    transform: hover ? 'translateX(1px)' : 'none',
-    transition: 'transform 0.12s ease',
-  };
+/**
+ * Shiny, slightly-pillowed brand button with a cursor-reactive specular highlight.
+ * The light fades in gradually (not a hard blink) and follows the pointer.
+ *
+ * Props:
+ *  - title: main word (e.g. "DOC")
+ *  - subtitle: thin tagline under the title
+ *  - titleColor: color of the main word
+ *  - onClick
+ */
+export default function BrandButton({ title, subtitle, titleColor = '#ff0000', titleFont, onClick }) {
+  const ref = useRef(null);
+  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+
+  const handleMove = useCallback((e) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 100;
+    const y = ((e.clientY - r.top) / r.height) * 100;
+    setGlare({ x, y, opacity: 1 });
+  }, []);
+
+  const handleEnter = useCallback(() => setGlare((g) => ({ ...g, opacity: 1 })), []);
+  const handleLeave = useCallback(() => setGlare((g) => ({ ...g, opacity: 0 })), []);
 
   return (
     <div
       ref={ref}
       onClick={onClick}
+      onMouseMove={handleMove}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
-      className="w-full relative flex items-baseline"
-      style={wrap}
+      className="w-full relative overflow-hidden flex flex-col items-center justify-center"
+      style={{
+        // ~10% taller than the old 34px button → ~50px to fit the tagline
+        height: '50px',
+        background: 'linear-gradient(180deg, #ffffff 0%, #f4f4f6 52%, #e4e4e8 100%)',
+        border: '1px solid rgba(0,0,0,0.16)',
+        borderRadius: '12px',
+        cursor: 'pointer',
+        // Pillowed: soft outer drop + inner top sheen + inner bottom shade
+        boxShadow:
+          '0 3px 6px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -3px 6px rgba(0,0,0,0.10)',
+        transition: 'box-shadow 0.2s ease',
+      }}
     >
-      {variant === 'corps' ? (
-        <>
-          <span
-            style={{
-              fontFamily: "'Zilla Slab', serif",
-              fontWeight: 700,
-              fontSize: '38px',
-              letterSpacing: '1px',
-              color: '#9ef060',
-              display: 'inline-block',
-              textShadow: hover
-                ? '0 0 9px rgba(158,240,96,0.75), 0 0 20px rgba(158,240,96,0.4)'
-                : '0 0 7px rgba(158,240,96,0.6), 0 0 16px rgba(158,240,96,0.35)',
-              transition: 'text-shadow 0.15s ease',
-            }}
-          >
-            CORPS
-          </span>
-          <span
-            style={{
-              fontFamily: "'Zilla Slab', serif",
-              fontWeight: 700,
-              fontSize: '38px',
-              color: '#9ef060',
-              textShadow: hover
-                ? '0 0 9px rgba(158,240,96,0.75)'
-                : '0 0 7px rgba(158,240,96,0.6)',
-            }}
-          >
-            /<span style={{ color: '#f2f2f2', textShadow: 'none' }}>/</span>
-          </span>
-          <span
-            style={{
-              fontFamily: "'Zilla Slab', serif",
-              fontWeight: 700,
-              fontSize: '30px',
-              color: '#f2f2f2',
-              letterSpacing: '0.5px',
-            }}
-          >
-            RME&nbsp;of&nbsp;ONE
-          </span>
-        </>
-      ) : (
-        <>
-          <span
-            style={{
-              fontFamily: "'Outfit', sans-serif",
-              fontWeight: 900,
-              fontSize: '36px',
-              letterSpacing: '-2px',
-              color: '#dc2626',
-              display: 'inline-block',
-              textShadow: hover
-                ? '2px 4px 4px rgba(0,0,0,0.4)'
-                : '2px 3px 3px rgba(0,0,0,0.3)',
-              transition: 'text-shadow 0.15s ease',
-            }}
-          >
-            DOC
-            <span
-              style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 400,
-                fontSize: '12px',
-                verticalAlign: 'super',
-                letterSpacing: 0,
-                marginLeft: '2px',
-              }}
-            >
-              &#8482;
-            </span>
-          </span>
-          <span style={{ color: '#f2f2f2', fontSize: '26px', fontWeight: 300, transform: 'translateY(-2px)' }}>|</span>
-          <span
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '24px',
-              letterSpacing: '2px',
-              fontWeight: 700,
-              color: '#f2f2f2',
-              textTransform: 'uppercase',
-            }}
-          >
-            Quick&nbsp;Research
-          </span>
-        </>
-      )}
+      {/* Cursor-reactive specular glare — gradual fade */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.35) 22%, transparent 55%)`,
+          opacity: glare.opacity,
+          transition: 'opacity 0.45s ease, background 0.12s linear',
+          pointerEvents: 'none',
+          mixBlendMode: 'soft-light',
+          zIndex: 2,
+        }}
+      />
+      {/* Top glossy sheen band */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '48%',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0))',
+          borderRadius: '12px 12px 40% 40%',
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
+
+      {/* Title — centered vertically (TM not counted toward centering) */}
+      <span
+        style={{
+          position: 'relative',
+          zIndex: 3,
+          fontFamily: titleFont || "'Outfit', sans-serif",
+          fontSize: '17px',
+          fontWeight: 800,
+          color: titleColor,
+          letterSpacing: '-0.7px',
+          lineHeight: 1,
+          display: 'inline-block',
+        }}
+      >
+        {title}
+        <sup style={{ fontSize: '6px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
+      </span>
+
+      {/* Thin tagline */}
+      <span
+        style={{
+          position: 'relative',
+          zIndex: 3,
+          marginTop: '3px',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '6.5px',
+          fontWeight: 700,
+          letterSpacing: '0.6px',
+          color: 'rgba(0,0,0,0.45)',
+          textTransform: 'uppercase',
+          whiteSpace: 'nowrap',
+          lineHeight: 1,
+        }}
+      >
+        {subtitle}
+      </span>
     </div>
   );
 }

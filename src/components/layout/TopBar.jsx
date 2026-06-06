@@ -200,8 +200,8 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         onClick={() => navigate('/Core')}
         title="CORPS — Workforce Portal"
         style={{
-          background: 'rgba(43, 43, 48, 0)',
-          border: '1px solid rgba(255, 255, 255, 0)',
+          background: '#2b2b30',
+          border: '1px solid rgba(255,255,255,0.85)',
           borderRadius: '8px',
           height: '32px',
           display: 'flex', alignItems: 'center', padding: '0 16px',
