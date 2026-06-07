@@ -78,6 +78,32 @@ export default function Dashboard() {
   const { isDark } = useTheme();
   const [openPanel, setOpenPanel] = useState(null); // statType string
 
+  // --- Hero video window-frame scroll parallax ---
+  const videoWrapRef = useRef(null);
+  const [scrollSkew, setScrollSkew] = useState(0);
+
+  React.useEffect(() => {
+    let raf = null;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        const el = videoWrapRef.current;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // how far the window is from viewport center, normalized
+          const center = rect.top + rect.height / 2;
+          const offset = (center - window.innerHeight / 2) / window.innerHeight;
+          setScrollSkew(offset * 4); // skew strength in degrees; tune to taste
+        }
+        raf = null;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  // --- end parallax ---
+
   const pageBg = isDark ? '#1a1d27' : '#f3f4f6';
   const cardBg = isDark ? '#23263a' : '#ffffff';
   const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#e5e7eb';
@@ -149,13 +175,50 @@ export default function Dashboard() {
   return (
     <div className="min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s' }}>
       <div className="p-6 space-y-4" style={{ minHeight: '100%' }}>
-      {/* Hero video */}
-      <video
-        src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
-        autoPlay muted playsInline
-        className="w-full rounded-2xl object-cover"
-        style={{ maxHeight: '180px', objectPosition: 'center' }}
-      />
+      {/* Hero video — window frame with scroll parallax */}
+      <div
+        ref={videoWrapRef}
+        className="w-full rounded-2xl"
+        style={{
+          position: 'relative',
+          padding: '10px',                 // the frame thickness / "wall"
+          borderRadius: '18px',
+          // raised outer bevel: light top-left, dark bottom-right = frame sits proud of page
+          background: isDark
+            ? 'linear-gradient(145deg, #3a3f55, #181a24)'
+            : 'linear-gradient(145deg, #ffffff, #d4d7e0)',
+          boxShadow: isDark
+            ? '6px 6px 16px rgba(0,0,0,0.5), -6px -6px 16px rgba(255,255,255,0.04)'
+            : '6px 6px 16px rgba(0,0,0,0.18), -6px -6px 16px rgba(255,255,255,0.9)',
+          // the frame skews against scroll
+          transform: `perspective(1200px) rotateX(${scrollSkew}deg)`,
+          transformOrigin: 'center center',
+          transition: 'transform 0.1s linear',
+          willChange: 'transform',
+          overflow: 'hidden',
+        }}
+      >
+        <video
+          src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
+          autoPlay muted playsInline
+          className="w-full object-cover"
+          style={{
+            maxHeight: '180px',
+            objectPosition: 'center',
+            borderRadius: '10px',
+            display: 'block',
+            // counter-skew so the VIDEO lags the frame = parallax depth
+            transform: `perspective(1200px) rotateX(${-scrollSkew * 0.5}deg) scale(1.06)`,
+            transition: 'transform 0.1s linear',
+            willChange: 'transform',
+          }}
+        />
+        {/* inner shadow on the glass = video looks recessed behind the wall */}
+        <div style={{
+          position: 'absolute', inset: '10px', borderRadius: '10px', pointerEvents: 'none',
+          boxShadow: 'inset 0 0 22px rgba(0,0,0,0.55), inset 0 2px 6px rgba(0,0,0,0.4)',
+        }} />
+      </div>
 
       {/* Shift timeline */}
       <ShiftFlowTimeline />
