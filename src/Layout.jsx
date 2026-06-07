@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 // Icons and dropdowns now handled by TopBar component
@@ -25,6 +25,88 @@ import IncomingCallPopup from "@/components/notifications/IncomingCallPopup";
 import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
 import { AnimatePresence, motion } from "framer-motion";
 
+// ─────────────────────────────────────────────────────────────
+// ScrollDot — minimal scroll indicator. Faint grey dot at rest,
+// glows brighter the FASTER you scroll, fades back when you stop.
+// Rides up/down mapped to scroll position. Defined inline so no
+// new file is needed. Drop inside a position:relative scroller.
+// ─────────────────────────────────────────────────────────────
+function ScrollDot({ scrollRef, color = "210, 230, 255", side = "right", size = 8, inset = 6 }) {
+  const [pct, setPct] = useState(0);
+  const [glow, setGlow] = useState(0);
+  const lastTop = useRef(0);
+  const lastT = useRef(0);
+  const decayRaf = useRef(null);
+
+  useEffect(() => {
+    const el = scrollRef?.current;
+    if (!el) return;
+
+    let raf = null;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        const top = el.scrollTop;
+        const max = Math.max(el.scrollHeight - el.clientHeight, 1);
+        setPct(top / max);
+
+        const now = performance.now();
+        const dt = Math.max(now - lastT.current, 1);
+        const dp = Math.abs(top - lastTop.current);
+        const speed = dp / dt;                 // px per ms
+        const g = Math.min(speed / 2.2, 1);    // 2.2 px/ms ≈ full glow; tune
+        setGlow((prev) => Math.max(prev, g));
+        lastTop.current = top;
+        lastT.current = now;
+        raf = null;
+      });
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [scrollRef]);
+
+  // glow decays each frame so it fades back to the grey dot at rest
+  useEffect(() => {
+    const tick = () => {
+      setGlow((g) => (g > 0.001 ? g * 0.9 : 0));
+      decayRaf.current = requestAnimationFrame(tick);
+    };
+    decayRaf.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(decayRaf.current);
+  }, []);
+
+  const restOpacity = 0.5;
+  const activeOpacity = restOpacity + glow * 0.5;
+  const blur = 2 + glow * 14;
+  const ringAlpha = glow * 0.85;
+
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        [side]: `${inset}px`,
+        top: `${pct * 100}%`,
+        transform: "translateY(-50%)",
+        width: `${size}px`,
+        height: `${size}px`,
+        borderRadius: "50%",
+        pointerEvents: "none",
+        zIndex: 30,
+        background: `rgba(${color}, ${activeOpacity})`,
+        boxShadow:
+          glow > 0.01
+            ? `0 0 ${blur}px rgba(${color}, ${ringAlpha}), 0 0 ${blur * 2}px rgba(${color}, ${ringAlpha * 0.5})`
+            : "none",
+        transition: "top 0.08s linear, box-shadow 0.12s ease, background 0.2s ease",
+        filter: glow < 0.02 ? "grayscale(1)" : "none",
+      }}
+    />
+  );
+}
+
 // Dock navigation removed — now using TopBar component
 
 function LayoutContent({ children, currentPageName }) {
@@ -40,6 +122,9 @@ function LayoutContent({ children, currentPageName }) {
     return saved ? parseInt(saved) : 1;
   });
   const [lockedSidebarWidth, setLockedSidebarWidth] = useState(0);
+
+  // ref for the main scroll container (drives ScrollDot)
+  const mainScrollRef = useRef(null);
 
   const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
   // isDark already destructured above
@@ -214,8 +299,14 @@ function LayoutContent({ children, currentPageName }) {
 
         {/* Active Call Bar — minimal top strip */}
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ scrollbarWidth: 'thin' }}>
+        {/* Page content — scroll container. position:relative anchors the ScrollDot;
+            scrollbar hidden (ScrollDot is the indicator now) but scrolling still works. */}
+        <main
+          ref={mainScrollRef}
+          className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 relative no-scrollbar"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          <ScrollDot scrollRef={mainScrollRef} />
           {children}
         </main>
 
