@@ -170,7 +170,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   return (
     <div style={{ width: '100%', overflow: 'hidden' }}>
       {/* Legend */}
-      <div className="flex items-center gap-3 flex-wrap mb-5 mt-1 ml-6">
+      <div className="flex items-center gap-3 flex-wrap mb-5 mt-1 ml-16">
         {EMPLOYER_DEMO_COLORS.map((e) =>
         <div key={e.name} className="flex items-center gap-1">
             <div style={{ width: 8, height: 8, borderRadius: 2, background: e.primary, boxShadow: `0 0 4px ${e.primary}88` }} />
