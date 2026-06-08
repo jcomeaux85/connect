@@ -154,7 +154,7 @@ export default function PersistentSidebar({
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isLocked, setIsLocked] = useState(() => localStorage.getItem('sidebarLocked') === '1');
-  const [panelGlare, setPanelGlare] = useState({ mx: 50, my: 50 });
+  const [panelGlare, setPanelGlare] = useState({ mx: 50, my: 50, intensity: 0 });
   const hasInteracted = useRef(false);
   const hideTimer = useRef(null);
   const panelRef = useRef(null);
@@ -166,6 +166,7 @@ export default function PersistentSidebar({
   };
   const handleMouseLeave = () => {
     if (isLocked) return;
+    setPanelGlare((g) => ({ ...g, intensity: 0 })); // light fades back to dark purple
     hideTimer.current = setTimeout(() => setIsHovered(false), 720);
   };
 
@@ -193,7 +194,7 @@ export default function PersistentSidebar({
     window.dispatchEvent(new CustomEvent('sidebar-lock-change', { detail: { width: lockedWidth } }));
   }, [isLocked, sidebarLevel]);
 
-  // Panel-level glare (independent listener)
+  // Panel-level glare (independent listener) -- full intensity when cursor is on the panel
   const handlePanelMouseMove = useCallback((e) => {
     const el = panelRef.current;
     if (!el) return;
@@ -201,6 +202,7 @@ export default function PersistentSidebar({
     setPanelGlare({
       mx: ((e.clientX - r.left) / r.width) * 100,
       my: ((e.clientY - r.top) / r.height) * 100,
+      intensity: 1,
     });
   }, []);
 
@@ -242,18 +244,24 @@ export default function PersistentSidebar({
 
   return (
     <>
-      {/* Approach zone — wider strip that pre-warms the cursor light before the panel opens */}
+      {/* Approach zone -- pre-warms the cursor light; brightness ramps as you near the panel */}
       <div
         className="fixed left-0 top-0 h-full z-[59]"
         style={{ width: '34px' }}
         onMouseEnter={handleMouseEnter}
         onMouseMove={(e) => {
-          // Feed vertical position so the panel hue follows the cursor on approach
-          setPanelGlare((g) => ({ ...g, my: (e.clientY / window.innerHeight) * 100, mx: 30 }));
+          // Closer to the panel (right edge of the 34px strip) = brighter pre-glow
+          const approachPct = e.clientX / 34;            // ~0 at far edge, ~1 near panel
+          setPanelGlare((g) => ({
+            ...g,
+            my: (e.clientY / window.innerHeight) * 100,
+            mx: 18,
+            intensity: Math.min(approachPct * 0.6, 0.6), // faint at distance, grows on approach
+          }));
         }}
       />
 
-      {/* Off-click catcher — closes sidebar and swallows the click so it doesn't hit the page */}
+      {/* Off-click catcher -- closes sidebar and swallows the click so it doesn't hit the page */}
       {isHovered && !isLocked && (
         <div
           className="fixed inset-0 z-[58]"
@@ -261,6 +269,7 @@ export default function PersistentSidebar({
             e.preventDefault();
             e.stopPropagation();
             if (hideTimer.current) clearTimeout(hideTimer.current);
+            setPanelGlare((g) => ({ ...g, intensity: 0 }));
             setIsHovered(false);
           }}
         />
@@ -285,14 +294,14 @@ export default function PersistentSidebar({
           pointerEvents: isOpen ? 'auto' : 'none',
         }}
       >
-        {/* Panel background glare — independent of buttons, slightly stronger + warm hue */}
+        {/* Panel background glare -- intensity-driven so it fades out on leave and ramps on approach */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: `radial-gradient(circle at ${panelGlare.mx}% ${panelGlare.my}%, rgba(214,190,255,0.13) 0%, rgba(255,255,255,0.07) 30%, transparent 66%)`,
+            background: `radial-gradient(circle at ${panelGlare.mx}% ${panelGlare.my}%, rgba(220,198,255,${(0.18 * panelGlare.intensity).toFixed(3)}) 0%, rgba(255,255,255,${(0.09 * panelGlare.intensity).toFixed(3)}) 30%, transparent 66%)`,
             pointerEvents: 'none',
-            transition: 'background 0.5s ease',
+            transition: 'background 0.4s ease',
             zIndex: 0,
           }}
         />
@@ -314,12 +323,12 @@ export default function PersistentSidebar({
             <ChipHeader />
           </div>
 
-          {/* Nav items — flex column, fill all space */}
+          {/* Nav items -- flex column, fill all space */}
           <div
             className="px-1.5 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-visible"
             style={{ scrollbarWidth: 'none', gap: '6px' }}
           >
-            {/* Nav buttons — fill height evenly */}
+            {/* Nav buttons -- fill height evenly */}
             <div
               className={`flex-1 ${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
               style={{ gap: '5px', minHeight: 0 }}
@@ -375,7 +384,7 @@ export default function PersistentSidebar({
               })}
             </div>
 
-            {/* DOC + CORPS brand buttons — shiny pillowed, cursor-reactive — always stacked, long */}
+            {/* DOC + CORPS brand buttons -- shiny pillowed, cursor-reactive -- always stacked, long */}
             <div className="pt-2 border-t flex flex-col" style={{ borderColor: PANEL_BORDER, gap: '6px' }}>
               <BrandButton
                 title="DOC"
@@ -512,7 +521,7 @@ export default function PersistentSidebar({
             </button>
           </div>
 
-          {/* User footer — larger photo */}
+          {/* User footer -- larger photo */}
           <div className="flex-shrink-0 p-2 border-t" style={{ borderColor: PANEL_BORDER }}>
             <div
               className="flex items-center gap-2.5 px-2 py-2 rounded-xl"
