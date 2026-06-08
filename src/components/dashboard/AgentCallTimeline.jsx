@@ -174,7 +174,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
         {EMPLOYER_DEMO_COLORS.map((e) =>
         <div key={e.name} className="flex items-center gap-1">
             <div style={{ width: 8, height: 8, borderRadius: 2, background: e.primary, boxShadow: `0 0 4px ${e.primary}88` }} />
-            <span style={{ fontSize: 10, color: textSecondary, fontWeight: 600 }}>{e.name}</span>
+            <span style={{ fontSize: 10, color: textSecondary, fontWeight: 600 }} className="font-thin text-sm">{e.name}</span>
           </div>
         )}
         <span style={{ fontSize: 10, color: textSecondary, marginLeft: 'auto' }}>{totalCalls} calls today</span>
