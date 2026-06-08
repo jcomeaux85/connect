@@ -34,13 +34,13 @@ function TiltCard({ children, onClick, className, style }) {
   const onLeave = useCallback(() => {
     if (locked) return;
     setTilt({ x: 0, y: 0 });
-    setGlare(g => ({ ...g, op: 0 }));
+    setGlare((g) => ({ ...g, op: 0 }));
   }, [locked]);
 
   const handleClick = useCallback(() => {
     setLocked(true);
     setTilt({ x: 0, y: 0 });
-    setGlare(g => ({ ...g, op: 0 }));
+    setGlare((g) => ({ ...g, op: 0 }));
     onClick && onClick();
     // Unlock after panel closes (user will click away)
     setTimeout(() => setLocked(false), 300);
@@ -57,20 +57,20 @@ function TiltCard({ children, onClick, className, style }) {
         willChange: 'transform',
         position: 'relative',
         overflow: 'hidden',
-        cursor: 'pointer',
+        cursor: 'pointer'
       }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      onClick={handleClick}
-    >
+      onClick={handleClick}>
+      
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1,
         background: `radial-gradient(circle at ${glare.mx}% ${glare.my}%, rgba(255,255,255,${glare.op}) 0%, transparent 60%)`,
-        transition: 'opacity 0.15s',
+        transition: 'opacity 0.15s'
       }} />
       <div style={{ position: 'relative', zIndex: 2 }}>{children}</div>
-    </div>
-  );
+    </div>);
+
 }
 
 export default function Dashboard() {
@@ -114,110 +114,110 @@ export default function Dashboard() {
   const { data: cases = [] } = useQuery({
     queryKey: ['cases'],
     queryFn: () => base44.entities.Case.list('-updated_date'),
-    enabled: !!user,
+    enabled: !!user
   });
 
   const { data: tasks = [] } = useQuery({
     queryKey: ['tasks'],
     queryFn: () => base44.entities.Task.list('-updated_date'),
-    enabled: !!user,
+    enabled: !!user
   });
 
   const { data: calls = [] } = useQuery({
     queryKey: ['calls'],
     queryFn: () => base44.entities.Call.list('-created_date'),
-    enabled: !!user,
+    enabled: !!user
   });
 
   const { data: users = [] } = useQuery({
     queryKey: ['users'],
     queryFn: () => base44.entities.User.list(),
-    enabled: !!user,
+    enabled: !!user
   });
 
-  const activeCases = cases.filter(c => c.status !== 'closed' && c.status !== 'resolved');
-  const inQueueCases = cases.filter(c => c.status === 'new');
-  const resolvedTodayCases = cases.filter(c => c.status === 'resolved' && c.updated_date && isToday(parseISO(c.updated_date)));
-  const todayCalls = calls.filter(c => c.created_date && isToday(parseISO(c.created_date)));
+  const activeCases = cases.filter((c) => c.status !== 'closed' && c.status !== 'resolved');
+  const inQueueCases = cases.filter((c) => c.status === 'new');
+  const resolvedTodayCases = cases.filter((c) => c.status === 'resolved' && c.updated_date && isToday(parseISO(c.updated_date)));
+  const todayCalls = calls.filter((c) => c.created_date && isToday(parseISO(c.created_date)));
 
-  const avgHandleTime = todayCalls.length > 0
-    ? todayCalls.reduce((a, c) => a + (c.duration || 0), 0) / todayCalls.length
-    : 0;
+  const avgHandleTime = todayCalls.length > 0 ?
+  todayCalls.reduce((a, c) => a + (c.duration || 0), 0) / todayCalls.length :
+  0;
   const avgMin = Math.floor(avgHandleTime / 60);
   const avgSec = Math.floor(avgHandleTime % 60);
 
   const stats = [
-    {
-      label: 'Active Calls', value: activeCases.length, sub: `${inQueueCases.length} on hold`,
-      change: '+12%', changePos: true, color: '#7C3AED', icon: Phone,
-      panelData: activeCases,
-    },
-    {
-      label: 'In Queue', value: inQueueCases.length, sub: 'Avg wait 1:34',
-      change: '-8%', changePos: false, color: '#3B82F6', icon: PhoneIncoming,
-      panelData: inQueueCases,
-    },
-    {
-      label: 'Resolved Today', value: resolvedTodayCases.length || 127, sub: '94% satisfaction',
-      change: '+23%', changePos: true, color: '#10B981', icon: CheckSquare,
-      panelData: resolvedTodayCases,
-    },
-    {
-      label: 'Avg Handle Time', value: `${avgMin || 4}:${String(avgSec || 32).padStart(2, '0')}`,
-      sub: 'Target: 5:00', change: '-15%', changePos: false, color: '#F59E0B', icon: Clock,
-      panelData: todayCalls,
-    },
-  ];
+  {
+    label: 'Active Calls', value: activeCases.length, sub: `${inQueueCases.length} on hold`,
+    change: '+12%', changePos: true, color: '#7C3AED', icon: Phone,
+    panelData: activeCases
+  },
+  {
+    label: 'In Queue', value: inQueueCases.length, sub: 'Avg wait 1:34',
+    change: '-8%', changePos: false, color: '#3B82F6', icon: PhoneIncoming,
+    panelData: inQueueCases
+  },
+  {
+    label: 'Resolved Today', value: resolvedTodayCases.length || 127, sub: '94% satisfaction',
+    change: '+23%', changePos: true, color: '#10B981', icon: CheckSquare,
+    panelData: resolvedTodayCases
+  },
+  {
+    label: 'Avg Handle Time', value: `${avgMin || 4}:${String(avgSec || 32).padStart(2, '0')}`,
+    sub: 'Target: 5:00', change: '-15%', changePos: false, color: '#F59E0B', icon: Clock,
+    panelData: todayCalls
+  }];
+
 
   const panelDataMap = {};
-  stats.forEach(s => { panelDataMap[s.label] = s.panelData; });
+  stats.forEach((s) => {panelDataMap[s.label] = s.panelData;});
 
   return (
     <div className="min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s' }}>
       <div className="p-6 space-y-4" style={{ minHeight: '100%' }}>
       {/* Hero video — window frame with scroll parallax */}
       <div
-        ref={videoWrapRef}
-        className="w-full rounded-2xl"
-        style={{
-          position: 'relative',
-          padding: '10px',                 // the frame thickness / "wall"
-          borderRadius: '18px',
-          // raised outer bevel: light top-left, dark bottom-right = frame sits proud of page
-          background: isDark
-            ? 'linear-gradient(145deg, #3a3f55, #181a24)'
-            : 'linear-gradient(145deg, #ffffff, #d4d7e0)',
-          boxShadow: isDark
-            ? '6px 6px 16px rgba(0,0,0,0.5), -6px -6px 16px rgba(255,255,255,0.04)'
-            : '6px 6px 16px rgba(0,0,0,0.18), -6px -6px 16px rgba(255,255,255,0.9)',
-          // the frame skews against scroll
-          transform: `perspective(1200px) rotateX(${scrollSkew}deg)`,
-          transformOrigin: 'center center',
-          transition: 'transform 0.1s linear',
-          willChange: 'transform',
-          overflow: 'hidden',
-        }}
-      >
-        <video
-          src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
-          autoPlay muted playsInline
-          className="w-full object-cover"
+          ref={videoWrapRef}
+          className="w-full rounded-2xl"
           style={{
-            maxHeight: '180px',
-            objectPosition: 'center',
-            borderRadius: '10px',
-            display: 'block',
-            // counter-skew so the VIDEO lags the frame = parallax depth
-            transform: `perspective(1200px) rotateX(${-scrollSkew * 0.5}deg) scale(1.06)`,
+            position: 'relative',
+            padding: '10px', // the frame thickness / "wall"
+            borderRadius: '18px',
+            // raised outer bevel: light top-left, dark bottom-right = frame sits proud of page
+            background: isDark ?
+            'linear-gradient(145deg, #3a3f55, #181a24)' :
+            'linear-gradient(145deg, #ffffff, #d4d7e0)',
+            boxShadow: isDark ?
+            '6px 6px 16px rgba(0,0,0,0.5), -6px -6px 16px rgba(255,255,255,0.04)' :
+            '6px 6px 16px rgba(0,0,0,0.18), -6px -6px 16px rgba(255,255,255,0.9)',
+            // the frame skews against scroll
+            transform: `perspective(1200px) rotateX(${scrollSkew}deg)`,
+            transformOrigin: 'center center',
             transition: 'transform 0.1s linear',
             willChange: 'transform',
-          }}
-        />
+            overflow: 'hidden'
+          }}>
+          
+        <video
+            src="https://res.cloudinary.com/dfeelbckg/video/upload/q_auto/f_auto/v1776843080/ebmheader_uxcv5g.mp4"
+            autoPlay muted playsInline
+            className="w-full object-cover"
+            style={{
+              maxHeight: '180px',
+              objectPosition: 'center',
+              borderRadius: '10px',
+              display: 'block',
+              // counter-skew so the VIDEO lags the frame = parallax depth
+              transform: `perspective(1200px) rotateX(${-scrollSkew * 0.5}deg) scale(1.06)`,
+              transition: 'transform 0.1s linear',
+              willChange: 'transform'
+            }} />
+          
         {/* inner shadow on the glass = video looks recessed behind the wall */}
         <div style={{
-          position: 'absolute', inset: '10px', borderRadius: '10px', pointerEvents: 'none',
-          boxShadow: 'inset 0 0 22px rgba(0,0,0,0.55), inset 0 2px 6px rgba(0,0,0,0.4)',
-        }} />
+            position: 'absolute', inset: '10px', borderRadius: '10px', pointerEvents: 'none',
+            boxShadow: 'inset 0 0 22px rgba(0,0,0,0.55), inset 0 2px 6px rgba(0,0,0,0.4)'
+          }} />
       </div>
 
       {/* Shift timeline */}
@@ -226,14 +226,14 @@ export default function Dashboard() {
       {/* Stats row — tilt + click to open panel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => {
-          const StatIcon = s.icon;
-          return (
-            <TiltCard
-              key={i}
-              onClick={() => setOpenPanel(s.label)}
-              className="rounded-2xl p-4"
-              style={{ background: cardBg, border: `1px solid ${cardBorder}`, boxShadow: isDark ? '0 2px 12px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.07)', transition: 'background 0.3s' }}
-            >
+            const StatIcon = s.icon;
+            return (
+              <TiltCard
+                key={i}
+                onClick={() => setOpenPanel(s.label)}
+                className="rounded-2xl p-4"
+                style={{ background: cardBg, border: `1px solid ${cardBorder}`, boxShadow: isDark ? '0 2px 12px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.07)', transition: 'background 0.3s' }}>
+                
               <div className="flex items-start justify-between mb-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}20` }}>
                   <StatIcon className="w-5 h-5" style={{ color: s.color }} />
@@ -246,14 +246,14 @@ export default function Dashboard() {
               <p className="text-xs font-semibold mt-0.5" style={{ color: textSecondary }}>{s.label}</p>
               <p className="text-[11px] mt-0.5" style={{ color: textTertiary }}>{s.sub}</p>
               <p className="text-[9px] mt-2 font-medium" style={{ color: s.color, opacity: 0.7 }}>Click to view →</p>
-            </TiltCard>
-          );
-        })}
+            </TiltCard>);
+
+          })}
       </div>
 
       {/* Call Volume + Queue */}
       <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
+        <div className="lg:col-span-2 rounded-2xl py-4 px-6" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
           <AgentCallTimeline incomingCalls={calls} />
         </div>
         <CallQueuePanel cases={cases} />
@@ -265,12 +265,12 @@ export default function Dashboard() {
 
       {/* Slide-out detail panel */}
       <StatSlidePanel
-        open={!!openPanel}
-        onClose={() => setOpenPanel(null)}
-        statType={openPanel}
-        data={panelDataMap[openPanel] || []}
-      />
+          open={!!openPanel}
+          onClose={() => setOpenPanel(null)}
+          statType={openPanel}
+          data={panelDataMap[openPanel] || []} />
+        
       </div>
-    </div>
-  );
+    </div>);
+
 }
