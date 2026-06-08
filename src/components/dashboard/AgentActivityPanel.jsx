@@ -92,60 +92,76 @@ export default function AgentActivityPanel({ users = [], currentUser = null, cal
   }
 
   return (
-    <div className="rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderTop: '2px solid #60a5fa' }}>
+<div className="rounded-2xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderTop: '2px solid #60a5fa' }}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Agent Activity</h3>
         <button onClick={() => setIsCollapsed(true)} className="p-1">
           <ChevronDown className="w-4 h-4 transform rotate-180" style={{ color: textSecondary }} />
         </button>
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        {agents.map((agent, i) => (
-          <div
-            key={i}
-            className={agent.isCurrentUser ? '' : 'flex items-center gap-2 p-3 rounded-xl'}
-            style={agent.isCurrentUser ? {} : { background: tileBg, border: `1px solid ${tileBorder}` }}
-          >
-            {agent.isCurrentUser ? (
-              <div className="mb-2">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
+
+      {(() => {
+        const currentUser = agents.find(a => a.isCurrentUser);
+        const others = agents.filter(a => !a.isCurrentUser);
+        return (
+          <div className="grid grid-cols-2 gap-3 items-stretch">
+
+            {/* Column 1 — the user, full column, focal point */}
+            <div
+              className="rounded-xl p-4 flex flex-col justify-center"
+              style={{ background: tileBg, border: `1px solid ${tileBorder}` }}
+            >
+              {currentUser && (
+                <>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
+                      {currentUser.initials}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: textPrimary }}>{currentUser.name}</p>
+                      <p className="text-xs font-medium" style={{ color: STATUS_COLORS[currentUser.status] || '#9CA3AF' }}>YOU • {currentUser.status}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <p style={{ color: textSecondary }}>Calls</p>
+                      <p className="text-2xl font-bold" style={{ color: textPrimary }}>{currentUser.calls}</p>
+                    </div>
+                    <div>
+                      <p style={{ color: textSecondary }}>Avg Handle</p>
+                      <p className="text-2xl font-bold font-mono" style={{ color: textPrimary }}>{currentUser.avg}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Column 2 — remaining agents stacked, self-sizes to count */}
+            <div className="flex flex-col gap-2">
+              {others.map((agent, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-2 p-3 rounded-xl flex-1"
+                  style={{ background: tileBg, border: `1px solid ${tileBorder}` }}
+                >
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
                     {agent.initials}
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold" style={{ color: textPrimary }}>{agent.name}</p>
-                    <p className="text-xs font-medium" style={{ color: STATUS_COLORS[agent.status] || '#9CA3AF' }}>YOU • {agent.status}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold truncate" style={{ color: textPrimary }}>{agent.name}</p>
+                    <p className="text-[10px] font-medium" style={{ color: STATUS_COLORS[agent.status] || '#9CA3AF' }}>{agent.status}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-[10px]" style={{ color: textSecondary }}>{agent.calls} calls</p>
+                    <p className="text-[10px] font-mono" style={{ color: textSecondary }}>Avg {agent.avg}</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <p style={{ color: textSecondary }}>Calls</p>
-                    <p className="text-lg font-bold" style={{ color: textPrimary }}>{agent.calls}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: textSecondary }}>Avg Handle</p>
-                    <p className="text-lg font-bold font-mono" style={{ color: textPrimary }}>{agent.avg}</p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
-                  {agent.initials}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold truncate" style={{ color: textPrimary }}>{agent.name}</p>
-                  <p className="text-[10px] font-medium" style={{ color: STATUS_COLORS[agent.status] || '#9CA3AF' }}>{agent.status}</p>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-[10px]" style={{ color: textSecondary }}>{agent.calls} calls</p>
-                  <p className="text-[10px] font-mono" style={{ color: textSecondary }}>Avg {agent.avg}</p>
-                </div>
-              </>
-            )}
+              ))}
+            </div>
+
           </div>
-        ))}
-      </div>
+        );
+      })()}
     </div>
   );
 }
