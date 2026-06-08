@@ -195,7 +195,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
         return (
           <div key={agent} style={{ display: 'flex', alignItems: 'center', height: ROW_H, marginBottom: 4 }}>
             {/* Label */}
-            <div style={{ width: LABEL_W, flexShrink: 0, fontSize: 11, fontWeight: 700, color: textPrimary, textAlign: 'right', paddingRight: 10 }}>
+            <div style={{ width: LABEL_W, flexShrink: 0, fontSize: 11, fontWeight: 700, color: textPrimary, textAlign: 'right', paddingRight: 10 }} className="rounded">
               {agent}
             </div>
 
