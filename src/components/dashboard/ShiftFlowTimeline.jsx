@@ -37,19 +37,34 @@ function checkConflict(requestedStart, existingBreaks, myEmail) {
   return false;
 }
 
-// Teammate colors: burnt orange, sky blue, aloe green, then repeat
-const TEAMMATE_COLORS = [
-  { lunch: "rgba(210,100,30,0.45)", dot: "#E8621A" },   // burnt orange
-  { lunch: "rgba(30,160,220,0.45)", dot: "#1DA8E0" },   // sky blue
-  { lunch: "rgba(80,180,100,0.45)", dot: "#50B464" },   // aloe green
-  { lunch: "rgba(210,100,30,0.35)", dot: "#E8621A" },
-];
-// Keep for backward compat
-const TEAMMATE_LUNCH_COLORS = TEAMMATE_COLORS.map(c => c.lunch);
-const TEAMMATE_DOT_COLORS = TEAMMATE_COLORS.map(c => c.dot);
+// Fallback palette — used only when an employee has no timeline_color set.
+// Burnt orange, sky blue, aloe green, then repeat.
+const FALLBACK_DOT_COLORS = ["#E8621A", "#1DA8E0", "#50B464"];
+
+// Convert a hex color to an rgba() string at a given alpha (for lunch blocks).
+function hexToRgba(hex, alpha) {
+  if (!hex) return `rgba(150,150,150,${alpha})`;
+  let h = hex.replace("#", "");
+  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  if ([r, g, b].some(Number.isNaN)) return `rgba(150,150,150,${alpha})`;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// Resolve an employee's timeline color: their chosen color, else fallback by index.
+function empColor(emp, index) {
+  return emp?.timeline_color || FALLBACK_DOT_COLORS[index % FALLBACK_DOT_COLORS.length];
+}
 
 export default function ShiftFlowTimeline() {
-  const { colors, isDark } = useTheme();
+  const theme = useTheme();
+  const { colors, isDark } = theme;
+  // Bulletproof text colors regardless of theme key naming
+  const txtPrimary = colors?.textPrimary || colors?.text || (isDark ? "#f0f0f0" : "#111827");
+  const txtSecondary = colors?.textSecondary || colors?.text || (isDark ? "#9ca3af" : "#6b7280");
+
   const queryClient = useQueryClient();
   const [nowMins, setNowMins] = useState(() => {
     const now = new Date();
@@ -100,7 +115,7 @@ export default function ShiftFlowTimeline() {
   const nowTime = fromMins(nowMins);
 
   if (employeesWithShifts.length === 0) {
-    // Demo timeline: 8am–6pm
+    // Demo timeline: 8am-6pm (hardcoded sample for pitch — intentional)
     const dStart = "08:00";
     const dEnd = "18:00";
     const dTotalMins = toMins(dEnd) - toMins(dStart);
@@ -108,48 +123,35 @@ export default function ShiftFlowTimeline() {
     const wPct = (s, e) => Math.max(0, ((toMins(e) - toMins(s)) / dTotalMins) * 100);
     const progressPct = pct(fromMins(nowMins));
 
-    // Teammate lunches (orange, sky blue, aloe green) — all before my 1pm lunch
     const teammLunches = [
       { start: "11:00", end: "12:00", color: "rgba(232,98,26,0.5)",  dot: "#E8621A" }, // orange
       { start: "11:15", end: "12:15", color: "rgba(29,168,224,0.5)", dot: "#1DA8E0" }, // sky blue
       { start: "11:30", end: "12:30", color: "rgba(80,180,100,0.5)", dot: "#50B464" }, // aloe green
     ];
-    // My lunch: 1pm–2pm purple
     const myLunch = { start: "13:00", end: "14:00" };
 
-    // Dots: each lunch gets a dot on each side. filled=taken, hollow=reserved
-    // Teammates: hollow (reserved). Mine: hollow (reserved)
     const allDots = [
-      // Teammate orange
       { at: teammLunches[0].start, color: "#E8621A", size: 10, filled: false },
       { at: teammLunches[0].end,   color: "#E8621A", size: 10, filled: true  },
-      // Teammate sky blue
       { at: teammLunches[1].start, color: "#1DA8E0", size: 10, filled: false },
       { at: teammLunches[1].end,   color: "#1DA8E0", size: 10, filled: true  },
-      // Teammate aloe green
       { at: teammLunches[2].start, color: "#50B464", size: 10, filled: false },
       { at: teammLunches[2].end,   color: "#50B464", size: 10, filled: false },
-      // My purple lunch dots
       { at: myLunch.start, color: "#a78bfa", size: 13, filled: false },
       { at: myLunch.end,   color: "#a78bfa", size: 13, filled: false },
     ];
 
     return (
       <div className="px-4 py-3">
-        {/* Outer wrapper taller to give room for the bar + green line below */}
         <div className="relative" style={{ height: '28px' }}>
 
-          {/* Track — vertically centered in top half */}
           <div className="absolute rounded-full overflow-hidden" style={{
             top: '6px', left: 0, right: 0, height: '14px',
             background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'
           }}>
-            {/* Green progress up to now */}
             <div className="absolute top-0 left-0 h-full" style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg, #22c55e, #16a34a)' }} />
-            {/* Purple remaining */}
             <div className="absolute top-0 h-full" style={{ left: `${progressPct}%`, width: `${100 - progressPct}%`, background: isDark ? 'rgba(139,92,246,0.22)' : 'rgba(139,92,246,0.14)' }} />
 
-            {/* Teammate lunch blocks */}
             {teammLunches.map((l, i) => (
               <div key={i} className="absolute pointer-events-none" style={{
                 top: '20%', height: '60%',
@@ -160,7 +162,6 @@ export default function ShiftFlowTimeline() {
               }} />
             ))}
 
-            {/* My purple lunch block — full height */}
             <div className="absolute top-0 h-full pointer-events-none" style={{
               left: `${pct(myLunch.start)}%`,
               width: `${wPct(myLunch.start, myLunch.end)}%`,
@@ -169,7 +170,6 @@ export default function ShiftFlowTimeline() {
             }} />
           </div>
 
-          {/* Thin green vertical "now" line — full bar height */}
           {progressPct > 0 && progressPct < 100 && (
             <div className="absolute pointer-events-none" style={{
               left: `${progressPct}%`,
@@ -184,7 +184,6 @@ export default function ShiftFlowTimeline() {
             }} />
           )}
 
-          {/* Now circle on the bar center */}
           {progressPct > 0 && progressPct < 100 && (
             <div className="absolute pointer-events-none" style={{
               left: `${progressPct}%`,
@@ -200,7 +199,6 @@ export default function ShiftFlowTimeline() {
             }} />
           )}
 
-          {/* Dots on each side of lunches */}
           {allDots.map((d, i) => (
             <div key={i} className="absolute pointer-events-none" style={{
               left: `${pct(d.at)}%`,
@@ -234,20 +232,16 @@ export default function ShiftFlowTimeline() {
   const meStart = meShift?.start_time || globalStart;
   const meEnd = meShift?.end_time || globalEnd;
 
-  // Green progress: how far through MY shift
   const progressPct = meShift
     ? Math.max(0, Math.min(100, ((nowMins - toMins(meStart)) / (toMins(meEnd) - toMins(meStart))) * 100))
     : 0;
 
-  // Green bar width in global coords = progressPct of my shift width
   const meShiftWidthPct = widthPct(meStart, meEnd, globalStart, globalEnd);
   const meShiftLeftPct = toPct(meStart, globalStart, globalEnd);
   const greenWidthPct = (progressPct / 100) * meShiftWidthPct;
 
-  // Teammates ordered consistently (not me)
   const teammates = employeesWithShifts.filter(e => e.email !== currentUser?.email);
 
-  // Group breaks for conflict
   const empGroup = me?.break_group_id ? breakGroups.find(g => g.id === me.break_group_id) : null;
   const groupBreaks = empGroup
     ? breaks.filter(b => empGroup.member_emails?.includes(b.employee_email))
@@ -263,7 +257,6 @@ export default function ShiftFlowTimeline() {
     const pct = (e.clientX - rect.left) / rect.width;
     const totalMins = toMins(globalEnd) - toMins(globalStart);
     const clickedMins = toMins(globalStart) + Math.round((pct * totalMins) / 15) * 15;
-    // Only allow clicks within my shift
     if (clickedMins < toMins(meStart) || clickedMins >= toMins(meEnd)) return;
     const lunchStart = me.lunch_start_time || "12:00";
     const lunchEnd = me.lunch_end_time || "12:30";
@@ -307,12 +300,11 @@ export default function ShiftFlowTimeline() {
               background: isDark ? 'rgba(139,92,246,0.18)' : 'rgba(139,92,246,0.12)',
             }} />
 
-          {/* === LUNCH BLOCKS === */}
-
-          {/* Teammate lunches — grey gradient (lighter = earlier index) */}
+          {/* Teammate lunches — each employee's own timeline_color (fallback to palette) */}
           {teammates.map((emp, i) => {
             if (!emp.lunch_start_time) return null;
             const lEnd = emp.lunch_end_time || fromMins(toMins(emp.lunch_start_time) + 60);
+            const c = empColor(emp, i);
             return (
               <div key={`lunch-tm-${emp.id}`}
                 className="absolute top-1 pointer-events-none"
@@ -320,7 +312,7 @@ export default function ShiftFlowTimeline() {
                   left: `${toPct(emp.lunch_start_time, globalStart, globalEnd)}%`,
                   width: `${widthPct(emp.lunch_start_time, lEnd, globalStart, globalEnd)}%`,
                   height: '60%',
-                  background: TEAMMATE_LUNCH_COLORS[i % TEAMMATE_LUNCH_COLORS.length],
+                  background: hexToRgba(c, 0.45),
                   borderRadius: '3px',
                 }} />
             );
@@ -338,7 +330,7 @@ export default function ShiftFlowTimeline() {
           )}
         </div>
 
-        {/* === NOW CIRCLE (on top, outside overflow:hidden) === */}
+        {/* === NOW CIRCLE === */}
         {meShift && progressPct > 0 && progressPct < 100 && (
           <div className="absolute top-1/2 pointer-events-none"
             style={{
@@ -354,20 +346,18 @@ export default function ShiftFlowTimeline() {
             }} />
         )}
 
-        {/* === BREAK DOTS === */}
-
-        {/* Teammate break dots */}
+        {/* Teammate break dots — each employee's own timeline_color */}
         {teammates.map((emp, i) => {
           const empBreaks = breaks.filter(b =>
             b.employee_email === emp.email &&
             b.status !== "cancelled" && b.status !== "declined"
           );
+          const dotColor = empColor(emp, i);
           return empBreaks.map(brk => {
             const bTime = brk.requested_start_time || brk.actual_start_time;
             if (!bTime) return null;
             const pct = toPct(bTime, globalStart, globalEnd);
             const taken = brk.status === "taken";
-            const dotColor = TEAMMATE_DOT_COLORS[i % TEAMMATE_DOT_COLORS.length];
             return (
               <div key={brk.id}
                 className="absolute top-1/2 pointer-events-none"
@@ -446,16 +436,16 @@ export default function ShiftFlowTimeline() {
               }}
             >
               <p className="text-[10px] font-bold mb-1" style={{ color: popover.conflict ? '#EF4444' : '#a78bfa' }}>
-                {popover.conflict ? '⚠ Overlaps another break' : `Reserve ${popover.type === 'AM_15_min' ? 'AM' : 'PM'} Break`}
+                {popover.conflict ? '\u26A0 Overlaps another break' : `Reserve ${popover.type === 'AM_15_min' ? 'AM' : 'PM'} Break`}
               </p>
               {!popover.conflict && (
-                <p className="text-[11px] mb-2" style={{ color: colors.text }}>
+                <p className="text-[11px] mb-2" style={{ color: txtPrimary }}>
                   {(() => {
                     const [h, m] = popover.time.split(":").map(Number);
                     const endMins = h * 60 + m + 15;
                     const eh = Math.floor(endMins / 60), em = endMins % 60;
                     const fmt = (hh, mm) => `${hh % 12 || 12}:${String(mm).padStart(2,"0")} ${hh >= 12 ? "PM" : "AM"}`;
-                    return `${fmt(h, m)} – ${fmt(eh, em)}`;
+                    return `${fmt(h, m)} \u2013 ${fmt(eh, em)}`;
                   })()}
                 </p>
               )}
@@ -482,7 +472,7 @@ export default function ShiftFlowTimeline() {
                 <button
                   onClick={() => setPopover(null)}
                   className="flex-1 text-[10px] font-bold py-1 rounded-lg border-0"
-                  style={{ background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)', color: colors.textSecondary }}>
+                  style={{ background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)', color: txtSecondary }}>
                   {popover.conflict ? 'OK' : 'Cancel'}
                 </button>
               </div>
