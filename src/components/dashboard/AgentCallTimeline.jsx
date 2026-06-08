@@ -7,16 +7,16 @@ import { useNavigate } from 'react-router-dom';
 const AGENTS = ['Ryan', 'Vanessa', 'Chris', 'Jarrad'];
 
 const EMPLOYER_DEMO_COLORS = [
-  { name: 'Lazer',       primary: '#ef4444', secondary: '#000000ff' },
-  { name: 'Orbital',     primary: '#f97316', secondary: '#fefefeff' },
-  { name: 'PSP',         primary: '#22c55e', secondary: 'hsla(150, 100%, 100%, 1.00)' },
-  { name: 'PAM',         primary: '#3b82f6', secondary: 'rgba(255, 255, 255, 1)' },
-  { name: 'Dohrn',       primary: '#ffa515e7', secondary: '#f60400ff' },
-  { name: 'Tekni-Plex',  primary: '#8400ffff', secondary: 'rgba(218, 218, 218, 1)' },
-  { name: "Buddy's",     primary: 'rgba(249, 237, 16, 1)', secondary: 'rgba(240, 240, 240, 1)' },
-  { name: 'GCL',         primary: '#e1411dff', secondary: 'rgba(224, 224, 224, 1)' },
-  { name: 'SwimUSA',     primary: '#010101ff', secondary: 'rgba(251, 251, 251, 1)' },
-  { name: 'Brandywine',  primary: 'rgba(50, 207, 251, 1)', secondary: '#e9e9e9ff' },
+  { name: 'Lazer',       primary: '#ff0808ff', secondary: '#ca1818ff' },
+  { name: 'Orbital',     primary: '#ffb625ff', secondary: 'rgba(255, 166, 0, 1)' },
+  { name: 'PSP',         primary: '#22c55e', secondary: 'rgba(30, 109, 11, 1)' },
+  { name: 'PAM',         primary: 'rgba(20, 133, 232, 1)', secondary: 'rgba(127, 166, 220, 1)' },
+  { name: 'Dohrn',       primary: 'rgba(255, 179, 0, 1)', secondary: '#f60400ff' },
+  { name: 'Tekni-Plex',  primary: '#8400ffff', secondary: '#787878ff' },
+  { name: "Buddy's",     primary: 'rgba(249, 237, 16, 1)', secondary: 'hsla(206, 100%, 43%, 1.00)' },
+  { name: 'Rock-it',     primary: 'rgba(43, 197, 248, 1)', secondary: 'rgba(245, 48, 48, 1)' },
+  { name: 'SwimUSA',     primary: '#010101ff', secondary: 'rgba(51, 51, 51, 1)' },
+  { name: 'Brandywine',  primary: 'rgba(44, 162, 195, 1)', secondary: 'rgba(161, 160, 160, 1)' },
 ];
 
 // Each demo call: time, direction, duration (seconds) — no overlaps per agent, 12 each = 48 total
