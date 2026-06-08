@@ -80,6 +80,10 @@
     "break_group_id": {
       "type": "string",
       "description": "Reference to BreakGroup for break coordination"
+    },
+    "timeline_color": {
+      "type": "string",
+      "description": "Hex color for this employee's lunch/break blocks on the shift timeline (e.g. #E8621A)"
     }
   },
   "required": [
