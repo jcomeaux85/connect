@@ -13,7 +13,7 @@ const EMPLOYER_DEMO_COLORS = [
   { name: 'PAM',         primary: '#3b82f6', secondary: 'rgba(255, 255, 255, 1)' },
   { name: 'Dohrn',       primary: '#ffa515e7', secondary: '#f60400ff' },
   { name: 'Tekni-Plex',  primary: '#8400ffff', secondary: 'rgba(218, 218, 218, 1)' },
-  { name: "Buddy's",     primary: '#f43f5e', secondary: '#fda4af' },
+  { name: "Buddy's",     primary: 'rgba(249, 237, 16, 1)', secondary: 'rgba(240, 240, 240, 1)' },
   { name: 'GCL',         primary: '#e1411dff', secondary: 'rgba(224, 224, 224, 1)' },
   { name: 'SwimUSA',     primary: '#010101ff', secondary: 'rgba(251, 251, 251, 1)' },
   { name: 'Brandywine',  primary: 'rgba(50, 207, 251, 1)', secondary: '#e9e9e9ff' },
