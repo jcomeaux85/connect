@@ -5,11 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/ThemeProvider';
 import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
-  MessageSquare, LogOut, Palette, Building2, Briefcase,
+  MessageSquare, LogOut, Palette, Building2,
   Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play, Lightbulb
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import ChipHeader from '@/components/navigation/ChipHeader';
 import BrandButton from '@/components/navigation/BrandButton';
@@ -26,14 +25,6 @@ const navItems = [
   { title: 'Tasks', url: createPageUrl('Boards'), icon: CheckSquare },
   { title: 'Call Log', url: createPageUrl('CallLog'), icon: Phone },
   { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock },
-];
-
-const quickActions = (handlers, isDark) => [
-  { label: 'Messages', icon: MessageSquare, onClick: handlers.onToggleMessages },
-  { label: 'Phone', icon: Phone, onClick: handlers.onTogglePhone },
-  { label: 'Customize', icon: Palette, onClick: handlers.onToggleBackgroundCustomizer },
-  { label: isDark ? 'Light' : 'Dark', icon: isDark ? Sun : Moon, onClick: handlers.onToggleTheme },
-  { label: 'Logout', icon: LogOut, onClick: handlers.onLogout },
 ];
 
 // --- Pointer-driven lit button ---
@@ -158,7 +149,7 @@ export default function PersistentSidebar({
 }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { colors, toggleTheme, isDark: themeDark } = useTheme();
+  const { toggleTheme, isDark: themeDark } = useTheme();
   const { enabled: spotlightOn, toggle: toggleSpotlight } = useSpotlight();
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -177,6 +168,11 @@ export default function PersistentSidebar({
     if (isLocked) return;
     hideTimer.current = setTimeout(() => setIsHovered(false), 720);
   };
+
+  // Clear any pending hide timer on unmount
+  useEffect(() => {
+    return () => { if (hideTimer.current) clearTimeout(hideTimer.current); };
+  }, []);
 
   const toggleLock = () => {
     setIsLocked((prev) => {
@@ -283,7 +279,7 @@ export default function PersistentSidebar({
           background: PANEL_BG,
           backdropFilter: 'blur(24px) saturate(200%)',
           WebkitBackdropFilter: 'blur(24px) saturate(200%)',
-          borderRight: `1px solid ${PANEL_BG}`,
+          borderRight: `1px solid ${PANEL_BORDER}`,
           boxShadow: '4px 0 40px rgba(0,0,0,0.45), inset -1px 0 0 rgba(255,255,255,0.08)',
           overflow: 'hidden',
           pointerEvents: isOpen ? 'auto' : 'none',
