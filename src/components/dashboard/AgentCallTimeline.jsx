@@ -168,9 +168,9 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const centerLine    = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
 
   return (
-    <div style={{ width: '100%', overflow: 'hidden' }}>
-      {/* Legend */}
-      <div className="flex items-center gap-3 mb-3 flex-wrap">
+<div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      {/* Legend (fixed top) */}
+      <div className="flex items-center gap-3 mb-3 flex-wrap" style={{ flexShrink: 0 }}>
         {EMPLOYER_DEMO_COLORS.map(e => (
           <div key={e.name} className="flex items-center gap-1">
             <div style={{ width: 8, height: 8, borderRadius: 2, background: e.primary, boxShadow: `0 0 4px ${e.primary}88` }} />
@@ -180,113 +180,138 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
         <span style={{ fontSize: 10, color: textSecondary, marginLeft: 'auto' }}>{totalCalls} calls today</span>
       </div>
 
-      {/* Direction labels */}
-      <div style={{ display: 'flex', paddingLeft: LABEL_W, marginBottom: 2 }}>
+      {/* Direction labels (fixed) */}
+      <div style={{ display: 'flex', paddingLeft: LABEL_W, marginBottom: 2, flexShrink: 0 }}>
         <span style={{ fontSize: 9, color: textSecondary, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>▲ IN</span>
         <span style={{ fontSize: 9, color: textSecondary, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginLeft: 8 }}>▼ OUT</span>
       </div>
 
-      {/* Agent rows */}
-      {AGENTS.map(agent => {
-        const blocks = agentBlocks[agent] || [];
-        const inbound  = blocks.filter(c => c.direction === 'inbound');
-        const outbound = blocks.filter(c => c.direction === 'outbound');
+      {/* Agent rows — flex:1 fills remaining height, rows distribute evenly */}
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {AGENTS.map(agent => {
+          const blocks = agentBlocks[agent] || [];
+          const inbound  = blocks.filter(c => c.direction === 'inbound');
+          const outbound = blocks.filter(c => c.direction === 'outbound');
 
-        return (
-          <div key={agent} style={{ display: 'flex', alignItems: 'center', height: ROW_H, marginBottom: 4 }}>
-            {/* Label */}
-            <div style={{ width: LABEL_W, flexShrink: 0, fontSize: 14, fontWeight: 700, color: textPrimary, textAlign: 'right', paddingRight: 10 }}>
-              {agent}
-            </div>
+          return (
+            <div key={agent} style={{ display: 'flex', alignItems: 'center', flex: 1, minHeight: 0 }}>
+              {/* Label */}
+              <div style={{ width: LABEL_W, flexShrink: 0, fontSize: 14, fontWeight: 700, color: textPrimary, textAlign: 'right', paddingRight: 10 }}>
+                {agent}
+              </div>
 
-            {/* Lane */}
-            <div style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: laneBg, borderRadius: 8, border: `1px solid ${laneBorder}`, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: GAP, padding: '4px 0' }}>
+              {/* Lane */}
+              <div style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: laneBg, borderRadius: 8, border: `1px solid ${laneBorder}`, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: GAP, padding: '4px 0' }}>
 
-              {/* Hour grid lines */}
-              {HOUR_LABELS.slice(0, -1).map((_, i) => (
-                <div key={i} style={{ position: 'absolute', left: `${(i / (HOUR_LABELS.length - 1)) * 100}%`, top: 0, bottom: 0, width: 1, background: gridLine, pointerEvents: 'none' }} />
-              ))}
-
-              {/* Center divider */}
-              <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, background: centerLine, pointerEvents: 'none' }} />
-
-              {/* Inbound track (top half) */}
-              <div style={{ position: 'relative', height: TRACK_H, flexShrink: 0 }}>
-                {inbound.map((c, idx) => {
-                  const left = toPercent(c.hour, c.minute);
-                  const width = Math.max(durToPercent(c.duration), 0.4);
-                  const col = c.employer.primary;
-                  const sec = c.employer.secondary;
+                {/* Hour grid lines — alternating major/minor for readability */}
+                {HOUR_LABELS.slice(0, -1).map((_, i) => {
+                  const isMajor = i % 2 === 0;
                   return (
-                    <div
-                      key={idx}
-                      onMouseEnter={() => setTooltip({ agent, direction: 'inbound', time: `${String(c.hour).padStart(2,'0')}:${String(c.minute).padStart(2,'0')}`, dur: c.duration, employer: c.employer.name, color: col })}
-                      onMouseLeave={() => setTooltip(null)}
-                      onClick={() => c.caseId && navigate(`/Case?id=${c.caseId}`)}
-                      style={{
-                        position: 'absolute',
-                        left: `${left}%`,
-                        width: `${width}%`,
-                        height: '100%',
-                        bottom: 0,
-                        borderRadius: '3px 3px 0 0',
-                        background: `linear-gradient(180deg, ${sec} 0%, ${col} 100%)`,
-                        boxShadow: `0 0 6px ${col}66, inset 0 1px 0 ${sec}`,
-                        cursor: c.caseId ? 'pointer' : 'default',
-                        opacity: 0.92,
-                        transition: 'opacity 0.1s',
-                      }}
-                      onMouseOver={e => e.currentTarget.style.opacity = '1'}
-                      onMouseOut={e => e.currentTarget.style.opacity = '0.92'}
-                    />
+                    <div key={i} style={{
+                      position: 'absolute',
+                      left: `${(i / (HOUR_LABELS.length - 1)) * 100}%`,
+                      top: 0, bottom: 0, width: 1,
+                      background: isMajor ? gridLineMajor : gridLine,
+                      pointerEvents: 'none',
+                    }} />
                   );
                 })}
-              </div>
 
-              {/* Outbound track (bottom half) */}
-              <div style={{ position: 'relative', height: TRACK_H, flexShrink: 0 }}>
-                {outbound.map((c, idx) => {
-                  const left = toPercent(c.hour, c.minute);
-                  const width = Math.max(durToPercent(c.duration), 0.4);
-                  const col = c.employer.primary;
-                  const sec = c.employer.secondary;
-                  return (
-                    <div
-                      key={idx}
-                      onMouseEnter={() => setTooltip({ agent, direction: 'outbound', time: `${String(c.hour).padStart(2,'0')}:${String(c.minute).padStart(2,'0')}`, dur: c.duration, employer: c.employer.name, color: col })}
-                      onMouseLeave={() => setTooltip(null)}
-                      onClick={() => c.caseId && navigate(`/Case?id=${c.caseId}`)}
-                      style={{
-                        position: 'absolute',
-                        left: `${left}%`,
-                        width: `${width}%`,
-                        height: '100%',
-                        top: 0,
-                        borderRadius: '0 0 3px 3px',
-                        background: `linear-gradient(180deg, ${col} 0%, ${sec} 100%)`,
-                        boxShadow: `0 0 6px ${col}66, inset 0 -1px 0 ${sec}`,
-                        cursor: c.caseId ? 'pointer' : 'default',
-                        opacity: 0.85,
-                        transition: 'opacity 0.1s',
-                      }}
-                      onMouseOver={e => e.currentTarget.style.opacity = '1'}
-                      onMouseOut={e => e.currentTarget.style.opacity = '0.85'}
-                    />
-                  );
-                })}
-              </div>
+                {/* Subtle alternating hour shading bands for depth */}
+                {HOUR_LABELS.slice(0, -1).map((_, i) => (
+                  i % 2 === 1 ? (
+                    <div key={`band-${i}`} style={{
+                      position: 'absolute',
+                      left: `${(i / (HOUR_LABELS.length - 1)) * 100}%`,
+                      width: `${(1 / (HOUR_LABELS.length - 1)) * 100}%`,
+                      top: 0, bottom: 0,
+                      background: bandShade,
+                      pointerEvents: 'none',
+                    }} />
+                  ) : null
+                ))}
 
-              {/* Count badge */}
-              <div style={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: textSecondary, background: laneBg, lineHeight: 1 }}>
-                {blocks.length}
+                {/* Center divider */}
+                <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, background: centerLine, pointerEvents: 'none', zIndex: 1 }} />
+
+                {/* Inbound track (top half) */}
+                <div style={{ position: 'relative', flex: 1, minHeight: 0, zIndex: 2 }}>
+                  {inbound.map((c, idx) => {
+                    const left = toPercent(c.hour, c.minute);
+                    const width = Math.max(durToPercent(c.duration), 0.4);
+                    const col = c.employer.primary;
+                    const sec = c.employer.secondary;
+                    return (
+                      <div
+                        key={idx}
+                        onMouseEnter={() => setTooltip({ agent, direction: 'inbound', time: `${String(c.hour).padStart(2,'0')}:${String(c.minute).padStart(2,'0')}`, dur: c.duration, employer: c.employer.name, color: col })}
+                        onMouseLeave={() => setTooltip(null)}
+                        onClick={() => c.caseId && navigate(`/Case?id=${c.caseId}`)}
+                        style={{
+                          position: 'absolute',
+                          left: `${left}%`,
+                          width: `${width}%`,
+                          height: '100%',
+                          bottom: 0,
+                          borderRadius: '3px 3px 0 0',
+                          background: `linear-gradient(180deg, ${sec} 0%, ${col} 100%)`,
+                          boxShadow: `0 0 6px ${col}66, inset 0 1px 0 ${sec}`,
+                          cursor: c.caseId ? 'pointer' : 'default',
+                          opacity: 0.92,
+                          transition: 'opacity 0.1s',
+                        }}
+                        onMouseOver={e => e.currentTarget.style.opacity = '1'}
+                        onMouseOut={e => e.currentTarget.style.opacity = '0.92'}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Outbound track (bottom half) */}
+                <div style={{ position: 'relative', flex: 1, minHeight: 0, zIndex: 2 }}>
+                  {outbound.map((c, idx) => {
+                    const left = toPercent(c.hour, c.minute);
+                    const width = Math.max(durToPercent(c.duration), 0.4);
+                    const col = c.employer.primary;
+                    const sec = c.employer.secondary;
+                    return (
+                      <div
+                        key={idx}
+                        onMouseEnter={() => setTooltip({ agent, direction: 'outbound', time: `${String(c.hour).padStart(2,'0')}:${String(c.minute).padStart(2,'0')}`, dur: c.duration, employer: c.employer.name, color: col })}
+                        onMouseLeave={() => setTooltip(null)}
+                        onClick={() => c.caseId && navigate(`/Case?id=${c.caseId}`)}
+                        style={{
+                          position: 'absolute',
+                          left: `${left}%`,
+                          width: `${width}%`,
+                          height: '100%',
+                          top: 0,
+                          borderRadius: '0 0 3px 3px',
+                          background: `linear-gradient(180deg, ${col} 0%, ${sec} 100%)`,
+                          boxShadow: `0 0 6px ${col}66, inset 0 -1px 0 ${sec}`,
+                          cursor: c.caseId ? 'pointer' : 'default',
+                          opacity: 0.85,
+                          transition: 'opacity 0.1s',
+                        }}
+                        onMouseOver={e => e.currentTarget.style.opacity = '1'}
+                        onMouseOut={e => e.currentTarget.style.opacity = '0.85'}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Count badge */}
+                <div style={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: textSecondary, background: laneBg, lineHeight: 1, zIndex: 3, padding: '1px 3px', borderRadius: 3 }}>
+                  {blocks.length}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
 
-      {/* X-axis */}
-      <div style={{ display: 'flex', paddingLeft: LABEL_W, marginTop: 4, paddingRight: 30 }}>
+      {/* X-axis (fixed bottom) */}
+      <div style={{ display: 'flex', paddingLeft: LABEL_W, marginTop: 4, paddingRight: 30, flexShrink: 0 }}>
         {HOUR_LABELS.map((label, i) => (
           <div key={label} style={{ flex: i === HOUR_LABELS.length - 1 ? 0 : 1, fontSize: 9, color: textSecondary, fontWeight: 600 }}>
             {label}
