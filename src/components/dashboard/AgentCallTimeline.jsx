@@ -166,6 +166,8 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const laneBg        = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
   const laneBorder    = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
   const centerLine    = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const gridLineMajor = isDark ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.16)';
+  const bandShade     = isDark ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.025)';
 
   return (
 <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
