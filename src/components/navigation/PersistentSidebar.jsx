@@ -299,7 +299,7 @@ export default function PersistentSidebar({
           style={{
             position: 'absolute',
             inset: 0,
-            background: `radial-gradient(circle at ${panelGlare.mx}% ${panelGlare.my}%, rgba(220,198,255,${(0.18 * panelGlare.intensity).toFixed(3)}) 0%, rgba(255,255,255,${(0.09 * panelGlare.intensity).toFixed(3)}) 30%, transparent 66%)`,
+            background: `radial-gradient(circle at ${panelGlare.mx}% ${panelGlare.my}%, rgba(220,198,255,${(0.18 * panelGlare.intensity).toFixed(3)}) 0%, rgba(255,255,255,${(0.09 * panelGlare.intensity).toFixed(3)}) 30%, transparent 70%)`,
             pointerEvents: 'none',
             transition: 'background 0.4s ease',
             zIndex: 0,
