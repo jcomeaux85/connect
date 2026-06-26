@@ -406,23 +406,35 @@ export default function PersistentSidebar({
                   </span>
                 </button>
 
-                {/* CORPS */}
+                {/* CORPS — text logo, transparent, phosphor-green coding font */}
                 <button
                   onClick={() => navigate('/Core')}
                   className="w-full flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer group"
                   style={{ background: 'transparent' }}
                 >
-                  <img
-                    src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/0e7fee8f7_generated_image.png"
-                    alt="CORPS"
-                    className="w-[78%] object-contain transition-transform duration-150 group-hover:scale-105"
-                    style={{ filter: 'drop-shadow(0 0 6px rgba(51,255,51,0.3))' }}
-                  />
                   <span
-                    className="mt-1"
-                    style={{ fontFamily: "'VT323', ui-monospace, monospace", fontSize: '13px', color: '#33FF33', letterSpacing: '0.04em' }}
+                    className="transition-transform duration-150 group-hover:scale-105"
+                    style={{
+                      fontFamily: "'VT323', ui-monospace, monospace",
+                      fontSize: '30px',
+                      lineHeight: 1,
+                      color: '#33FF33',
+                      letterSpacing: '0.03em',
+                      textShadow: '0 0 8px rgba(51,255,51,0.55), 0 0 18px rgba(51,255,51,0.3)',
+                    }}
                   >
                     CORPS // RME of ONE
+                  </span>
+                  <span
+                    className="mt-1.5"
+                    style={{
+                      fontFamily: "'VT323', ui-monospace, monospace",
+                      fontSize: '11px',
+                      color: 'rgba(51,255,51,0.55)',
+                      letterSpacing: '0.18em',
+                    }}
+                  >
+                    UNIFYING RISK MANAGEMENT ENTERPRISE
                   </span>
                 </button>
               </div>
