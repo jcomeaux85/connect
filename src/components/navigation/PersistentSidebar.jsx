@@ -11,7 +11,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import ChipHeader from '@/components/navigation/ChipHeader';
-import BrandButton from '@/components/navigation/BrandButton';
 import { useSpotlight } from '@/components/spotlight/SpotlightContext';
 
 export const SIDEBAR_WIDTHS = [52, 160, 220];
@@ -384,22 +383,50 @@ export default function PersistentSidebar({
               })}
             </div>
 
-            {/* DOC + CORPS brand buttons -- shiny pillowed, cursor-reactive -- always stacked, long */}
-            <div className="pt-2 border-t flex flex-col" style={{ borderColor: PANEL_BORDER, gap: '6px' }}>
-              <BrandButton
-                title="DOC"
-                subtitle="Directory of Coverage v2.7"
-                titleColor="rgba(255,0,0,1)"
-                onClick={onToggleDoc}
-              />
-              <BrandButton
-                title="CORPS"
-                subtitle="Can't Outsource Real Problem Solving"
-                titleColor="#16a34a"
-                titleFont="'JetBrains Mono', 'Fira Code', ui-monospace, monospace"
-                onClick={() => navigate('/Core')}
-              />
-            </div>
+            {/* DOC + CORPS brand buttons -- image is the button, no bg, same width, centered */}
+            {!isMin && (
+              <div className="pt-2 border-t flex flex-col items-center" style={{ borderColor: PANEL_BORDER, gap: '14px' }}>
+                {/* DOC */}
+                <button
+                  onClick={onToggleDoc}
+                  className="w-full flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer group"
+                  style={{ background: 'transparent' }}
+                >
+                  <img
+                    src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f5105ec6d_DOCnobg.png"
+                    alt="DOC"
+                    className="w-[78%] object-contain transition-transform duration-150 group-hover:scale-105"
+                    style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
+                  />
+                  <span
+                    className="mt-1 tracking-wide"
+                    style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' }}
+                  >
+                    DOC <span style={{ color: 'rgba(255,0,0,0.7)' }}>|</span> directory of coverages
+                  </span>
+                </button>
+
+                {/* CORPS */}
+                <button
+                  onClick={() => navigate('/Core')}
+                  className="w-full flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer group"
+                  style={{ background: 'transparent' }}
+                >
+                  <img
+                    src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/0e7fee8f7_generated_image.png"
+                    alt="CORPS"
+                    className="w-[78%] object-contain transition-transform duration-150 group-hover:scale-105"
+                    style={{ filter: 'drop-shadow(0 0 6px rgba(51,255,51,0.3))' }}
+                  />
+                  <span
+                    className="mt-1"
+                    style={{ fontFamily: "'VT323', ui-monospace, monospace", fontSize: '13px', color: '#33FF33', letterSpacing: '0.04em' }}
+                  >
+                    CORPS // RME of ONE
+                  </span>
+                </button>
+              </div>
+            )}
 
             {/* Divider + Quick actions */}
             <div
