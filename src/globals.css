@@ -123,3 +123,46 @@ body[data-spotlight="on"][data-spotlight-active] .spot-panel {
 body[data-spotlight="on"][data-spotlight-active] .spot-panel[data-spot-selected] {
   filter: brightness(1.06);
 }
+
+/* ─────────────────────────────────────────────────────────
+   Call timeline lane — hover lean/rock + waveform wobble
+   ───────────────────────────────────────────────────────── */
+.agent-lane {
+  transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Lane scales up + leans + rocks for ~1s while hovered */
+.agent-lane.lane-active {
+  animation: laneRock 1s ease-in-out;
+  z-index: 5;
+}
+
+@keyframes laneRock {
+  0%   { transform: perspective(900px) scale(1)    rotateZ(0deg)    rotateY(0deg); }
+  20%  { transform: perspective(900px) scale(1.06) rotateZ(-1.4deg) rotateY(6deg); }
+  45%  { transform: perspective(900px) scale(1.08) rotateZ(1.2deg)  rotateY(-5deg); }
+  70%  { transform: perspective(900px) scale(1.07) rotateZ(-0.8deg) rotateY(4deg); }
+  100% { transform: perspective(900px) scale(1.06) rotateZ(0deg)    rotateY(0deg); }
+}
+
+/* Hold the lifted/scaled state while pointer stays on the lane */
+.agent-lane:hover {
+  transform: perspective(900px) scale(1.06);
+  filter: brightness(1.08);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+}
+
+/* Each waveform bar randomly lengthens/shortens for 1s then settles */
+.wf-bar-active {
+  animation: wfWobble 1s ease-in-out;
+}
+
+@keyframes wfWobble {
+  0%   { height: var(--wf-h); }
+  25%  { height: var(--wf-h1); }
+  50%  { height: var(--wf-h2); }
+  75%  { height: var(--wf-h3); }
+  100% { height: var(--wf-h); }
+}
