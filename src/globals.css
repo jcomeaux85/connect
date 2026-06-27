@@ -127,9 +127,9 @@ body[data-spotlight="on"][data-spotlight-active] .spot-panel[data-spot-selected]
 /* ─────────────────────────────────────────────────────────
    Call timeline waveform — per-waveform hover wobble
    ───────────────────────────────────────────────────────── */
-/* Each waveform bar randomly lengthens/shortens for 1s then settles */
+/* While hovered, each bar continuously lengthens/shortens like live audio */
 .wf-bar-active {
-  animation: wfWobble 1s ease-in-out;
+  animation: wfWobble 0.7s ease-in-out infinite;
 }
 
 @keyframes wfWobble {
