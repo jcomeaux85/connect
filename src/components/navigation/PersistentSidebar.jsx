@@ -398,12 +398,6 @@ export default function PersistentSidebar({
                     className="w-[78%] object-contain transition-transform duration-150 group-hover:scale-105"
                     style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
                   />
-                  <span
-                    className="mt-1 tracking-wide"
-                    style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' }}
-                  >
-                    DOC <span style={{ color: 'rgba(255,0,0,0.7)' }}>|</span> directory of coverages
-                  </span>
                 </button>
 
                 {/* CORPS — text logo, transparent, phosphor-green coding font */}
@@ -416,25 +410,14 @@ export default function PersistentSidebar({
                     className="transition-transform duration-150 group-hover:scale-105"
                     style={{
                       fontFamily: "'VT323', ui-monospace, monospace",
-                      fontSize: '30px',
+                      fontSize: '44px',
                       lineHeight: 1,
                       color: '#33FF33',
                       letterSpacing: '0.03em',
                       textShadow: '0 0 8px rgba(51,255,51,0.55), 0 0 18px rgba(51,255,51,0.3)',
                     }}
                   >
-                    CORPS // RME of ONE
-                  </span>
-                  <span
-                    className="mt-1.5"
-                    style={{
-                      fontFamily: "'VT323', ui-monospace, monospace",
-                      fontSize: '11px',
-                      color: 'rgba(51,255,51,0.55)',
-                      letterSpacing: '0.18em',
-                    }}
-                  >
-                    UNIFYING RISK MANAGEMENT ENTERPRISE
+                    CORPS//
                   </span>
                 </button>
               </div>
@@ -536,27 +519,6 @@ export default function PersistentSidebar({
                 ? <Pin className="w-3.5 h-3.5" />
                 : <PinOff className="w-3.5 h-3.5" />
               }
-            </button>
-            <button
-              onClick={() => navigate('/CallQueueDemo')}
-              title="View demo"
-              style={{
-                width: '36px',
-                height: '28px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'rgba(255,255,255,0.07)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                color: 'rgba(255,255,255,0.5)',
-                transition: 'background 0.15s, color 0.15s',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(124,58,237,0.35)'; e.currentTarget.style.color = '#fff'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
-            >
-              <Play className="w-3.5 h-3.5" />
             </button>
           </div>
 
