@@ -383,37 +383,46 @@ export default function PersistentSidebar({
               })}
             </div>
 
-            {/* DOC + CORPS brand buttons -- image is the button, no bg, same width, centered */}
+            {/* DOC + CORPS brand buttons -- level 2: stacked full logos;
+                level 3 (two-col grid): side by side. Hidden at level 1 (icon rail too narrow). */}
             {!isMin && (
-              <div className="pt-2 border-t flex flex-col items-center" style={{ borderColor: PANEL_BORDER, gap: '14px' }}>
-                {/* DOC */}
+            <div
+              className={`pt-2 border-t ${isFull ? 'grid grid-cols-2 items-center' : 'flex flex-col items-center'}`}
+              style={{ borderColor: PANEL_BORDER, gap: '14px' }}
+            >
+              {/* DOC */}
+              <div className={isFull ? '' : 'w-full'}>
                 <button
                   onClick={onToggleDoc}
                   className="w-full flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer group"
                   style={{ background: 'transparent' }}
+                  title="DOC — Directory of Coverages"
                 >
                   <img
                     src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f5105ec6d_DOCnobg.png"
                     alt="DOC"
-                    className="w-[78%] object-contain transition-transform duration-150 group-hover:scale-105"
+                    className="object-contain transition-transform duration-150 group-hover:scale-105 w-[78%]"
                     style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
                   />
                 </button>
+              </div>
 
-                {/* CORPS — text logo, transparent, phosphor-green coding font */}
+              {/* CORPS — text logo, transparent, phosphor-green coding font */}
+              <div className={isFull ? '' : 'w-full'}>
                 <button
                   onClick={() => navigate('/Core')}
                   className="w-full flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer group"
                   style={{ background: 'transparent' }}
+                  title="CORPS"
                 >
                   <span
-                    className="transition-transform duration-150 group-hover:scale-105"
+                    className="transition-transform duration-150 group-hover:scale-105 whitespace-nowrap"
                     style={{
                       fontFamily: "'VT323', ui-monospace, monospace",
-                      fontSize: '44px',
+                      fontSize: isFull ? '30px' : '44px',
                       lineHeight: 1,
                       color: '#33FF33',
-                      letterSpacing: '0.03em',
+                      letterSpacing: '0.02em',
                       textShadow: '0 0 8px rgba(51,255,51,0.55), 0 0 18px rgba(51,255,51,0.3)',
                     }}
                   >
@@ -421,6 +430,7 @@ export default function PersistentSidebar({
                   </span>
                 </button>
               </div>
+            </div>
             )}
 
             {/* Divider + Quick actions */}
