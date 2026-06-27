@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 /**
  * Renders a single call as an audio-style waveform of thin vertical bars.
  * `bars` is an array of 0..1 amplitudes (built seeded so it never reflows).
  * `direction` controls anchor: inbound grows up from bottom, outbound grows down from top.
- * `active` triggers a 1s wobble where bars randomly lengthen/shorten then settle.
+ * Hovering THIS waveform triggers a 1s wobble where its bars randomly
+ * lengthen/shorten then settle — independent of neighbors or the lane.
  */
-export default function CallWaveform({ bars, color, secondary, direction, active }) {
+export default function CallWaveform({ bars, color, secondary, direction }) {
   const isInbound = direction === 'inbound';
+  const [active, setActive] = useState(false);
+
   return (
     <div
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
       style={{
         position: 'absolute',
         inset: 0,

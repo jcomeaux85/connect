@@ -134,19 +134,6 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const [tooltip, setTooltip] = React.useState(null);
-  const [hoveredAgent, setHoveredAgent] = React.useState(null);
-
-  // Drive the global SPOTLIGHT so surrounding tiles dim while a lane is hovered
-  React.useEffect(() => {
-    const body = document.body;
-    if (hoveredAgent) {
-      body.setAttribute('data-spotlight', 'on');
-      body.setAttribute('data-spotlight-active', '');
-    } else {
-      body.removeAttribute('data-spotlight-active');
-    }
-    return () => body.removeAttribute('data-spotlight-active');
-  }, [hoveredAgent]);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -225,21 +212,16 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
           const inbound  = blocks.filter(c => c.direction === 'inbound');
           const outbound = blocks.filter(c => c.direction === 'outbound');
 
-          const isHot = hoveredAgent === agent;
-
           return (
             <div key={agent} style={{ display: 'flex', alignItems: 'center', flex: 1, minHeight: 0 }}>
               {/* Label */}
-              <div style={{ width: LABEL_W, flexShrink: 0, fontSize: 14, fontWeight: 700, color: textPrimary, textAlign: 'right', paddingRight: 10, transition: 'transform 0.2s', transform: isHot ? 'scale(1.08)' : 'scale(1)' }}>
+              <div style={{ width: LABEL_W, flexShrink: 0, fontSize: 14, fontWeight: 700, color: textPrimary, textAlign: 'right', paddingRight: 10 }}>
                 {agent}
               </div>
 
               {/* Lane */}
               <div
-                className={`agent-lane spot-panel${isHot ? ' lane-active' : ''}`}
-                data-spot-selected={isHot ? '' : undefined}
-                onMouseEnter={() => setHoveredAgent(agent)}
-                onMouseLeave={() => { setHoveredAgent(null); setTooltip(null); }}
+                onMouseLeave={() => setTooltip(null)}
                 style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: laneBg, borderRadius: 8, border: `1px solid ${laneBorder}`, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: GAP, padding: '4px 0' }}>
 
                 {/* Center divider */}
@@ -273,7 +255,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
                         onMouseOver={e => e.currentTarget.style.opacity = '1'}
                         onMouseOut={e => e.currentTarget.style.opacity = '0.92'}
                       >
-                        <CallWaveform bars={bars} color={col} secondary={sec} direction="inbound" active={isHot} />
+                        <CallWaveform bars={bars} color={col} secondary={sec} direction="inbound" />
                       </div>
                     );
                   })}
@@ -307,7 +289,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
                         onMouseOver={e => e.currentTarget.style.opacity = '1'}
                         onMouseOut={e => e.currentTarget.style.opacity = '0.85'}
                       >
-                        <CallWaveform bars={bars} color={col} secondary={sec} direction="outbound" active={isHot} />
+                        <CallWaveform bars={bars} color={col} secondary={sec} direction="outbound" />
                       </div>
                     );
                   })}
