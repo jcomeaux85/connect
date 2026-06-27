@@ -39,6 +39,7 @@ export default function CallWaveform({ bars, color, secondary, direction }) {
                 ? `linear-gradient(180deg, ${secondary} 0%, ${color} 100%)`
                 : `linear-gradient(180deg, ${color} 0%, ${secondary} 100%)`,
               boxShadow: `0 0 3px ${color}55`,
+              transformOrigin: isInbound ? 'bottom' : 'top',
               transition: 'height 0.12s ease',
               // per-bar random offsets + stagger drive the wobble keyframes
               '--wf-h': `${base}%`,
