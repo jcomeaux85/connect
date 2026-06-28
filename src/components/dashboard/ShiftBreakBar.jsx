@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { Coffee, Clock, ChevronDown } from "lucide-react";
+import { Coffee, Clock, ChevronDown, X } from "lucide-react";
 
 const TODAY = format(new Date(), "yyyy-MM-dd");
 const DAY_START = "08:00";
@@ -84,6 +84,11 @@ export default function ShiftBreakBar({ isDark }) {
 
   const createBreak = useMutation({
     mutationFn: (d) => base44.entities.EmployeeBreak.create(d),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["queue-breaks-today"] }),
+  });
+
+  const removeBreak = useMutation({
+    mutationFn: (id) => base44.entities.EmployeeBreak.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["queue-breaks-today"] }),
   });
 
@@ -233,8 +238,11 @@ export default function ShiftBreakBar({ isDark }) {
           if (!bTime) return null;
           const c = colorOf(b.employee_email);
           const taken = b.status === "taken";
+          const mine = b.employee_email === active.email && !taken;
           return (
-            <div key={b.id} className="absolute top-1/2" title={`${nameOf(b.employee_email)} break ${fmt12(bTime)} (${taken ? "taken" : "scheduled"})`}
+            <div key={b.id} className="absolute top-1/2"
+              onClick={mine ? () => removeBreak.mutate(b.id) : undefined}
+              title={mine ? `Click to remove ${nameOf(b.employee_email)}'s scheduled break` : `${nameOf(b.employee_email)} break ${fmt12(bTime)} (${taken ? "taken" : "scheduled"})`}
               style={{
                 left: `${pct(bTime)}%`,
                 transform: "translate(-50%, -50%)",
@@ -242,6 +250,7 @@ export default function ShiftBreakBar({ isDark }) {
                 background: taken ? c : "transparent",
                 border: `2.5px solid ${c}`,
                 boxShadow: taken ? `0 0 7px ${c}bb` : `0 0 4px ${c}77`,
+                cursor: mine ? "pointer" : "default",
                 zIndex: 22,
               }} />
           );
@@ -303,6 +312,13 @@ export default function ShiftBreakBar({ isDark }) {
                     <span style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", padding: "1px 6px", borderRadius: 6, background: b.status === "taken" ? hexToRgba(c, 0.15) : (isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6"), color: b.status === "taken" ? c : txtSecondary }}>
                       {b.status === "taken" ? "Taken" : "Scheduled"}
                     </span>
+                    {b.status !== "taken" && (
+                      <button onClick={() => removeBreak.mutate(b.id)} title="Remove scheduled break"
+                        className="flex items-center justify-center rounded"
+                        style={{ width: 16, height: 16, background: "transparent", border: "none", color: txtSecondary, cursor: "pointer", flexShrink: 0 }}>
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
                   </div>
                 );
               })}
