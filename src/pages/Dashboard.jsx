@@ -6,6 +6,7 @@ import { Phone, PhoneIncoming, CheckSquare, Clock } from "lucide-react";
 import { isToday, parseISO } from "date-fns";
 import AgentCallTimeline from "@/components/dashboard/AgentCallTimeline";
 import ShiftFlowTimeline from "@/components/dashboard/ShiftFlowTimeline";
+import ShiftBreakBar from "@/components/dashboard/ShiftBreakBar";
 import CallQueuePanel from "@/components/dashboard/CallQueuePanel";
 import AgentActivityPanel from "@/components/dashboard/AgentActivityPanel";
 import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
@@ -220,8 +221,8 @@ export default function Dashboard() {
         }} />
       </div>
 
-      {/* Shift timeline */}
-      <ShiftFlowTimeline />
+      {/* Shift timeline — queue lunches + breaks */}
+      <ShiftBreakBar isDark={isDark} />
 
       {/* Stats row — tilt + click to open panel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
