@@ -6,7 +6,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
   MessageSquare, LogOut, Palette, Building2,
-  Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play, Lightbulb
+  Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play, Lightbulb, Settings
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -216,9 +216,7 @@ export default function PersistentSidebar({
   const actions = [
     { label: 'Messages', icon: MessageSquare, onClick: onToggleMessages },
     { label: 'Phone', icon: Phone, onClick: onTogglePhone },
-    { label: spotlightOn ? 'Spotlight On' : 'Spotlight', icon: Lightbulb, onClick: toggleSpotlight, active: spotlightOn },
-    { label: 'Customize', icon: Palette, onClick: onToggleBackgroundCustomizer },
-    { label: themeDark ? 'Light' : 'Dark', icon: themeDark ? Sun : Moon, onClick: toggleTheme },
+    { label: themeDark ? 'Light' : 'Dark', icon: themeDark ? Sun : Moon, onClick: toggleTheme, gear: onToggleBackgroundCustomizer },
     { label: 'Logout', icon: LogOut, onClick: handleLogout },
   ];
 
@@ -438,17 +436,17 @@ export default function PersistentSidebar({
               className={`pt-2 border-t ${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
               style={{ borderColor: PANEL_BORDER, gap: '5px' }}
             >
-              {actions.map(({ label, icon: Icon, onClick, to, active }) => {
+              {actions.map(({ label, icon: Icon, onClick, to, active, gear }) => {
                 const hovered = hoveredItem === `action-${label}`;
                 const btn = (
                   <div
-                    className="relative"
+                    className="relative flex items-center gap-1.5"
                     onMouseEnter={() => setHoveredItem(`action-${label}`)}
                     onMouseLeave={() => setHoveredItem(null)}
                   >
                     <LitButton
                       isActive={!!active}
-                      className="w-full flex items-center"
+                      className="flex-1 flex items-center"
                       onClick={onClick}
                       style={{
                         ...btnStyle(!!active),
@@ -470,6 +468,16 @@ export default function PersistentSidebar({
                         )}
                       </AnimatePresence>
                     </LitButton>
+                    {gear && !isMin && (
+                      <button
+                        onClick={gear}
+                        title="Customize background"
+                        className="flex items-center justify-center flex-shrink-0"
+                        style={{ ...btnStyle(false), width: '34px', height: '34px' }}
+                      >
+                        <Settings className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.65)' }} />
+                      </button>
+                    )}
                     {isMin && <HoverTooltip label={label} visible={hovered} />}
                   </div>
                 );

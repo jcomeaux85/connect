@@ -42,10 +42,22 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
         className="flex items-center gap-3 rounded-full px-3 sm:px-5 py-2.5"
         style={raised}
       >
-        {/* Brand */}
-        <span className="text-[11px] font-bold text-purple-500 tracking-widest uppercase pl-1 flex-shrink-0 hidden lg:block">
-          CORPS
-        </span>
+        {/* Brand — glowing green VT323 logo, clickable */}
+        <button
+          onClick={() => onNavigate('dashboard')}
+          className="bg-transparent border-0 p-0 pl-1 flex-shrink-0 cursor-pointer transition-transform duration-150 hover:scale-105"
+          title="CORPS"
+          style={{
+            fontFamily: "'VT323', ui-monospace, monospace",
+            fontSize: '30px',
+            lineHeight: 1,
+            color: '#33FF33',
+            letterSpacing: '0.02em',
+            textShadow: '0 0 8px rgba(51,255,51,0.55), 0 0 18px rgba(51,255,51,0.3)',
+          }}
+        >
+          CORPS//
+        </button>
 
         {/* Search pill — small by default, expands on focus (shrinking the buttons) */}
         <div
