@@ -131,20 +131,22 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         boxShadow: '0 1px 0 rgba(255,255,255,0.07), 0 4px 20px rgba(0,0,0,0.35)'
       }}>
       
-      {/* BEN|connect Logo */}
+      {/* BEN|connect Logo — white 3D dimensional signage */}
       <Link to="/" className="flex items-center flex-shrink-0 mr-2 select-none">
         <span
           style={{
-            fontFamily: "'Barlow Condensed', sans-serif",
-            fontWeight: 700,
-            fontSize: '24px',
+            fontFamily: "'Outfit', 'Barlow Condensed', sans-serif",
+            fontSize: '26px',
             lineHeight: 1,
             color: '#ffffff',
             whiteSpace: 'nowrap',
-            letterSpacing: '0.5px'
+            letterSpacing: '-0.5px',
+            textShadow: '0 1px 0 rgba(255,255,255,0.5), 2px 3px 4px rgba(0,0,0,0.45), 4px 6px 8px rgba(0,0,0,0.3)'
           }}>
           
-          BEN<span style={{ fontWeight: 400, opacity: 0.85 }}>|</span>connect
+          <span style={{ fontWeight: 800 }}>BEN</span>
+          <span style={{ fontWeight: 400, margin: '0 1px' }}>|</span>
+          <span style={{ fontWeight: 500 }}>connect</span>
         </span>
       </Link>
 
