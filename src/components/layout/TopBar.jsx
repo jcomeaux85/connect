@@ -197,31 +197,24 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         }
       </div>
 
-        {/* CORPS logo button — dark grey bg, neon green letters, thin white outline */}
-        <TiltBtn
+        {/* CORPS// logo button — glowing VT323 phosphor-green text, transparent bg */}
+        <div
         onClick={() => navigate('/Core')}
         title="CORPS — Workforce Portal"
-        style={{
-          background: '#2b2b30',
-          border: '1px solid rgba(255,255,255,0.85)',
-          borderRadius: '8px',
-          height: '32px',
-          display: 'flex', alignItems: 'center', padding: '0 16px',
-          flexShrink: 0
-        }}>
+        className="flex items-center flex-shrink-0 cursor-pointer select-none px-2"
+        style={{ height: '32px' }}>
           
           <span style={{
-          fontFamily: "'Outfit', sans-serif",
-          fontSize: '18px',
-          fontWeight: 800,
-          color: '#39ff14',
-          textShadow: '0 0 8px rgba(57,255,20,0.55)',
-          letterSpacing: '0.5px',
+          fontFamily: "'VT323', ui-monospace, monospace",
+          fontSize: '30px',
+          color: '#33FF33',
+          textShadow: '0 0 4px rgba(51,255,51,0.9), 0 0 10px rgba(51,255,51,0.6), 0 0 18px rgba(51,255,51,0.35)',
+          letterSpacing: '1px',
           lineHeight: 1
         }}>
-            CORPS
+            CORPS//
           </span>
-        </TiltBtn>
+        </div>
 
         {/* DOC™ button — white bg, thin grey border */}
         <TiltBtn
