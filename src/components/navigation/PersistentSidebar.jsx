@@ -392,7 +392,7 @@ export default function PersistentSidebar({
               <div className={isFull ? '' : 'w-full'}>
                 <button
                   onClick={onToggleDoc}
-                  className="w-full flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer group"
+                  className="w-full flex items-end justify-center bg-transparent border-0 p-0 cursor-pointer group"
                   style={{ background: 'transparent' }}
                   title="DOC — Directory of Coverages"
                 >
