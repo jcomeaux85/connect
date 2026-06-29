@@ -400,21 +400,19 @@ export default function PersistentSidebar({
                     src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f5105ec6d_DOCnobg.png"
                     alt="DOC"
                     className="object-contain transition-transform duration-150 group-hover:scale-105 w-auto"
-                    style={{ height: isFull ? '21px' : '31px', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
+                    style={{ height: isFull ? '30px' : '44px', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
                   />
                   <span
                     className="transition-transform duration-150 group-hover:scale-105"
                     style={{
-                      fontFamily: "'VT323', ui-monospace, monospace",
-                      fontSize: isFull ? '30px' : '44px',
-                      lineHeight: 1,
-                      color: '#ffffff',
-                      marginLeft: '1px',
-                      textShadow: '0 0 6px rgba(255,255,255,0.5)',
+                      width: isFull ? '14px' : '20px',
+                      height: isFull ? '3px' : '4px',
+                      background: '#ffffff',
+                      borderRadius: '1px',
+                      marginLeft: '3px',
+                      boxShadow: '0 0 6px rgba(255,255,255,0.5)',
                     }}
-                  >
-                    _
-                  </span>
+                  />
                 </button>
               </div>
 
