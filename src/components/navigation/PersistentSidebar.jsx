@@ -392,16 +392,29 @@ export default function PersistentSidebar({
               <div className={isFull ? '' : 'w-full'}>
                 <button
                   onClick={onToggleDoc}
-                  className="w-full flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer group"
+                  className="w-full flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer group"
                   style={{ background: 'transparent' }}
                   title="DOC — Directory of Coverages"
                 >
                   <img
                     src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f5105ec6d_DOCnobg.png"
                     alt="DOC"
-                    className="object-contain transition-transform duration-150 group-hover:scale-105 w-[78%]"
-                    style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
+                    className="object-contain transition-transform duration-150 group-hover:scale-105 w-auto"
+                    style={{ height: isFull ? '21px' : '31px', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
                   />
+                  <span
+                    className="transition-transform duration-150 group-hover:scale-105"
+                    style={{
+                      fontFamily: "'VT323', ui-monospace, monospace",
+                      fontSize: isFull ? '30px' : '44px',
+                      lineHeight: 1,
+                      color: '#ffffff',
+                      marginLeft: '1px',
+                      textShadow: '0 0 6px rgba(255,255,255,0.5)',
+                    }}
+                  >
+                    _
+                  </span>
                 </button>
               </div>
 
