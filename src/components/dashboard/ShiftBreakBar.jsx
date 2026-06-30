@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { Coffee, Clock } from "lucide-react";
 
-const BRAND_PURPLE = "#646cff";
+const BRAND_PURPLE = "#7c3aed";
 const ALERT_BLUE = "#3b82f6";
 
 const TODAY = format(new Date(), "yyyy-MM-dd");
@@ -184,7 +184,7 @@ export default function ShiftBreakBar({ isDark }) {
   const armed = showClock; // button is "armed" once a time has been picked
 
   return (
-    <div className="px-4 py-2.5 rounded-2xl" style={{ background: isDark ? "#23263a" : "#ffffff", border: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "#e5e7eb"}` }}>
+    <div className="px-4 py-2.5">
       {/* Section title — just above the left side of the bar */}
       <div className="mb-1.5" style={{ fontSize: 12, letterSpacing: "0.04em", color: txtSecondary }}>
         <span style={{ fontWeight: 800, color: txtPrimary }}>Q</span>flo
@@ -237,8 +237,8 @@ export default function ShiftBreakBar({ isDark }) {
           );
         })}
 
-        {/* Break + Clock buttons — inline, right side of the strip */}
-        <div className="absolute flex items-center gap-1.5" style={{ right: 0, top: "50%", transform: "translateY(-50%)", zIndex: 30 }}>
+        {/* Break + Clock buttons — directly under the right side of the bar */}
+        <div className="absolute flex items-center gap-1.5" style={{ right: 0, top: "100%", marginTop: "6px", zIndex: 30 }}>
           <AnimatePresence>
             {showClock && (
               <motion.div
@@ -256,14 +256,14 @@ export default function ShiftBreakBar({ isDark }) {
 
           <button onClick={() => setShowClock((s) => !s)} title="Schedule a break for a specific time"
             className="flex items-center justify-center rounded-lg"
-            style={{ width: 26, height: 26, background: showClock ? hexToRgba(ALERT_BLUE, 0.2) : (isDark ? "rgba(255,255,255,0.08)" : "#f3f4f6"), border: `1px solid ${showClock ? hexToRgba(ALERT_BLUE, 0.5) : (isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb")}`, color: showClock ? ALERT_BLUE : txtSecondary }}>
-            <Clock className="w-3.5 h-3.5" />
+            style={{ width: 22, height: 22, background: showClock ? hexToRgba(ALERT_BLUE, 0.2) : (isDark ? "rgba(255,255,255,0.08)" : "#f3f4f6"), border: `1px solid ${showClock ? hexToRgba(ALERT_BLUE, 0.5) : (isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb")}`, color: showClock ? ALERT_BLUE : txtSecondary }}>
+            <Clock className="w-3 h-3" />
           </button>
 
           <button onClick={showClock ? scheduleAt : takeNow} title={showClock ? "Schedule break at chosen time" : "Take a break now"}
             disabled={reachedLimit()}
-            className="relative flex items-center gap-1 rounded-lg px-2.5 font-bold text-[11px] overflow-hidden"
-            style={{ height: 26, background: reachedLimit() ? (isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6") : ALERT_BLUE, color: reachedLimit() ? txtSecondary : "#fff", border: "none", cursor: reachedLimit() ? "not-allowed" : "pointer", opacity: reachedLimit() ? 0.6 : 1 }}>
+            className="relative flex items-center gap-1 rounded-lg px-2 font-bold text-[10px] overflow-hidden"
+            style={{ height: 22, background: reachedLimit() ? (isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6") : ALERT_BLUE, color: reachedLimit() ? txtSecondary : "#fff", border: "none", cursor: reachedLimit() ? "not-allowed" : "pointer", opacity: reachedLimit() ? 0.6 : 1 }}>
             {/* Glare sweep — only while armed (a time has been picked) and not yet pressed */}
             {armed && !reachedLimit() && (
               <motion.span
@@ -274,7 +274,7 @@ export default function ShiftBreakBar({ isDark }) {
                 transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 0.6, ease: "easeInOut" }}
               />
             )}
-            <Coffee className="w-3.5 h-3.5 relative z-10" />
+            <Coffee className="w-3 h-3 relative z-10" />
             <span className="relative z-10">Break</span>
           </button>
         </div>
