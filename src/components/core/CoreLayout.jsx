@@ -1,9 +1,15 @@
 import React from 'react';
 import CorpsPillHeader from './CorpsPillHeader';
+import { useTheme } from '@/components/ThemeProvider';
 
 export default function CoreLayout({ activeSection, onNavigate, children }) {
+  const { isDark, colors } = useTheme();
+
   return (
-    <div className="corps-neu flex flex-col h-full bg-[#e8e8ee]" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div
+      className="corps-neu flex flex-col h-full"
+      style={{ fontFamily: "'Inter', sans-serif", background: isDark ? '#2a2e3a' : '#e8e8ee' }}
+    >
       {/* Neumorphic pill header — search + section nav (replaces the B|c hanging nav on CORPS) */}
       <CorpsPillHeader activeSection={activeSection} onNavigate={onNavigate} />
 

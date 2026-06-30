@@ -104,6 +104,45 @@ css
 }
 
 /* ─────────────────────────────────────────────────────────
+   CORPS Neumorphism — DARK MODE
+   Flip the soft-UI palette to charcoal and recolor the
+   hardcoded light surfaces (bg-white, bg-gray-50) and the
+   grey text so the whole CORPS module follows dark mode.
+   ───────────────────────────────────────────────────────── */
+.dark .corps-neu {
+  --neu-bg: #2a2e3a;
+  --neu-dark: #1f232d;
+  --neu-light: #353945;
+}
+
+/* Raised white cards → dark raised cards */
+.dark .corps-neu .bg-white {
+  background: var(--neu-bg) !important;
+}
+.dark .corps-neu .bg-white.rounded-2xl {
+  box-shadow: 6px 6px 14px var(--neu-dark), -6px -6px 14px var(--neu-light) !important;
+}
+
+/* Light grey chips/tiles → dark inset wells */
+.dark .corps-neu .bg-gray-50 {
+  background: var(--neu-bg) !important;
+}
+
+/* Light hover states shouldn't flash bright in dark mode */
+.dark .corps-neu .hover\:bg-gray-100:hover,
+.dark .corps-neu .hover\:bg-purple-50:hover {
+  background: #353945 !important;
+}
+
+/* Text: lift the dark greys to light so they're legible on charcoal */
+.dark .corps-neu .text-gray-900 { color: #f3f4f6 !important; }
+.dark .corps-neu .text-gray-800 { color: #e5e7eb !important; }
+.dark .corps-neu .text-gray-700 { color: #d1d5db !important; }
+.dark .corps-neu .text-gray-600 { color: #c7ccd4 !important; }
+.dark .corps-neu .text-gray-500 { color: #9ca3af !important; }
+/* gray-400 labels already read fine on dark — leave as-is */
+
+/* ─────────────────────────────────────────────────────────
    SPOTLIGHT — concentration aid (brightness only, no layout change)
    Reuses the same easing/feel as the existing hover hue transition.
    OFF (no data-spotlight on body): zero visual change.
