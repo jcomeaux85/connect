@@ -236,48 +236,48 @@ export default function ShiftBreakBar({ isDark }) {
               }} />
           );
         })}
+      </div>
 
-        {/* Break + Clock buttons — directly under the right side of the bar */}
-        <div className="absolute flex items-center gap-1.5" style={{ right: 0, top: "100%", marginTop: "6px", zIndex: 30 }}>
-          <AnimatePresence>
-            {showClock && (
-              <motion.div
-                initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: "auto" }} exit={{ opacity: 0, width: 0 }}
-                className="flex items-center gap-1.5 overflow-hidden"
-              >
-                <select value={pickTime} onChange={(e) => setPickTime(e.target.value)}
-                  className="text-[11px] font-semibold rounded-lg px-2 py-1 outline-none"
-                  style={{ background: isDark ? "rgba(255,255,255,0.08)" : "#f3f4f6", color: txtPrimary, border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb"}` }}>
-                  {timeOptions.map((t) => <option key={t} value={t}>{fmt12(t)}</option>)}
-                </select>
-              </motion.div>
-            )}
-          </AnimatePresence>
+      {/* Break + Clock buttons — in normal flow, right-aligned under the bar */}
+      <div className="flex items-center justify-end gap-1.5 mt-1.5">
+        <AnimatePresence>
+          {showClock && (
+            <motion.div
+              initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: "auto" }} exit={{ opacity: 0, width: 0 }}
+              className="flex items-center gap-1.5 overflow-hidden"
+            >
+              <select value={pickTime} onChange={(e) => setPickTime(e.target.value)}
+                className="text-[11px] font-semibold rounded-lg px-2 py-1 outline-none"
+                style={{ background: isDark ? "rgba(255,255,255,0.08)" : "#f3f4f6", color: txtPrimary, border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb"}` }}>
+                {timeOptions.map((t) => <option key={t} value={t}>{fmt12(t)}</option>)}
+              </select>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-          <button onClick={() => setShowClock((s) => !s)} title="Schedule a break for a specific time"
-            className="flex items-center justify-center rounded-lg"
-            style={{ width: 22, height: 22, background: showClock ? hexToRgba(ALERT_BLUE, 0.2) : (isDark ? "rgba(255,255,255,0.08)" : "#f3f4f6"), border: `1px solid ${showClock ? hexToRgba(ALERT_BLUE, 0.5) : (isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb")}`, color: showClock ? ALERT_BLUE : txtSecondary }}>
-            <Clock className="w-3 h-3" />
-          </button>
+        <button onClick={() => setShowClock((s) => !s)} title="Schedule a break for a specific time"
+          className="flex items-center justify-center rounded-lg"
+          style={{ width: 22, height: 22, background: showClock ? hexToRgba(ALERT_BLUE, 0.2) : (isDark ? "rgba(255,255,255,0.08)" : "#f3f4f6"), border: `1px solid ${showClock ? hexToRgba(ALERT_BLUE, 0.5) : (isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb")}`, color: showClock ? ALERT_BLUE : txtSecondary }}>
+          <Clock className="w-3 h-3" />
+        </button>
 
-          <button onClick={showClock ? scheduleAt : takeNow} title={showClock ? "Schedule break at chosen time" : "Take a break now"}
-            disabled={reachedLimit()}
-            className="relative flex items-center gap-1 rounded-lg px-2 font-bold text-[10px] overflow-hidden"
-            style={{ height: 22, background: reachedLimit() ? (isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6") : ALERT_BLUE, color: reachedLimit() ? txtSecondary : "#fff", border: "none", cursor: reachedLimit() ? "not-allowed" : "pointer", opacity: reachedLimit() ? 0.6 : 1 }}>
-            {/* Glare sweep — only while armed (a time has been picked) and not yet pressed */}
-            {armed && !reachedLimit() && (
-              <motion.span
-                className="absolute top-0 bottom-0 pointer-events-none"
-                style={{ width: "40%", background: "linear-gradient(105deg, transparent, rgba(255,255,255,0.65), transparent)" }}
-                initial={{ left: "-50%" }}
-                animate={{ left: "120%" }}
-                transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 0.6, ease: "easeInOut" }}
-              />
-            )}
-            <Coffee className="w-3 h-3 relative z-10" />
-            <span className="relative z-10">Break</span>
-          </button>
-        </div>
+        <button onClick={showClock ? scheduleAt : takeNow} title={showClock ? "Schedule break at chosen time" : "Take a break now"}
+          disabled={reachedLimit()}
+          className="relative flex items-center gap-1 rounded-lg px-2 font-bold text-[10px] overflow-hidden"
+          style={{ height: 22, background: reachedLimit() ? (isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6") : ALERT_BLUE, color: reachedLimit() ? txtSecondary : "#fff", border: "none", cursor: reachedLimit() ? "not-allowed" : "pointer", opacity: reachedLimit() ? 0.6 : 1 }}>
+          {/* Glare sweep — only while armed (a time has been picked) and not yet pressed */}
+          {armed && !reachedLimit() && (
+            <motion.span
+              className="absolute top-0 bottom-0 pointer-events-none"
+              style={{ width: "40%", background: "linear-gradient(105deg, transparent, rgba(255,255,255,0.65), transparent)" }}
+              initial={{ left: "-50%" }}
+              animate={{ left: "120%" }}
+              transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 0.6, ease: "easeInOut" }}
+            />
+          )}
+          <Coffee className="w-3 h-3 relative z-10" />
+          <span className="relative z-10">Break</span>
+        </button>
       </div>
     </div>
   );
