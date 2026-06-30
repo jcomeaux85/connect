@@ -3,6 +3,7 @@ import {
   LayoutDashboard, Clock, Calendar, FileText,
   DollarSign, User, Users, Search
 } from 'lucide-react';
+import { useTheme } from '@/components/ThemeProvider';
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -14,38 +15,45 @@ const navItems = [
   { id: 'team', label: 'Team', icon: Users },
 ];
 
-// Match the sidebar / top-nav purple glass language exactly
-const PANEL_BG = 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
-
-// Pill container — deep purple glass like the sidebar panel
-const container = {
-  background: PANEL_BG,
-  border: '1px solid rgba(255,255,255,0.13)',
-  boxShadow: '0 4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
-};
-
-// Inactive button — glassy white-on-purple (same as sidebar nav buttons)
-const raised = {
-  background: 'rgba(255,255,255,0.07)',
-  border: '1px solid rgba(255,255,255,0.10)',
-  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 4px rgba(0,0,0,0.25)',
-};
-// Active button — violet gradient with glow (same as sidebar active state)
-const pressed = {
-  background: 'linear-gradient(135deg, rgba(124,58,237,0.55) 0%, rgba(109,40,217,0.45) 100%)',
-  border: '1px solid rgba(167,139,250,0.4)',
-  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 1px rgba(167,139,250,0.35), 0 2px 8px rgba(0,0,0,0.3)',
-};
-// Search well — inset glass
-const pill = {
-  background: 'rgba(255,255,255,0.07)',
-  border: '1px solid rgba(255,255,255,0.10)',
-  boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.3)',
-};
-
 export default function CorpsPillHeader({ activeSection, onNavigate }) {
   const [search, setSearch] = useState('');
   const [focused, setFocused] = useState(false);
+  const { isDark } = useTheme();
+
+  // Dark mode: deep purple glass (matches sidebar/top-nav).
+  // Light mode: soft lavender glass so it reads on the light bg.
+  const PANEL_BG = isDark
+    ? 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)'
+    : 'linear-gradient(135deg, rgba(124,58,237,0.95) 0%, rgba(109,40,217,0.97) 60%, rgba(91,33,182,1) 100%)';
+
+  const container = {
+    background: PANEL_BG,
+    border: isDark ? '1px solid rgba(255,255,255,0.13)' : '1px solid rgba(255,255,255,0.25)',
+    boxShadow: isDark
+      ? '0 4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)'
+      : '0 6px 24px rgba(91,33,182,0.35), inset 0 1px 0 rgba(255,255,255,0.25)',
+  };
+
+  // Inactive button — glassy white-on-purple (same language as sidebar nav buttons)
+  const raised = {
+    background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.14)',
+    border: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(255,255,255,0.22)',
+    boxShadow: isDark
+      ? 'inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 4px rgba(0,0,0,0.25)'
+      : 'inset 0 1px 0 rgba(255,255,255,0.30), 0 1px 4px rgba(0,0,0,0.18)',
+  };
+  // Active button — violet gradient with glow (same as sidebar active state)
+  const pressed = {
+    background: 'linear-gradient(135deg, rgba(124,58,237,0.55) 0%, rgba(109,40,217,0.45) 100%)',
+    border: '1px solid rgba(167,139,250,0.4)',
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 1px rgba(167,139,250,0.35), 0 2px 8px rgba(0,0,0,0.3)',
+  };
+  // Search well — inset glass
+  const pill = {
+    background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.16)',
+    border: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(255,255,255,0.24)',
+    boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.3)',
+  };
 
   return (
     <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0">
