@@ -40,7 +40,7 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
   const [focused, setFocused] = useState(false);
 
   return (
-    <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0" style={{ background: NAV_BG }}>
+    <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0" style={{ background: BG }}>
       <div
         className="flex items-center gap-3 rounded-full px-3 sm:px-5 py-2.5"
         style={{ background: NAV_BG, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 20px rgba(0,0,0,0.35)' }}
