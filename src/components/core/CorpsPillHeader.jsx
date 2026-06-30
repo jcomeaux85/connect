@@ -14,26 +14,33 @@ const navItems = [
   { id: 'team', label: 'Team', icon: Users },
 ];
 
-// Pill container background — deep purple to match the sidebar & top nav
-const NAV_BG = '#1c0e3a';
+// Match the sidebar / top-nav purple glass language exactly
+const PANEL_BG = 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
 
-// Neumorphic raised surface for the buttons (stay grey)
-const BG = '#e8e8ee';
-const SHADOW_DARK = '#c5c5d0';
-const SHADOW_LIGHT = '#ffffff';
+// Pill container — deep purple glass like the sidebar panel
+const container = {
+  background: PANEL_BG,
+  border: '1px solid rgba(255,255,255,0.13)',
+  boxShadow: '0 4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
+};
 
+// Inactive button — glassy white-on-purple (same as sidebar nav buttons)
 const raised = {
-  background: BG,
-  boxShadow: `2px 2px 5px rgba(0,0,0,0.25)`,
-  border: '1px solid rgba(0,0,0,0.06)',
+  background: 'rgba(255,255,255,0.07)',
+  border: '1px solid rgba(255,255,255,0.10)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 4px rgba(0,0,0,0.25)',
 };
+// Active button — violet gradient with glow (same as sidebar active state)
 const pressed = {
-  background: BG,
-  boxShadow: `inset 4px 4px 8px ${SHADOW_DARK}, inset -4px -4px 8px ${SHADOW_LIGHT}`,
+  background: 'linear-gradient(135deg, rgba(124,58,237,0.55) 0%, rgba(109,40,217,0.45) 100%)',
+  border: '1px solid rgba(167,139,250,0.4)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 1px rgba(167,139,250,0.35), 0 2px 8px rgba(0,0,0,0.3)',
 };
+// Search well — inset glass
 const pill = {
-  background: BG,
-  boxShadow: `inset 3px 3px 7px ${SHADOW_DARK}, inset -3px -3px 7px ${SHADOW_LIGHT}`,
+  background: 'rgba(255,255,255,0.07)',
+  border: '1px solid rgba(255,255,255,0.10)',
+  boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.3)',
 };
 
 export default function CorpsPillHeader({ activeSection, onNavigate }) {
@@ -41,10 +48,10 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
   const [focused, setFocused] = useState(false);
 
   return (
-    <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0" style={{ background: BG }}>
+    <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0">
       <div
         className="flex items-center gap-3 rounded-full px-3 sm:px-5 py-2.5"
-        style={{ background: NAV_BG, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 20px rgba(0,0,0,0.35)' }}
+        style={container}
       >
         {/* Brand — glowing green VT323 logo, clickable */}
         <button
@@ -72,14 +79,15 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
             maxWidth: '100%',
           }}
         >
-          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <Search className="w-4 h-4 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.4)' }} />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             placeholder="Search..."
-            className="bg-transparent border-none outline-none text-sm text-gray-700 placeholder:text-gray-400 w-full"
+            className="bg-transparent border-none outline-none text-sm w-full"
+            style={{ color: 'rgba(255,255,255,0.9)', caretColor: '#a78bfa' }}
           />
         </div>
 
@@ -97,9 +105,9 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
               >
                 <Icon
                   className="w-4 h-4 flex-shrink-0"
-                  style={{ color: isActive ? '#7c3aed' : '#6b7280' }}
+                  style={{ color: isActive ? '#c4b5fd' : 'rgba(255,255,255,0.7)' }}
                 />
-                <span className="truncate" style={{ color: isActive ? '#7c3aed' : '#4b5563' }}>{label}</span>
+                <span className="truncate" style={{ color: isActive ? '#e9d5ff' : 'rgba(255,255,255,0.85)' }}>{label}</span>
               </button>
             );
           })}
