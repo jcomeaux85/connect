@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUser } from "@/components/hooks/useUser";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { Coffee, Clock, ChevronDown, X } from "lucide-react";
+import { Coffee, Clock } from "lucide-react";
+
+const BRAND_PURPLE = "#646cff";
+const ALERT_BLUE = "#3b82f6";
 
 const TODAY = format(new Date(), "yyyy-MM-dd");
 const DAY_START = "08:00";
@@ -49,6 +53,7 @@ const BREAK_LEN = 15; // minutes
 
 export default function ShiftBreakBar({ isDark }) {
   const queryClient = useQueryClient();
+  const { data: user } = useUser();
   const txtPrimary = isDark ? "#f0f0f0" : "#111827";
   const txtSecondary = isDark ? "#9ca3af" : "#6b7280";
 
@@ -56,8 +61,6 @@ export default function ShiftBreakBar({ isDark }) {
     const n = new Date();
     return n.getHours() * 60 + n.getMinutes();
   });
-  const [activeIdx, setActiveIdx] = useState(0); // which queue agent is "you" for the demo
-  const [showPicker, setShowPicker] = useState(false);
   const [showClock, setShowClock] = useState(false);
   const [pickTime, setPickTime] = useState("10:15");
 
@@ -92,9 +95,16 @@ export default function ShiftBreakBar({ isDark }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["queue-breaks-today"] }),
   });
 
-  const active = QUEUE[activeIdx];
-  const colorOf = (email) => QUEUE.find((q) => q.email === email)?.color || "#94a3b8";
-  const nameOf = (email) => QUEUE.find((q) => q.email === email)?.name || "?";
+  // Locked to the logged-in user — no switching, ever.
+  const active = {
+    name: user?.full_name || "You",
+    email: user?.email || "you@queue.demo",
+    color: BRAND_PURPLE,
+  };
+  const colorOf = (email) =>
+    email === active.email ? BRAND_PURPLE : (QUEUE.find((q) => q.email === email)?.color || "#94a3b8");
+  const nameOf = (email) =>
+    email === active.email ? active.name : (QUEUE.find((q) => q.email === email)?.name || "?");
 
   const myBreaks = queueBreaks.filter((b) => b.employee_email === active.email);
 
@@ -171,49 +181,20 @@ export default function ShiftBreakBar({ isDark }) {
     return opts;
   }, []);
 
+  const armed = showClock; // button is "armed" once a time has been picked
+
   return (
-    <div className="px-4 py-3 rounded-2xl" style={{ background: isDark ? "#23263a" : "#ffffff", border: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "#e5e7eb"}` }}>
-      {/* Header row: queue label + who-am-I picker */}
-      <div className="flex items-center justify-between mb-2">
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: txtSecondary }}>
-          Queue Shift &amp; Breaks
-        </span>
-        <div className="relative">
-          <button
-            onClick={() => setShowPicker((p) => !p)}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-bold"
-            style={{ background: hexToRgba(active.color, 0.15), color: active.color, border: `1px solid ${hexToRgba(active.color, 0.4)}` }}
-          >
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: active.color, display: "inline-block" }} />
-            {active.name}
-            <ChevronDown className="w-3 h-3" />
-          </button>
-          <AnimatePresence>
-            {showPicker && (
-              <motion.div
-                initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
-                className="absolute right-0 mt-1 z-50 rounded-xl p-1 shadow-xl"
-                style={{ background: isDark ? "#1a1424" : "#fff", border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e5e7eb"}`, minWidth: 120 }}
-              >
-                {QUEUE.map((q, i) => (
-                  <button key={q.email} onClick={() => { setActiveIdx(i); setShowPicker(false); }}
-                    className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-[11px] font-semibold"
-                    style={{ color: txtPrimary, background: i === activeIdx ? hexToRgba(q.color, 0.12) : "transparent" }}>
-                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: q.color }} />
-                    {q.name}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+    <div className="px-4 py-2.5 rounded-2xl" style={{ background: isDark ? "#23263a" : "#ffffff", border: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "#e5e7eb"}` }}>
+      {/* Section title — just above the left side of the bar */}
+      <div className="mb-1.5" style={{ fontSize: 12, letterSpacing: "0.04em", color: txtSecondary }}>
+        <span style={{ fontWeight: 800, color: txtPrimary }}>Q</span>flo
       </div>
 
       {/* === BAR === */}
-      <div className="relative" style={{ height: "28px" }}>
-        <div className="absolute rounded-full overflow-hidden" style={{ top: "7px", left: 0, right: 0, height: "14px", background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.08)" }}>
+      <div className="relative" style={{ height: "20px" }}>
+        <div className="absolute rounded-full overflow-hidden" style={{ top: "3px", left: 0, right: 0, height: "14px", background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.08)" }}>
           {/* Time progress fill */}
-          <div className="absolute top-0 left-0 h-full" style={{ width: `${progressPct}%`, background: "linear-gradient(90deg, #22c55e, #16a34a)" }} />
+          <div className="absolute top-0 left-0 h-full" style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${BRAND_PURPLE}, #4f46e5)` }} />
 
           {/* Fixed lunch segments — one per agent, in their color */}
           {QUEUE.map((q) => (
@@ -229,7 +210,7 @@ export default function ShiftBreakBar({ isDark }) {
 
         {/* Now line */}
         {progressPct > 0 && progressPct < 100 && (
-          <div className="absolute pointer-events-none" style={{ left: `${progressPct}%`, top: "3px", bottom: "3px", width: "2px", background: "#22c55e", boxShadow: "0 0 6px rgba(34,197,94,0.8)", transform: "translateX(-50%)", zIndex: 25 }} />
+          <div className="absolute pointer-events-none" style={{ left: `${progressPct}%`, top: "1px", bottom: "1px", width: "2px", background: BRAND_PURPLE, boxShadow: `0 0 6px ${hexToRgba(BRAND_PURPLE, 0.8)}`, transform: "translateX(-50%)", zIndex: 25 }} />
         )}
 
         {/* Break circles — filled = taken, outline = reserved */}
@@ -256,8 +237,8 @@ export default function ShiftBreakBar({ isDark }) {
           );
         })}
 
-        {/* Break + Clock buttons — bottom right */}
-        <div className="absolute flex items-center gap-1.5" style={{ right: 0, bottom: "-30px", zIndex: 30 }}>
+        {/* Break + Clock buttons — inline, right side of the strip */}
+        <div className="absolute flex items-center gap-1.5" style={{ right: 0, top: "50%", transform: "translateY(-50%)", zIndex: 30 }}>
           <AnimatePresence>
             {showClock && (
               <motion.div
@@ -275,55 +256,28 @@ export default function ShiftBreakBar({ isDark }) {
 
           <button onClick={() => setShowClock((s) => !s)} title="Schedule a break for a specific time"
             className="flex items-center justify-center rounded-lg"
-            style={{ width: 26, height: 26, background: showClock ? hexToRgba(active.color, 0.2) : (isDark ? "rgba(255,255,255,0.08)" : "#f3f4f6"), border: `1px solid ${showClock ? hexToRgba(active.color, 0.5) : (isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb")}`, color: showClock ? active.color : txtSecondary }}>
+            style={{ width: 26, height: 26, background: showClock ? hexToRgba(ALERT_BLUE, 0.2) : (isDark ? "rgba(255,255,255,0.08)" : "#f3f4f6"), border: `1px solid ${showClock ? hexToRgba(ALERT_BLUE, 0.5) : (isDark ? "rgba(255,255,255,0.12)" : "#e5e7eb")}`, color: showClock ? ALERT_BLUE : txtSecondary }}>
             <Clock className="w-3.5 h-3.5" />
           </button>
 
           <button onClick={showClock ? scheduleAt : takeNow} title={showClock ? "Schedule break at chosen time" : "Take a break now"}
             disabled={reachedLimit()}
-            className="flex items-center gap-1 rounded-lg px-2.5 font-bold text-[11px]"
-            style={{ height: 26, background: reachedLimit() ? (isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6") : hexToRgba(active.color, 0.9), color: reachedLimit() ? txtSecondary : "#fff", border: "none", cursor: reachedLimit() ? "not-allowed" : "pointer", opacity: reachedLimit() ? 0.6 : 1 }}>
-            <Coffee className="w-3.5 h-3.5" />
-            Break
+            className="relative flex items-center gap-1 rounded-lg px-2.5 font-bold text-[11px] overflow-hidden"
+            style={{ height: 26, background: reachedLimit() ? (isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6") : ALERT_BLUE, color: reachedLimit() ? txtSecondary : "#fff", border: "none", cursor: reachedLimit() ? "not-allowed" : "pointer", opacity: reachedLimit() ? 0.6 : 1 }}>
+            {/* Glare sweep — only while armed (a time has been picked) and not yet pressed */}
+            {armed && !reachedLimit() && (
+              <motion.span
+                className="absolute top-0 bottom-0 pointer-events-none"
+                style={{ width: "40%", background: "linear-gradient(105deg, transparent, rgba(255,255,255,0.65), transparent)" }}
+                initial={{ left: "-50%" }}
+                animate={{ left: "120%" }}
+                transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 0.6, ease: "easeInOut" }}
+              />
+            )}
+            <Coffee className="w-3.5 h-3.5 relative z-10" />
+            <span className="relative z-10">Break</span>
           </button>
         </div>
-      </div>
-
-      {/* === SEPARATE BREAK-DATA DISPLAY === */}
-      <div className="mt-9 pt-2" style={{ borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "#f0f0f0"}` }}>
-        <div className="flex items-center justify-between mb-1.5">
-          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: txtSecondary }}>Break Log</span>
-          <span style={{ fontSize: 10, color: txtSecondary }}>{queueBreaks.length} today</span>
-        </div>
-        {queueBreaks.length === 0 ? (
-          <p style={{ fontSize: 11, color: txtSecondary }}>No breaks recorded yet.</p>
-        ) : (
-          <div className="flex flex-col gap-1">
-            {[...queueBreaks]
-              .sort((a, b) => toMins(a.actual_start_time || a.requested_start_time) - toMins(b.actual_start_time || b.requested_start_time))
-              .map((b) => {
-                const bTime = b.actual_start_time || b.requested_start_time;
-                const c = colorOf(b.employee_email);
-                return (
-                  <div key={b.id} className="flex items-center gap-2 text-[11px]">
-                    <span style={{ width: 9, height: 9, borderRadius: "50%", background: b.status === "taken" ? c : "transparent", border: `2px solid ${c}`, flexShrink: 0 }} />
-                    <span style={{ fontWeight: 700, color: txtPrimary, minWidth: 56 }}>{nameOf(b.employee_email)}</span>
-                    <span style={{ color: txtPrimary }}>{fmt12(bTime)} – {fmt12(fromMins(toMins(bTime) + BREAK_LEN))}</span>
-                    <span style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", padding: "1px 6px", borderRadius: 6, background: b.status === "taken" ? hexToRgba(c, 0.15) : (isDark ? "rgba(255,255,255,0.06)" : "#f3f4f6"), color: b.status === "taken" ? c : txtSecondary }}>
-                      {b.status === "taken" ? "Taken" : "Scheduled"}
-                    </span>
-                    {b.status !== "taken" && (
-                      <button onClick={() => removeBreak.mutate(b.id)} title="Remove scheduled break"
-                        className="flex items-center justify-center rounded"
-                        style={{ width: 16, height: 16, background: "transparent", border: "none", color: txtSecondary, cursor: "pointer", flexShrink: 0 }}>
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-          </div>
-        )}
       </div>
     </div>
   );
