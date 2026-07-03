@@ -136,6 +136,17 @@ export default function Analytics() {
   const complianceRating = 94; // Placeholder - would come from CallTranscript compliance_score
   const qualityScore = 87; // Placeholder - would come from CallTranscript quality_score
 
+  // ─────────────────────────────────────────────────────────
+  // DEMO MODE — goal-forward placeholder data for the pitch.
+  // When no real records exist yet, surface realistic call-center
+  // numbers so every chart and metric looks alive. As soon as real
+  // data lands, these fall back to the computed values above.
+  // ─────────────────────────────────────────────────────────
+  const isDemo = calls.length === 0 && cases.length === 0 && tasks.length === 0;
+
+  // Deterministic pseudo-random so the demo looks stable across renders
+  const seeded = (i, base, spread) => base + Math.round((Math.sin(i * 12.9898) * 43758.5453 % 1 + 1) / 2 * spread);
+
   // Overall metrics
   const totalCalls = calls.length;
   const inboundCalls = calls.filter(c => c.direction === 'inbound').length;
@@ -157,11 +168,23 @@ export default function Analytics() {
     end: new Date()
   });
 
-  const callVolumeData = last14Days.map(day => {
+  const callVolumeData = last14Days.map((day, i) => {
     const dayStr = format(day, 'yyyy-MM-dd');
     const dayCalls = calls.filter(c =>
       c.created_date && format(new Date(c.created_date), 'yyyy-MM-dd') === dayStr
     );
+    if (isDemo) {
+      const inbound = seeded(i + 1, 38, 46);
+      const outbound = seeded(i + 7, 22, 30);
+      return {
+        date: format(day, 'MMM d'),
+        calls: inbound + outbound,
+        inbound,
+        outbound,
+        missed: seeded(i + 3, 2, 6),
+        avgDuration: seeded(i + 5, 4, 5)
+      };
+    }
     return {
       date: format(day, 'MMM d'),
       calls: dayCalls.length,
@@ -173,11 +196,20 @@ export default function Analytics() {
   });
 
   // Case trends
-  const caseTrendData = last14Days.map(day => {
+  const caseTrendData = last14Days.map((day, i) => {
     const dayStr = format(day, 'yyyy-MM-dd');
     const dayCases = cases.filter(c =>
       c.created_date && format(new Date(c.created_date), 'yyyy-MM-dd') === dayStr
     );
+    if (isDemo) {
+      const opened = seeded(i + 2, 12, 16);
+      return {
+        date: format(day, 'MMM d'),
+        opened,
+        closed: Math.max(opened - seeded(i + 4, 1, 4), 4),
+        escalated: seeded(i + 6, 1, 3)
+      };
+    }
     return {
       date: format(day, 'MMM d'),
       opened: dayCases.length,
@@ -186,20 +218,95 @@ export default function Analytics() {
     };
   });
 
+  // ── Demo counts (used across cards, pies and bars when isDemo) ──
+  const demo = {
+    totalCalls: 3847,
+    inbound: 2361,
+    outbound: 1486,
+    avgCallDuration: 272, // seconds → 4:32
+    activeCases: 142,
+    resolvedCases: 1089,
+    urgentCases: 9,
+    casesNew: 37,
+    casesInProgress: 96,
+    casesPending: 46,
+    callCompleted: 3512,
+    callMissed: 214,
+    callBusy: 61,
+    callNoAnswer: 60,
+    priUrgent: 9, priHigh: 41, priMedium: 118, priLow: 66,
+    thisWeekCallTime: 486000, lastWeekCallTime: 441000,
+    avgCallTimeThisWeek: 268, avgCallTimeLastWeek: 291,
+    missedCallsThisWeek: 18, missedCallsLastWeek: 27,
+    outboundThisWeek: 312, outboundLastWeek: 274,
+    inboundThisWeek: 498, inboundLastWeek: 452,
+    threeWayThisWeek: 14, threeWayLastWeek: 9,
+    totalCallsThisWeek: 824, totalCallsLastWeek: 735,
+    casesOpenedThisWeek: 96, casesOpenedLastWeek: 81,
+    casesClosedThisWeek: 88, casesClosedLastWeek: 74,
+    escalatedThisWeek: 6, escalatedLastWeek: 11,
+    tasksCreated: 214, tasksAssigned: 63, tasksAssignedCompleted: 51,
+    tasksCompletedThisWeek: 47, tasksCompletedLastWeek: 39,
+    pendingThisWeek: 12, pendingLastWeek: 18,
+  };
+
+  // Resolve a metric: real value when live, demo value in demo mode
+  const M = (real, demoVal) => (isDemo ? demoVal : real);
+
+  // Display-resolved metrics — these feed the StatCards, pies and bars.
+  const d_totalCalls = M(totalCalls, demo.totalCalls);
+  const d_avgCallDuration = M(avgCallDuration, demo.avgCallDuration);
+  const d_activeCases = M(activeCases, demo.activeCases);
+  const d_resolvedCases = M(resolvedCases, demo.resolvedCases);
+  const d_thisWeekCallTime = M(thisWeekCallTime, demo.thisWeekCallTime);
+  const d_lastWeekCallTime = M(lastWeekCallTime, demo.lastWeekCallTime);
+  const d_avgCallTimeThisWeek = M(avgCallTimeThisWeek, demo.avgCallTimeThisWeek);
+  const d_avgCallTimeLastWeek = M(avgCallTimeLastWeek, demo.avgCallTimeLastWeek);
+  const d_missedThisWeek = M(missedCallsThisWeek, demo.missedCallsThisWeek);
+  const d_missedLastWeek = M(missedCallsLastWeek, demo.missedCallsLastWeek);
+  const d_outboundThisWeek = M(outboundCallsThisWeek, demo.outboundThisWeek);
+  const d_outboundLastWeek = M(outboundCallsLastWeek, demo.outboundLastWeek);
+  const d_inboundThisWeek = M(thisWeekCalls.filter(c => c.direction === 'inbound').length, demo.inboundThisWeek);
+  const d_inboundLastWeek = M(lastWeekCalls.filter(c => c.direction === 'inbound').length, demo.inboundLastWeek);
+  const d_threeWayThisWeek = M(threeWayCallsThisWeek, demo.threeWayThisWeek);
+  const d_threeWayLastWeek = M(threeWayCallsLastWeek, demo.threeWayLastWeek);
+  const d_totalCallsThisWeek = M(thisWeekCalls.length, demo.totalCallsThisWeek);
+  const d_totalCallsLastWeek = M(lastWeekCalls.length, demo.totalCallsLastWeek);
+  const d_casesOpenedThisWeek = M(casesOpenedThisWeek, demo.casesOpenedThisWeek);
+  const d_casesOpenedLastWeek = M(casesOpenedLastWeek, demo.casesOpenedLastWeek);
+  const d_casesClosedThisWeek = M(casesClosedThisWeek, demo.casesClosedThisWeek);
+  const d_casesClosedLastWeek = M(casesClosedLastWeek, demo.casesClosedLastWeek);
+  const d_escalatedThisWeek = M(escalatedCasesThisWeek, demo.escalatedThisWeek);
+  const d_escalatedLastWeek = M(escalatedCasesLastWeek, demo.escalatedLastWeek);
+  const d_tasksCreated = M(tasksCreatedByUser, demo.tasksCreated);
+  const d_tasksAssigned = M(tasksAssignedToUser, demo.tasksAssigned);
+  const d_tasksAssignedCompleted = M(tasks.filter(t => t.assigned_to === user?.email && t.status === 'completed').length, demo.tasksAssignedCompleted);
+  const d_tasksCompletedThisWeek = M(tasksCompletedThisWeek, demo.tasksCompletedThisWeek);
+  const d_tasksCompletedLastWeek = M(tasksCompletedLastWeek, demo.tasksCompletedLastWeek);
+  const d_pendingThisWeek = M(tasks.filter(t => t.status === 'pending' && t.created_date && isThisWeek(t.created_date)).length, demo.pendingThisWeek);
+  const d_pendingLastWeek = M(tasks.filter(t => t.status === 'pending' && t.created_date && isLastWeek(t.created_date)).length, demo.pendingLastWeek);
+  const d_totalCases = M(cases.length, demo.casesInProgress + demo.casesNew + demo.casesPending + demo.resolvedCases);
+
+  // Demo-aware percentage deltas
+  const d_callTimeChange = isDemo ? 10 : callTimeChange;
+  const d_avgCallTimeChange = isDemo ? -8 : avgCallTimeChange;
+  const d_casesOpenedChange = isDemo ? 19 : casesOpenedChange;
+  const d_casesClosedChange = isDemo ? 19 : casesClosedChange;
+
   // Case status distribution
   const caseStatusData = [
-    { name: 'Active', value: cases.filter(c => c.status === 'in_progress').length, color: colors.primary },
-    { name: 'New', value: cases.filter(c => c.status === 'new').length, color: colors.success },
-    { name: 'Pending', value: cases.filter(c => c.status === 'pending').length, color: colors.warning },
-    { name: 'Resolved', value: resolvedCases, color: colors.gray }
+    { name: 'Active', value: M(cases.filter(c => c.status === 'in_progress').length, demo.casesInProgress), color: colors.primary },
+    { name: 'New', value: M(cases.filter(c => c.status === 'new').length, demo.casesNew), color: colors.success },
+    { name: 'Pending', value: M(cases.filter(c => c.status === 'pending').length, demo.casesPending), color: colors.warning },
+    { name: 'Resolved', value: M(resolvedCases, demo.resolvedCases), color: colors.gray }
   ];
 
   // Priority distribution
   const priorityData = [
-    { name: 'Urgent', value: cases.filter(c => c.priority === 'urgent').length, color: colors.danger },
-    { name: 'High', value: cases.filter(c => c.priority === 'high').length, color: colors.warning },
-    { name: 'Medium', value: cases.filter(c => c.priority === 'medium').length, color: colors.primary },
-    { name: 'Low', value: cases.filter(c => c.priority === 'low').length, color: colors.gray }
+    { name: 'Urgent', value: M(cases.filter(c => c.priority === 'urgent').length, demo.priUrgent), color: colors.danger },
+    { name: 'High', value: M(cases.filter(c => c.priority === 'high').length, demo.priHigh), color: colors.warning },
+    { name: 'Medium', value: M(cases.filter(c => c.priority === 'medium').length, demo.priMedium), color: colors.primary },
+    { name: 'Low', value: M(cases.filter(c => c.priority === 'low').length, demo.priLow), color: colors.gray }
   ];
 
   // Helper function to format time
@@ -258,9 +365,19 @@ export default function Analytics() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-bold" style={{ color: colors.text }}>
-              Analytics Dashboard
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-4xl font-bold" style={{ color: colors.text }}>
+                Analytics Dashboard
+              </h1>
+              {isDemo && (
+                <span
+                  className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
+                  style={{ color: colors.purple, background: colors.bg, boxShadow: `inset 2px 2px 4px ${colors.shadowDark}, inset -2px -2px 4px ${colors.shadowLight}` }}
+                >
+                  Demo Data
+                </span>
+              )}
+            </div>
             <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
               Comprehensive call center performance metrics and insights
             </p>
@@ -295,20 +412,20 @@ export default function Analytics() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatCard
                 title="Total Calls (All Time)"
-                value={totalCalls}
+                value={d_totalCalls.toLocaleString()}
                 icon={Phone}
                 color={colors.primary}
               />
               <StatCard
                 title="Active Cases"
-                value={activeCases}
-                subtitle={`${resolvedCases} resolved`}
+                value={d_activeCases}
+                subtitle={`${d_resolvedCases.toLocaleString()} resolved`}
                 icon={Activity}
                 color={colors.success}
               />
               <StatCard
                 title="Avg Call Time"
-                value={formatTime(avgCallDuration)}
+                value={formatTime(d_avgCallDuration)}
                 icon={Clock}
                 color={colors.warning}
               />
@@ -383,29 +500,29 @@ export default function Analytics() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatCard
                 title="This Week Call Time"
-                value={formatDuration(thisWeekCallTime)}
-                change={callTimeChange}
+                value={formatDuration(d_thisWeekCallTime)}
+                change={d_callTimeChange}
                 icon={Clock}
                 color={colors.primary}
               />
               <StatCard
                 title="Last Week Call Time"
-                value={formatDuration(lastWeekCallTime)}
+                value={formatDuration(d_lastWeekCallTime)}
                 icon={Clock}
                 color={colors.textSecondary}
               />
               <StatCard
                 title="Avg Call Time (This Week)"
-                value={formatTime(avgCallTimeThisWeek)}
-                subtitle={`Last week: ${formatTime(avgCallTimeLastWeek)}`}
-                change={avgCallTimeChange}
+                value={formatTime(d_avgCallTimeThisWeek)}
+                subtitle={`Last week: ${formatTime(d_avgCallTimeLastWeek)}`}
+                change={d_avgCallTimeChange}
                 icon={Activity}
                 color={colors.warning}
               />
               <StatCard
                 title="Missed Calls (This Week)"
-                value={missedCallsThisWeek}
-                subtitle={`Last week: ${missedCallsLastWeek}`}
+                value={d_missedThisWeek}
+                subtitle={`Last week: ${d_missedLastWeek}`}
                 icon={PhoneMissed}
                 color={colors.danger}
               />
@@ -414,29 +531,29 @@ export default function Analytics() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatCard
                 title="Outbound Calls (This Week)"
-                value={outboundCallsThisWeek}
-                subtitle={`Last week: ${outboundCallsLastWeek}`}
+                value={d_outboundThisWeek}
+                subtitle={`Last week: ${d_outboundLastWeek}`}
                 icon={PhoneOutgoing}
                 color={colors.primary}
               />
               <StatCard
                 title="Inbound Calls (This Week)"
-                value={thisWeekCalls.filter(c => c.direction === 'inbound').length}
-                subtitle={`Last week: ${lastWeekCalls.filter(c => c.direction === 'inbound').length}`}
+                value={d_inboundThisWeek}
+                subtitle={`Last week: ${d_inboundLastWeek}`}
                 icon={PhoneIncoming}
                 color={colors.success}
               />
               <StatCard
                 title="3-Way Calls (This Week)"
-                value={threeWayCallsThisWeek}
-                subtitle={`Last week: ${threeWayCallsLastWeek}`}
+                value={d_threeWayThisWeek}
+                subtitle={`Last week: ${d_threeWayLastWeek}`}
                 icon={Users}
                 color={colors.purple}
               />
               <StatCard
                 title="Total Calls (This Week)"
-                value={thisWeekCalls.length}
-                subtitle={`Last week: ${lastWeekCalls.length}`}
+                value={d_totalCallsThisWeek}
+                subtitle={`Last week: ${d_totalCallsLastWeek}`}
                 icon={Phone}
                 color={colors.info}
               />
@@ -476,10 +593,10 @@ export default function Analytics() {
                     <PieChart>
                       <Pie
                         data={[
-                          { name: 'Completed', value: calls.filter(c => c.status === 'completed').length, color: colors.success },
-                          { name: 'Missed', value: calls.filter(c => c.status === 'missed').length, color: colors.danger },
-                          { name: 'Busy', value: calls.filter(c => c.status === 'busy').length, color: colors.warning },
-                          { name: 'No Answer', value: calls.filter(c => c.status === 'no_answer').length, color: colors.textSecondary },
+                          { name: 'Completed', value: M(calls.filter(c => c.status === 'completed').length, demo.callCompleted), color: colors.success },
+                          { name: 'Missed', value: M(calls.filter(c => c.status === 'missed').length, demo.callMissed), color: colors.danger },
+                          { name: 'Busy', value: M(calls.filter(c => c.status === 'busy').length, demo.callBusy), color: colors.warning },
+                          { name: 'No Answer', value: M(calls.filter(c => c.status === 'no_answer').length, demo.callNoAnswer), color: colors.textSecondary },
                         ]}
                         cx="50%"
                         cy="50%"
@@ -488,10 +605,10 @@ export default function Analytics() {
                         label={(entry) => entry.value > 0 ? `${entry.name}: ${entry.value}` : null}
                       >
                         {[
-                          { name: 'Completed', value: calls.filter(c => c.status === 'completed').length, color: colors.success },
-                          { name: 'Missed', value: calls.filter(c => c.status === 'missed').length, color: colors.danger },
-                          { name: 'Busy', value: calls.filter(c => c.status === 'busy').length, color: colors.warning },
-                          { name: 'No Answer', value: calls.filter(c => c.status === 'no_answer').length, color: colors.textSecondary },
+                          { name: 'Completed', value: M(calls.filter(c => c.status === 'completed').length, demo.callCompleted), color: colors.success },
+                          { name: 'Missed', value: M(calls.filter(c => c.status === 'missed').length, demo.callMissed), color: colors.danger },
+                          { name: 'Busy', value: M(calls.filter(c => c.status === 'busy').length, demo.callBusy), color: colors.warning },
+                          { name: 'No Answer', value: M(calls.filter(c => c.status === 'no_answer').length, demo.callNoAnswer), color: colors.textSecondary },
                         ].map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
@@ -516,31 +633,31 @@ export default function Analytics() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatCard
                 title="Cases Opened (This Week)"
-                value={casesOpenedThisWeek}
-                subtitle={`Last week: ${casesOpenedLastWeek}`}
-                change={casesOpenedChange}
+                value={d_casesOpenedThisWeek}
+                subtitle={`Last week: ${d_casesOpenedLastWeek}`}
+                change={d_casesOpenedChange}
                 icon={FolderOpen}
                 color={colors.primary}
               />
               <StatCard
                 title="Cases Closed (This Week)"
-                value={casesClosedThisWeek}
-                subtitle={`Last week: ${casesClosedLastWeek}`}
-                change={casesClosedChange}
+                value={d_casesClosedThisWeek}
+                subtitle={`Last week: ${d_casesClosedLastWeek}`}
+                change={d_casesClosedChange}
                 icon={FolderCheck}
                 color={colors.success}
               />
               <StatCard
                 title="Escalated Cases (This Week)"
-                value={escalatedCasesThisWeek}
-                subtitle={`Last week: ${escalatedCasesLastWeek}`}
+                value={d_escalatedThisWeek}
+                subtitle={`Last week: ${d_escalatedLastWeek}`}
                 icon={Zap}
                 color={colors.danger}
               />
               <StatCard
                 title="Active Cases"
-                value={activeCases}
-                subtitle={`${resolvedCases} total resolved`}
+                value={d_activeCases}
+                subtitle={`${d_resolvedCases.toLocaleString()} total resolved`}
                 icon={Activity}
                 color={colors.info}
               />
@@ -556,10 +673,10 @@ export default function Analytics() {
                     <PieChart>
                       <Pie
                         data={[
-                          { name: 'Active', value: cases.filter(c => c.status === 'in_progress').length, color: colors.primary },
-                          { name: 'New', value: cases.filter(c => c.status === 'new').length, color: colors.success },
-                          { name: 'Pending', value: cases.filter(c => c.status === 'pending').length, color: colors.warning },
-                          { name: 'Resolved', value: resolvedCases, color: colors.textSecondary }
+                          { name: 'Active', value: M(cases.filter(c => c.status === 'in_progress').length, demo.casesInProgress), color: colors.primary },
+                          { name: 'New', value: M(cases.filter(c => c.status === 'new').length, demo.casesNew), color: colors.success },
+                          { name: 'Pending', value: M(cases.filter(c => c.status === 'pending').length, demo.casesPending), color: colors.warning },
+                          { name: 'Resolved', value: d_resolvedCases, color: colors.textSecondary }
                         ]}
                         cx="50%"
                         cy="50%"
@@ -568,10 +685,10 @@ export default function Analytics() {
                         label={(entry) => entry.value > 0 ? `${entry.name}: ${entry.value}` : null}
                       >
                         {[
-                          { name: 'Active', value: cases.filter(c => c.status === 'in_progress').length, color: colors.primary },
-                          { name: 'New', value: cases.filter(c => c.status === 'new').length, color: colors.success },
-                          { name: 'Pending', value: cases.filter(c => c.status === 'pending').length, color: colors.warning },
-                          { name: 'Resolved', value: resolvedCases, color: colors.textSecondary }
+                          { name: 'Active', value: M(cases.filter(c => c.status === 'in_progress').length, demo.casesInProgress), color: colors.primary },
+                          { name: 'New', value: M(cases.filter(c => c.status === 'new').length, demo.casesNew), color: colors.success },
+                          { name: 'Pending', value: M(cases.filter(c => c.status === 'pending').length, demo.casesPending), color: colors.warning },
+                          { name: 'Resolved', value: d_resolvedCases, color: colors.textSecondary }
                         ].map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
@@ -595,12 +712,7 @@ export default function Analytics() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {[
-                      { name: 'Urgent', value: cases.filter(c => c.priority === 'urgent').length, color: colors.danger },
-                      { name: 'High', value: cases.filter(c => c.priority === 'high').length, color: colors.warning },
-                      { name: 'Medium', value: cases.filter(c => c.priority === 'medium').length, color: colors.primary },
-                      { name: 'Low', value: cases.filter(c => c.priority === 'low').length, color: colors.textSecondary }
-                    ].map((item) => (
+                    {priorityData.map((item) => (
                       <div key={item.name}>
                         <div className="flex justify-between mb-2">
                           <span className="text-sm font-medium" style={{ color: colors.text }}>
@@ -616,7 +728,7 @@ export default function Analytics() {
                         }}>
                           <motion.div
                             initial={{ width: 0 }}
-                            animate={{ width: `${cases.length > 0 ? (item.value / cases.length) * 100 : 0}%` }}
+                            animate={{ width: `${d_totalCases > 0 ? (item.value / d_totalCases) * 100 : 0}%` }}
                             transition={{ duration: 1, delay: 0.2 }}
                             className="h-full rounded-full"
                             style={{ background: item.color }}
@@ -649,14 +761,14 @@ export default function Analytics() {
               />
               <StatCard
                 title="Tasks Created by Me"
-                value={tasksCreatedByUser}
+                value={d_tasksCreated}
                 icon={ListChecks}
                 color={colors.purple}
               />
               <StatCard
                 title="Tasks Assigned to Me"
-                value={tasksAssignedToUser}
-                subtitle={`${tasks.filter(t => t.assigned_to === user?.email && t.status === 'completed').length} completed`}
+                value={d_tasksAssigned}
+                subtitle={`${d_tasksAssignedCompleted} completed`}
                 icon={UserCheck}
                 color={colors.info}
               />
@@ -670,8 +782,8 @@ export default function Analytics() {
                 <CardContent>
                   <ResponsiveContainer width="100%" height={400}>
                     <BarChart data={[
-                      { week: 'This Week', completed: tasksCompletedThisWeek, pending: tasks.filter(t => t.status === 'pending' && t.created_date && isThisWeek(t.created_date)).length },
-                      { week: 'Last Week', completed: tasksCompletedLastWeek, pending: tasks.filter(t => t.status === 'pending' && t.created_date && isLastWeek(t.created_date)).length }
+                      { week: 'This Week', completed: d_tasksCompletedThisWeek, pending: d_pendingThisWeek },
+                      { week: 'Last Week', completed: d_tasksCompletedLastWeek, pending: d_pendingLastWeek }
                     ]}>
                       <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#3a3e4a' : '#d1d9e6'} />
                       <XAxis dataKey="week" stroke={colors.textSecondary} fontSize={12} />
@@ -740,7 +852,7 @@ export default function Analytics() {
                       <div className="flex justify-between mb-2">
                         <span className="text-sm font-medium" style={{ color: colors.text }}>Task Completion Rate</span>
                         <span className="text-sm font-bold" style={{ color: colors.purple }}>
-                          {tasksAssignedToUser > 0 ? Math.round((tasks.filter(t => t.assigned_to === user?.email && t.status === 'completed').length / tasksAssignedToUser) * 100) : 0}%
+                          {d_tasksAssigned > 0 ? Math.round((d_tasksAssignedCompleted / d_tasksAssigned) * 100) : 0}%
                         </span>
                       </div>
                       <div className="h-4 rounded-full overflow-hidden" style={{
@@ -749,7 +861,7 @@ export default function Analytics() {
                       }}>
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: `${tasksAssignedToUser > 0 ? (tasks.filter(t => t.assigned_to === user?.email && t.status === 'completed').length / tasksAssignedToUser) * 100 : 0}%` }}
+                          animate={{ width: `${d_tasksAssigned > 0 ? (d_tasksAssignedCompleted / d_tasksAssigned) * 100 : 0}%` }}
                           transition={{ duration: 1, delay: 0.4 }}
                           className="h-full rounded-full"
                           style={{ background: colors.purple }}
@@ -761,7 +873,7 @@ export default function Analytics() {
                       <div className="flex justify-between mb-2">
                         <span className="text-sm font-medium" style={{ color: colors.text }}>Case Resolution Rate</span>
                         <span className="text-sm font-bold" style={{ color: colors.info }}>
-                          {cases.length > 0 ? Math.round((resolvedCases / cases.length) * 100) : 0}%
+                          {d_totalCases > 0 ? Math.round((d_resolvedCases / d_totalCases) * 100) : 0}%
                         </span>
                       </div>
                       <div className="h-4 rounded-full overflow-hidden" style={{
@@ -770,7 +882,7 @@ export default function Analytics() {
                       }}>
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: `${cases.length > 0 ? (resolvedCases / cases.length) * 100 : 0}%` }}
+                          animate={{ width: `${d_totalCases > 0 ? (d_resolvedCases / d_totalCases) * 100 : 0}%` }}
                           transition={{ duration: 1, delay: 0.6 }}
                           className="h-full rounded-full"
                           style={{ background: colors.info }}
