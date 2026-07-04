@@ -346,6 +346,13 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
         ))}
       </div>
 
+      {/* Recording Modal — admin single-click playback */}
+      <CallRecordingModal
+        isOpen={!!recordingModal}
+        onClose={() => setRecordingModal(null)}
+        call={recordingModal}
+      />
+
       {/* Tooltip */}
       {tooltip && (
         <div style={{
