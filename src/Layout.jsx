@@ -335,14 +335,14 @@ function LayoutContent({ children, currentPageName }) {
         }
       </AnimatePresence>
 
-      <NotificationCenter user={user} isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
-      <MessagingPanel user={user} isOpen={showMessages} onClose={() => setShowMessages(false)} />
-      {showCalls && <CallsPanel user={user} isOpen={showCalls} onClose={() => setShowCalls(false)} />}
-      <BackgroundCustomizer isOpen={showBackgroundCustomizer} onClose={() => setShowBackgroundCustomizer(false)} />
-      <AIAssistantOrb />
-      <DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} />
-      <DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} />
-      <PersistentCallPanel />
+      <ErrorBoundary><NotificationCenter user={user} isOpen={showNotifications} onClose={() => setShowNotifications(false)} /></ErrorBoundary>
+      <ErrorBoundary><MessagingPanel user={user} isOpen={showMessages} onClose={() => setShowMessages(false)} /></ErrorBoundary>
+      {showCalls && <ErrorBoundary><CallsPanel user={user} isOpen={showCalls} onClose={() => setShowCalls(false)} /></ErrorBoundary>}
+      <ErrorBoundary><BackgroundCustomizer isOpen={showBackgroundCustomizer} onClose={() => setShowBackgroundCustomizer(false)} /></ErrorBoundary>
+      <ErrorBoundary><AIAssistantOrb /></ErrorBoundary>
+      <ErrorBoundary><DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} /></ErrorBoundary>
+      <ErrorBoundary><DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} /></ErrorBoundary>
+      <ErrorBoundary><PersistentCallPanel /></ErrorBoundary>
 
       {/* Incoming Call Popups */}
       {incomingCalls.map((call, index) =>
