@@ -145,7 +145,26 @@ const ROW_H = TRACK_H * 2 + GAP + 16; // total row height with padding
 export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const { isDark } = useTheme();
   const navigate = useNavigate();
+  const { data: user } = useUser();
+  const isAdmin = user?.role === 'admin';
   const [tooltip, setTooltip] = React.useState(null);
+  const [recordingModal, setRecordingModal] = React.useState(null);
+
+  const handleCallClick = (c, agent) => {
+    if (isAdmin) {
+      setRecordingModal({
+        agent,
+        direction: c.direction,
+        time: `${String(c.hour).padStart(2, '0')}:${String(c.minute).padStart(2, '0')}`,
+        employer: c.employer.name,
+        color: c.employer.primary,
+        secondary: c.employer.secondary,
+        audioUrl: DEMO_AUDIO_BY_AGENT[agent] || null,
+      });
+      return;
+    }
+    if (c.caseId) navigate(`/Case?id=${c.caseId}`);
+  };
 
   const today = new Date().toISOString().split('T')[0];
 
