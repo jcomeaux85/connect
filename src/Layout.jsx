@@ -365,7 +365,7 @@ function LayoutContent({ children, currentPageName }) {
           onReply={async (replyText) => {
             await base44.entities.SMS.create({ case_id: sms.case_id, customer_phone: sms.customer_phone, message: replyText, direction: 'sent', status: 'sent', sent_at: new Date().toISOString() });
           }}
-          onDismiss={() => {}}
+          onDismiss={async () => { await base44.entities.SMS.update(sms.id, { dismissed: true }); }}
           onViewCase={() => {if (sms.case_id) window.location.href = createPageUrl(`Case?id=${sms.case_id}`);}} />
         
         </div>
