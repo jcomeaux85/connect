@@ -4,8 +4,20 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import CallWaveform from '@/components/dashboard/CallWaveform';
+import CallRecordingModal from '@/components/dashboard/CallRecordingModal';
+import { useUser } from '@/components/hooks/useUser';
 
 const AGENTS = ['Ryan', 'Vanessa', 'Chris', 'Jarrad'];
+
+// DEMO AUDIO — drop one recording URL per agent here. Every call in that
+// agent's row will play this file when clicked in admin mode. Swap these
+// for real recordings whenever you've got them.
+const DEMO_AUDIO_BY_AGENT = {
+  Ryan: null,
+  Vanessa: null,
+  Chris: null,
+  Jarrad: null,
+};
 
 const EMPLOYER_DEMO_COLORS = [
   { name: 'Lazer',       primary: '#ff0808ff', secondary: '#ca1818ff' },
