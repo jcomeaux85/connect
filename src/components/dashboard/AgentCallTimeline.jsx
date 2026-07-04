@@ -272,14 +272,14 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
                         key={idx}
                         onMouseEnter={() => setTooltip({ agent, direction: 'inbound', time: `${String(c.hour).padStart(2,'0')}:${String(c.minute).padStart(2,'0')}`, dur: c.duration, employer: c.employer.name, color: col })}
                         onMouseLeave={() => setTooltip(null)}
-                        onClick={() => c.caseId && navigate(`/Case?id=${c.caseId}`)}
+                        onClick={() => handleCallClick(c, agent)}
                         style={{
                           position: 'absolute',
                           left: `${left}%`,
                           width: `${width}%`,
                           height: '100%',
                           bottom: 0,
-                          cursor: c.caseId ? 'pointer' : 'default',
+                          cursor: isAdmin || c.caseId ? 'pointer' : 'default',
                           opacity: 0.92,
                           transition: 'opacity 0.1s',
                         }}
