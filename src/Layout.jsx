@@ -22,6 +22,7 @@ import PersistentCallPanel from "@/components/calls/PersistentCallPanel";
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
 import IncomingCallPopup from "@/components/notifications/IncomingCallPopup";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
 import { AnimatePresence, motion } from "framer-motion";
 
