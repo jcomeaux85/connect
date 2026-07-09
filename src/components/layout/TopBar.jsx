@@ -201,7 +201,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         <div
         onClick={() => navigate('/Core')}
         title="CORPS — Workforce Portal"
-        className="flex items-center flex-shrink-0 cursor-pointer select-none px-2"
+        className="flex items-center flex-shrink-0 cursor-pointer select-none px-2 hidden"
         style={{ height: '32px' }}>
           
           <span style={{
