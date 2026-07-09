@@ -276,10 +276,15 @@ function LayoutContent({ children, currentPageName }) {
         user={user} />
       
 
-      {/* Main area: nav + content — shifts right when sidebar is locked open */}
+      {/* Main area: nav + content — shifts right when sidebar is locked open,
+          and shrinks from the right when DOC slides out so the site stays usable */}
       <div
         className="flex flex-col flex-1 overflow-hidden"
-        style={{ marginLeft: lockedSidebarWidth, transition: 'margin-left 0.25s ease-out' }}
+        style={{
+          marginLeft: lockedSidebarWidth,
+          marginRight: showDOC ? 'min(50vw, 640px)' : 0,
+          transition: 'margin-left 0.25s ease-out, margin-right 0.3s ease-out',
+        }}
       >
 
         {/* Top Bar — 8x8 style */}
