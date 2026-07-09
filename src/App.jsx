@@ -13,6 +13,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Core from './pages/Core';
 import DOC from './pages/DOC';
 import CallQueueDemo from './pages/CallQueueDemo';
+import Concensus from './pages/Concensus';
+import ConcensusProvider from '@/concensus/ConcensusProvider';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -67,6 +69,7 @@ const AuthenticatedApp = () => {
       <Route path="/Core" element={<LayoutWrapper currentPageName="Core"><Core /></LayoutWrapper>} />
       <Route path="/DOC" element={<LayoutWrapper currentPageName="DOC"><DOC /></LayoutWrapper>} />
       <Route path="/CallQueueDemo" element={<CallQueueDemo />} />
+      <Route path="/Concensus" element={<LayoutWrapper currentPageName="Concensus"><Concensus /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -82,6 +85,7 @@ function App() {
           <Router>
             <NavigationTracker />
             <AuthenticatedApp />
+            <ConcensusProvider />
           </Router>
           <Toaster />
           <VisualEditAgent />

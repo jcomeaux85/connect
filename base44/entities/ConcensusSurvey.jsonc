@@ -1,0 +1,27 @@
+{
+  "name": "ConcensusSurvey",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Display title for the weekly survey"
+    },
+    "publish_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the survey was published (YYYY-MM-DD). Used to group questions into one weekly survey."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "closed"
+      ],
+      "default": "active",
+      "description": "Whether the survey is currently accepting responses"
+    }
+  },
+  "required": [
+    "publish_date"
+  ]
+}

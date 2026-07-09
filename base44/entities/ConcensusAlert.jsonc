@@ -1,0 +1,57 @@
+{
+  "name": "ConcensusAlert",
+  "type": "object",
+  "properties": {
+    "response_id": {
+      "type": "string",
+      "description": "Reference to the ConcensusResponse that triggered the alert"
+    },
+    "survey_id": {
+      "type": "string",
+      "description": "Reference to the ConcensusSurvey"
+    },
+    "question_text": {
+      "type": "string",
+      "description": "Cached question text"
+    },
+    "respondent_email": {
+      "type": "string",
+      "description": "Email of the team member"
+    },
+    "respondent_name": {
+      "type": "string",
+      "description": "Cached name of the respondent"
+    },
+    "answer_text": {
+      "type": "string",
+      "description": "The answer that triggered the alert"
+    },
+    "rating": {
+      "type": "number",
+      "description": "The rating that triggered the alert"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "flagged",
+        "low_rating",
+        "flagged_and_low"
+      ],
+      "description": "Why this alert was raised"
+    },
+    "is_resolved": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether an admin has resolved this alert"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert was resolved"
+    }
+  },
+  "required": [
+    "respondent_email",
+    "reason"
+  ]
+}

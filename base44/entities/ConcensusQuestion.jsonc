@@ -1,0 +1,37 @@
+{
+  "name": "ConcensusQuestion",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string",
+      "description": "The question text shown to team members"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "scheduled",
+        "published"
+      ],
+      "default": "draft",
+      "description": "Lifecycle of the question"
+    },
+    "publish_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this question should be / was published into a survey (YYYY-MM-DD)"
+    },
+    "survey_id": {
+      "type": "string",
+      "description": "Reference to the ConcensusSurvey this question belongs to once published"
+    },
+    "order_index": {
+      "type": "number",
+      "default": 0,
+      "description": "Order of the question within its survey"
+    }
+  },
+  "required": [
+    "text"
+  ]
+}
