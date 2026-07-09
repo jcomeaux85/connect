@@ -211,7 +211,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           textShadow: '0 0 4px rgba(51,255,51,0.9), 0 0 10px rgba(51,255,51,0.6), 0 0 18px rgba(51,255,51,0.35)',
           letterSpacing: '1px',
           lineHeight: 1
-        }}>
+        }} className="hidden">
             CORPS//
           </span>
         </div>
