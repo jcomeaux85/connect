@@ -241,6 +241,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           </span>
         </TiltBtn>
 
+      <div className="flex items-center gap-2 ml-auto">
         {/* Active Call button */}
         <TiltBtn
         onClick={onToggleCalls}
@@ -305,11 +306,9 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
             </div>
         }
         </div>
-        
-      <div className="flex items-center gap-2 ml-auto">
-        {/* Clock — not a button, no tilt */}
-        <div className="flex items-center gap-1.5 px-3 h-8 rounded-lg cursor-default select-none ml-5"
-        style={NAV_BTN}>
+
+        {/* Clock — bare text, no container */}
+        <div className="flex items-center gap-1.5 cursor-default select-none ml-2">
           <Clock className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
           <div className="text-right">
             <p className="text-xs font-bold leading-none" style={{ color: 'rgba(255,255,255,0.85)' }}>{format(now, 'hh:mm:ss aa')}</p>
