@@ -11,8 +11,6 @@ export default function ScheduledList({ questions }) {
     .filter((q) => q.status === "scheduled")
     .sort((a, b) => (a.publish_date || "").localeCompare(b.publish_date || ""));
 
-  if (scheduled.length === 0) return null;
-
   const remove = async (id) => {
     await concensusApi.deleteQuestion(id);
     queryClient.invalidateQueries({ queryKey: ["concensus-admin"] });
@@ -25,6 +23,11 @@ export default function ScheduledList({ questions }) {
         <h3 className="text-lg font-black" style={{ color: t.text }}>Scheduled</h3>
       </div>
       <div className="space-y-3">
+        {scheduled.length === 0 && (
+          <div className="p-6 text-center rounded-2xl" style={raisedSoft(16)}>
+            <p className="text-sm" style={{ color: t.textSoft }}>No scheduled check-ins. Set a future date on a question to queue it here.</p>
+          </div>
+        )}
         {scheduled.map((q) => (
           <div key={q.id} className="p-4 flex items-center gap-4" style={raisedSoft(16)}>
             <span className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0" style={{ background: t.peach, color: t.amberDeep }}>
