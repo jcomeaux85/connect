@@ -19,16 +19,31 @@ export default function ConcensusProvider() {
 
   const [dismissed, setDismissed] = useState(false);
   const [open, setOpen] = useState(false);
+  // Latches true the instant idle fires. Once latched, the prompt stays up
+  // regardless of further mouse movement toward the button — activity should
+  // only decide WHEN the prompt first appears, never make it vanish out from
+  // under an in-flight click.
+  const [promptShown, setPromptShown] = useState(false);
 
   const hasPending = !!active && !dismissed;
-  const isIdle = useIdle(IDLE_MS, hasPending && !open);
+  const isIdle = useIdle(IDLE_MS, hasPending && !open && !promptShown);
 
-  // Reset dismissal when a new pending survey appears.
+  // Reset dismissal + latch when a new pending survey appears.
   useEffect(() => {
     setDismissed(false);
+    setPromptShown(false);
   }, [active?.survey?.id]);
 
-  const showPrompt = hasPending && isIdle && !open;
+  // Edge-trigger: the moment idle flips true, latch the prompt open. useIdle
+  // is disabled once latched (see above), so this fires once per idle period
+  // and is immune to ambient mousemove after that.
+  useEffect(() => {
+    if (isIdle && hasPending && !open && !promptShown) {
+      setPromptShown(true);
+    }
+  }, [isIdle, hasPending, open, promptShown]);
+
+  const showPrompt = hasPending && promptShown && !open;
 
   return (
     <>
@@ -36,8 +51,14 @@ export default function ConcensusProvider() {
         {showPrompt && (
           <IdlePrompt
             key="prompt"
-            onOpen={() => setOpen(true)}
-            onDismiss={() => setDismissed(true)}
+            onOpen={() => {
+              setOpen(true);
+              setPromptShown(false);
+            }}
+            onDismiss={() => {
+              setDismissed(true);
+              setPromptShown(false);
+            }}
           />
         )}
       </AnimatePresence>
