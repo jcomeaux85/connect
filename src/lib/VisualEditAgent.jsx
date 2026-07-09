@@ -230,7 +230,7 @@ export default function VisualEditAgent() {
 		const elementData = {
 			type: 'element-selected',
 			tagName: element.tagName,
-			classes: element.className?.baseVal || element.className || '',
+			classes: (typeof element.className === 'string' ? element.className : element.className?.baseVal) || '',
 			visualSelectorId: visualSelectorId,
 			content: element.innerText,
 			dataSourceLocation: element.dataset.sourceLocation,
