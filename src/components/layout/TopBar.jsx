@@ -198,23 +198,23 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
       </div>
 
         {/* CORPS// logo button — glowing VT323 phosphor-green text, transparent bg */}
-        <div
-        onClick={() => navigate('/Core')}
-        title="CORPS — Workforce Portal"
-        className="flex items-center flex-shrink-0 cursor-pointer select-none px-2 hidden"
-        style={{ height: '32px' }}>
-          
-          <span style={{
-          fontFamily: "'VT323', ui-monospace, monospace",
-          fontSize: '30px',
-          color: '#33FF33',
-          textShadow: '0 0 4px rgba(51,255,51,0.9), 0 0 10px rgba(51,255,51,0.6), 0 0 18px rgba(51,255,51,0.35)',
-          letterSpacing: '1px',
-          lineHeight: 1
-        }} className="hidden">
-            CORPS//
-          </span>
-        </div>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
 
         {/* DOC™ button — white bg, thin grey border */}
         <TiltBtn
