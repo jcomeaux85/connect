@@ -80,7 +80,8 @@ export default function ConcensusAdminPage() {
               <PersonTrendline responses={responses} surveys={surveys} />
             </div>
 
-            <h2 className="text-lg font-black mb-4 px-1" style={{ color: t.text }}>Published surveys</h2>
+            <h2 className="text-lg font-black mb-1 px-1" style={{ color: t.text }}>Check-in history</h2>
+            <p className="text-xs mb-4 px-1" style={{ color: t.textSoft }}>Browse past surveys — expand any to see per-question averages, then drill into individual answers.</p>
             <SurveyResults surveys={surveys} questions={questions} responses={responses} />
           </>
         )}

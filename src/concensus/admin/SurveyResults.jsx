@@ -2,8 +2,9 @@
 // respondent count, expandable per survey.
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Users, Star } from "lucide-react";
-import { concensusTheme as t, raised, raisedSoft, inset } from "../concensusTheme";
+import { ChevronDown, Users, Star, Search } from "lucide-react";
+import { concensusTheme as t, raised, inset } from "../concensusTheme";
+import QuestionResponses from "./QuestionResponses";
 
 function SurveyRow({ survey, questions, responses }) {
   const [open, setOpen] = useState(false);
@@ -59,20 +60,14 @@ function SurveyRow({ survey, questions, responses }) {
             className="overflow-hidden"
           >
             <div className="pt-5 space-y-3">
-              {perQuestion.map(({ question, count, avg }) => (
-                <div key={question.id} className="p-4 flex items-center gap-4" style={raisedSoft(14)}>
-                  <p className="text-sm flex-1" style={{ color: t.text }}>{question.text}</p>
-                  <div className="flex items-center gap-4 shrink-0">
-                    <div className="px-3 py-1.5 rounded-xl text-center" style={inset(10)}>
-                      <div className="text-sm font-black" style={{ color: t.violetDeep }}>{avg || "—"}</div>
-                      <div className="text-[9px] font-semibold" style={{ color: t.textFaint }}>avg rating</div>
-                    </div>
-                    <div className="px-3 py-1.5 rounded-xl text-center" style={inset(10)}>
-                      <div className="text-sm font-black" style={{ color: t.text }}>{count}</div>
-                      <div className="text-[9px] font-semibold" style={{ color: t.textFaint }}>responses</div>
-                    </div>
-                  </div>
-                </div>
+              {perQuestion.map(({ question, count, avg, responses: qResponses }) => (
+                <QuestionResponses
+                  key={question.id}
+                  question={question}
+                  count={count}
+                  avg={avg}
+                  responses={qResponses}
+                />
               ))}
             </div>
           </motion.div>
@@ -83,11 +78,24 @@ function SurveyRow({ survey, questions, responses }) {
 }
 
 export default function SurveyResults({ surveys, questions, responses }) {
+  const [search, setSearch] = useState("");
+
   const published = useMemo(
     () => surveys.filter((s) => questions.some((q) => q.survey_id === s.id))
       .sort((a, b) => (b.publish_date || "").localeCompare(a.publish_date || "")),
     [surveys, questions]
   );
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return published;
+    return published.filter((s) => {
+      const title = (s.title || `Survey ${s.publish_date}`).toLowerCase();
+      const date = (s.publish_date || "").toLowerCase();
+      const qs = questions.filter((qq) => qq.survey_id === s.id).map((qq) => (qq.text || "").toLowerCase()).join(" ");
+      return title.includes(q) || date.includes(q) || qs.includes(q);
+    });
+  }, [published, questions, search]);
 
   if (published.length === 0) {
     return (
@@ -99,9 +107,27 @@ export default function SurveyResults({ surveys, questions, responses }) {
 
   return (
     <div className="space-y-4">
-      {published.map((survey) => (
-        <SurveyRow key={survey.id} survey={survey} questions={questions} responses={responses} />
-      ))}
+      {/* Search past check-ins */}
+      <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl" style={inset(16)}>
+        <Search className="w-4 h-4 shrink-0" style={{ color: t.textFaint }} />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search past check-ins by date, title, or question…"
+          className="flex-1 bg-transparent text-sm outline-none"
+          style={{ color: t.text }}
+        />
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="p-8 text-center" style={raised(24)}>
+          <p className="text-sm" style={{ color: t.textSoft }}>No check-ins match “{search}”.</p>
+        </div>
+      ) : (
+        filtered.map((survey) => (
+          <SurveyRow key={survey.id} survey={survey} questions={questions} responses={responses} />
+        ))
+      )}
     </div>
   );
 }
