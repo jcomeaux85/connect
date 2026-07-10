@@ -16,8 +16,35 @@ function buildPatchedHtml(htmlContent, light) {
   if (!htmlContent) return null;
 
   const forceLight = light
-    ? 'html, body { background: #eef1f6 !important; color: #1a202c !important; }'
+    ? 'html, body { background: #e8e8ee !important; color: #1a202c !important; }'
     : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
+
+  // Light mode: soft neumorphic surfaces to match the main site (#e8e8ee base)
+  const lightNeu = light ? [
+    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] {',
+    '  background: #e8e8ee !important; color: #1a202c !important;',
+    '  box-shadow: inset 3px 3px 6px #c5c5cf, inset -3px -3px 6px #ffffff !important;',
+    '  border: none !important; border-radius: 10px !important; }',
+    '.ben-btn, [class*="ben-btn"], .benefit-nav button, .client-tab, [class*="client-tab"] {',
+    '  background: #e8e8ee !important; color: #555 !important;',
+    '  box-shadow: 3px 3px 7px #c5c5cf, -3px -3px 7px #ffffff !important;',
+    '  border: none !important; border-radius: 22px !important; }',
+    '.ben-btn.active, [class*="ben-btn"].active, .client-tab.active {',
+    '  background: #dc2626 !important; color: #fff !important;',
+    '  box-shadow: inset 2px 2px 5px #a01818, inset -2px -2px 5px #ff3a3a !important; }',
+    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] {',
+    '  background: #e8e8ee !important;',
+    '  box-shadow: 6px 6px 14px #c5c5cf, -6px -6px 14px #ffffff !important;',
+    '  border: none !important; border-radius: 14px !important; }',
+    'button:not(.ben-btn):not([class*="client-tab"]) {',
+    '  background: #e8e8ee !important; color: #555 !important;',
+    '  box-shadow: 3px 3px 7px #c5c5cf, -3px -3px 7px #ffffff !important; border: none !important; }',
+    '.doc-footer, .footer, footer {',
+    '  background: transparent !important; color: #8a8a96 !important;',
+    '  border: none !important; box-shadow: none !important; }',
+    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] {',
+    '  background: #e8e8ee !important; border-bottom: 1px solid #d2d2da !important; }',
+  ].join('\n') : '';
 
   const darkOverrides = light ? '' : [
     'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] {',
@@ -85,6 +112,7 @@ function buildPatchedHtml(htmlContent, light) {
     '.quick-copy { position: static !important; opacity: 1 !important; display: inline-flex !important; margin-left: 8px !important; vertical-align: middle !important; flex-shrink: 0 !important; }',
     '.source-line { display: flex !important; align-items: center !important; flex-wrap: wrap !important; gap: 4px !important; }',
     forceLight,
+    lightNeu,
     darkOverrides,
     lightClientSeparator,
     '</style>',
@@ -157,8 +185,18 @@ function buildPatchedHtml(htmlContent, light) {
 // Build only the theme-switching CSS to inject without a full reload
 function buildThemeCss(light) {
   const base = light
-    ? 'html, body { background: #eef1f6 !important; color: #1a202c !important; }'
+    ? 'html, body { background: #e8e8ee !important; color: #1a202c !important; }'
     : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
+
+  const lightNeu = light ? [
+    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #e8e8ee !important; color: #1a202c !important; box-shadow: inset 3px 3px 6px #c5c5cf, inset -3px -3px 6px #ffffff !important; border: none !important; border-radius: 10px !important; }',
+    '.ben-btn, [class*="ben-btn"], .benefit-nav button, .client-tab, [class*="client-tab"] { background: #e8e8ee !important; color: #555 !important; box-shadow: 3px 3px 7px #c5c5cf, -3px -3px 7px #ffffff !important; border: none !important; border-radius: 22px !important; }',
+    '.ben-btn.active, [class*="ben-btn"].active, .client-tab.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #a01818, inset -2px -2px 5px #ff3a3a !important; }',
+    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] { background: #e8e8ee !important; box-shadow: 6px 6px 14px #c5c5cf, -6px -6px 14px #ffffff !important; border: none !important; border-radius: 14px !important; }',
+    'button:not(.ben-btn):not([class*="client-tab"]) { background: #e8e8ee !important; color: #555 !important; box-shadow: 3px 3px 7px #c5c5cf, -3px -3px 7px #ffffff !important; border: none !important; }',
+    '.doc-footer, .footer, footer { background: transparent !important; color: #8a8a96 !important; border: none !important; box-shadow: none !important; }',
+    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { background: #e8e8ee !important; border-bottom: 1px solid #d2d2da !important; }',
+  ].join('\n') : '';
 
   const dark = light ? '' : [
     'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #252529 !important; color: #c8ccd2 !important; box-shadow: 4px 4px 10px #1a1a1e !important; border: none !important; border-radius: 10px !important; }',
@@ -176,7 +214,7 @@ function buildThemeCss(light) {
 
   const lightClient = light ? '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { border-bottom: 1px solid #c8d0da !important; }' : '';
 
-  return [base, dark, lightClient].join('\n');
+  return [base, lightNeu, dark, lightClient].join('\n');
 }
 
 // Cursor shadow — light mode ambient pointer glow, sits above iframe
@@ -294,7 +332,7 @@ export default function DOCModal({ isOpen, onClose }) {
   const isDark = !docLight;
 
   // Content area still follows light/dark; header/rail are always purple glass (Benconnect)
-  const panelBg   = isDark ? '#2c2c31' : 'rgba(238, 241, 246, 0.97)';
+  const panelBg   = isDark ? '#2c2c31' : '#e8e8ee';
 
   const btnStyle = {
     width: 28, height: 28, borderRadius: 8,
@@ -374,7 +412,7 @@ export default function DOCModal({ isOpen, onClose }) {
               {docLight && <CursorShadow />}
 
               {loading && (
-                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: isDark ? '#2c2c31' : '#eef1f6' }}>
+                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: isDark ? '#2c2c31' : '#e8e8ee' }}>
                   <div style={{
                     fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: '11px',
