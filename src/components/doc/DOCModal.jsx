@@ -2,6 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Sun, Moon } from 'lucide-react';
 import DOCDockRail from './DOCDockRail';
+import { useTheme } from '@/components/ThemeProvider';
+
+// Deep purple glass — matches the Benconnect PersistentSidebar header/rail
+const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
+const PANEL_BORDER = 'rgba(255,255,255,0.13)';
 
 const DOC_HTML_URL = 'https://media.base44.com/files/public/68fa7c4cb70fe91d38015eba/c1547e610_DOC_.html';
 const EBM_SRC = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/5c7593e2c_im.png';
@@ -203,12 +208,20 @@ function CursorShadow() {
 }
 
 export default function DOCModal({ isOpen, onClose }) {
-  const [docLight, setDocLight] = useState(true);
+  const { isDark: siteDark } = useTheme();
+  // DOC follows the site theme unless overridden locally within DOC
+  const [docLight, setDocLight] = useState(!siteDark);
+  const userOverride = useRef(false);
   const [htmlContent, setHtmlContent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [blobUrl, setBlobUrl] = useState(null);
   const iframeRef = useRef(null);
   const initialLoadDone = useRef(false);
+
+  // Follow the site's light/dark unless the user has toggled DOC's own switch
+  useEffect(() => {
+    if (!userOverride.current) setDocLight(!siteDark);
+  }, [siteDark]);
 
   useEffect(() => {
     if (isOpen && !htmlContent) {
@@ -280,21 +293,16 @@ export default function DOCModal({ isOpen, onClose }) {
 
   const isDark = !docLight;
 
+  // Content area still follows light/dark; header/rail are always purple glass (Benconnect)
   const panelBg   = isDark ? '#2c2c31' : 'rgba(238, 241, 246, 0.97)';
-  const headerBg  = isDark ? '#232327' : '#dde3ea';
-  const headerBdr = isDark ? '#1e1e22' : '#c8d0da';
-  const btnBg     = isDark ? '#333338' : '#dde3ea';
-  const btnShadow = isDark
-    ? '3px 3px 7px #1a1a1e, 1px 1px 2px #171719'
-    : '3px 3px 6px #b8c0cc, -3px -3px 6px #fff';
-  const btnColor  = isDark ? '#888' : '#555';
 
   const btnStyle = {
-    width: 28, height: 28, borderRadius: 8, border: 'none',
-    background: btnBg,
-    boxShadow: btnShadow,
+    width: 28, height: 28, borderRadius: 8,
+    border: '1px solid rgba(255,255,255,0.10)',
+    background: 'rgba(255,255,255,0.07)',
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 4px rgba(0,0,0,0.25)',
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    color: btnColor,
+    color: 'rgba(255,255,255,0.8)',
     flexShrink: 0,
   };
 
@@ -325,8 +333,8 @@ export default function DOCModal({ isOpen, onClose }) {
             <div
               className="flex items-center justify-between flex-shrink-0 px-4 py-2"
               style={{
-                background: headerBg,
-                borderBottom: `1px solid ${headerBdr}`,
+                background: PANEL_BG,
+                borderBottom: `1px solid ${PANEL_BORDER}`,
                 minHeight: '44px',
               }}
             >
@@ -338,19 +346,17 @@ export default function DOCModal({ isOpen, onClose }) {
                   color: '#dc2626',
                   letterSpacing: '-1px',
                   lineHeight: 1,
-                  textShadow: isDark
-                    ? '1px 2px 4px #0a0a0d'
-                    : '2px 2px 4px #b8c0cc, -1px -1px 2px #fff',
+                  textShadow: '1px 2px 6px rgba(0,0,0,0.55)',
                 }}>
                   DOC<sup style={{ fontSize: '.45rem', opacity: .5, verticalAlign: 'super' }}>™</sup>
                 </span>
-                <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: isDark ? '#555' : '#8a96a3', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: 'rgba(255,255,255,0.5)', letterSpacing: '1px', textTransform: 'uppercase' }}>
                   Directory of Coverage
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
-                <button onClick={() => setDocLight(p => !p)} title={docLight ? 'Switch to dark mode' : 'Switch to light mode'} style={btnStyle}>
+                <button onClick={() => { userOverride.current = true; setDocLight(p => !p); }} title={docLight ? 'Switch to dark mode' : 'Switch to light mode'} style={btnStyle}>
                   {docLight ? <Moon size={13} /> : <Sun size={13} />}
                 </button>
                 <button onClick={handlePopOut} title="Open in new window" style={btnStyle}>

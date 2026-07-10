@@ -25,20 +25,18 @@ const DOCK_ITEMS = [
   { label: 'Supplemental', match: 'supplemental', icon: ShieldCheck, color: '#f97316' },
 ];
 
+// Deep purple glass — matches the Benconnect PersistentSidebar
+const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
+const PANEL_BORDER = 'rgba(255,255,255,0.13)';
+
 export default function DOCDockRail({ isDark, onTrigger }) {
-  const railBg = isDark ? '#232327' : '#dde3ea';
-  const railBdr = isDark ? '#1a1a1e' : '#c8d0da';
-  const tileBg = isDark ? '#2c2c31' : '#eef1f6';
-  const tileShadow = isDark
-    ? '4px 4px 9px #18181b, -3px -3px 7px #303035'
-    : '4px 4px 9px #c2cad6, -4px -4px 9px #ffffff';
   return (
     <div
       className="flex flex-col items-center gap-3 py-4 px-2.5 overflow-y-auto scrollbar-hide"
       style={{
-        background: railBg,
-        borderRight: `1px solid ${railBdr}`,
-        boxShadow: isDark ? 'inset -6px 0 14px rgba(0,0,0,0.35)' : 'inset -6px 0 14px rgba(0,0,0,0.06)',
+        background: PANEL_BG,
+        borderRight: `1px solid ${PANEL_BORDER}`,
+        boxShadow: 'inset -6px 0 14px rgba(0,0,0,0.35)',
         width: 88,
         flexShrink: 0,
       }}
@@ -56,15 +54,16 @@ export default function DOCDockRail({ isDark, onTrigger }) {
             style={{
               width: 54,
               height: 54,
-              background: tileBg,
-              boxShadow: tileShadow,
+              background: 'rgba(255,255,255,0.07)',
+              border: `1px solid ${color}55`,
+              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.10), 0 2px 8px rgba(0,0,0,0.3), 0 0 10px ${color}33`,
             }}
           >
-            <Icon size={26} style={{ color }} strokeWidth={2} />
+            <Icon size={26} style={{ color: '#ffffff' }} strokeWidth={2} />
           </div>
           <span
             className="text-[10px] font-semibold text-center leading-tight"
-            style={{ color: isDark ? '#9aa0ab' : '#5a6672' }}
+            style={{ color: 'rgba(255,255,255,0.75)' }}
           >
             {label}
           </span>
