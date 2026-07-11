@@ -18,95 +18,11 @@ function buildPatchedHtml(htmlContent, light) {
 
   const forceLight = light
     ? 'html, body { background: #e8e8ee !important; color: #1a202c !important; }'
-    : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
+    : 'html, body { background: #2a2e3a !important; color: #c8ccd2 !important; }';
 
-  // Light mode: soft neumorphic surfaces to match the main site (#e8e8ee base)
-  // Shadow direction SWAPPED — dark shadow now falls to the top-left, light to bottom-right.
-  const lightNeu = light ? [
-    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] {',
-    '  background: #e8e8ee !important; color: #1a202c !important;',
-    '  box-shadow: inset -3px -3px 6px #c5c5cf, inset 3px 3px 6px #ffffff !important;',
-    '  border: none !important; border-radius: 10px !important; }',
-    '.ben-btn, [class*="ben-btn"], .benefit-nav button {',
-    '  background: #e8e8ee !important; color: #555 !important;',
-    '  box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important;',
-    '  border: none !important; border-radius: 22px !important; }',
-    '.ben-btn.active, [class*="ben-btn"].active {',
-    '  background: #dc2626 !important; color: #fff !important;',
-    '  box-shadow: inset -2px -2px 5px #a01818, inset 2px 2px 5px #ff3a3a !important; }',
-    // Client pills: thin INSET colored border in the selected client's accent color.
-    // var(--accent) is set by DOC's switchClient() to the active client's color.
-    '.client-pill {',
-    '  box-shadow: inset 0 0 0 1.5px var(--accent), -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important;',
-    '  border-radius: 50px !important; }',
-    '.client-pill.active, .client-pill:active {',
-    '  box-shadow: inset 0 0 0 2px var(--accent), 0 0 10px var(--accent), 0 0 18px var(--accent) !important;',
-    '  color: var(--accent) !important; }',
-    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] {',
-    '  background: #e8e8ee !important;',
-    '  box-shadow: -6px -6px 14px #c5c5cf, 6px 6px 14px #ffffff !important;',
-    '  border: none !important; border-radius: 14px !important; }',
-    'button:not(.ben-btn):not([class*="client-tab"]) {',
-    '  background: #e8e8ee !important; color: #555 !important;',
-    '  box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border: none !important; }',
-    '.doc-footer, .footer, footer {',
-    '  background: transparent !important; color: #8a8a96 !important;',
-    '  border: none !important; box-shadow: none !important; }',
-    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] {',
-    '  background: #e8e8ee !important; border-bottom: 1px solid #d2d2da !important; }',
-  ].join('\n') : '';
-
-  const darkOverrides = light ? '' : [
-    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] {',
-    '  background: #252529 !important; color: #c8ccd2 !important;',
-    '  box-shadow: 4px 4px 10px #1a1a1e, 2px 2px 5px #1c1c20 !important;',
-    '  border: none !important; border-radius: 10px !important; }',
-    '.ben-btn, [class*="ben-btn"], .benefit-nav button {',
-    '  background: #333338 !important; color: #aab0bb !important;',
-    '  box-shadow: 3px 3px 8px #1e1e22, 1px 1px 3px #1a1a1e !important;',
-    '  border: none !important; border-radius: 22px !important; }',
-    '.ben-btn.active, [class*="ben-btn"].active {',
-    '  background: #dc2626 !important; color: #fff !important;',
-    '  box-shadow: 3px 3px 8px #1a1a1e !important; }',
-    // Client pills (dark): inset accent-colored border; selected one glows in accent
-    '.client-pill {',
-    '  box-shadow: inset 0 0 0 1.5px var(--accent), 3px 3px 8px #1e1e22, -3px -3px 8px #2e2e34 !important;',
-    '  border-radius: 50px !important; }',
-    '.client-pill.active, .client-pill:active {',
-    '  box-shadow: inset 0 0 0 2px var(--accent), 0 0 10px var(--accent), 0 0 20px var(--accent) !important;',
-    '  color: var(--accent) !important; }',
-    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] {',
-    '  background: #303035 !important;',
-    '  box-shadow: 4px 4px 10px #1e1e22, 1px 1px 3px #1a1a1e !important;',
-    '  border: none !important; border-radius: 12px !important; }',
-    'button:not(.ben-btn):not([class*="client-tab"]) {',
-    '  background: #333338 !important; color: #aab0bb !important;',
-    '  box-shadow: 3px 3px 7px #1e1e22 !important; border: none !important; }',
-    'a { color: #dc2626 !important; }',
-    // Footer: no box, no border, blend into bg
-    '.doc-footer, .footer, footer {',
-    '  background: transparent !important; color: #555 !important;',
-    '  border: none !important; box-shadow: none !important; }',
-    // Client strip: slightly darker + thin separator below
-    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] {',
-    '  background: #1e1e22 !important;',
-    '  border-bottom: 1px solid rgba(255,255,255,0.09) !important; }',
-    // Main result title: white in dark mode
-    '.result-name, .result-title, [class*="result-name"], [class*="result-title"], .card-title, [class*="card-title"] {',
-    '  color: #e8eaed !important; }',
-    // Category and source labels: muted grey instead of white
-    '.result-category, .result-source, [class*="result-category"], [class*="result-source"],',
-    '.category-label, .source-label, [class*="category"], [class*="source-label"] {',
-    '  color: #888 !important; }',
-    // Copy button: nudge away from title (margin-top)
-    '.quick-copy, [class*="quick-copy"] { margin-top: 4px !important; }',
-  ].join('\n');
-
-  // Light mode: client strip separator line below to match header grey
-  const lightClientSeparator = light ? [
-    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] {',
-    '  border-bottom: 1px solid #c8d0da !important; }',
-  ].join('\n') : '';
+  const lightNeu = light ? THEME_CSS(true) : '';
+  const darkOverrides = light ? '' : THEME_CSS(false);
+  const lightClientSeparator = '';
 
   const styleBlock = [
     '<style>',
@@ -160,12 +76,18 @@ function buildPatchedHtml(htmlContent, light) {
     '      }\n' +
     '    });\n' +
     '  }\n' +
-    '  if (document.readyState === "loading") {\n' +
-    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(patchFooter, 300); });\n' +
-    '  } else {\n' +
-    '    setTimeout(patchFooter, 300);\n' +
+    '  function startOnFullSearch() {\n' +
+    '    var full = document.getElementById("viewFull");\n' +
+    '    if (full && !full.classList.contains("active")) full.click();\n' +
+    '    var input = document.getElementById("searchInput");\n' +
+    '    if (input) { input.focus(); }\n' +
     '  }\n' +
-    '  setTimeout(patchFooter, 1200);\n' +
+    '  if (document.readyState === "loading") {\n' +
+    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(patchFooter, 300); setTimeout(startOnFullSearch, 350); });\n' +
+    '  } else {\n' +
+    '    setTimeout(patchFooter, 300); setTimeout(startOnFullSearch, 350);\n' +
+    '  }\n' +
+    '  setTimeout(patchFooter, 1200); setTimeout(startOnFullSearch, 700);\n' +
     '\n' +
     '  // Broadcast the active client accent color to the parent whenever it changes\n' +
     '  var lastAccent = null;\n' +
@@ -211,43 +133,58 @@ function buildPatchedHtml(htmlContent, light) {
   return htmlContent.replace('</head>', styleBlock + '\n' + footerScript + '\n</head>');
 }
 
-// Build only the theme-switching CSS to inject without a full reload
+// ─────────────────────────────────────────────────────────────
+// SINGLE SOURCE OF TRUTH for DOC theming. Palettes matched EXACTLY
+// to the CORPS/BC neumorphic tokens (globals.css):
+//   light: bg #e8e8ee, dark-shadow #c5c5cf, light-shadow #ffffff
+//   dark:  bg #2a2e3a, dark-shadow #1f232d, light-shadow #353945
+// Real DOC class names (from source): .search-well, .search-input,
+// .cat-row button, .view-btn, .carrier-strip (client pills),
+// #resultsZone cards. Every surface uses DUAL neumorphic shadows
+// so nothing looks like black bleeding out.
+// ─────────────────────────────────────────────────────────────
+function THEME_CSS(light) {
+  if (light) {
+    const BG = '#e8e8ee', D = '#c5c5cf', L = '#ffffff';
+    return [
+      // Search well + input → inset pressed field (never black)
+      `.search-well, .search-zone { background: ${BG} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+      `.search-input, input[type="text"], input[type="search"] { background: transparent !important; color: #1a202c !important; box-shadow: none !important; border: none !important; }`,
+      `.search-input::placeholder { color: #9a9aa5 !important; }`,
+      // Category buttons + view toggle → raised soft buttons
+      `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${BG} !important; color: #555 !important; box-shadow: 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 20px !important; }`,
+      `.cat-row button.active, .view-btn.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #a01818, inset -2px -2px 5px #ff3a3a !important; }`,
+      // Client pills (carrier strip) → raised + thin INSET accent border; selected glows
+      `.carrier-strip > *, .carrier-chip, .carrier-btn { background: ${BG} !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 50px !important; }`,
+      `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active { box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 18px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
+      // Result cards → raised
+      `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${BG} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+      `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
+    ].join('\n');
+  }
+  const BG = '#2a2e3a', D = '#1f232d', L = '#353945';
+  return [
+    `.search-well, .search-zone { background: ${BG} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+    `.search-input, input[type="text"], input[type="search"] { background: transparent !important; color: #d6dae2 !important; box-shadow: none !important; border: none !important; }`,
+    `.search-input::placeholder { color: #7a808c !important; }`,
+    `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${BG} !important; color: #aab0bb !important; box-shadow: 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 20px !important; }`,
+    `.cat-row button.active, .view-btn.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #7a1414, inset -2px -2px 5px #ff3a3a !important; }`,
+    `.carrier-strip > *, .carrier-chip, .carrier-btn { background: ${BG} !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 50px !important; }`,
+    `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active { box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 20px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
+    `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${BG} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+    `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
+    `a { color: #f0736f !important; }`,
+    `.result-name, .result-title, .card-title, [class*="result-name"], [class*="card-title"] { color: #e8eaed !important; }`,
+    `.result-category, .result-source, .category-label, .source-label { color: #9096a0 !important; }`,
+  ].join('\n');
+}
+
+// Injected on live theme switch (no reload)
 function buildThemeCss(light) {
   const base = light
     ? 'html, body { background: #e8e8ee !important; color: #1a202c !important; }'
-    : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
-
-  const lightNeu = light ? [
-    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #e8e8ee !important; color: #1a202c !important; box-shadow: inset -3px -3px 6px #c5c5cf, inset 3px 3px 6px #ffffff !important; border: none !important; border-radius: 10px !important; }',
-    '.ben-btn, [class*="ben-btn"], .benefit-nav button { background: #e8e8ee !important; color: #555 !important; box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border: none !important; border-radius: 22px !important; }',
-    '.ben-btn.active, [class*="ben-btn"].active { background: #dc2626 !important; color: #fff !important; box-shadow: inset -2px -2px 5px #a01818, inset 2px 2px 5px #ff3a3a !important; }',
-    '.client-pill { box-shadow: inset 0 0 0 1.5px var(--accent), -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border-radius: 50px !important; }',
-    '.client-pill.active, .client-pill:active { box-shadow: inset 0 0 0 2px var(--accent), 0 0 10px var(--accent), 0 0 18px var(--accent) !important; color: var(--accent) !important; }',
-    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] { background: #e8e8ee !important; box-shadow: -6px -6px 14px #c5c5cf, 6px 6px 14px #ffffff !important; border: none !important; border-radius: 14px !important; }',
-    'button:not(.ben-btn):not([class*="client-tab"]) { background: #e8e8ee !important; color: #555 !important; box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border: none !important; }',
-    '.doc-footer, .footer, footer { background: transparent !important; color: #8a8a96 !important; border: none !important; box-shadow: none !important; }',
-    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { background: #e8e8ee !important; border-bottom: 1px solid #d2d2da !important; }',
-  ].join('\n') : '';
-
-  const dark = light ? '' : [
-    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #252529 !important; color: #c8ccd2 !important; box-shadow: 4px 4px 10px #1a1a1e !important; border: none !important; border-radius: 10px !important; }',
-    '.ben-btn, [class*="ben-btn"], .benefit-nav button { background: #333338 !important; color: #aab0bb !important; box-shadow: 3px 3px 8px #1e1e22 !important; border: none !important; border-radius: 22px !important; }',
-    '.ben-btn.active, [class*="ben-btn"].active { background: #dc2626 !important; color: #fff !important; }',
-    '.client-pill { box-shadow: inset 0 0 0 1.5px var(--accent), 3px 3px 8px #1e1e22, -3px -3px 8px #2e2e34 !important; border-radius: 50px !important; }',
-    '.client-pill.active, .client-pill:active { box-shadow: inset 0 0 0 2px var(--accent), 0 0 10px var(--accent), 0 0 20px var(--accent) !important; color: var(--accent) !important; }',
-    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] { background: #303035 !important; box-shadow: 4px 4px 10px #1e1e22 !important; border: none !important; border-radius: 12px !important; }',
-    'button:not(.ben-btn):not([class*="client-tab"]) { background: #333338 !important; color: #aab0bb !important; box-shadow: 3px 3px 7px #1e1e22 !important; border: none !important; }',
-    'a { color: #dc2626 !important; }',
-    '.doc-footer, .footer, footer { background: transparent !important; color: #555 !important; border: none !important; box-shadow: none !important; }',
-    '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { background: #1e1e22 !important; border-bottom: 1px solid rgba(255,255,255,0.09) !important; }',
-    '.result-name, .result-title, [class*="result-name"], [class*="result-title"], .card-title, [class*="card-title"] { color: #e8eaed !important; }',
-    '.result-category, .result-source, [class*="result-category"], [class*="result-source"], .category-label, .source-label, [class*="category"], [class*="source-label"] { color: #888 !important; }',
-    '.quick-copy, [class*="quick-copy"] { margin-top: 4px !important; }',
-  ].join('\n');
-
-  const lightClient = light ? '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { border-bottom: 1px solid #c8d0da !important; }' : '';
-
-  return [base, lightNeu, dark, lightClient].join('\n');
+    : 'html, body { background: #2a2e3a !important; color: #c8ccd2 !important; }';
+  return [base, THEME_CSS(light)].join('\n');
 }
 
 // Cursor shadow — light mode ambient pointer glow, sits above iframe
@@ -377,7 +314,7 @@ export default function DOCModal({ isOpen, onClose }) {
   const isDark = !docLight;
 
   // Content area still follows light/dark; header/rail are always purple glass (Benconnect)
-  const panelBg   = isDark ? '#2c2c31' : '#e8e8ee';
+  const panelBg   = isDark ? '#2a2e3a' : '#e8e8ee';
 
   const btnStyle = {
     width: 28, height: 28, borderRadius: 8,
@@ -457,7 +394,7 @@ export default function DOCModal({ isOpen, onClose }) {
               {docLight && <CursorShadow />}
 
               {loading && (
-                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: isDark ? '#2c2c31' : '#e8e8ee' }}>
+                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: isDark ? '#2a2e3a' : '#e8e8ee' }}>
                   <div style={{
                     fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: '11px',
