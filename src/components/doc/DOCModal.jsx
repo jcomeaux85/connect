@@ -176,6 +176,18 @@ function buildPatchedHtml(htmlContent, light) {
     '      s.id = "__theme_override__";\n' +
     '      s.textContent = e.data.css;\n' +
     '      document.head.appendChild(s);\n' +
+    '      // Drive the NATIVE data-theme attribute too — our custom CSS only\n' +
+    '      // patches specific selectors; everything else in the native sheet\n' +
+    '      // reads var(--nm-bg)/var(--text-0) via [data-theme], so it has to move too.\n' +
+    '      if (typeof e.data.dark === "boolean") {\n' +
+    '        if (e.data.dark) {\n' +
+    '          document.documentElement.setAttribute("data-theme", "dark");\n' +
+    '          try { localStorage.setItem("doc_theme", "dark"); } catch (err) {}\n' +
+    '        } else {\n' +
+    '          document.documentElement.removeAttribute("data-theme");\n' +
+    '          try { localStorage.setItem("doc_theme", "light"); } catch (err) {}\n' +
+    '        }\n' +
+    '      }\n' +
     '    }\n' +
     '  });\n' +
     '})();\n' +
