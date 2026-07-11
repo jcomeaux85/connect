@@ -15,12 +15,13 @@ const EBM_SRC = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba
 function buildPatchedHtml(htmlContent, light) {
   if (!htmlContent) return null;
 
+  const mirror = getBcMirrorColors();
   const forceLight = light
-    ? 'html, body, .main-wrap, .container { background: #e8e8ee !important; background-color: #e8e8ee !important; background-image: none !important; color: #1a202c !important; }'
-    : 'html, body, .main-wrap, .container { background: #2a2e3a !important; background-color: #2a2e3a !important; background-image: none !important; color: #c8ccd2 !important; }';
+    ? `html, body, .main-wrap, .container { background: ${mirror.cardBg} !important; background-color: ${mirror.cardBg} !important; background-image: none !important; color: #1a202c !important; }`
+    : `html, body, .main-wrap, .container { background: ${mirror.cardBg} !important; background-color: ${mirror.cardBg} !important; background-image: none !important; color: #c8ccd2 !important; }`;
 
-  const lightNeu = light ? THEME_CSS(true) : '';
-  const darkOverrides = light ? '' : THEME_CSS(false);
+  const lightNeu = light ? THEME_CSS(true, mirror) : '';
+  const darkOverrides = light ? '' : THEME_CSS(false, mirror);
   const lightClientSeparator = '';
 
   const styleBlock = [
