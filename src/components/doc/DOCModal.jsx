@@ -393,7 +393,7 @@ export default function DOCModal({ isOpen, onClose }) {
             <div
               className="flex items-center justify-between flex-shrink-0 px-4"
               style={{
-                background: PANEL_BG,
+                background: 'linear-gradient(315deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)',
                 backdropFilter: 'blur(24px) saturate(200%)',
                 WebkitBackdropFilter: 'blur(24px) saturate(200%)',
                 borderBottom: `1px solid ${PANEL_BORDER}`,
