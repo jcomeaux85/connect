@@ -476,6 +476,9 @@ export default function DOCModal({ isOpen, onClose }) {
               className="flex items-center flex-shrink-0 gap-8 px-4 overflow-x-auto overflow-y-hidden no-scrollbar min-w-0"
               style={{
                 height: '38px',
+                minHeight: '38px',
+                maxHeight: '38px',
+                boxSizing: 'border-box',
                 whiteSpace: 'nowrap',
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
