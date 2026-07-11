@@ -58,7 +58,12 @@ function buildPatchedHtml(htmlContent, light) {
   const footerScript = '<script>\n' +
     '(function() {\n' +
     '  (function seedTheme() {\n' +
-    
+    (light
+      ? '    document.documentElement.removeAttribute("data-theme");\n' + '    try { localStorage.setItem("doc_theme", "light"); } catch (e) {}\n'
+      : '    document.documentElement.setAttribute("data-theme", "dark");\n' + '    try { localStorage.setItem("doc_theme", "dark"); } catch (e) {}\n'
+    ) +
+    '  })();\n' +
+    '  function patchFooter() {\n' +
     '    var ebmSrc = ' + ebmJson + ';\n' +
     '    var candidates = document.querySelectorAll(".footer, .doc-footer, footer, [class*=\\"footer\\"]");\n' +
     '    candidates.forEach(function(el) {\n' +
