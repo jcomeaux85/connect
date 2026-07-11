@@ -122,7 +122,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
 
   return (
     <div
-      className="flex items-center gap-2 px-4 h-[52px] flex-shrink-0 relative z-50"
+      className="flex items-center gap-2 px-4 h-[52px] flex-shrink-0 relative z-50 min-w-0"
       style={{
         background: 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)',
         backdropFilter: 'blur(24px) saturate(200%)',
@@ -162,7 +162,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
       </TiltBtn>
 
       {/* Search */}
-      <div className="relative flex-1 max-w-sm">
+      <div className="relative flex-1 max-w-sm min-w-[80px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
         <input
           className="w-full pl-9 pr-3 h-8 rounded-lg text-sm outline-none"
@@ -241,7 +241,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           </span>
         </TiltBtn>
 
-      <div className="flex items-center gap-2 ml-auto">
+      <div className="flex items-center gap-2 ml-auto flex-shrink-0">
         {/* Active Call button */}
         <TiltBtn
         onClick={onToggleCalls}
@@ -251,11 +251,12 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           NAV_BTN),
           borderRadius: '8px',
           height: '32px',
-          display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px'
+          display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px',
+          flexShrink: 0
         }}>
           
           <PhoneCall className="w-3.5 h-3.5" style={{ color: showCalls ? '#c4b5fd' : 'rgba(255,255,255,0.5)' }} />
-          <span className="text-xs font-medium" style={{ color: showCalls ? '#c4b5fd' : 'rgba(255,255,255,0.5)' }}>No Active Call</span>
+          <span className="hidden lg:inline text-xs font-medium" style={{ color: showCalls ? '#c4b5fd' : 'rgba(255,255,255,0.5)' }}>No Active Call</span>
         </TiltBtn>
 
         {/* Dark mode toggle */}
@@ -289,7 +290,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           style={{ ...NAV_BTN, height: '32px', display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px' }}>
             
             <div className="w-2 h-2 rounded-full" style={{ background: currentStatus.color }} />
-            <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>{status}</span>
+            <span className="hidden md:inline text-xs font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>{status}</span>
             <ChevronDown className="w-3 h-3" style={{ color: 'rgba(255,255,255,0.4)' }} />
           </TiltBtn>
           {showStatus &&
@@ -308,7 +309,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         </div>
 
         {/* Clock — bare text, no container */}
-        <div className="flex items-center gap-1.5 cursor-default select-none ml-2">
+        <div className="hidden xl:flex items-center gap-1.5 cursor-default select-none ml-2">
           <Clock className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
           <div className="text-right">
             <p className="text-xs font-bold leading-none" style={{ color: 'rgba(255,255,255,0.85)' }}>{format(now, 'hh:mm:ss aa')}</p>
