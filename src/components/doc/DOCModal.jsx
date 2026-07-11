@@ -37,6 +37,7 @@ function buildPatchedHtml(htmlContent, light) {
     'button[title*="light"], button[title*="Dark"], button[title*="Light"],',
     '.mode-toggle, [class*="mode-toggle"] { display: none !important; }',
     'html, body { overflow-x: hidden !important; }',
+    '.carrier-strip, #carrierStrip { display: none !important; }',
     '.benefit-nav { gap: 5px !important; }',
     '.ben-btn { padding: 7px 12px !important; font-size: .75rem !important; }',
     '.result-details { grid-template-columns: 1fr !important; }',
@@ -102,13 +103,19 @@ function buildPatchedHtml(htmlContent, light) {
     '\n' +
     '  // Report the list of client tabs (label + accent color) to the parent\n' +
     '  function clientEls() {\n' +
-    '    return Array.prototype.slice.call(document.querySelectorAll(".carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > *"));\n' +
+    '    var strip = document.getElementById("carrierStrip") || document.querySelector(".carrier-strip");\n' +
+    '    if (!strip) return [];\n' +
+    '    return Array.prototype.slice.call(strip.children);\n' +
     '  }\n' +
     '  var lastClientSig = null;\n' +
     '  function reportClients() {\n' +
     '    var els = clientEls();\n' +
     '    var list = els.map(function(el, i) {\n' +
-    '      var col = (el.getAttribute("data-accent") || el.style.getPropertyValue("--accent") || getComputedStyle(el).getPropertyValue("--accent") || "").trim();\n' +
+    '      var cs = getComputedStyle(el);\n' +
+    '      function ok(c) { return c && c !== "rgba(0, 0, 0, 0)" && c !== "transparent" && c.indexOf("rgb") === 0; }\n' +
+    '      var col = (el.getAttribute("data-accent") || el.style.getPropertyValue("--accent") || cs.getPropertyValue("--accent") || "").trim();\n' +
+    '      if (!col) { var b = cs.borderTopColor; if (ok(b)) col = b; }\n' +
+    '      if (!col) { var t = cs.color; if (ok(t)) col = t; }\n' +
     '      return { index: i, label: (el.textContent || "").trim(), accent: col, active: el.classList.contains("active") };\n' +
     '    }).filter(function(c) { return c.label; });\n' +
     '    var sig = JSON.stringify(list);\n' +
