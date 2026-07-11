@@ -338,6 +338,21 @@ export default function DOCModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
+  // BC's colors can finish publishing (or change via customization) AFTER DOC
+  // already built its blob with fallback defaults — re-sync live instead of
+  // ever going stale.
+  useEffect(() => {
+    const resync = () => {
+      if (iframeRef.current && iframeRef.current.contentWindow) {
+        iframeRef.current.contentWindow.postMessage(
+          { type: 'doc-set-theme', css: buildThemeCss(docLight) }, '*'
+        );
+      }
+    };
+    window.addEventListener('bc-colors-changed', resync);
+    return () => window.removeEventListener('bc-colors-changed', resync);
+  }, [docLight]);
+
   // Build blob on first open, then use postMessage for theme switches (preserves search state)
   useEffect(() => {
     if (!htmlContent) return;
