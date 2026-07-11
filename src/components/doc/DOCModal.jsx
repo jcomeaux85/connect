@@ -193,42 +193,56 @@ function buildPatchedHtml(htmlContent, light) {
 // #resultsZone cards. Every surface uses DUAL neumorphic shadows
 // so nothing looks like black bleeding out.
 // ─────────────────────────────────────────────────────────────
-function THEME_CSS(light) {
+// Reverse-mirrored from BC: DOC's overall/page face = BC's CARD color,
+// DOC's elements (search well, buttons, pills, result cards) = BC's actual
+// PAGE color. Both are read live off the CSS vars Layout.jsx publishes, so
+// this tracks whatever background BC is really rendering — default or
+// user-customized — instead of a guessed hardcoded swap.
+function getBcMirrorColors() {
+  const root = document.documentElement;
+  const cs = getComputedStyle(root);
+  const cardBg = cs.getPropertyValue('--bc-card-bg').trim() || '#2a2e3a';
+  const outerBg = cs.getPropertyValue('--bc-outer-bg').trim() || '#1a1c24';
+  return { cardBg, outerBg };
+}
+
+function THEME_CSS(light, mirror) {
+  const { cardBg, outerBg } = mirror || getBcMirrorColors();
   if (light) {
-    const BG = '#e8e8ee', D = '#c5c5cf', L = '#ffffff';
+    const PAGE = cardBg, ELEM = outerBg, D = '#c5c5cf', L = '#ffffff';
     return [
-      // Force ALL page wrappers to the exact BC surface — kill DOC's own bg
-      `html, body, .main-wrap, .container, .search-zone, #resultsZone, .cat-wrap, .carrier-strip, .redirect-banner { background: ${BG} !important; background-color: ${BG} !important; background-image: none !important; }`,
-      // Search well + input → inset pressed field (never black)
-      `.search-well, .search-zone { background: ${BG} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+      // Force ALL page wrappers to BC's CARD color (DOC's overall face)
+      `html, body, .main-wrap, .container, .search-zone, #resultsZone, .cat-wrap, .carrier-strip, .redirect-banner { background: ${PAGE} !important; background-color: ${PAGE} !important; background-image: none !important; }`,
+      // Search well + input → BC's actual PAGE color, inset pressed field
+      `.search-well, .search-zone { background: ${ELEM} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
       `.search-input, input[type="text"], input[type="search"] { background: transparent !important; color: #1a202c !important; box-shadow: none !important; border: none !important; }`,
       `.search-input::placeholder { color: #9a9aa5 !important; }`,
       // Search icon + clear button → transparent, no black square
       `.search-icon { background: transparent !important; box-shadow: none !important; border: none !important; color: #9a9aa5 !important; }`,
       `.search-clear { background: transparent !important; box-shadow: none !important; border: none !important; color: #9a9aa5 !important; }`,
-      // Category buttons + view toggle → raised soft buttons
-      `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${BG} !important; color: #555 !important; box-shadow: 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 20px !important; }`,
+      // Category buttons + view toggle → BC's PAGE color, raised soft buttons
+      `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${ELEM} !important; color: #555 !important; box-shadow: 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 20px !important; }`,
       `.cat-row button.active, .view-btn.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #a01818, inset -2px -2px 5px #ff3a3a !important; }`,
-      // Client pills (carrier strip) → raised + thin INSET accent border; selected glows
-      `.carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > * { background: ${BG} !important; background-color: ${BG} !important; background-image: none !important; color: #555 !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 50px !important; }`,
-      `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active, #carrierStrip > .active { background: ${BG} !important; box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 18px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
-      // Result cards → raised
-      `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${BG} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+      // Client pills (carrier strip) → BC's PAGE color, raised + thin INSET accent border; selected glows
+      `.carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > * { background: ${ELEM} !important; background-color: ${ELEM} !important; background-image: none !important; color: #555 !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 50px !important; }`,
+      `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active, #carrierStrip > .active { background: ${ELEM} !important; box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 18px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
+      // Result cards → BC's PAGE color, raised
+      `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${ELEM} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
       `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
     ].join('\n');
   }
-  const BG = '#2a2e3a', D = '#1f232d', L = '#353945';
+  const PAGE = cardBg, ELEM = outerBg, D = '#1f232d', L = '#353945';
   return [
-    // Force ALL page wrappers to the exact BC surface — kill DOC's own near-black bg
-    `html, body, .main-wrap, .container, #resultsZone, .cat-wrap, .carrier-strip, .redirect-banner { background: ${BG} !important; background-color: ${BG} !important; background-image: none !important; }`,
-    `.search-well, .search-zone { background: ${BG} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+    // Force ALL page wrappers to BC's CARD color (DOC's overall face)
+    `html, body, .main-wrap, .container, #resultsZone, .cat-wrap, .carrier-strip, .redirect-banner { background: ${PAGE} !important; background-color: ${PAGE} !important; background-image: none !important; }`,
+    `.search-well, .search-zone { background: ${ELEM} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
     `.search-input, input[type="text"], input[type="search"] { background: transparent !important; color: #d6dae2 !important; box-shadow: none !important; border: none !important; }`,
     `.search-input::placeholder { color: #7a808c !important; }`,
-    `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${BG} !important; color: #aab0bb !important; box-shadow: 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 20px !important; }`,
+    `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${ELEM} !important; color: #aab0bb !important; box-shadow: 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 20px !important; }`,
     `.cat-row button.active, .view-btn.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #7a1414, inset -2px -2px 5px #ff3a3a !important; }`,
-    `.carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > * { background: ${BG} !important; background-color: ${BG} !important; background-image: none !important; color: #aab0bb !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 50px !important; }`,
-    `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active, #carrierStrip > .active { background: ${BG} !important; box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 20px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
-    `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${BG} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+    `.carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > * { background: ${ELEM} !important; background-color: ${ELEM} !important; background-image: none !important; color: #aab0bb !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 50px !important; }`,
+    `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active, #carrierStrip > .active { background: ${ELEM} !important; box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 20px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
+    `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${ELEM} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
     `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
     `a { color: #f0736f !important; }`,
     `.result-name, .result-title, .card-title, [class*="result-name"], [class*="card-title"] { color: #e8eaed !important; }`,
@@ -238,10 +252,11 @@ function THEME_CSS(light) {
 
 // Injected on live theme switch (no reload)
 function buildThemeCss(light) {
+  const mirror = getBcMirrorColors();
   const base = light
-    ? 'html, body { background: #e8e8ee !important; color: #1a202c !important; }'
-    : 'html, body { background: #2a2e3a !important; color: #c8ccd2 !important; }';
-  return [base, THEME_CSS(light)].join('\n');
+    ? `html, body { background: ${mirror.cardBg} !important; color: #1a202c !important; }`
+    : `html, body { background: ${mirror.cardBg} !important; color: #c8ccd2 !important; }`;
+  return [base, THEME_CSS(light, mirror)].join('\n');
 }
 
 // Cursor shadow — light mode ambient pointer glow, sits above iframe
