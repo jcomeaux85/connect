@@ -157,6 +157,25 @@ function LayoutContent({ children, currentPageName }) {
     return { background: colors.bg };
   };
 
+  // Broadcast BC's ACTUAL rendered page bg + theme's card bg as CSS vars so
+  // DOC (a separate iframe context) can reverse-mirror BC's real colors —
+  // page bg becomes DOC's element color, card bg becomes DOC's page color —
+  // instead of guessing at hex values that drift when the user customizes
+  // their background.
+  useEffect(() => {
+    const el = bgWrapperRef.current;
+    if (!el) return;
+    const publish = () => {
+      const computed = getComputedStyle(el).backgroundColor;
+      const outerBg = (computed && computed !== 'rgba(0, 0, 0, 0)') ? computed : colors.bg;
+      document.documentElement.style.setProperty('--bc-outer-bg', outerBg);
+      document.documentElement.style.setProperty('--bc-card-bg', colors.cardBg);
+    };
+    publish();
+    const t = setTimeout(publish, 50); // catch late paint (gradients/images)
+    return () => clearTimeout(t);
+  }, [theme, backgroundSettings, colors.bg, colors.cardBg]);
+
   const { data: user } = useUser();
 
   // Incoming calls polling
