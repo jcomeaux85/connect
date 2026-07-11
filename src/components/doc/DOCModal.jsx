@@ -57,7 +57,8 @@ function buildPatchedHtml(htmlContent, light) {
   // Script: handle search focus + theme switching without clearing search
   const footerScript = '<script>\n' +
     '(function() {\n' +
-    '  function patchFooter() {\n' +
+    '  (function seedTheme() {\n' +
+    
     '    var ebmSrc = ' + ebmJson + ';\n' +
     '    var candidates = document.querySelectorAll(".footer, .doc-footer, footer, [class*=\\"footer\\"]");\n' +
     '    candidates.forEach(function(el) {\n' +
