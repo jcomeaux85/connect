@@ -32,12 +32,12 @@ const PANEL_BORDER = 'rgba(255,255,255,0.13)';
 export default function DOCDockRail({ isDark, onTrigger }) {
   return (
     <div
-      className="flex flex-col items-center gap-3 py-4 px-2.5 overflow-y-auto scrollbar-hide"
+      className="flex flex-col items-center gap-4 py-4 px-2 overflow-y-auto overflow-x-visible scrollbar-hide"
       style={{
         background: PANEL_BG,
         borderRight: `1px solid ${PANEL_BORDER}`,
         boxShadow: 'inset -6px 0 14px rgba(0,0,0,0.35)',
-        width: 88,
+        width: 60,
         flexShrink: 0,
       }}
     >
@@ -45,25 +45,29 @@ export default function DOCDockRail({ isDark, onTrigger }) {
         <button
           key={label}
           onClick={() => onTrigger(match)}
-          title={label}
-          className="group flex flex-col items-center gap-1 flex-shrink-0 transition-transform duration-150 hover:scale-110 active:scale-95"
-          style={{ width: '100%' }}
+          className="group relative flex items-center justify-center flex-shrink-0 transition-transform duration-150 hover:scale-125 active:scale-95"
+          style={{ width: 40, height: 40 }}
         >
-          <div
-            className="flex items-center justify-center rounded-2xl"
-            style={{
-              width: 54,
-              height: 54,
-              background: 'rgba(255,255,255,0.07)',
-              border: `1px solid ${color}55`,
-              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.10), 0 2px 8px rgba(0,0,0,0.3), 0 0 10px ${color}33`,
-            }}
-          >
-            <Icon size={26} style={{ color: '#ffffff' }} strokeWidth={2} />
-          </div>
+          {/* Backgroundless icon — tints to its theme color on hover */}
+          <Icon
+            size={26}
+            strokeWidth={2}
+            className="transition-colors duration-150"
+            style={{ color: 'rgba(255,255,255,0.82)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = color)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.82)')}
+          />
+
+          {/* Pop-out label — slides out to the right on hover */}
           <span
-            className="text-[10px] font-semibold text-center leading-tight"
-            style={{ color: 'rgba(255,255,255,0.75)' }}
+            className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded-lg px-2.5 py-1 text-[11px] font-semibold opacity-0 translate-x-[-6px] transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-0"
+            style={{
+              background: 'rgba(20,10,40,0.95)',
+              color: '#fff',
+              border: `1px solid ${color}88`,
+              boxShadow: `0 4px 14px rgba(0,0,0,0.45), 0 0 8px ${color}55`,
+              zIndex: 50,
+            }}
           >
             {label}
           </span>

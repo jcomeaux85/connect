@@ -4,8 +4,9 @@ import { X, ExternalLink, Sun, Moon } from 'lucide-react';
 import DOCDockRail from './DOCDockRail';
 import { useTheme } from '@/components/ThemeProvider';
 
-// Deep purple glass — matches the Benconnect PersistentSidebar header/rail
-const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
+// Deep purple glass — REVERSED from the Benconnect main header so the dark ends
+// of both headers meet in the middle (DOC's dark end sits on the LEFT edge).
+const PANEL_BG = 'linear-gradient(340deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
 const PANEL_BORDER = 'rgba(255,255,255,0.13)';
 
 const DOC_HTML_URL = 'https://media.base44.com/files/public/68fa7c4cb70fe91d38015eba/c1547e610_DOC_.html';
@@ -20,25 +21,31 @@ function buildPatchedHtml(htmlContent, light) {
     : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
 
   // Light mode: soft neumorphic surfaces to match the main site (#e8e8ee base)
+  // Shadow direction SWAPPED — dark shadow now falls to the top-left, light to bottom-right.
   const lightNeu = light ? [
     'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] {',
     '  background: #e8e8ee !important; color: #1a202c !important;',
-    '  box-shadow: inset 3px 3px 6px #c5c5cf, inset -3px -3px 6px #ffffff !important;',
+    '  box-shadow: inset -3px -3px 6px #c5c5cf, inset 3px 3px 6px #ffffff !important;',
     '  border: none !important; border-radius: 10px !important; }',
-    '.ben-btn, [class*="ben-btn"], .benefit-nav button, .client-tab, [class*="client-tab"] {',
+    '.ben-btn, [class*="ben-btn"], .benefit-nav button {',
     '  background: #e8e8ee !important; color: #555 !important;',
-    '  box-shadow: 3px 3px 7px #c5c5cf, -3px -3px 7px #ffffff !important;',
+    '  box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important;',
     '  border: none !important; border-radius: 22px !important; }',
-    '.ben-btn.active, [class*="ben-btn"].active, .client-tab.active {',
+    '.ben-btn.active, [class*="ben-btn"].active {',
     '  background: #dc2626 !important; color: #fff !important;',
-    '  box-shadow: inset 2px 2px 5px #a01818, inset -2px -2px 5px #ff3a3a !important; }',
+    '  box-shadow: inset -2px -2px 5px #a01818, inset 2px 2px 5px #ff3a3a !important; }',
+    // Client tabs: thin themed inset border; selected one glows outward (JS-driven, see below)
+    '.client-tab, [class*="client-tab"] {',
+    '  background: #e8e8ee !important; color: #555 !important;',
+    '  box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important;',
+    '  border-radius: 22px !important; }',
     '.result-card, [class*="result-card"], .card, [class*="card-wrap"] {',
     '  background: #e8e8ee !important;',
-    '  box-shadow: 6px 6px 14px #c5c5cf, -6px -6px 14px #ffffff !important;',
+    '  box-shadow: -6px -6px 14px #c5c5cf, 6px 6px 14px #ffffff !important;',
     '  border: none !important; border-radius: 14px !important; }',
     'button:not(.ben-btn):not([class*="client-tab"]) {',
     '  background: #e8e8ee !important; color: #555 !important;',
-    '  box-shadow: 3px 3px 7px #c5c5cf, -3px -3px 7px #ffffff !important; border: none !important; }',
+    '  box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border: none !important; }',
     '.doc-footer, .footer, footer {',
     '  background: transparent !important; color: #8a8a96 !important;',
     '  border: none !important; box-shadow: none !important; }',
@@ -143,12 +150,31 @@ function buildPatchedHtml(htmlContent, light) {
     '      }\n' +
     '    });\n' +
     '  }\n' +
-    '  if (document.readyState === "loading") {\n' +
-    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(patchFooter, 300); });\n' +
-    '  } else {\n' +
-    '    setTimeout(patchFooter, 300);\n' +
+    '  // Client tabs: thin themed inset border per tab + outward glow on the selected one\n' +
+    '  var CLIENT_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];\n' +
+    '  function styleClientTabs() {\n' +
+    '    var tabs = document.querySelectorAll(".client-tab, [class*=\\"client-tab\\"]");\n' +
+    '    tabs.forEach(function(tab, i) {\n' +
+    '      var c = CLIENT_COLORS[i % CLIENT_COLORS.length];\n' +
+    '      tab.style.setProperty("border", "1px solid " + c + "99", "important");\n' +
+    '      var active = tab.classList.contains("active") || tab.getAttribute("aria-selected") === "true";\n' +
+    '      if (active) {\n' +
+    '        tab.style.setProperty("box-shadow", "0 0 10px " + c + ", 0 0 18px " + c + "88, inset 0 0 4px " + c + "55", "important");\n' +
+    '        tab.style.setProperty("border", "1px solid " + c, "important");\n' +
+    '      } else {\n' +
+    '        tab.style.removeProperty("box-shadow");\n' +
+    '      }\n' +
+    '    });\n' +
     '  }\n' +
-    '  setTimeout(patchFooter, 1200);\n' +
+    '  document.addEventListener("click", function(e) {\n' +
+    '    if (e.target.closest(".client-tab, [class*=\\"client-tab\\"]")) setTimeout(styleClientTabs, 30);\n' +
+    '  });\n' +
+    '  if (document.readyState === "loading") {\n' +
+    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(patchFooter, 300); setTimeout(styleClientTabs, 350); });\n' +
+    '  } else {\n' +
+    '    setTimeout(patchFooter, 300); setTimeout(styleClientTabs, 350);\n' +
+    '  }\n' +
+    '  setTimeout(patchFooter, 1200); setTimeout(styleClientTabs, 1250);\n' +
     '\n' +
     '  // Theme switch: inject new style block without reloading page\n' +
     '  window.addEventListener("message", function(e) {\n' +
@@ -174,6 +200,7 @@ function buildPatchedHtml(htmlContent, light) {
     '      s.id = "__theme_override__";\n' +
     '      s.textContent = e.data.css;\n' +
     '      document.head.appendChild(s);\n' +
+    '      setTimeout(styleClientTabs, 30);\n' +
     '    }\n' +
     '  });\n' +
     '})();\n' +
@@ -189,11 +216,12 @@ function buildThemeCss(light) {
     : 'html, body { background: #2c2c31 !important; color: #c8ccd2 !important; }';
 
   const lightNeu = light ? [
-    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #e8e8ee !important; color: #1a202c !important; box-shadow: inset 3px 3px 6px #c5c5cf, inset -3px -3px 6px #ffffff !important; border: none !important; border-radius: 10px !important; }',
-    '.ben-btn, [class*="ben-btn"], .benefit-nav button, .client-tab, [class*="client-tab"] { background: #e8e8ee !important; color: #555 !important; box-shadow: 3px 3px 7px #c5c5cf, -3px -3px 7px #ffffff !important; border: none !important; border-radius: 22px !important; }',
-    '.ben-btn.active, [class*="ben-btn"].active, .client-tab.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #a01818, inset -2px -2px 5px #ff3a3a !important; }',
-    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] { background: #e8e8ee !important; box-shadow: 6px 6px 14px #c5c5cf, -6px -6px 14px #ffffff !important; border: none !important; border-radius: 14px !important; }',
-    'button:not(.ben-btn):not([class*="client-tab"]) { background: #e8e8ee !important; color: #555 !important; box-shadow: 3px 3px 7px #c5c5cf, -3px -3px 7px #ffffff !important; border: none !important; }',
+    'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #e8e8ee !important; color: #1a202c !important; box-shadow: inset -3px -3px 6px #c5c5cf, inset 3px 3px 6px #ffffff !important; border: none !important; border-radius: 10px !important; }',
+    '.ben-btn, [class*="ben-btn"], .benefit-nav button { background: #e8e8ee !important; color: #555 !important; box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border: none !important; border-radius: 22px !important; }',
+    '.ben-btn.active, [class*="ben-btn"].active { background: #dc2626 !important; color: #fff !important; box-shadow: inset -2px -2px 5px #a01818, inset 2px 2px 5px #ff3a3a !important; }',
+    '.client-tab, [class*="client-tab"] { background: #e8e8ee !important; color: #555 !important; box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border-radius: 22px !important; }',
+    '.result-card, [class*="result-card"], .card, [class*="card-wrap"] { background: #e8e8ee !important; box-shadow: -6px -6px 14px #c5c5cf, 6px 6px 14px #ffffff !important; border: none !important; border-radius: 14px !important; }',
+    'button:not(.ben-btn):not([class*="client-tab"]) { background: #e8e8ee !important; color: #555 !important; box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border: none !important; }',
     '.doc-footer, .footer, footer { background: transparent !important; color: #8a8a96 !important; border: none !important; box-shadow: none !important; }',
     '.client-rail, [class*="client-rail"], .client-tabs, [class*="client-tabs"] { background: #e8e8ee !important; border-bottom: 1px solid #d2d2da !important; }',
   ].join('\n') : '';
@@ -357,7 +385,7 @@ export default function DOCModal({ isOpen, onClose }) {
             className="fixed top-0 right-0 bottom-0 z-[201] flex overflow-hidden"
             style={{
               width: 'min(50vw, 640px)',
-              boxShadow: isDark ? '-6px 0 40px #0d0d10' : '-6px 0 40px rgba(0,0,0,0.22)',
+              boxShadow: isDark ? '-6px 0 40px #0d0d10' : '-6px 0 40px rgba(0,0,0,0.12)',
               background: panelBg,
             }}
             onClick={e => e.stopPropagation()}
