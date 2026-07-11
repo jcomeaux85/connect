@@ -443,7 +443,8 @@ export default function DOCModal({ isOpen, onClose }) {
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: '20px',
                   fontWeight: 800,
-                  color: 'rgba(255, 0, 0, 1)',
+                  color: '#ff2b2b',
+                  textShadow: '0 0 8px rgba(255,43,43,0.55)',
                   letterSpacing: '-0.7px',
                   lineHeight: 1,
                 }}>
@@ -456,7 +457,7 @@ export default function DOCModal({ isOpen, onClose }) {
 
               <div className="flex items-center gap-2">
                 <button onClick={() => { userOverride.current = true; setDocLight(p => !p); }} title={docLight ? 'Switch to dark mode' : 'Switch to light mode'} style={btnStyle}>
-                  {docLight ? <Moon size={14} /> : <Sun size={14} />}
+                  {docLight ? <Moon size={14} color="#ffffff" /> : <Sun size={14} color="#fbbf24" />}
                 </button>
                 <button onClick={handlePopOut} title="Open in new window" style={btnStyle}>
                   <ExternalLink size={14} />
