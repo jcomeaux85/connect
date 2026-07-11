@@ -41,7 +41,9 @@ export default function HangingNav() {
   };
 
   return (
-    <div className="flex justify-center py-1.5 border-b" style={{
+    <div className="flex justify-center items-center border-b" style={{
+      height: '38px',
+      boxSizing: 'border-box',
       borderColor: 'rgba(255,255,255,0.10)',
       background: 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)',
       backdropFilter: 'blur(24px)',
