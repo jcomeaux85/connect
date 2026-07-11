@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Sun, Moon } from 'lucide-react';
-import DOCDockRail from './DOCDockRail';
+import DOCNavRail from './DOCNavRail';
 import { useTheme } from '@/components/ThemeProvider';
 
 // Deep purple glass — matched EXACTLY to the Benconnect main header (HangingNav).
@@ -99,6 +99,31 @@ function buildPatchedHtml(htmlContent, light) {
     '  }\n' +
     '  setInterval(reportAccent, 400);\n' +
     '  setTimeout(reportAccent, 600);\n' +
+    '\n' +
+    '  // Client tabs "light up" — mirror the BC vertical-nav glow exactly.\n' +
+    '  // Proximity-based blue outline + cyan glow that tracks the cursor.\n' +
+    '  function clientTabs() {\n' +
+    '    return document.querySelectorAll(".carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > *");\n' +
+    '  }\n' +
+    '  function bindGlow() {\n' +
+    '    clientTabs().forEach(function(tab) {\n' +
+    '      if (tab.__glowBound) return;\n' +
+    '      tab.__glowBound = true;\n' +
+    '      tab.addEventListener("mousemove", function(e) {\n' +
+    '        var r = tab.getBoundingClientRect();\n' +
+    '        var cx = Math.max(r.left, Math.min(e.clientX, r.right));\n' +
+    '        var cy = Math.max(r.top, Math.min(e.clientY, r.bottom));\n' +
+    '        var d = Math.hypot(e.clientX - cx, e.clientY - cy);\n' +
+    '        var p = Math.max(0, 1 - d / 150);\n' +
+    '        tab.style.textShadow = "-0.5px -0.5px 0 #2563eb, 0.5px -0.5px 0 #2563eb, -0.5px 0.5px 0 #2563eb, 0.5px 0.5px 0 #2563eb, 0 0 " + (p * 20) + "px #00d4ff";\n' +
+    '      });\n' +
+    '      tab.addEventListener("mouseleave", function() {\n' +
+    '        if (!tab.classList.contains("active")) tab.style.textShadow = "none";\n' +
+    '      });\n' +
+    '    });\n' +
+    '  }\n' +
+    '  setInterval(bindGlow, 700);\n' +
+    '  setTimeout(bindGlow, 500);\n' +
     '\n' +
     '  // Theme switch: inject new style block without reloading page\n' +
     '  window.addEventListener("message", function(e) {\n' +
@@ -437,8 +462,8 @@ export default function DOCModal({ isOpen, onClose }) {
             </div>
             </div>
 
-            {/* Mac-dock style search rail — now on the RIGHT edge of DOC */}
-            <DOCDockRail isDark={isDark} onTrigger={triggerSearch} accent={clientAccent} />
+            {/* BC-mirrored vertical nav rail (chip + lights + lit buttons) on the RIGHT edge of DOC */}
+            <DOCNavRail onTrigger={triggerSearch} />
           </motion.div>
         </>
       )}
