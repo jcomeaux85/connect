@@ -193,8 +193,14 @@ export default function ShiftBreakBar({ isDark }) {
       {/* === BAR === */}
       <div className="relative" style={{ height: "20px" }}>
         <div className="absolute rounded-full overflow-hidden" style={{ top: "3px", left: 0, right: 0, height: "14px", background: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.08)" }}>
-          {/* Time progress fill */}
-          <div className="absolute top-0 left-0 h-full" style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${BRAND_PURPLE}, #4f46e5)` }} />
+          {/* Thin white progress line — no purple fill */}
+          <div className="absolute" style={{
+            top: "50%", left: 0, width: `${progressPct}%`, height: "2px",
+            background: "rgba(255,255,255,0.95)",
+            boxShadow: "0 0 4px rgba(255,255,255,0.6)",
+            transform: "translateY(-50%)",
+            borderRadius: "1px",
+          }} />
 
           {/* Fixed lunch segments — one per agent, in their color */}
           {QUEUE.map((q) => (
@@ -208,9 +214,9 @@ export default function ShiftBreakBar({ isDark }) {
           ))}
         </div>
 
-        {/* Now line */}
+        {/* White dot at the end of the progress line */}
         {progressPct > 0 && progressPct < 100 && (
-          <div className="absolute pointer-events-none" style={{ left: `${progressPct}%`, top: "1px", bottom: "1px", width: "2px", background: BRAND_PURPLE, boxShadow: `0 0 6px ${hexToRgba(BRAND_PURPLE, 0.8)}`, transform: "translateX(-50%)", zIndex: 25 }} />
+          <div className="absolute pointer-events-none" style={{ left: `${progressPct}%`, top: "50%", transform: "translate(-50%, -50%)", width: "12px", height: "12px", borderRadius: "50%", background: "#ffffff", boxShadow: "0 0 6px rgba(255,255,255,0.9), 0 1px 3px rgba(0,0,0,0.4)", zIndex: 25 }} />
         )}
 
         {/* Break circles — filled = taken, outline = reserved */}
