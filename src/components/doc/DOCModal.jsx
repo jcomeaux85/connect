@@ -381,8 +381,9 @@ export default function DOCModal({ isOpen, onClose }) {
 
   const isDark = !docLight;
 
-  // Content area still follows light/dark; header/rail are always purple glass (Benconnect)
-  const panelBg   = isDark ? '#2a2e3a' : '#e8e8ee';
+  // Content area follows light/dark; reverse-mirrored from BC — DOC's overall
+  // face uses BC's CARD color (was flat #2a2e3a/#e8e8ee before).
+  const panelBg   = isDark ? 'var(--bc-card-bg, #2a2e3a)' : 'var(--bc-card-bg, #e8e8ee)';
 
   const btnStyle = {
     width: 32, height: 32, borderRadius: 8,
