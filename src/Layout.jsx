@@ -170,10 +170,10 @@ function LayoutContent({ children, currentPageName }) {
       const outerBg = (computed && computed !== 'rgba(0, 0, 0, 0)') ? computed : colors.bg;
       document.documentElement.style.setProperty('--bc-outer-bg', outerBg);
       document.documentElement.style.setProperty('--bc-card-bg', colors.cardBg);
+      window.dispatchEvent(new Event('bc-colors-changed'));
     };
     publish();
     const t = setTimeout(publish, 50); // catch late paint (gradients/images)
-    window.dispatchEvent(new Event('bc-colors-changed'));
     return () => clearTimeout(t);
   }, [theme, backgroundSettings, colors.bg, colors.cardBg]);
 
