@@ -284,7 +284,7 @@ function LayoutContent({ children, currentPageName }) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
+    <div ref={bgWrapperRef} className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
 
       {/* Persistent Sidebar — always rendered, floats over content */}
       <PersistentSidebar
