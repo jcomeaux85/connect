@@ -47,20 +47,28 @@ export default function HangingNav() {
       borderColor: 'rgba(255,255,255,0.10)',
       background: 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)',
       backdropFilter: 'blur(24px)',
+      containerType: 'inline-size',
+      containerName: 'hangnav',
+      width: '100%',
+      overflow: 'hidden',
     }}>
-      <div className="flex gap-16 w-4/5 justify-center">
+      <div className="flex items-center justify-between w-full" style={{ gap: 'clamp(6px, 3cqw, 48px)', padding: '0 clamp(8px, 3cqw, 32px)' }}>
         {NAV_LINKS.map((link) => {
           const isActive = location.pathname === link.path;
           return (
             <Link
               key={link.path}
               to={link.path}
-              className="text-base font-semibold tracking-widest transition-all duration-300"
+              className="font-semibold transition-all duration-300"
               style={{
                 color: isActive ? '#ffffff' : textPrimary,
                 textShadow: isActive 
                   ? '-0.5px -0.5px 0 #2563eb, 0.5px -0.5px 0 #2563eb, -0.5px 0.5px 0 #2563eb, 0.5px 0.5px 0 #2563eb, 0 0 15px #00d4ff'
-                  : '0 0 1px rgba(255,255,255,0.3)'
+                  : '0 0 1px rgba(255,255,255,0.3)',
+                fontSize: 'clamp(9px, 2.4cqw, 16px)',
+                letterSpacing: 'clamp(0.01em, 0.5cqw, 0.1em)',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
               onMouseMove={handleLinkHover}
               onMouseLeave={handleLinkLeave}
