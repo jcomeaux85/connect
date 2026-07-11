@@ -34,11 +34,14 @@ function buildPatchedHtml(htmlContent, light) {
     '.ben-btn.active, [class*="ben-btn"].active {',
     '  background: #dc2626 !important; color: #fff !important;',
     '  box-shadow: inset -2px -2px 5px #a01818, inset 2px 2px 5px #ff3a3a !important; }',
-    // Client tabs: thin themed inset border; selected one glows outward (JS-driven, see below)
-    '.client-tab, [class*="client-tab"] {',
-    '  background: #e8e8ee !important; color: #555 !important;',
-    '  box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important;',
-    '  border-radius: 22px !important; }',
+    // Client pills: thin INSET colored border in the selected client's accent color.
+    // var(--accent) is set by DOC's switchClient() to the active client's color.
+    '.client-pill {',
+    '  box-shadow: inset 0 0 0 1.5px var(--accent), -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important;',
+    '  border-radius: 50px !important; }',
+    '.client-pill.active, .client-pill:active {',
+    '  box-shadow: inset 0 0 0 2px var(--accent), 0 0 10px var(--accent), 0 0 18px var(--accent) !important;',
+    '  color: var(--accent) !important; }',
     '.result-card, [class*="result-card"], .card, [class*="card-wrap"] {',
     '  background: #e8e8ee !important;',
     '  box-shadow: -6px -6px 14px #c5c5cf, 6px 6px 14px #ffffff !important;',
@@ -58,13 +61,20 @@ function buildPatchedHtml(htmlContent, light) {
     '  background: #252529 !important; color: #c8ccd2 !important;',
     '  box-shadow: 4px 4px 10px #1a1a1e, 2px 2px 5px #1c1c20 !important;',
     '  border: none !important; border-radius: 10px !important; }',
-    '.ben-btn, [class*="ben-btn"], .benefit-nav button, .client-tab, [class*="client-tab"] {',
+    '.ben-btn, [class*="ben-btn"], .benefit-nav button {',
     '  background: #333338 !important; color: #aab0bb !important;',
     '  box-shadow: 3px 3px 8px #1e1e22, 1px 1px 3px #1a1a1e !important;',
     '  border: none !important; border-radius: 22px !important; }',
-    '.ben-btn.active, [class*="ben-btn"].active, .client-tab.active {',
+    '.ben-btn.active, [class*="ben-btn"].active {',
     '  background: #dc2626 !important; color: #fff !important;',
     '  box-shadow: 3px 3px 8px #1a1a1e !important; }',
+    // Client pills (dark): inset accent-colored border; selected one glows in accent
+    '.client-pill {',
+    '  box-shadow: inset 0 0 0 1.5px var(--accent), 3px 3px 8px #1e1e22, -3px -3px 8px #2e2e34 !important;',
+    '  border-radius: 50px !important; }',
+    '.client-pill.active, .client-pill:active {',
+    '  box-shadow: inset 0 0 0 2px var(--accent), 0 0 10px var(--accent), 0 0 20px var(--accent) !important;',
+    '  color: var(--accent) !important; }',
     '.result-card, [class*="result-card"], .card, [class*="card-wrap"] {',
     '  background: #303035 !important;',
     '  box-shadow: 4px 4px 10px #1e1e22, 1px 1px 3px #1a1a1e !important;',
@@ -150,31 +160,24 @@ function buildPatchedHtml(htmlContent, light) {
     '      }\n' +
     '    });\n' +
     '  }\n' +
-    '  // Client tabs: thin themed inset border per tab + outward glow on the selected one\n' +
-    '  var CLIENT_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];\n' +
-    '  function styleClientTabs() {\n' +
-    '    var tabs = document.querySelectorAll(".client-tab, [class*=\\"client-tab\\"]");\n' +
-    '    tabs.forEach(function(tab, i) {\n' +
-    '      var c = CLIENT_COLORS[i % CLIENT_COLORS.length];\n' +
-    '      tab.style.setProperty("border", "1px solid " + c + "99", "important");\n' +
-    '      var active = tab.classList.contains("active") || tab.getAttribute("aria-selected") === "true";\n' +
-    '      if (active) {\n' +
-    '        tab.style.setProperty("box-shadow", "0 0 10px " + c + ", 0 0 18px " + c + "88, inset 0 0 4px " + c + "55", "important");\n' +
-    '        tab.style.setProperty("border", "1px solid " + c, "important");\n' +
-    '      } else {\n' +
-    '        tab.style.removeProperty("box-shadow");\n' +
-    '      }\n' +
-    '    });\n' +
-    '  }\n' +
-    '  document.addEventListener("click", function(e) {\n' +
-    '    if (e.target.closest(".client-tab, [class*=\\"client-tab\\"]")) setTimeout(styleClientTabs, 30);\n' +
-    '  });\n' +
     '  if (document.readyState === "loading") {\n' +
-    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(patchFooter, 300); setTimeout(styleClientTabs, 350); });\n' +
+    '    document.addEventListener("DOMContentLoaded", function() { setTimeout(patchFooter, 300); });\n' +
     '  } else {\n' +
-    '    setTimeout(patchFooter, 300); setTimeout(styleClientTabs, 350);\n' +
+    '    setTimeout(patchFooter, 300);\n' +
     '  }\n' +
-    '  setTimeout(patchFooter, 1200); setTimeout(styleClientTabs, 1250);\n' +
+    '  setTimeout(patchFooter, 1200);\n' +
+    '\n' +
+    '  // Broadcast the active client accent color to the parent whenever it changes\n' +
+    '  var lastAccent = null;\n' +
+    '  function reportAccent() {\n' +
+    '    var a = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();\n' +
+    '    if (a && a !== lastAccent) {\n' +
+    '      lastAccent = a;\n' +
+    '      parent.postMessage({ type: "doc-accent", accent: a }, "*");\n' +
+    '    }\n' +
+    '  }\n' +
+    '  setInterval(reportAccent, 400);\n' +
+    '  setTimeout(reportAccent, 600);\n' +
     '\n' +
     '  // Theme switch: inject new style block without reloading page\n' +
     '  window.addEventListener("message", function(e) {\n' +
@@ -200,7 +203,6 @@ function buildPatchedHtml(htmlContent, light) {
     '      s.id = "__theme_override__";\n' +
     '      s.textContent = e.data.css;\n' +
     '      document.head.appendChild(s);\n' +
-    '      setTimeout(styleClientTabs, 30);\n' +
     '    }\n' +
     '  });\n' +
     '})();\n' +
@@ -219,7 +221,8 @@ function buildThemeCss(light) {
     'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #e8e8ee !important; color: #1a202c !important; box-shadow: inset -3px -3px 6px #c5c5cf, inset 3px 3px 6px #ffffff !important; border: none !important; border-radius: 10px !important; }',
     '.ben-btn, [class*="ben-btn"], .benefit-nav button { background: #e8e8ee !important; color: #555 !important; box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border: none !important; border-radius: 22px !important; }',
     '.ben-btn.active, [class*="ben-btn"].active { background: #dc2626 !important; color: #fff !important; box-shadow: inset -2px -2px 5px #a01818, inset 2px 2px 5px #ff3a3a !important; }',
-    '.client-tab, [class*="client-tab"] { background: #e8e8ee !important; color: #555 !important; box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border-radius: 22px !important; }',
+    '.client-pill { box-shadow: inset 0 0 0 1.5px var(--accent), -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border-radius: 50px !important; }',
+    '.client-pill.active, .client-pill:active { box-shadow: inset 0 0 0 2px var(--accent), 0 0 10px var(--accent), 0 0 18px var(--accent) !important; color: var(--accent) !important; }',
     '.result-card, [class*="result-card"], .card, [class*="card-wrap"] { background: #e8e8ee !important; box-shadow: -6px -6px 14px #c5c5cf, 6px 6px 14px #ffffff !important; border: none !important; border-radius: 14px !important; }',
     'button:not(.ben-btn):not([class*="client-tab"]) { background: #e8e8ee !important; color: #555 !important; box-shadow: -3px -3px 7px #c5c5cf, 3px 3px 7px #ffffff !important; border: none !important; }',
     '.doc-footer, .footer, footer { background: transparent !important; color: #8a8a96 !important; border: none !important; box-shadow: none !important; }',
@@ -228,8 +231,10 @@ function buildThemeCss(light) {
 
   const dark = light ? '' : [
     'input, .search-bar, .search-wrap, [class*="search-bar"], [class*="search-wrap"] { background: #252529 !important; color: #c8ccd2 !important; box-shadow: 4px 4px 10px #1a1a1e !important; border: none !important; border-radius: 10px !important; }',
-    '.ben-btn, [class*="ben-btn"], .benefit-nav button, .client-tab, [class*="client-tab"] { background: #333338 !important; color: #aab0bb !important; box-shadow: 3px 3px 8px #1e1e22 !important; border: none !important; border-radius: 22px !important; }',
-    '.ben-btn.active, [class*="ben-btn"].active, .client-tab.active { background: #dc2626 !important; color: #fff !important; }',
+    '.ben-btn, [class*="ben-btn"], .benefit-nav button { background: #333338 !important; color: #aab0bb !important; box-shadow: 3px 3px 8px #1e1e22 !important; border: none !important; border-radius: 22px !important; }',
+    '.ben-btn.active, [class*="ben-btn"].active { background: #dc2626 !important; color: #fff !important; }',
+    '.client-pill { box-shadow: inset 0 0 0 1.5px var(--accent), 3px 3px 8px #1e1e22, -3px -3px 8px #2e2e34 !important; border-radius: 50px !important; }',
+    '.client-pill.active, .client-pill:active { box-shadow: inset 0 0 0 2px var(--accent), 0 0 10px var(--accent), 0 0 20px var(--accent) !important; color: var(--accent) !important; }',
     '.result-card, [class*="result-card"], .card, [class*="card-wrap"] { background: #303035 !important; box-shadow: 4px 4px 10px #1e1e22 !important; border: none !important; border-radius: 12px !important; }',
     'button:not(.ben-btn):not([class*="client-tab"]) { background: #333338 !important; color: #aab0bb !important; box-shadow: 3px 3px 7px #1e1e22 !important; border: none !important; }',
     'a { color: #dc2626 !important; }',
@@ -283,6 +288,18 @@ export default function DOCModal({ isOpen, onClose }) {
   const [blobUrl, setBlobUrl] = useState(null);
   const iframeRef = useRef(null);
   const initialLoadDone = useRef(false);
+  // Accent color of the currently-selected client (broadcast from the iframe)
+  const [clientAccent, setClientAccent] = useState('#dc2626');
+
+  useEffect(() => {
+    const onMsg = (e) => {
+      if (e.data && e.data.type === 'doc-accent' && e.data.accent) {
+        setClientAccent(e.data.accent);
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
 
   // Follow the site's light/dark unless the user has toggled DOC's own switch
   useEffect(() => {
@@ -391,7 +408,7 @@ export default function DOCModal({ isOpen, onClose }) {
             onClick={e => e.stopPropagation()}
           >
             {/* Mac-dock style search rail — sits on the left edge of DOC */}
-            <DOCDockRail isDark={isDark} onTrigger={triggerSearch} />
+            <DOCDockRail isDark={isDark} onTrigger={triggerSearch} accent={clientAccent} />
 
             {/* Main column: header + content */}
             <div className="flex flex-col flex-1 overflow-hidden min-w-0">

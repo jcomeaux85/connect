@@ -29,7 +29,7 @@ const DOCK_ITEMS = [
 const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
 const PANEL_BORDER = 'rgba(255,255,255,0.13)';
 
-export default function DOCDockRail({ isDark, onTrigger }) {
+export default function DOCDockRail({ isDark, onTrigger, accent = '#dc2626' }) {
   return (
     <div
       className="flex flex-col items-center gap-4 py-4 px-2 overflow-y-auto overflow-x-visible scrollbar-hide"
@@ -41,31 +41,37 @@ export default function DOCDockRail({ isDark, onTrigger }) {
         flexShrink: 0,
       }}
     >
-      {DOCK_ITEMS.map(({ label, match, icon: Icon, color }) => (
+      {DOCK_ITEMS.map(({ label, match, icon: Icon }) => (
         <button
           key={label}
           onClick={() => onTrigger(match)}
           className="group relative flex items-center justify-center flex-shrink-0 transition-transform duration-150 hover:scale-125 active:scale-95"
           style={{ width: 40, height: 40 }}
         >
-          {/* Backgroundless icon — tints to its theme color on hover */}
+          {/* Backgroundless icon — glows the SELECTED CLIENT's accent color on hover */}
           <Icon
             size={26}
             strokeWidth={2}
-            className="transition-colors duration-150"
+            className="transition-all duration-150"
             style={{ color: 'rgba(255,255,255,0.82)' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = color)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.82)')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = accent;
+              e.currentTarget.style.filter = `drop-shadow(0 0 6px ${accent})`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'rgba(255,255,255,0.82)';
+              e.currentTarget.style.filter = 'none';
+            }}
           />
 
-          {/* Pop-out label — slides out to the right on hover */}
+          {/* Pop-out label — slides out to the right on hover, in the client accent color */}
           <span
             className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded-lg px-2.5 py-1 text-[11px] font-semibold opacity-0 translate-x-[-6px] transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-0"
             style={{
               background: 'rgba(20,10,40,0.95)',
               color: '#fff',
-              border: `1px solid ${color}88`,
-              boxShadow: `0 4px 14px rgba(0,0,0,0.45), 0 0 8px ${color}55`,
+              border: `1px solid ${accent}88`,
+              boxShadow: `0 4px 14px rgba(0,0,0,0.45), 0 0 8px ${accent}55`,
               zIndex: 50,
             }}
           >
