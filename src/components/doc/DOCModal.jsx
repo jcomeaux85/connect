@@ -100,6 +100,23 @@ function buildPatchedHtml(htmlContent, light) {
     '  setInterval(reportAccent, 400);\n' +
     '  setTimeout(reportAccent, 600);\n' +
     '\n' +
+    '  // Report the list of client tabs (label + accent color) to the parent\n' +
+    '  function clientEls() {\n' +
+    '    return Array.prototype.slice.call(document.querySelectorAll(".carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > *"));\n' +
+    '  }\n' +
+    '  var lastClientSig = null;\n' +
+    '  function reportClients() {\n' +
+    '    var els = clientEls();\n' +
+    '    var list = els.map(function(el, i) {\n' +
+    '      var col = (el.getAttribute("data-accent") || el.style.getPropertyValue("--accent") || getComputedStyle(el).getPropertyValue("--accent") || "").trim();\n' +
+    '      return { index: i, label: (el.textContent || "").trim(), accent: col, active: el.classList.contains("active") };\n' +
+    '    }).filter(function(c) { return c.label; });\n' +
+    '    var sig = JSON.stringify(list);\n' +
+    '    if (sig !== lastClientSig) { lastClientSig = sig; parent.postMessage({ type: "doc-clients", clients: list }, "*"); }\n' +
+    '  }\n' +
+    '  setInterval(reportClients, 500);\n' +
+    '  setTimeout(reportClients, 700);\n' +
+    '\n' +
     '  // Client tabs "light up" — mirror the BC vertical-nav glow exactly.\n' +
     '  // Proximity-based blue outline + cyan glow that tracks the cursor.\n' +
     '  function clientTabs() {\n' +
@@ -130,6 +147,11 @@ function buildPatchedHtml(htmlContent, light) {
     '    if (e.data && e.data.type === "doc-focus-search") {\n' +
     '      var input = document.querySelector(\'input[type="search"], input[type="text"], input[placeholder*="earch"], .search-input, #search, #searchInput, [id*="search"], [class*="search-input"]\');\n' +
     '      if (input) { input.focus(); input.select(); }\n' +
+    '    }\n' +
+    '    if (e.data && e.data.type === "doc-select-client") {\n' +
+    '      var els = clientEls();\n' +
+    '      var el = els[e.data.index];\n' +
+    '      if (el) { el.click(); }\n' +
     '    }\n' +
     '    if (e.data && e.data.type === "doc-trigger-search") {\n' +
     '      var term = (e.data.term || "").toLowerCase();\n' +
@@ -258,11 +280,16 @@ export default function DOCModal({ isOpen, onClose }) {
   const initialLoadDone = useRef(false);
   // Accent color of the currently-selected client (broadcast from the iframe)
   const [clientAccent, setClientAccent] = useState('#dc2626');
+  // List of client tabs pulled up out of the iframe into the sub-header
+  const [clients, setClients] = useState([]);
 
   useEffect(() => {
     const onMsg = (e) => {
       if (e.data && e.data.type === 'doc-accent' && e.data.accent) {
         setClientAccent(e.data.accent);
+      }
+      if (e.data && e.data.type === 'doc-clients' && Array.isArray(e.data.clients)) {
+        setClients(e.data.clients);
       }
     };
     window.addEventListener('message', onMsg);
@@ -334,6 +361,12 @@ export default function DOCModal({ isOpen, onClose }) {
   const triggerSearch = (term) => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
       iframeRef.current.contentWindow.postMessage({ type: 'doc-trigger-search', term }, '*');
+    }
+  };
+
+  const selectClient = (index) => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({ type: 'doc-select-client', index }, '*');
     }
   };
 
@@ -430,45 +463,61 @@ export default function DOCModal({ isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Sub-header strip — mirrors the BC HangingNav bar directly under the top header */}
+            {/* Sub-header strip — the CLIENTS, pulled up from the iframe.
+                Plain words like the adjacent nav (no pills); glow their own client
+                color on hover. Scrolls horizontally only, never wraps/vertical.
+                min-w-0 lets the strip shrink so the left side resizes on narrow screens. */}
             <div
-              className="flex items-center justify-center flex-shrink-0 gap-10 px-4"
+              className="flex items-center flex-shrink-0 gap-8 px-4 overflow-x-auto overflow-y-hidden no-scrollbar min-w-0"
               style={{
                 height: '38px',
+                whiteSpace: 'nowrap',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
                 background: 'linear-gradient(315deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)',
                 backdropFilter: 'blur(24px) saturate(200%)',
                 WebkitBackdropFilter: 'blur(24px) saturate(200%)',
                 borderBottom: `1px solid ${PANEL_BORDER}`,
               }}
             >
-              {[
-                { label: 'SEARCH', term: '' },
-                { label: 'MEDICAL', term: 'medical' },
-                { label: 'DENTAL', term: 'dental' },
-                { label: 'VISION', term: 'vision' },
-              ].map((tab) => (
-                <button
-                  key={tab.label}
-                  onClick={() => triggerSearch(tab.term)}
-                  className="text-[13px] font-semibold tracking-widest transition-all duration-300 bg-transparent border-0 cursor-pointer"
-                  style={{ color: 'rgba(255,255,255,0.55)', textShadow: '0 0 1px rgba(255,255,255,0.3)' }}
-                  onMouseMove={(e) => {
-                    const r = e.currentTarget.getBoundingClientRect();
-                    const cx = Math.max(r.left, Math.min(e.clientX, r.right));
-                    const cy = Math.max(r.top, Math.min(e.clientY, r.bottom));
-                    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
-                    const p = Math.max(0, 1 - d / 150);
-                    e.currentTarget.style.color = `rgba(255,255,255,${0.4 + p * 0.6})`;
-                    e.currentTarget.style.textShadow = `-0.5px -0.5px 0 #2563eb, 0.5px -0.5px 0 #2563eb, -0.5px 0.5px 0 #2563eb, 0.5px 0.5px 0 #2563eb, 0 0 ${p * 20}px #00d4ff`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.55)';
-                    e.currentTarget.style.textShadow = '0 0 1px rgba(255,255,255,0.3)';
-                  }}
-                >
-                  {tab.label}
-                </button>
-              ))}
+              {clients.length === 0 && (
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', fontStyle: 'italic', flexShrink: 0 }}>
+                  No clients loaded
+                </span>
+              )}
+              {clients.map((client) => {
+                const accent = client.accent || '#00d4ff';
+                return (
+                  <button
+                    key={client.index}
+                    onClick={() => selectClient(client.index)}
+                    className="text-[13px] font-semibold tracking-widest transition-all duration-300 bg-transparent border-0 cursor-pointer flex-shrink-0"
+                    style={{
+                      color: client.active ? accent : 'rgba(255,255,255,0.55)',
+                      textShadow: client.active
+                        ? `0 0 10px ${accent}, 0 0 18px ${accent}`
+                        : '0 0 1px rgba(255,255,255,0.3)',
+                    }}
+                    onMouseMove={(e) => {
+                      const r = e.currentTarget.getBoundingClientRect();
+                      const cx = Math.max(r.left, Math.min(e.clientX, r.right));
+                      const cy = Math.max(r.top, Math.min(e.clientY, r.bottom));
+                      const d = Math.hypot(e.clientX - cx, e.clientY - cy);
+                      const p = Math.max(0, 1 - d / 150);
+                      e.currentTarget.style.color = accent;
+                      e.currentTarget.style.textShadow = `0 0 ${4 + p * 20}px ${accent}, 0 0 ${p * 32}px ${accent}`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = client.active ? accent : 'rgba(255,255,255,0.55)';
+                      e.currentTarget.style.textShadow = client.active
+                        ? `0 0 10px ${accent}, 0 0 18px ${accent}`
+                        : '0 0 1px rgba(255,255,255,0.3)';
+                    }}
+                  >
+                    {client.label}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Content area */}
