@@ -42,28 +42,43 @@ export default function DOCDockRail({ isDark, onTrigger, accent = '#dc2626' }) {
         flexShrink: 0,
       }}
     >
-      {DOCK_ITEMS.map(({ label, match, icon: Icon }) => (
+      {DOCK_ITEMS.map(({ label, match, icon: Icon, href, imgSrc, color }) => (
         <button
           key={label}
-          onClick={() => onTrigger(match)}
+          onClick={() => (href ? window.open(href, '_blank', 'noopener') : onTrigger(match))}
           className="group relative flex items-center justify-center flex-shrink-0 transition-transform duration-150 hover:scale-125 active:scale-95"
           style={{ width: 40, height: 40 }}
         >
-          {/* Backgroundless icon — glows the SELECTED CLIENT's accent color on hover */}
-          <Icon
-            size={26}
-            strokeWidth={2}
-            className="transition-all duration-150"
-            style={{ color: 'rgba(255,255,255,0.82)' }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = accent;
-              e.currentTarget.style.filter = `drop-shadow(0 0 6px ${accent})`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'rgba(255,255,255,0.82)';
-              e.currentTarget.style.filter = 'none';
-            }}
-          />
+          {/* Backgroundless icon (or client logo image) — glows the SELECTED CLIENT's accent color on hover */}
+          {imgSrc ? (
+            <img
+              src={imgSrc}
+              alt={label}
+              className="transition-all duration-150"
+              style={{ width: 26, height: 26, objectFit: 'contain', borderRadius: 6 }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.filter = `drop-shadow(0 0 6px ${accent}) drop-shadow(0 0 10px ${accent})`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.filter = 'none';
+              }}
+            />
+          ) : (
+            <Icon
+              size={26}
+              strokeWidth={2}
+              className="transition-all duration-150"
+              style={{ color: 'rgba(255,255,255,0.82)' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = accent;
+                e.currentTarget.style.filter = `drop-shadow(0 0 6px ${accent})`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'rgba(255,255,255,0.82)';
+                e.currentTarget.style.filter = 'none';
+              }}
+            />
+          )}
 
           {/* Pop-out label — slides out to the right on hover, in the client accent color */}
           <span
