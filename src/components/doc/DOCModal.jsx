@@ -147,6 +147,8 @@ function THEME_CSS(light) {
   if (light) {
     const BG = '#e8e8ee', D = '#c5c5cf', L = '#ffffff';
     return [
+      // Force ALL page wrappers to the exact BC surface — kill DOC's own bg
+      `html, body, .main-wrap, .container, .search-zone, #resultsZone, .cat-wrap, .carrier-strip, .redirect-banner { background: ${BG} !important; background-color: ${BG} !important; background-image: none !important; }`,
       // Search well + input → inset pressed field (never black)
       `.search-well, .search-zone { background: ${BG} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
       `.search-input, input[type="text"], input[type="search"] { background: transparent !important; color: #1a202c !important; box-shadow: none !important; border: none !important; }`,
@@ -164,6 +166,8 @@ function THEME_CSS(light) {
   }
   const BG = '#2a2e3a', D = '#1f232d', L = '#353945';
   return [
+    // Force ALL page wrappers to the exact BC surface — kill DOC's own near-black bg
+    `html, body, .main-wrap, .container, #resultsZone, .cat-wrap, .carrier-strip, .redirect-banner { background: ${BG} !important; background-color: ${BG} !important; background-image: none !important; }`,
     `.search-well, .search-zone { background: ${BG} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
     `.search-input, input[type="text"], input[type="search"] { background: transparent !important; color: #d6dae2 !important; box-shadow: none !important; border: none !important; }`,
     `.search-input::placeholder { color: #7a808c !important; }`,
