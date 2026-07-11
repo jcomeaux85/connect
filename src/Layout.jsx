@@ -126,6 +126,10 @@ function LayoutContent({ children, currentPageName }) {
 
   // ref for the main scroll container (drives ScrollDot)
   const mainScrollRef = useRef(null);
+  // ref for the outer background wrapper — measured live so DOC can mirror
+  // BC's *actual rendered* colors (including any custom background the user
+  // picks), not a guessed hardcoded value.
+  const bgWrapperRef = useRef(null);
 
   const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
   // isDark already destructured above
