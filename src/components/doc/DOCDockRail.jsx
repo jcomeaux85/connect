@@ -17,6 +17,7 @@ const DOCK_ITEMS = [
   { label: 'Medical', match: 'medical', icon: Stethoscope, color: '#ef4444' },
   { label: 'Dental', match: 'dental', icon: Smile, color: '#f59e0b' },
   { label: 'Vision', match: 'vision', icon: Eye, color: '#3b82f6' },
+  { label: 'CLIENT 1', href: 'https://ndrndr.com/alera/doc/client1.pdf', imgSrc: 'https://ndrndr.com/alera/doc/assets/client1.png', color: '#dc2626' },
   { label: 'Life', match: 'life', icon: HeartPulse, color: '#ec4899' },
   { label: 'Disability', match: 'disability', icon: Accessibility, color: '#8b5cf6' },
   { label: 'Retirement', match: 'retirement', icon: PiggyBank, color: '#10b981' },
