@@ -149,8 +149,14 @@ export default function ShiftFlowTimeline() {
             top: '6px', left: 0, right: 0, height: '14px',
             background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'
           }}>
-            <div className="absolute top-0 left-0 h-full" style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg, #22c55e, #16a34a)' }} />
-            <div className="absolute top-0 h-full" style={{ left: `${progressPct}%`, width: `${100 - progressPct}%`, background: isDark ? 'rgba(139,92,246,0.22)' : 'rgba(139,92,246,0.14)' }} />
+            {/* Thin white progress line — replaces the color fill */}
+            <div className="absolute" style={{
+              top: '50%', left: 0, width: `${progressPct}%`, height: '2px',
+              background: 'rgba(255,255,255,0.9)',
+              transform: 'translateY(-50%)',
+              boxShadow: '0 0 4px rgba(255,255,255,0.5)',
+              borderRadius: '1px',
+            }} />
 
             {teammLunches.map((l, i) => (
               <div key={i} className="absolute pointer-events-none" style={{
@@ -283,21 +289,18 @@ export default function ShiftFlowTimeline() {
           }}
           onClick={handleBarClick}
         >
-          {/* Green "clock" progress fill */}
-          <div className="absolute top-0 left-0 h-full rounded-full"
+          {/* Thin white progress line — replaces the color fill */}
+          <div className="absolute"
             style={{
+              top: '50%',
               left: `${meShiftLeftPct}%`,
               width: `${greenWidthPct}%`,
-              background: 'linear-gradient(90deg, #8B5CF6, #7C3AED)',
+              height: '2px',
+              background: 'rgba(255,255,255,0.9)',
+              boxShadow: '0 0 4px rgba(255,255,255,0.5)',
+              transform: 'translateY(-50%)',
+              borderRadius: '1px',
               transition: 'width 1s linear',
-            }} />
-
-          {/* Remaining my-shift (dim) */}
-          <div className="absolute top-0 h-full"
-            style={{
-              left: `${meShiftLeftPct + greenWidthPct}%`,
-              width: `${meShiftWidthPct - greenWidthPct}%`,
-              background: isDark ? 'rgba(139,92,246,0.18)' : 'rgba(139,92,246,0.12)',
             }} />
 
           {/* Teammate lunches — each employee's own timeline_color (fallback to palette) */}

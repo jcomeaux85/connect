@@ -153,6 +153,9 @@ function THEME_CSS(light) {
       `.search-well, .search-zone { background: ${BG} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
       `.search-input, input[type="text"], input[type="search"] { background: transparent !important; color: #1a202c !important; box-shadow: none !important; border: none !important; }`,
       `.search-input::placeholder { color: #9a9aa5 !important; }`,
+      // Search icon + clear button → transparent, no black square
+      `.search-icon { background: transparent !important; box-shadow: none !important; border: none !important; color: #9a9aa5 !important; }`,
+      `.search-clear { background: transparent !important; box-shadow: none !important; border: none !important; color: #9a9aa5 !important; }`,
       // Category buttons + view toggle → raised soft buttons
       `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${BG} !important; color: #555 !important; box-shadow: 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 20px !important; }`,
       `.cat-row button.active, .view-btn.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #a01818, inset -2px -2px 5px #ff3a3a !important; }`,
@@ -348,8 +351,18 @@ export default function DOCModal({ isOpen, onClose }) {
             }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Mac-dock style search rail — sits on the left edge of DOC */}
-            <DOCDockRail isDark={isDark} onTrigger={triggerSearch} accent={clientAccent} />
+            {/* Brushed metal divider — replaces the old rail location on the left edge */}
+            <div style={{
+              width: '6px',
+              flexShrink: 0,
+              background: isDark
+                ? 'linear-gradient(90deg, #14161d 0%, #2b2f3a 22%, #3a3f4c 50%, #2b2f3a 78%, #14161d 100%)'
+                : 'linear-gradient(90deg, #9098a5 0%, #d9dde4 22%, #f2f4f8 50%, #d9dde4 78%, #9098a5 100%)',
+              backgroundImage: isDark
+                ? 'repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 2px), linear-gradient(90deg, #14161d 0%, #2b2f3a 22%, #3a3f4c 50%, #2b2f3a 78%, #14161d 100%)'
+                : 'repeating-linear-gradient(90deg, rgba(255,255,255,0.5) 0px, rgba(255,255,255,0.5) 1px, transparent 1px, transparent 2px), linear-gradient(90deg, #9098a5 0%, #d9dde4 22%, #f2f4f8 50%, #d9dde4 78%, #9098a5 100%)',
+              boxShadow: 'inset 1px 0 2px rgba(0,0,0,0.3), inset -1px 0 2px rgba(0,0,0,0.3)',
+            }} />
 
             {/* Main column: header + content */}
             <div className="flex flex-col flex-1 overflow-hidden min-w-0">
@@ -423,6 +436,9 @@ export default function DOCModal({ isOpen, onClose }) {
               )}
             </div>
             </div>
+
+            {/* Mac-dock style search rail — now on the RIGHT edge of DOC */}
+            <DOCDockRail isDark={isDark} onTrigger={triggerSearch} accent={clientAccent} />
           </motion.div>
         </>
       )}
