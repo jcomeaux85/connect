@@ -435,7 +435,8 @@ export default function DOCModal({ isOpen, onClose }) {
                 WebkitBackdropFilter: 'blur(24px) saturate(200%)',
                 borderBottom: `1px solid ${PANEL_BORDER}`,
                 boxShadow: '0 1px 0 rgba(255,255,255,0.07)',
-                height: '52px',
+                boxSizing: 'border-box',
+                height: 'var(--bc-topbar-h, 52px)',
               }}
             >
               <div className="flex items-baseline gap-2">
