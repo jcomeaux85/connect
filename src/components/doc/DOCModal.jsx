@@ -17,8 +17,8 @@ function buildPatchedHtml(htmlContent, light) {
   if (!htmlContent) return null;
 
   const forceLight = light
-    ? 'html, body { background: #e8e8ee !important; color: #1a202c !important; }'
-    : 'html, body { background: #2a2e3a !important; color: #c8ccd2 !important; }';
+    ? 'html, body, .main-wrap, .container { background: #e8e8ee !important; background-color: #e8e8ee !important; background-image: none !important; color: #1a202c !important; }'
+    : 'html, body, .main-wrap, .container { background: #2a2e3a !important; background-color: #2a2e3a !important; background-image: none !important; color: #c8ccd2 !important; }';
 
   const lightNeu = light ? THEME_CSS(true) : '';
   const darkOverrides = light ? '' : THEME_CSS(false);
