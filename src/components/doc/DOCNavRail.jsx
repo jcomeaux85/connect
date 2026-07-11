@@ -155,11 +155,6 @@ export default function DOCNavRail({ onTrigger }) {
         zIndex: 1,
       }} />
 
-      {/* DOC chip header with status lights */}
-      <div className="flex-shrink-0" style={{ borderBottom: `1px solid ${PANEL_BORDER}` }}>
-        <DOCChipHeader />
-      </div>
-
       {/* Nav buttons — fill height evenly */}
       <div
         className="px-1 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-visible scrollbar-hide"
@@ -182,6 +177,11 @@ export default function DOCNavRail({ onTrigger }) {
             <HoverTooltip label={label} visible={hovered === label} />
           </div>
         ))}
+      </div>
+
+      {/* DOC chip at the foot of the bar */}
+      <div className="flex-shrink-0" style={{ borderTop: `1px solid ${PANEL_BORDER}` }}>
+        <DOCChipHeader />
       </div>
     </div>
   );
