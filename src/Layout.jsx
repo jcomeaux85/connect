@@ -173,6 +173,7 @@ function LayoutContent({ children, currentPageName }) {
     };
     publish();
     const t = setTimeout(publish, 50); // catch late paint (gradients/images)
+    window.dispatchEvent(new Event('bc-colors-changed'));
     return () => clearTimeout(t);
   }, [theme, backgroundSettings, colors.bg, colors.cardBg]);
 
