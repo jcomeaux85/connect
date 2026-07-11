@@ -85,10 +85,28 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
   const [searchResults, setSearchResults] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
+  const rootRef = useRef(null);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(t);
+  }, []);
+
+  // Broadcast our ACTUAL rendered height (not the CSS value we asked for) so
+  // other fixed/independently-composited panels (e.g. DOC) can match us pixel
+  // for pixel on every machine, regardless of DPR/scaling/compositing rounding.
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const publish = () => {
+      const h = el.getBoundingClientRect().height;
+      if (h > 0) document.documentElement.style.setProperty('--bc-topbar-h', `${h}px`);
+    };
+    publish();
+    const ro = new ResizeObserver(publish);
+    ro.observe(el);
+    window.addEventListener('resize', publish);
+    return () => { ro.disconnect(); window.removeEventListener('resize', publish); };
   }, []);
 
   const { data: cases = [] } = useQuery({
