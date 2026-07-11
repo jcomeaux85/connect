@@ -162,7 +162,7 @@ export default function DOCNavRail({ onTrigger }) {
 
       {/* Nav buttons — fill height evenly */}
       <div
-        className="px-1.5 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-visible scrollbar-hide"
+        className="px-1 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-visible scrollbar-hide"
         style={{ scrollbarWidth: 'none', gap: '5px' }}
       >
         {NAV_ITEMS.map(({ label, match, icon: Icon }) => (

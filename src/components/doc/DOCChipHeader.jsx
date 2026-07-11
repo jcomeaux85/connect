@@ -45,7 +45,7 @@ export default function DOCChipHeader() {
       style={{
         position: 'relative',
         width: '100%',
-        padding: '15px',
+        padding: '4px',
         display: 'flex',
         justifyContent: 'center',
       }}
