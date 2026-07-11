@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ChipHeader from '@/components/navigation/ChipHeader';
+import DOCChipHeader from './DOCChipHeader';
 import {
   Stethoscope, Smile, Eye, HeartPulse, Accessibility,
   PiggyBank, Pill, ShieldCheck, Wallet,
@@ -155,9 +155,9 @@ export default function DOCNavRail({ onTrigger }) {
         zIndex: 1,
       }} />
 
-      {/* Chip header with status lights */}
+      {/* DOC chip header with status lights */}
       <div className="flex-shrink-0" style={{ borderBottom: `1px solid ${PANEL_BORDER}` }}>
-        <ChipHeader />
+        <DOCChipHeader />
       </div>
 
       {/* Nav buttons — fill height evenly */}

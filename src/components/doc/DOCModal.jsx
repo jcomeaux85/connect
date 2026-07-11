@@ -430,6 +430,47 @@ export default function DOCModal({ isOpen, onClose }) {
               </div>
             </div>
 
+            {/* Sub-header strip — mirrors the BC HangingNav bar directly under the top header */}
+            <div
+              className="flex items-center justify-center flex-shrink-0 gap-10 px-4"
+              style={{
+                height: '38px',
+                background: PANEL_BG,
+                backdropFilter: 'blur(24px) saturate(200%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(200%)',
+                borderBottom: `1px solid ${PANEL_BORDER}`,
+              }}
+            >
+              {[
+                { label: 'SEARCH', term: '' },
+                { label: 'MEDICAL', term: 'medical' },
+                { label: 'DENTAL', term: 'dental' },
+                { label: 'VISION', term: 'vision' },
+              ].map((tab) => (
+                <button
+                  key={tab.label}
+                  onClick={() => triggerSearch(tab.term)}
+                  className="text-[13px] font-semibold tracking-widest transition-all duration-300 bg-transparent border-0 cursor-pointer"
+                  style={{ color: 'rgba(255,255,255,0.55)', textShadow: '0 0 1px rgba(255,255,255,0.3)' }}
+                  onMouseMove={(e) => {
+                    const r = e.currentTarget.getBoundingClientRect();
+                    const cx = Math.max(r.left, Math.min(e.clientX, r.right));
+                    const cy = Math.max(r.top, Math.min(e.clientY, r.bottom));
+                    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
+                    const p = Math.max(0, 1 - d / 150);
+                    e.currentTarget.style.color = `rgba(255,255,255,${0.4 + p * 0.6})`;
+                    e.currentTarget.style.textShadow = `-0.5px -0.5px 0 #2563eb, 0.5px -0.5px 0 #2563eb, -0.5px 0.5px 0 #2563eb, 0.5px 0.5px 0 #2563eb, 0 0 ${p * 20}px #00d4ff`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = 'rgba(255,255,255,0.55)';
+                    e.currentTarget.style.textShadow = '0 0 1px rgba(255,255,255,0.3)';
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
             {/* Content area */}
             <div className="flex-1 overflow-hidden relative">
               {/* Cursor shadow — light mode only */}
