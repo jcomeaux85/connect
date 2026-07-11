@@ -323,12 +323,11 @@ export default function DOCModal({ isOpen, onClose }) {
   const panelBg   = isDark ? '#2a2e3a' : '#e8e8ee';
 
   const btnStyle = {
-    width: 28, height: 28, borderRadius: 8,
+    width: 32, height: 32, borderRadius: 8,
     border: '1px solid rgba(255,255,255,0.10)',
     background: 'rgba(255,255,255,0.07)',
-    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 4px rgba(0,0,0,0.25)',
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    color: 'rgba(255,255,255,0.8)',
+    color: 'rgba(255,255,255,0.6)',
     flexShrink: 0,
   };
 
@@ -367,25 +366,26 @@ export default function DOCModal({ isOpen, onClose }) {
             <div className="flex flex-col flex-1 overflow-hidden min-w-0">
             {/* Header */}
             <div
-              className="flex items-center justify-between flex-shrink-0 px-4 py-2"
+              className="flex items-center justify-between flex-shrink-0 px-4"
               style={{
                 background: PANEL_BG,
-                backdropFilter: 'blur(24px)',
+                backdropFilter: 'blur(24px) saturate(200%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(200%)',
                 borderBottom: `1px solid ${PANEL_BORDER}`,
-                minHeight: '44px',
+                boxShadow: '0 1px 0 rgba(255,255,255,0.07), 0 4px 20px rgba(0,0,0,0.35)',
+                height: '52px',
               }}
             >
               <div className="flex items-baseline gap-2">
                 <span style={{
                   fontFamily: "'Outfit', sans-serif",
-                  fontSize: '1.6rem',
-                  fontWeight: 700,
-                  color: '#dc2626',
-                  letterSpacing: '-1px',
+                  fontSize: '20px',
+                  fontWeight: 800,
+                  color: 'rgba(255, 0, 0, 1)',
+                  letterSpacing: '-0.7px',
                   lineHeight: 1,
-                  textShadow: '1px 2px 6px rgba(0,0,0,0.55)',
                 }}>
-                  DOC<sup style={{ fontSize: '.45rem', opacity: .5, verticalAlign: 'super' }}>™</sup>
+                  DOC<sup style={{ fontSize: '7px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
                 </span>
                 <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: 'rgba(255,255,255,0.5)', letterSpacing: '1px', textTransform: 'uppercase' }}>
                   Directory of Coverage
@@ -394,10 +394,10 @@ export default function DOCModal({ isOpen, onClose }) {
 
               <div className="flex items-center gap-2">
                 <button onClick={() => { userOverride.current = true; setDocLight(p => !p); }} title={docLight ? 'Switch to dark mode' : 'Switch to light mode'} style={btnStyle}>
-                  {docLight ? <Moon size={13} /> : <Sun size={13} />}
+                  {docLight ? <Moon size={14} /> : <Sun size={14} />}
                 </button>
                 <button onClick={handlePopOut} title="Open in new window" style={btnStyle}>
-                  <ExternalLink size={13} />
+                  <ExternalLink size={14} />
                 </button>
                 <button onClick={onClose} title="Close" style={btnStyle}>
                   <X size={14} />
