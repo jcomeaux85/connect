@@ -4,10 +4,9 @@ import { X, ExternalLink, Sun, Moon } from 'lucide-react';
 import DOCDockRail from './DOCDockRail';
 import { useTheme } from '@/components/ThemeProvider';
 
-// Deep purple glass — REVERSED from the Benconnect main header so the dark ends
-// of both headers meet in the middle (DOC's dark end sits on the LEFT edge).
-const PANEL_BG = 'linear-gradient(340deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
-const PANEL_BORDER = 'rgba(255,255,255,0.13)';
+// Deep purple glass — matched EXACTLY to the Benconnect main header (HangingNav).
+const PANEL_BG = 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
+const PANEL_BORDER = 'rgba(255,255,255,0.10)';
 
 const DOC_HTML_URL = 'https://media.base44.com/files/public/68fa7c4cb70fe91d38015eba/c1547e610_DOC_.html';
 const EBM_SRC = 'https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/5c7593e2c_im.png';
@@ -160,8 +159,8 @@ function THEME_CSS(light) {
       `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${BG} !important; color: #555 !important; box-shadow: 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 20px !important; }`,
       `.cat-row button.active, .view-btn.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #a01818, inset -2px -2px 5px #ff3a3a !important; }`,
       // Client pills (carrier strip) → raised + thin INSET accent border; selected glows
-      `.carrier-strip > *, .carrier-chip, .carrier-btn { background: ${BG} !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 50px !important; }`,
-      `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active { box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 18px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
+      `.carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > * { background: ${BG} !important; background-color: ${BG} !important; background-image: none !important; color: #555 !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 7px ${D}, -3px -3px 7px ${L} !important; border: none !important; border-radius: 50px !important; }`,
+      `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active, #carrierStrip > .active { background: ${BG} !important; box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 18px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
       // Result cards → raised
       `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${BG} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
       `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
@@ -176,8 +175,8 @@ function THEME_CSS(light) {
     `.search-input::placeholder { color: #7a808c !important; }`,
     `.cat-row button, .view-btn, .search-clear, .cat-arrow { background: ${BG} !important; color: #aab0bb !important; box-shadow: 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 20px !important; }`,
     `.cat-row button.active, .view-btn.active { background: #dc2626 !important; color: #fff !important; box-shadow: inset 2px 2px 5px #7a1414, inset -2px -2px 5px #ff3a3a !important; }`,
-    `.carrier-strip > *, .carrier-chip, .carrier-btn { background: ${BG} !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 50px !important; }`,
-    `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active { box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 20px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
+    `.carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > * { background: ${BG} !important; background-color: ${BG} !important; background-image: none !important; color: #aab0bb !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 50px !important; }`,
+    `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active, #carrierStrip > .active { background: ${BG} !important; box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 20px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
     `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${BG} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
     `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
     `a { color: #f0736f !important; }`,
@@ -371,6 +370,7 @@ export default function DOCModal({ isOpen, onClose }) {
               className="flex items-center justify-between flex-shrink-0 px-4 py-2"
               style={{
                 background: PANEL_BG,
+                backdropFilter: 'blur(24px)',
                 borderBottom: `1px solid ${PANEL_BORDER}`,
                 minHeight: '44px',
               }}
