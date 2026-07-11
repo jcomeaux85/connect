@@ -140,6 +140,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
 
   return (
     <div
+      ref={rootRef}
       className="flex items-center gap-2 px-4 h-[52px] flex-shrink-0 relative z-50 min-w-0"
       style={{
         background: 'linear-gradient(135deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)',
