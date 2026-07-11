@@ -147,7 +147,8 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         backdropFilter: 'blur(24px) saturate(200%)',
         WebkitBackdropFilter: 'blur(24px) saturate(200%)',
         borderBottom: '1px solid rgba(255,255,255,0.10)',
-        boxShadow: '0 1px 0 rgba(255,255,255,0.07), 0 4px 20px rgba(0,0,0,0.35)'
+        boxShadow: '0 1px 0 rgba(255,255,255,0.07), 0 4px 20px rgba(0,0,0,0.35)',
+        boxSizing: 'border-box'
       }}>
       
       {/* BEN|connect Logo — white 3D dimensional signage */}
