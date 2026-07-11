@@ -37,7 +37,7 @@ function buildPatchedHtml(htmlContent, light) {
     'button[title*="light"], button[title*="Dark"], button[title*="Light"],',
     '.mode-toggle, [class*="mode-toggle"] { display: none !important; }',
     'html, body { overflow-x: hidden !important; }',
-    '.carrier-strip, #carrierStrip { display: none !important; }',
+    '.carrier-strip, #carrierStrip, .client-rail, .client-strip, .client-tabs, [class*="client-tab"] { display: none !important; }',
     '.benefit-nav { gap: 5px !important; }',
     '.ben-btn { padding: 7px 12px !important; font-size: .75rem !important; }',
     '.result-details { grid-template-columns: 1fr !important; }',
@@ -103,19 +103,16 @@ function buildPatchedHtml(htmlContent, light) {
     '\n' +
     '  // Report the list of client tabs (label + accent color) to the parent\n' +
     '  function clientEls() {\n' +
-    '    var strip = document.getElementById("carrierStrip") || document.querySelector(".carrier-strip");\n' +
+    '    var strip = document.getElementById("carrierStrip") || document.querySelector(".carrier-strip, .client-rail, .client-strip, .client-tabs");\n' +
     '    if (!strip) return [];\n' +
-    '    return Array.prototype.slice.call(strip.children);\n' +
+    '    var kids = Array.prototype.slice.call(strip.children);\n' +
+    '    return kids.filter(function(k) { return (k.textContent || "").trim(); });\n' +
     '  }\n' +
     '  var lastClientSig = null;\n' +
     '  function reportClients() {\n' +
     '    var els = clientEls();\n' +
     '    var list = els.map(function(el, i) {\n' +
-    '      var cs = getComputedStyle(el);\n' +
-    '      function ok(c) { return c && c !== "rgba(0, 0, 0, 0)" && c !== "transparent" && c.indexOf("rgb") === 0; }\n' +
-    '      var col = (el.getAttribute("data-accent") || el.style.getPropertyValue("--accent") || cs.getPropertyValue("--accent") || "").trim();\n' +
-    '      if (!col) { var b = cs.borderTopColor; if (ok(b)) col = b; }\n' +
-    '      if (!col) { var t = cs.color; if (ok(t)) col = t; }\n' +
+    '      var col = (el.getAttribute("data-accent") || el.style.getPropertyValue("--accent") || "").trim();\n' +
     '      return { index: i, label: (el.textContent || "").trim(), accent: col, active: el.classList.contains("active") };\n' +
     '    }).filter(function(c) { return c.label; });\n' +
     '    var sig = JSON.stringify(list);\n' +
@@ -389,10 +386,10 @@ export default function DOCModal({ isOpen, onClose }) {
 
   const btnStyle = {
     width: 32, height: 32, borderRadius: 8,
-    border: '1px solid rgba(255,255,255,0.10)',
-    background: 'rgba(255,255,255,0.07)',
+    border: '1px solid rgba(255,255,255,0.18)',
+    background: 'rgba(255,255,255,0.12)',
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    color: 'rgba(255,255,255,0.6)',
+    color: 'rgba(255,255,255,0.85)',
     flexShrink: 0,
   };
 
@@ -437,7 +434,7 @@ export default function DOCModal({ isOpen, onClose }) {
                 backdropFilter: 'blur(24px) saturate(200%)',
                 WebkitBackdropFilter: 'blur(24px) saturate(200%)',
                 borderBottom: `1px solid ${PANEL_BORDER}`,
-                boxShadow: '0 1px 0 rgba(255,255,255,0.07), 0 4px 20px rgba(0,0,0,0.35)',
+                boxShadow: '0 1px 0 rgba(255,255,255,0.07)',
                 height: '52px',
               }}
             >
