@@ -357,7 +357,7 @@ export default function DOCModal({ isOpen, onClose }) {
     const resync = () => {
       if (iframeRef.current && iframeRef.current.contentWindow) {
         iframeRef.current.contentWindow.postMessage(
-          { type: 'doc-set-theme', css: buildThemeCss(docLight) }, '*'
+          { type: 'doc-set-theme', css: buildThemeCss(docLight), dark: !docLight }, '*'
         );
       }
     };
@@ -372,7 +372,7 @@ export default function DOCModal({ isOpen, onClose }) {
       // Theme switch: inject CSS into existing iframe without reloading
       if (iframeRef.current && iframeRef.current.contentWindow) {
         iframeRef.current.contentWindow.postMessage(
-          { type: 'doc-set-theme', css: buildThemeCss(docLight) }, '*'
+          { type: 'doc-set-theme', css: buildThemeCss(docLight), dark: !docLight }, '*'
         );
       }
       return;
