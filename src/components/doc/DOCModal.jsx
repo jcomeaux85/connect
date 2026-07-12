@@ -455,7 +455,7 @@ export default function DOCModal({ isOpen, onClose }) {
             transition={{ type: 'spring', damping: 30, stiffness: 280 }}
             className="fixed top-0 right-0 bottom-0 z-[201] flex overflow-hidden"
             style={{
-              width: 'min(50vw, 640px)',
+              width: 'clamp(30vw, 34vw, 40vw)',
               boxShadow: isDark ? '-6px 0 40px #0d0d10' : '-6px 0 40px rgba(0,0,0,0.12)',
               background: panelBg,
             }}

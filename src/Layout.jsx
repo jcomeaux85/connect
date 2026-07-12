@@ -122,7 +122,16 @@ function LayoutContent({ children, currentPageName }) {
     const saved = localStorage.getItem('sidebarLevel');
     return saved ? parseInt(saved) : 1;
   });
-  const [lockedSidebarWidth, setLockedSidebarWidth] = useState(0);
+  const [lockedSidebarWidth, setLockedSidebarWidth] = useState(() => {
+    // Read initial locked width synchronously so page content never starts
+    // hidden behind a pinned sidebar (the event can fire before this mounts).
+    if (localStorage.getItem('sidebarLocked') === '1') {
+      const saved = localStorage.getItem('sidebarLevel');
+      const level = saved ? parseInt(saved) : 1;
+      return SIDEBAR_WIDTHS[Math.max(0, Math.min(SIDEBAR_WIDTHS.length - 1, level - 1))];
+    }
+    return 0;
+  });
 
   // ref for the main scroll container (drives ScrollDot)
   const mainScrollRef = useRef(null);
@@ -306,7 +315,7 @@ function LayoutContent({ children, currentPageName }) {
         className="flex flex-col flex-1 overflow-hidden"
         style={{
           marginLeft: lockedSidebarWidth,
-          marginRight: showDOC ? 'min(50vw, 640px)' : 0,
+          marginRight: showDOC ? 'clamp(30vw, 34vw, 40vw)' : 0,
           transition: 'margin-left 0.25s ease-out, margin-right 0.3s ease-out',
         }}
       >
