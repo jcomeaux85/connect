@@ -247,6 +247,8 @@ function THEME_CSS(light, mirror) {
       `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active, #carrierStrip > .active { background: ${ELEM} !important; box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 18px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
       // Result cards → BC's PAGE color, raised
       `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${ELEM} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+      // Each individual text field/row inside a result → BC's PAGE color
+      `.result-row, .result-field, .result-detail, .detail-row, .field-value, .result-value, .coverage-row, .info-row, [class*="result-row"], [class*="result-field"], [class*="detail-row"], [class*="field-value"] { background: ${ELEM} !important; background-color: ${ELEM} !important; background-image: none !important; border: none !important; }`,
       `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
     ].join('\n');
   }
@@ -262,6 +264,7 @@ function THEME_CSS(light, mirror) {
     `.carrier-strip > *, .carrier-chip, .carrier-btn, .carrier-strip button, #carrierStrip > * { background: ${ELEM} !important; background-color: ${ELEM} !important; background-image: none !important; color: #aab0bb !important; box-shadow: inset 0 0 0 1.5px var(--accent, #dc2626), 3px 3px 8px ${D}, -3px -3px 8px ${L} !important; border: none !important; border-radius: 50px !important; }`,
     `.carrier-strip > .active, .carrier-chip.active, .carrier-btn.active, #carrierStrip > .active { background: ${ELEM} !important; box-shadow: inset 0 0 0 2px var(--accent, #dc2626), 0 0 10px var(--accent, #dc2626), 0 0 20px var(--accent, #dc2626) !important; color: var(--accent, #dc2626) !important; }`,
     `#resultsZone > *, .result-card, .coverage-card, [class*="result-card"] { background: ${ELEM} !important; box-shadow: 6px 6px 14px ${D}, -6px -6px 14px ${L} !important; border: none !important; border-radius: 14px !important; }`,
+    `.result-row, .result-field, .result-detail, .detail-row, .field-value, .result-value, .coverage-row, .info-row, [class*="result-row"], [class*="result-field"], [class*="detail-row"], [class*="field-value"] { background: ${ELEM} !important; background-color: ${ELEM} !important; background-image: none !important; border: none !important; }`,
     `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
     `a { color: #f0736f !important; }`,
     `.result-name, .result-title, .card-title, [class*="result-name"], [class*="card-title"] { color: #e8eaed !important; }`,
