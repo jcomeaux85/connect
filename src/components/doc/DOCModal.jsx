@@ -30,6 +30,9 @@ function buildPatchedHtml(htmlContent, light) {
     '.main-wrap { margin-left: 0 !important; }',
     '.client-rail { padding-left: 12px !important; top: 0 !important; }',
     '.container { padding: 16px 14px 30px !important; }',
+    // Hide every scrollbar in DOC — a floating dot (injected in script) is the indicator instead.
+    '* { scrollbar-width: none !important; -ms-overflow-style: none !important; }',
+    '*::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }',
     '.clock-weather, .weather-widget, .weather-block, .fav-btn, .favorite-btn,',
     '[class*="weather"], [class*="favorite"], [class*="fav-star"],',
     '.pin-btn, .result-pin,',
@@ -62,6 +65,28 @@ function buildPatchedHtml(htmlContent, light) {
       ? '    document.documentElement.removeAttribute("data-theme");\n' + '    try { localStorage.setItem("doc_theme", "light"); } catch (e) {}\n'
       : '    document.documentElement.setAttribute("data-theme", "dark");\n' + '    try { localStorage.setItem("doc_theme", "dark"); } catch (e) {}\n'
     ) +
+    '  })();\n' +
+    '  (function scrollDot() {\n' +
+    '    var dot = document.createElement("div");\n' +
+    '    dot.id = "__doc_scroll_dot__";\n' +
+    '    dot.style.cssText = "position:fixed;right:6px;top:0;width:7px;height:7px;border-radius:50%;background:rgba(210,230,255,0.5);pointer-events:none;z-index:99999;transition:top 0.08s linear,box-shadow 0.15s ease,opacity 0.4s ease;opacity:0.35;";\n' +
+    '    function attach() { if (document.body) document.body.appendChild(dot); else setTimeout(attach, 100); }\n' +
+    '    attach();\n' +
+    '    var scroller = document.scrollingElement || document.documentElement;\n' +
+    '    var fadeT = null;\n' +
+    '    function update() {\n' +
+    '      var max = Math.max(scroller.scrollHeight - scroller.clientHeight, 1);\n' +
+    '      var pct = Math.min(scroller.scrollTop / max, 1);\n' +
+    '      var h = window.innerHeight;\n' +
+    '      dot.style.top = (pct * (h - 12) + 3) + "px";\n' +
+    '      dot.style.opacity = "0.85";\n' +
+    '      dot.style.boxShadow = "0 0 10px rgba(0,212,255,0.7), 0 0 18px rgba(0,212,255,0.4)";\n' +
+    '      if (fadeT) clearTimeout(fadeT);\n' +
+    '      fadeT = setTimeout(function() { dot.style.opacity = "0.35"; dot.style.boxShadow = "none"; }, 500);\n' +
+    '    }\n' +
+    '    window.addEventListener("scroll", update, { passive: true });\n' +
+    '    window.addEventListener("resize", update, { passive: true });\n' +
+    '    setTimeout(update, 300);\n' +
     '  })();\n' +
     '  function patchFooter() {\n' +
     '    var ebmSrc = ' + ebmJson + ';\n' +
@@ -221,7 +246,7 @@ function getBcMirrorColors() {
   const root = document.documentElement;
   const cs = getComputedStyle(root);
   const cardBg = cs.getPropertyValue('--bc-card-bg').trim() || '#2a2e3a';
-  const outerBg = cs.getPropertyValue('--bc-outer-bg').trim() || '#1a1c24';
+  const outerBg = cs.getPropertyValue('--bc-outer-bg').trim() || '#232733';
   return { cardBg, outerBg };
 }
 
@@ -252,10 +277,14 @@ function THEME_CSS(light, mirror) {
       `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
     ].join('\n');
   }
-  const PAGE = cardBg, ELEM = outerBg, D = '#1f232d', L = '#353945';
+  // Dark-mode palette — pinned to the exact values tuned in inspect element,
+  // since the BC mirror vars don't reliably reach the iframe.
+  const PAGE = '#2a2e3a', ELEM = '#232733', D = '#1f232d', L = '#353945';
   return [
+    // Drive DOC's own neumorphic CSS vars so the native sheet recolors itself too
+    `:root, html, body { --nm-bg: ${ELEM} !important; --nm-surface: ${ELEM} !important; --nm-dark: ${D} !important; --nm-light: ${L} !important; --card-bg: ${ELEM} !important; --panel-bg: ${ELEM} !important; --page-bg: ${PAGE} !important; --bg: ${PAGE} !important; }`,
     // Force ALL page wrappers to BC's CARD color (DOC's overall face)
-    `html, body, .main-wrap, .container, #resultsZone, .cat-wrap, .carrier-strip, .redirect-banner { background: ${PAGE} !important; background-color: ${PAGE} !important; background-image: none !important; }`,
+    `html, body, .main-wrap, .container, .search-zone, #resultsZone, .cat-wrap, .carrier-strip, .redirect-banner { background: ${PAGE} !important; background-color: ${PAGE} !important; background-image: none !important; }`,
     `.search-well, .search-zone { background: ${ELEM} !important; box-shadow: inset 3px 3px 6px ${D}, inset -3px -3px 6px ${L} !important; border: none !important; border-radius: 14px !important; }`,
     `.search-input, input[type="text"], input[type="search"] { background: transparent !important; color: #d6dae2 !important; box-shadow: none !important; border: none !important; }`,
     `.search-input::placeholder { color: #7a808c !important; }`,
