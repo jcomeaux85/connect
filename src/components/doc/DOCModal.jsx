@@ -277,9 +277,8 @@ function THEME_CSS(light, mirror) {
       `.clock-weather, .search-hint, .search-meta, .result-count { background: transparent !important; box-shadow: none !important; }`,
     ].join('\n');
   }
-  // Dark-mode palette — auto-mirror BC's LIVE page bg exactly.
-  // PAGE = BC's real page background, ELEM = BC's card background.
-  const PAGE = outerBg, ELEM = cardBg, D = '#1f232d', L = '#353945';
+  // Dark-mode palette — pinned to exact tuned values (mirror vars don't reach the iframe).
+  const PAGE = '#2a2e3a', ELEM = '#232733', D = '#1f232d', L = '#353945';
   return [
     // Drive DOC's own neumorphic CSS vars so the native sheet recolors itself too
     `:root, html, body { --nm-bg: ${ELEM} !important; --nm-surface: ${ELEM} !important; --nm-dark: ${D} !important; --nm-light: ${L} !important; --card-bg: ${ELEM} !important; --panel-bg: ${ELEM} !important; --page-bg: ${PAGE} !important; --bg: ${PAGE} !important; }`,
@@ -464,7 +463,7 @@ export default function DOCModal({ isOpen, onClose }) {
 
   // Content area follows light/dark; reverse-mirrored from BC — DOC's overall
   // face uses BC's CARD color (was flat #2a2e3a/#e8e8ee before).
-  const panelBg   = isDark ? 'var(--bc-outer-bg, #2a2e3a)' : 'var(--bc-outer-bg, #e8e8ee)';
+  const panelBg   = isDark ? '#2a2e3a' : '#e8e8ee';
 
   const btnStyle = {
     width: 32, height: 32, borderRadius: 8,
