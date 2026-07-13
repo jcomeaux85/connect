@@ -217,25 +217,7 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         }
       </div>
 
-        {/* CORPS// logo button — glowing VT323 phosphor-green text, transparent bg */}
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
+      <div className="flex items-center gap-2 ml-auto flex-shrink-0">
         {/* DOC™ button — white bg, thin grey border */}
         <TiltBtn
         onClick={onToggleDOC}
@@ -261,22 +243,20 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           </span>
         </TiltBtn>
 
-      <div className="flex items-center gap-2 ml-auto flex-shrink-0">
-        {/* Active Call button */}
+        {/* Active Call — small icon only */}
         <TiltBtn
         onClick={onToggleCalls}
+        title="Calls"
         style={{
           ...(showCalls ?
           { background: 'rgba(124,58,237,0.35)', border: '1px solid rgba(167,139,250,0.5)' } :
           NAV_BTN),
-          borderRadius: '8px',
-          height: '32px',
-          display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px',
+          width: '32px', height: '32px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0
         }}>
           
           <PhoneCall className="w-3.5 h-3.5" style={{ color: showCalls ? '#c4b5fd' : 'rgba(255,255,255,0.5)' }} />
-          <span className="hidden lg:inline text-xs font-medium" style={{ color: showCalls ? '#c4b5fd' : 'rgba(255,255,255,0.5)' }}>No Active Call</span>
         </TiltBtn>
 
         {/* Dark mode toggle */}
@@ -303,31 +283,6 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         }
         </TiltBtn>
 
-        {/* Status */}
-        <div className="relative">
-          <TiltBtn
-          onClick={() => setShowStatus((s) => !s)}
-          style={{ ...NAV_BTN, height: '32px', display: 'flex', alignItems: 'center', gap: '6px', padding: '0 12px' }}>
-            
-            <div className="w-2 h-2 rounded-full" style={{ background: currentStatus.color }} />
-            <span className="hidden md:inline text-xs font-medium" style={{ color: 'rgba(255,255,255,0.75)' }}>{status}</span>
-            <ChevronDown className="w-3 h-3" style={{ color: 'rgba(255,255,255,0.4)' }} />
-          </TiltBtn>
-          {showStatus &&
-        <div className="absolute right-0 top-full mt-1 rounded-xl shadow-xl z-50 overflow-hidden min-w-[140px]"
-        style={{ background: 'rgba(38,20,72,0.97)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(16px)' }}>
-              {STATUS_OPTIONS.map((opt) =>
-          <button key={opt.label}
-          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/10 text-left transition-colors"
-          onClick={() => {setStatus(opt.label);setShowStatus(false);}}>
-                  <div className="w-2 h-2 rounded-full" style={{ background: opt.color }} />
-                  <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>{opt.label}</span>
-                </button>
-          )}
-            </div>
-        }
-        </div>
-
         {/* Clock — bare text, no container */}
         <div className="hidden xl:flex items-center gap-1.5 cursor-default select-none ml-2">
           <Clock className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
@@ -337,12 +292,29 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           </div>
         </div>
 
-        {/* User avatar — initials only, no photo */}
-        <TiltBtn
-          style={{ ...NAV_BTN, width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: 'linear-gradient(135deg,#7C3AED,#5b21b6)', boxShadow: '0 0 0 2px rgba(167,139,250,0.3)' }}>
-          
-          <span className="text-white text-xs font-bold">{initials}</span>
-        </TiltBtn>
+        {/* User avatar — initials + status ring consolidated. Ring color = status. */}
+        <div className="relative">
+          <TiltBtn
+            onClick={() => setShowStatus((s) => !s)}
+            title={`Status: ${status}`}
+            style={{ width: '34px', height: '34px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: 'linear-gradient(135deg,#7C3AED,#5b21b6)', boxShadow: `0 0 0 2px ${currentStatus.color}, 0 0 8px ${currentStatus.color}99` }}>
+            
+            <span className="text-white text-xs font-bold">{initials}</span>
+          </TiltBtn>
+          {showStatus &&
+          <div className="absolute right-0 top-full mt-1 rounded-xl shadow-xl z-50 overflow-hidden min-w-[140px]"
+          style={{ background: 'rgba(38,20,72,0.97)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(16px)' }}>
+              {STATUS_OPTIONS.map((opt) =>
+            <button key={opt.label}
+            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/10 text-left transition-colors"
+            onClick={() => {setStatus(opt.label);setShowStatus(false);}}>
+                  <div className="w-2 h-2 rounded-full" style={{ background: opt.color }} />
+                  <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>{opt.label}</span>
+                </button>
+            )}
+            </div>
+          }
+        </div>
       </div>
     </div>);
 

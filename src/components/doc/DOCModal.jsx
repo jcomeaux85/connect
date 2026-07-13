@@ -338,7 +338,7 @@ function CursorShadow() {
 }
 
 export default function DOCModal({ isOpen, onClose }) {
-  const { isDark: siteDark } = useTheme();
+  const { isDark: siteDark, colors } = useTheme();
   // DOC follows the site theme unless overridden locally within DOC
   const [docLight, setDocLight] = useState(!siteDark);
   const userOverride = useRef(false);
@@ -461,9 +461,9 @@ export default function DOCModal({ isOpen, onClose }) {
 
   const isDark = !docLight;
 
-  // Content area follows light/dark; reverse-mirrored from BC — DOC's overall
-  // face uses BC's CARD color (was flat #2a2e3a/#e8e8ee before).
-  const panelBg   = isDark ? '#2a2e3a' : '#e8e8ee';
+  // DOC's overall face uses the SAME background color as the rest of the site
+  // (the live theme bg), so the panel reads as part of the app, not a separate box.
+  const panelBg = colors.bg;
 
   const btnStyle = {
     width: 32, height: 32, borderRadius: 8,
@@ -492,19 +492,6 @@ export default function DOCModal({ isOpen, onClose }) {
             }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Brushed metal divider — replaces the old rail location on the left edge */}
-            <div style={{
-              width: '6px',
-              flexShrink: 0,
-              background: isDark
-                ? 'linear-gradient(90deg, #14161d 0%, #2b2f3a 22%, #3a3f4c 50%, #2b2f3a 78%, #14161d 100%)'
-                : 'linear-gradient(90deg, #9098a5 0%, #d9dde4 22%, #f2f4f8 50%, #d9dde4 78%, #9098a5 100%)',
-              backgroundImage: isDark
-                ? 'repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 2px), linear-gradient(90deg, #14161d 0%, #2b2f3a 22%, #3a3f4c 50%, #2b2f3a 78%, #14161d 100%)'
-                : 'repeating-linear-gradient(90deg, rgba(255,255,255,0.5) 0px, rgba(255,255,255,0.5) 1px, transparent 1px, transparent 2px), linear-gradient(90deg, #9098a5 0%, #d9dde4 22%, #f2f4f8 50%, #d9dde4 78%, #9098a5 100%)',
-              boxShadow: 'inset 1px 0 2px rgba(0,0,0,0.3), inset -1px 0 2px rgba(0,0,0,0.3)',
-            }} />
-
             {/* Main column: header + content */}
             <div className="flex flex-col flex-1 overflow-hidden min-w-0">
             {/* Header */}
@@ -616,7 +603,7 @@ export default function DOCModal({ isOpen, onClose }) {
               {docLight && <CursorShadow />}
 
               {loading && (
-                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: isDark ? '#2a2e3a' : '#e8e8ee' }}>
+                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: colors.bg }}>
                   <div style={{
                     fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: '11px',
