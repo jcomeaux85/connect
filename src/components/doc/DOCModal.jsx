@@ -463,7 +463,7 @@ export default function DOCModal({ isOpen, onClose }) {
 
   // DOC's overall face uses the SAME background color as the rest of the site
   // (the live theme bg), so the panel reads as part of the app, not a separate box.
-  const panelBg = colors.bg;
+  const panelBg = isDark ? colors.bg : '#ffffff';
 
   const btnStyle = {
     width: 32, height: 32, borderRadius: 8,
@@ -487,7 +487,6 @@ export default function DOCModal({ isOpen, onClose }) {
             className="fixed top-0 right-0 bottom-0 z-[201] flex overflow-hidden"
             style={{
               width: 'clamp(30vw, 34vw, 40vw)',
-              boxShadow: isDark ? '-6px 0 40px #0d0d10' : '-6px 0 40px rgba(0,0,0,0.12)',
               background: panelBg,
             }}
             onClick={e => e.stopPropagation()}
@@ -603,7 +602,7 @@ export default function DOCModal({ isOpen, onClose }) {
               {docLight && <CursorShadow />}
 
               {loading && (
-                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: colors.bg }}>
+                <div className="absolute inset-0 flex items-center justify-center z-10" style={{ background: panelBg }}>
                   <div style={{
                     fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: '11px',
