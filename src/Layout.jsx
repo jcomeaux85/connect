@@ -320,6 +320,23 @@ function LayoutContent({ children, currentPageName }) {
         }}
       >
 
+        {/* Call Banner — push-down strip: ringing + connected. Sits above the
+            TopBar so its height reflows the entire column down (like DOC does
+            from the right). Ringing shows caller ID + Answer/Decline; connected
+            shows timer + Notes drawer whose text flows into the disposition. */}
+        <ActiveCallBar
+          incomingCall={incomingCalls[0] || null}
+          customer={incomingCalls[0]?.customer_id ? incomingCallCustomers[incomingCalls[0].customer_id] : null}
+          onAnswer={async () => {
+            const c = incomingCalls[0];
+            if (c) await base44.entities.IncomingCall.update(c.id, { status: 'answered', answered_at: new Date().toISOString() });
+          }}
+          onDecline={async () => {
+            const c = incomingCalls[0];
+            if (c) await base44.entities.IncomingCall.update(c.id, { status: 'declined' });
+          }}
+        />
+
         {/* Top Bar — 8x8 style */}
         <TopBar
           user={user}
@@ -382,8 +399,9 @@ function LayoutContent({ children, currentPageName }) {
       <ErrorBoundary><DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} /></ErrorBoundary>
       <ErrorBoundary><PersistentCallPanel /></ErrorBoundary>
 
-      {/* Incoming Call Popups */}
-      {incomingCalls.map((call, index) =>
+      {/* Incoming Call Popups — primary ring shows in the top banner, so only
+          overflow rings (2nd+) stack on the right. */}
+      {incomingCalls.slice(1).map((call, index) =>
       <div key={call.id} className="fixed right-6 z-[100]" style={{ top: `${24 + index * 320}px` }}>
           <IncomingCallPopup
           call={call}
@@ -397,7 +415,7 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Incoming SMS Popups */}
       {incomingSMS.map((sms, index) =>
-      <div key={sms.id} className="fixed right-6 z-[100]" style={{ top: `${24 + incomingCalls.length * 320 + index * 280}px` }}>
+      <div key={sms.id} className="fixed right-6 z-[100]" style={{ top: `${24 + Math.max(incomingCalls.length - 1, 0) * 320 + index * 280}px` }}>
           <IncomingSMSPopup
           sms={sms}
           customer={null}
