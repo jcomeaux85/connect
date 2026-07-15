@@ -43,7 +43,14 @@ export default function DispositionForm({ isOpen, onClose, callData, user }) {
       setElapsed(0);
       setSubmitted(false);
       setErrors({});
-      setForm(blank());
+      // seed from the call that just ended — notes typed in the banner drawer
+      // land here in call_notes instead of being wiped.
+      setForm({
+        ...blank(),
+        call_notes: callData?.call_notes || '',
+        caller_name: callData?.name || callData?.caller_name || '',
+        is_vip: !!(callData?.is_vip || callData?.isVip),
+      });
       timerRef.current = setInterval(() => setElapsed(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
     } else {
       clearInterval(timerRef.current);
