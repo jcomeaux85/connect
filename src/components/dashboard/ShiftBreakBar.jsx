@@ -5,6 +5,8 @@ import { useUser } from "@/components/hooks/useUser";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { Coffee, Clock } from "lucide-react";
+import QueueStatusLights from "@/components/dashboard/QueueStatusLights";
+import { useToast } from "@/components/ui/use-toast";
 
 const BRAND_PURPLE = "#7c3aed";
 const ALERT_BLUE = "#3b82f6";
@@ -56,6 +58,7 @@ export default function ShiftBreakBar({ isDark }) {
   const { data: user } = useUser();
   const txtPrimary = isDark ? "#f0f0f0" : "#111827";
   const txtSecondary = isDark ? "#9ca3af" : "#6b7280";
+  const { toast } = useToast();
 
   const [nowMins, setNowMins] = useState(() => {
     const n = new Date();
@@ -87,12 +90,21 @@ export default function ShiftBreakBar({ isDark }) {
 
   const createBreak = useMutation({
     mutationFn: (d) => base44.entities.EmployeeBreak.create(d),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["queue-breaks-today"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["queue-breaks-today"] });
+      toast({ title: "Break saved", description: "It's on the timeline now." });
+    },
+    onError: (err) => {
+      toast({ title: "Could not save break", description: String(err?.message || err), variant: "destructive" });
+    },
   });
 
   const removeBreak = useMutation({
     mutationFn: (id) => base44.entities.EmployeeBreak.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["queue-breaks-today"] }),
+    onError: (err) => {
+      toast({ title: "Could not remove break", description: String(err?.message || err), variant: "destructive" });
+    },
   });
 
   // Locked to the logged-in user — no switching, ever.
@@ -142,7 +154,7 @@ export default function ShiftBreakBar({ isDark }) {
   function takeNow() {
     const start = Math.round(nowMins / 5) * 5;
     const err = validate(start);
-    if (err) { window.alert(err); return; }
+    if (err) { toast({ title: "Break blocked", description: err, variant: "destructive" }); return; }
     createBreak.mutate({
       employee_email: active.email,
       break_date: TODAY,
@@ -159,7 +171,7 @@ export default function ShiftBreakBar({ isDark }) {
   function scheduleAt() {
     const start = toMins(pickTime);
     const err = validate(start);
-    if (err) { window.alert(err); return; }
+    if (err) { toast({ title: "Break blocked", description: err, variant: "destructive" }); return; }
     createBreak.mutate({
       employee_email: active.email,
       break_date: TODAY,
@@ -173,6 +185,18 @@ export default function ShiftBreakBar({ isDark }) {
   }
 
   const progressPct = pct(fromMins(nowMins));
+
+  // Four status lights — one per queue agent. Fades when on break
+  // (inside their lunch window or an active taken break).
+  const statusLights = QUEUE.map((q) => {
+    const inLunch = nowMins >= toMins(q.lunchStart) && nowMins < toMins(q.lunchEnd);
+    const onTaken = queueBreaks.some((b) =>
+      b.employee_email === q.email && b.status === "taken" &&
+      b.actual_start_time && b.actual_end_time &&
+      nowMins >= toMins(b.actual_start_time) && nowMins < toMins(b.actual_end_time)
+    );
+    return { color: q.color, label: q.name, state: (inLunch || onTaken) ? "break" : "on" };
+  });
 
   // Time options for the picker (5-min steps within shift)
   const timeOptions = useMemo(() => {
@@ -244,8 +268,10 @@ export default function ShiftBreakBar({ isDark }) {
         })}
       </div>
 
-      {/* Break + Clock buttons — in normal flow, right-aligned under the bar */}
-      <div className="flex items-center justify-end gap-1.5 mt-1.5">
+      {/* Status lights (left) + break buttons (right) — under the bar */}
+      <div className="flex items-center justify-between gap-1.5 mt-1.5">
+        <QueueStatusLights lights={statusLights} />
+        <div className="flex items-center gap-1.5">
         <AnimatePresence>
           {showClock && (
             <motion.div
@@ -284,6 +310,7 @@ export default function ShiftBreakBar({ isDark }) {
           <Coffee className="w-3 h-3 relative z-10" />
           <span className="relative z-10">Break</span>
         </button>
+        </div>
       </div>
     </div>
   );
