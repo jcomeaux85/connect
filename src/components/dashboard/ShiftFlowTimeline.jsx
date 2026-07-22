@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@/components/ThemeProvider";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
+import QueueStatusLights from "@/components/dashboard/QueueStatusLights";
 
 const TODAY = format(new Date(), "yyyy-MM-dd");
 
@@ -130,6 +131,27 @@ export default function ShiftFlowTimeline() {
     ];
     const myLunch = { start: "13:00", end: "14:00" };
 
+    // Four status lights — one per queue color. On break (fading) when the
+    // current time is inside that person's lunch window; otherwise lit (on).
+    const inWindow = (s, e) => nowMins >= toMins(s) && nowMins < toMins(e);
+    const demoLights = [
+      { color: "#E8621A", label: "Orange", state: inWindow(teammLunches[0].start, teammLunches[0].end) ? "break" : "on" },
+      { color: "#1DA8E0", label: "Sky",    state: inWindow(teammLunches[1].start, teammLunches[1].end) ? "break" : "on" },
+      { color: "#50B464", label: "Aloe",   state: inWindow(teammLunches[2].start, teammLunches[2].end) ? "break" : "on" },
+      { color: "#a78bfa", label: "You",    state: inWindow(myLunch.start, myLunch.end) ? "break" : "on" },
+    ];
+
+    // Reserve a break on the demo bar (click to pick a 15-min slot).
+    const handleDemoClick = (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const p = (e.clientX - rect.left) / rect.width;
+      const clickedMins = toMins(dStart) + Math.round((p * dTotalMins) / 15) * 15;
+      if (clickedMins < toMins(dStart) || clickedMins >= toMins(dEnd)) return;
+      if (clickedMins >= toMins(myLunch.start) && clickedMins < toMins(myLunch.end)) return;
+      const isAM = clickedMins < toMins(myLunch.start);
+      setPopover({ time: fromMins(clickedMins), type: isAM ? "AM_15_min" : "PM_15_min", conflict: false, pct: p * 100, demo: true });
+    };
+
     const allDots = [
       { at: teammLunches[0].start, color: "#E8621A", size: 10, filled: false },
       { at: teammLunches[0].end,   color: "#E8621A", size: 10, filled: true  },
@@ -147,8 +169,10 @@ export default function ShiftFlowTimeline() {
 
           <div className="absolute rounded-full overflow-hidden" style={{
             top: '6px', left: 0, right: 0, height: '14px',
-            background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'
-          }}>
+            background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)',
+            cursor: 'crosshair',
+          }}
+          onClick={handleDemoClick}>
             {/* Thin white progress line — replaces the color fill */}
             <div className="absolute" style={{
               top: '50%', left: 0, width: `${progressPct}%`, height: '2px',
@@ -221,7 +245,58 @@ export default function ShiftFlowTimeline() {
             }} />
           ))}
 
+          {/* === POPOVER (demo) === */}
+          <AnimatePresence>
+            {popover && (
+              <motion.div
+                initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                className="absolute z-50 rounded-xl p-3 shadow-xl"
+                style={{
+                  left: `${Math.min(85, Math.max(10, popover.pct))}%`,
+                  bottom: '30px',
+                  transform: 'translateX(-50%)',
+                  minWidth: '148px',
+                  background: isDark ? 'rgba(18,10,36,0.98)' : 'rgba(250,248,255,0.98)',
+                  border: '1px solid rgba(139,92,246,0.5)',
+                  boxShadow: '0 4px 20px rgba(139,92,246,0.2)',
+                }}
+              >
+                <p className="text-[10px] font-bold mb-1" style={{ color: '#a78bfa' }}>
+                  {`Reserve ${popover.type === 'AM_15_min' ? 'AM' : 'PM'} Break`}
+                </p>
+                <p className="text-[11px] mb-2" style={{ color: txtPrimary }}>
+                  {(() => {
+                    const [h, m] = popover.time.split(":").map(Number);
+                    const endMins = h * 60 + m + 15;
+                    const eh = Math.floor(endMins / 60), em = endMins % 60;
+                    const fmt = (hh, mm) => `${hh % 12 || 12}:${String(mm).padStart(2,"0")} ${hh >= 12 ? "PM" : "AM"}`;
+                    return `${fmt(h, m)} \u2013 ${fmt(eh, em)}`;
+                  })()}
+                </p>
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => setPopover(null)}
+                    className="flex-1 text-[10px] font-bold py-1 rounded-lg border-0"
+                    style={{ background: 'rgba(139,92,246,0.85)', color: '#fff' }}>
+                    Reserve
+                  </button>
+                  <button
+                    onClick={() => setPopover(null)}
+                    className="flex-1 text-[10px] font-bold py-1 rounded-lg border-0"
+                    style={{ background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)', color: txtSecondary }}>
+                    Cancel
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
         </div>
+
+        {/* Four queue status lights, left side under the bar */}
+        <QueueStatusLights lights={demoLights} />
       </div>
     );
   }
@@ -247,6 +322,22 @@ export default function ShiftFlowTimeline() {
   const greenWidthPct = (progressPct / 100) * meShiftWidthPct;
 
   const teammates = employeesWithShifts.filter(e => e.email !== currentUser?.email);
+
+  // Status lights — up to 4 queue colors. Fading (break) when now is inside
+  // that person's lunch window; otherwise lit (on). Data already on the bar.
+  const inLunch = (emp) => {
+    if (!emp?.lunch_start_time) return false;
+    const lEnd = emp.lunch_end_time || fromMins(toMins(emp.lunch_start_time) + 60);
+    return nowMins >= toMins(emp.lunch_start_time) && nowMins < toMins(lEnd);
+  };
+  const liveLights = [
+    ...teammates.slice(0, 3).map((emp, i) => ({
+      color: empColor(emp, i),
+      label: emp.full_name,
+      state: inLunch(emp) ? "break" : "on",
+    })),
+    ...(me ? [{ color: "#a78bfa", label: me.full_name, state: inLunch(me) ? "break" : "on" }] : []),
+  ];
 
   const empGroup = me?.break_group_id ? breakGroups.find(g => g.id === me.break_group_id) : null;
   const groupBreaks = empGroup
@@ -483,6 +574,9 @@ export default function ShiftFlowTimeline() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Four queue status lights, left side under the bar */}
+      <QueueStatusLights lights={liveLights} />
     </div>
   );
 }
