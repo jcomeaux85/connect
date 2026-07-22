@@ -402,17 +402,6 @@ export default function PersistentSidebar({
                     className="object-contain transition-transform duration-150 group-hover:scale-105 w-auto"
                     style={{ height: isFull ? '30px' : '44px', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
                   />
-                  <span
-                    className="transition-transform duration-150 group-hover:scale-105"
-                    style={{
-                      width: isFull ? '14px' : '20px',
-                      height: isFull ? '3px' : '4px',
-                      background: '#ffffff',
-                      borderRadius: '1px',
-                      marginLeft: '3px',
-                      boxShadow: '0 0 6px rgba(255,255,255,0.5)',
-                    }}
-                  />
                 </button>
               </div>
 
