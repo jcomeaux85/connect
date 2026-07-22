@@ -33,13 +33,11 @@ export default function DOC() {
         borderBottom: `1px solid ${isDark ? '#2a2a2e' : '#c0c0c0'}`,
       }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          <span style={{
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: '1.5rem', fontWeight: 700, color: '#dc2626',
-            letterSpacing: '-1px', lineHeight: 1,
-          }}>
-            DOC<sup style={{ fontSize: '.4rem', opacity: .5, verticalAlign: 'super' }}>™</sup>
-          </span>
+          <img
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
+            alt="DOC"
+            style={{ height: '26px', width: 'auto', objectFit: 'contain', display: 'block' }}
+          />
           <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: isDark ? '#555' : '#888', letterSpacing: '1px', textTransform: 'uppercase' }}>
             Directory of Coverage
           </span>

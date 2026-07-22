@@ -507,17 +507,11 @@ export default function DOCModal({ isOpen, onClose }) {
               }}
             >
               <div className="flex items-baseline gap-2">
-                <span style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: '20px',
-                  fontWeight: 800,
-                  color: '#ff2b2b',
-                  textShadow: '0 0 8px rgba(255,43,43,0.55)',
-                  letterSpacing: '-0.7px',
-                  lineHeight: 1,
-                }}>
-                  DOC<sup style={{ fontSize: '7px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
-                </span>
+                <img
+                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
+                  alt="DOC"
+                  style={{ height: '24px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                />
                 <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: 'rgba(255,255,255,0.5)', letterSpacing: '1px', textTransform: 'uppercase' }}>
                   Directory of Coverage
                 </span>

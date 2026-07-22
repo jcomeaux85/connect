@@ -231,16 +231,11 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
           flexShrink: 0
         }}>
           
-          <span style={{
-          fontFamily: "'Outfit', sans-serif",
-          fontSize: '20px',
-          fontWeight: 800,
-          color: 'rgba(255, 0, 0, 1)',
-          letterSpacing: '-0.7px',
-          lineHeight: 1
-        }}>
-            DOC<sup style={{ fontSize: '7px', opacity: 0.6, verticalAlign: 'super' }}>™</sup>
-          </span>
+          <img
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
+            alt="DOC"
+            style={{ height: '22px', width: 'auto', objectFit: 'contain', display: 'block' }}
+          />
         </TiltBtn>
 
         {/* Active Call — small icon only */}

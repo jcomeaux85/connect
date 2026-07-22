@@ -397,7 +397,7 @@ export default function PersistentSidebar({
                   title="DOC — Directory of Coverages"
                 >
                   <img
-                    src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f5105ec6d_DOCnobg.png"
+                    src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
                     alt="DOC"
                     className="object-contain transition-transform duration-150 group-hover:scale-105 w-auto"
                     style={{ height: isFull ? '30px' : '44px', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
