@@ -287,6 +287,12 @@ export default function Analytics() {
   const d_pendingLastWeek = M(tasks.filter(t => t.status === 'pending' && t.created_date && isLastWeek(t.created_date)).length, demo.pendingLastWeek);
   const d_totalCases = M(cases.length, demo.casesInProgress + demo.casesNew + demo.casesPending + demo.resolvedCases);
 
+  // Calculate percentage changes
+  const callTimeChange = lastWeekCallTime > 0 ? Math.round(((thisWeekCallTime - lastWeekCallTime) / lastWeekCallTime) * 100) : 0;
+  const avgCallTimeChange = avgCallTimeLastWeek > 0 ? Math.round(((avgCallTimeThisWeek - avgCallTimeLastWeek) / avgCallTimeLastWeek) * 100) : 0;
+  const casesOpenedChange = casesOpenedLastWeek > 0 ? Math.round(((casesOpenedThisWeek - casesOpenedLastWeek) / casesOpenedLastWeek) * 100) : 0;
+  const casesClosedChange = casesClosedLastWeek > 0 ? Math.round(((casesClosedThisWeek - casesClosedLastWeek) / casesClosedLastWeek) * 100) : 0;
+
   // Demo-aware percentage deltas
   const d_callTimeChange = isDemo ? 10 : callTimeChange;
   const d_avgCallTimeChange = isDemo ? -8 : avgCallTimeChange;
@@ -324,12 +330,6 @@ export default function Analytics() {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-
-  // Calculate percentage changes
-  const callTimeChange = lastWeekCallTime > 0 ? Math.round(((thisWeekCallTime - lastWeekCallTime) / lastWeekCallTime) * 100) : 0;
-  const avgCallTimeChange = avgCallTimeLastWeek > 0 ? Math.round(((avgCallTimeThisWeek - avgCallTimeLastWeek) / avgCallTimeLastWeek) * 100) : 0;
-  const casesOpenedChange = casesOpenedLastWeek > 0 ? Math.round(((casesOpenedThisWeek - casesOpenedLastWeek) / casesOpenedLastWeek) * 100) : 0;
-  const casesClosedChange = casesClosedLastWeek > 0 ? Math.round(((casesClosedThisWeek - casesClosedLastWeek) / casesClosedLastWeek) * 100) : 0;
 
   // Stat card component
   const StatCard = ({ title, value, subtitle, change, icon: Icon, color, trend }) => (
