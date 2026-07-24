@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { corpsData } from '@/api/corpsData';
 import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Clock, FileText, CreditCard, User, Play, Square, Cloud } from 'lucide-react';
@@ -36,14 +37,14 @@ export default function CoreDashboard({ onNavigate }) {
 
   const { data: timecardEntries = [] } = useQuery({
     queryKey: ['core-timecard-entries', user?.email],
-    queryFn: () => base44.entities.CoreTimecardEntry.filter({ employee_email: user?.email }, '-work_date', 14),
+    queryFn: () => corpsData.CoreTimecardEntry.filter({ employee_email: user?.email }, '-work_date', 14),
     enabled: !!user?.email,
   });
 
   const { data: employeeProfile } = useQuery({
     queryKey: ['core-employee', user?.email],
     queryFn: async () => {
-      const results = await base44.entities.CoreEmployee.filter({ email: user?.email });
+      const results = await corpsData.CoreEmployee.filter({ email: user?.email });
       return results[0] || null;
     },
     enabled: !!user?.email,
@@ -65,7 +66,7 @@ export default function CoreDashboard({ onNavigate }) {
     setClockInTime(null);
     setElapsed(0);
 
-    await base44.entities.CoreTimecardEntry.create({
+    await corpsData.CoreTimecardEntry.create({
       employee_email: user?.email,
       work_date: format(inTime, 'yyyy-MM-dd'),
       clock_in: format(inTime, 'HH:mm'),
@@ -109,7 +110,7 @@ export default function CoreDashboard({ onNavigate }) {
   // Upcoming shifts (mock from schedule)
   const { data: shifts = [] } = useQuery({
     queryKey: ['core-shifts', user?.email],
-    queryFn: () => base44.entities.CoreShift.filter({ employee_email: user?.email }, 'shift_date', 5),
+    queryFn: () => corpsData.CoreShift.filter({ employee_email: user?.email }, 'shift_date', 5),
     enabled: !!user?.email,
   });
 
