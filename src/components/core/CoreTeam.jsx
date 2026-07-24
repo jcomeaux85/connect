@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { corpsData } from '@/api/corpsData';
 import { Search, Plus, Edit3, Trash2, User } from 'lucide-react';
 
 export default function CoreTeam() {
@@ -14,21 +15,21 @@ export default function CoreTeam() {
 
   const { data: employees = [] } = useQuery({
     queryKey: ['core-employees-all'],
-    queryFn: () => base44.entities.CoreEmployee.list('full_name'),
+    queryFn: () => corpsData.CoreEmployee.list('full_name'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CoreEmployee.create(data),
+    mutationFn: (data) => corpsData.CoreEmployee.create(data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['core-employees-all'] }); setShowAdd(false); resetForm(); },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.CoreEmployee.update(id, data),
+    mutationFn: ({ id, data }) => corpsData.CoreEmployee.update(id, data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['core-employees-all'] }); setEditingId(null); },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.CoreEmployee.delete(id),
+    mutationFn: (id) => corpsData.CoreEmployee.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['core-employees-all'] }),
   });
 
