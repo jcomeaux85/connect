@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 // Icons and dropdowns now handled by TopBar component
 import { base44 } from "@/api/base44Client";
+import { telephony } from "@/api/telephony";
 import { useQuery } from '@tanstack/react-query';
 import { useUser } from "@/components/hooks/useUser";
 
@@ -191,7 +192,7 @@ function LayoutContent({ children, currentPageName }) {
   // Incoming calls polling
   const { data: incomingCalls = [] } = useQuery({
     queryKey: ['incoming-calls'],
-    queryFn: () => base44.entities.IncomingCall.filter({ status: 'ringing' }, '-created_date'),
+    queryFn: () => telephony.getRingingCalls(),
     enabled: !!user?.email,
     refetchInterval: 3000
   });
@@ -329,11 +330,11 @@ function LayoutContent({ children, currentPageName }) {
           customer={incomingCalls[0]?.customer_id ? incomingCallCustomers[incomingCalls[0].customer_id] : null}
           onAnswer={async () => {
             const c = incomingCalls[0];
-            if (c) await base44.entities.IncomingCall.update(c.id, { status: 'answered', answered_at: new Date().toISOString() });
+            if (c) await telephony.answer(c.id);
           }}
           onDecline={async () => {
             const c = incomingCalls[0];
-            if (c) await base44.entities.IncomingCall.update(c.id, { status: 'declined' });
+            if (c) await telephony.decline(c.id);
           }}
         />
 
@@ -406,9 +407,9 @@ function LayoutContent({ children, currentPageName }) {
           <IncomingCallPopup
           call={call}
           customer={call.customer_id ? incomingCallCustomers[call.customer_id] : null}
-          onAnswer={async () => {await base44.entities.IncomingCall.update(call.id, { status: 'answered', answered_at: new Date().toISOString() });}}
-          onDecline={async () => {await base44.entities.IncomingCall.update(call.id, { status: 'declined' });}}
-          onVoicemail={async () => {await base44.entities.IncomingCall.update(call.id, { status: 'voicemail' });}} />
+          onAnswer={async () => {await telephony.answer(call.id);}}
+          onDecline={async () => {await telephony.decline(call.id);}}
+          onVoicemail={async () => {await telephony.voicemail(call.id);}} />
         
         </div>
       )}
