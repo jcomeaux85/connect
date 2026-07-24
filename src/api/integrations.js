@@ -1,11 +1,13 @@
 import { base44 } from './base44Client';
-
+import { invokeAI } from './aiProvider';
 
 
 
 export const Core = base44.integrations.Core;
 
-export const InvokeLLM = base44.integrations.Core.InvokeLLM;
+// Legacy import path — routed through the vendor-blind adapter so ANY code
+// using this export automatically follows the configured AI provider.
+export const InvokeLLM = invokeAI;
 
 export const SendEmail = base44.integrations.Core.SendEmail;
 
