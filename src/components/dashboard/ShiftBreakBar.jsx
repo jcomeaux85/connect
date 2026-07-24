@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
+import { corpsData } from "@/api/corpsData";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/components/hooks/useUser";
 import { format } from "date-fns";
@@ -77,7 +78,7 @@ export default function ShiftBreakBar({ isDark }) {
 
   const { data: breaks = [] } = useQuery({
     queryKey: ["queue-breaks-today"],
-    queryFn: () => base44.entities.EmployeeBreak.filter({ break_date: TODAY }),
+    queryFn: () => corpsData.EmployeeBreak.filter({ break_date: TODAY }),
     refetchInterval: 20000,
   });
 
@@ -89,7 +90,7 @@ export default function ShiftBreakBar({ isDark }) {
   );
 
   const createBreak = useMutation({
-    mutationFn: (d) => base44.entities.EmployeeBreak.create(d),
+    mutationFn: (d) => corpsData.EmployeeBreak.create(d),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["queue-breaks-today"] });
       toast({ title: "Break saved", description: "It's on the timeline now." });
@@ -100,7 +101,7 @@ export default function ShiftBreakBar({ isDark }) {
   });
 
   const removeBreak = useMutation({
-    mutationFn: (id) => base44.entities.EmployeeBreak.delete(id),
+    mutationFn: (id) => corpsData.EmployeeBreak.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["queue-breaks-today"] }),
     onError: (err) => {
       toast({ title: "Could not remove break", description: String(err?.message || err), variant: "destructive" });
