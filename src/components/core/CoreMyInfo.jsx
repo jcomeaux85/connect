@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { corpsData } from '@/api/corpsData';
 import { Briefcase, Calendar, Shield, CreditCard, Heart, Edit3, Save, X } from 'lucide-react';
 
 export default function CoreMyInfo() {
@@ -12,7 +13,7 @@ export default function CoreMyInfo() {
   const { data: profile } = useQuery({
     queryKey: ['core-employee', user?.email],
     queryFn: async () => {
-      const r = await base44.entities.CoreEmployee.filter({ email: user?.email });
+      const r = await corpsData.CoreEmployee.filter({ email: user?.email });
       return r[0] || null;
     },
     enabled: !!user?.email,
@@ -41,8 +42,8 @@ export default function CoreMyInfo() {
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      if (profile?.id) return base44.entities.CoreEmployee.update(profile.id, data);
-      return base44.entities.CoreEmployee.create({ ...data, email: user?.email, full_name: user?.full_name });
+      if (profile?.id) return corpsData.CoreEmployee.update(profile.id, data);
+      return corpsData.CoreEmployee.create({ ...data, email: user?.email, full_name: user?.full_name });
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['core-employee'] }); setEditing(false); },
   });
