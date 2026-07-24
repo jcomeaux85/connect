@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Send, Loader2, Paperclip, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { base44 } from '@/api/base44Client';
+import { invokeAI } from '@/api/aiProvider';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 
@@ -25,7 +26,7 @@ export default function EmailComposerModal({ isOpen, onClose, toEmail, toName })
   const handleAIWrite = async () => {
     setAiLoading(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
+      const result = await invokeAI({
         prompt: `Write a professional, friendly email to ${toName || 'a customer'} (${toEmail || ''}) about their employee benefits. 
 Keep it concise (3-4 short paragraphs), warm, and helpful. 
 Subject line should be relevant and professional.
