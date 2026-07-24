@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { invokeAI } from "@/api/aiProvider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -68,7 +69,7 @@ export default function Cases() {
     setAiMessages(prev => [...prev, { role: 'user', content: msg }]);
     setAiLoading(true);
     try {
-      const res = await base44.integrations.Core.InvokeLLM({ prompt: `You are an AI Case Assistant for a benefits call center. The user asked: "${msg}". Respond helpfully and concisely.` });
+      const res = await invokeAI({ prompt: `You are an AI Case Assistant for a benefits call center. The user asked: "${msg}". Respond helpfully and concisely.` });
       setAiMessages(prev => [...prev, { role: 'assistant', content: res }]);
     } catch {
       setAiMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
