@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { corpsData } from '@/api/corpsData';
 import { format } from 'date-fns';
 import { Download, Plus, Wallet, FileText, TrendingUp } from 'lucide-react';
 
@@ -13,21 +14,21 @@ export default function CorePay() {
 
   const { data: paystubs = [] } = useQuery({
     queryKey: ['core-pay', user?.email],
-    queryFn: () => base44.entities.CorePaystub.filter({ employee_email: user?.email }, '-pay_date'),
+    queryFn: () => corpsData.CorePaystub.filter({ employee_email: user?.email }, '-pay_date'),
     enabled: !!user?.email,
   });
 
   const { data: employeeProfile } = useQuery({
     queryKey: ['core-employee', user?.email],
     queryFn: async () => {
-      const r = await base44.entities.CoreEmployee.filter({ email: user?.email });
+      const r = await corpsData.CoreEmployee.filter({ email: user?.email });
       return r[0] || null;
     },
     enabled: !!user?.email,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CorePaystub.create(data),
+    mutationFn: (data) => corpsData.CorePaystub.create(data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['core-pay'] }); setShowAdd(false); },
   });
 
