@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { corpsData } from '@/api/corpsData';
 import { format, addDays, subDays, startOfWeek, endOfWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight, Download, CheckCircle } from 'lucide-react';
 
@@ -15,17 +16,17 @@ export default function CoreTimecard() {
 
   const { data: entries = [], isLoading } = useQuery({
     queryKey: ['core-timecard', user?.email, format(periodStart, 'yyyy-MM-dd')],
-    queryFn: () => base44.entities.CoreTimecardEntry.filter({ employee_email: user?.email }, 'work_date'),
+    queryFn: () => corpsData.CoreTimecardEntry.filter({ employee_email: user?.email }, 'work_date'),
     enabled: !!user?.email,
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.CoreTimecardEntry.update(id, data),
+    mutationFn: ({ id, data }) => corpsData.CoreTimecardEntry.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['core-timecard'] }),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CoreTimecardEntry.create(data),
+    mutationFn: (data) => corpsData.CoreTimecardEntry.create(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['core-timecard'] }),
   });
 
