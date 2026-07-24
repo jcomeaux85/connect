@@ -1,13 +1,13 @@
-import { base44 } from "@/api/base44Client";
+import { invokeAI } from "@/api/aiProvider";
 
 /**
  * AI Helper Functions for Call Center Hub
- * All functions use base44's secure InvokeLLM integration
+ * All functions route through the vendor-blind aiProvider adapter.
  */
 
 // 1. Auto-Summarize Calls
 export async function summarizeCall(callNotes, duration, outcome) {
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeAI({
     prompt: `You are an expert insurance call center analyst. Summarize this call professionally.
 
 Call Duration: ${duration} seconds
@@ -42,7 +42,7 @@ Provide a concise summary with key points and action items.`,
 
 // 2. Smart Note Suggestions
 export async function suggestNotes(caseType, callCategory, customerMessage) {
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeAI({
     prompt: `You are an insurance documentation assistant. Based on this call information, suggest what should be documented:
 
 Case Type: ${caseType}
@@ -76,7 +76,7 @@ Suggest specific things the agent should document.`,
 
 // 3. Priority Detection
 export async function detectPriority(customerMessage, caseType, customerHistory) {
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeAI({
     prompt: `You are an insurance triage expert. Analyze this case and determine priority level.
 
 Case Type: ${caseType}
@@ -117,7 +117,7 @@ Determine the urgency and priority level.`,
 
 // 4. Response Templates
 export async function generateResponse(inquiry, customerName, caseType, tone = "professional") {
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeAI({
     prompt: `You are a professional insurance customer service representative. Generate a helpful response.
 
 Customer Name: ${customerName}
@@ -153,7 +153,7 @@ Write a professional, empathetic response that addresses their concern.`,
 
 // 5. Quality Scoring
 export async function scoreCallQuality(callTranscript, agentNotes, resolution) {
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeAI({
     prompt: `You are a call center quality assurance manager. Evaluate this interaction.
 
 Call Transcript/Notes: ${callTranscript}
@@ -211,7 +211,7 @@ export async function recommendAgent(caseDetails, availableAgents) {
     `${agent.email}: ${agent.specialties || 'General'} - ${agent.caseload || 0} active cases`
   ).join('\n');
 
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeAI({
     prompt: `You are an intelligent case routing system. Recommend the best agent for this case.
 
 Case Details: ${JSON.stringify(caseDetails, null, 2)}
@@ -252,7 +252,7 @@ Consider: expertise match, current workload, case complexity, and past performan
 
 // 7. Compliance Checker
 export async function checkCompliance(noteContent, caseType, regulatoryContext = "insurance") {
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeAI({
     prompt: `You are a compliance officer for insurance documentation. Review this note for compliance.
 
 Regulatory Context: ${regulatoryContext}
@@ -306,7 +306,7 @@ export async function analyzeCaseTrends(cases) {
     duration: c.updated_date ? new Date(c.updated_date) - new Date(c.created_date) : null
   }));
 
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeAI({
     prompt: `You are a call center analytics expert. Analyze these recent cases for trends and insights.
 
 Cases: ${JSON.stringify(caseSummary, null, 2)}
