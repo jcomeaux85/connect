@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
+import { corpsData } from "@/api/corpsData";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@/components/ThemeProvider";
 import { format } from "date-fns";
@@ -83,20 +84,20 @@ export default function ShiftFlowTimeline() {
 
   const { data: employees = [] } = useQuery({
     queryKey: ["core-employees-shifts"],
-    queryFn: () => base44.entities.CoreEmployee.list("full_name"),
+    queryFn: () => corpsData.CoreEmployee.list("full_name"),
   });
   const { data: shifts = [] } = useQuery({
     queryKey: ["core-shifts-today"],
-    queryFn: () => base44.entities.CoreShift.filter({ shift_date: TODAY }),
+    queryFn: () => corpsData.CoreShift.filter({ shift_date: TODAY }),
   });
   const { data: breaks = [] } = useQuery({
     queryKey: ["employee-breaks-today"],
-    queryFn: () => base44.entities.EmployeeBreak.filter({ break_date: TODAY }),
+    queryFn: () => corpsData.EmployeeBreak.filter({ break_date: TODAY }),
     refetchInterval: 30000,
   });
   const { data: breakGroups = [] } = useQuery({
     queryKey: ["break-groups"],
-    queryFn: () => base44.entities.BreakGroup.list("name"),
+    queryFn: () => corpsData.BreakGroup.list("name"),
   });
   const { data: currentUser } = useQuery({
     queryKey: ["current-user"],
@@ -104,7 +105,7 @@ export default function ShiftFlowTimeline() {
   });
 
   const createBreakMutation = useMutation({
-    mutationFn: (d) => base44.entities.EmployeeBreak.create(d),
+    mutationFn: (d) => corpsData.EmployeeBreak.create(d),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["employee-breaks-today"] }),
   });
 
