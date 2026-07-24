@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { corpsData } from '@/api/corpsData';
 import { format } from 'date-fns';
 import { Plus, X, Calendar } from 'lucide-react';
 
@@ -15,12 +16,12 @@ export default function CoreRequests() {
 
   const { data: requests = [] } = useQuery({
     queryKey: ['core-requests', user?.email],
-    queryFn: () => base44.entities.CoreTimeOffRequest.filter({ employee_email: user?.email }, '-created_date'),
+    queryFn: () => corpsData.CoreTimeOffRequest.filter({ employee_email: user?.email }, '-created_date'),
     enabled: !!user?.email,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CoreTimeOffRequest.create(data),
+    mutationFn: (data) => corpsData.CoreTimeOffRequest.create(data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['core-requests'] }); setShowForm(false); setForm({ request_type: 'Vacation', start_date: '', end_date: '', total_hours: 8, notes: '' }); },
   });
 
