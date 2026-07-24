@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { corpsData } from '@/api/corpsData';
 import { format, addDays, startOfWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, ArrowLeftRight } from 'lucide-react';
 
@@ -16,12 +17,12 @@ export default function CoreSchedule() {
 
   const { data: shifts = [] } = useQuery({
     queryKey: ['core-shifts-all', user?.email, format(weekStart, 'yyyy-MM-dd')],
-    queryFn: () => base44.entities.CoreShift.filter({ employee_email: user?.email }, 'shift_date'),
+    queryFn: () => corpsData.CoreShift.filter({ employee_email: user?.email }, 'shift_date'),
     enabled: !!user?.email,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CoreShift.create(data),
+    mutationFn: (data) => corpsData.CoreShift.create(data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['core-shifts-all'] }); setShowAdd(false); },
   });
 
