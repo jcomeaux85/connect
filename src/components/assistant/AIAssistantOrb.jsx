@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
+import { invokeAI } from "@/api/aiProvider";
 import {
   Sparkles,
   X,
@@ -104,7 +105,7 @@ export default function AIAssistantOrb() {
         .map(m => `${m.role}: ${m.content}`)
         .join('\n');
 
-      const response = await base44.integrations.Core.InvokeLLM({
+      const response = await invokeAI({
         prompt: `You are a helpful, conversational AI assistant for a call center management application. You're friendly, supportive, and understanding.
 
 Your Primary Role:
