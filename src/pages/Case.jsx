@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { invokeAI } from "@/api/aiProvider";
 import { useSearchParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
@@ -297,7 +298,7 @@ export default function CasePage() {
     try {
       const currentCall = calls.find(c => c.id === callId);
       const callNotesDuringCall = notes.filter(n => n.note_type === 'call_note' && currentCall && new Date(n.created_date) >= new Date(currentCall.call_start_time)).map(n => n.content).join('\n\n');
-      const response = await base44.integrations.Core.InvokeLLM({
+      const response = await invokeAI({
         prompt: `Analyze this call based ONLY on the notes taken during the call.\nCall Duration: ${formatCallDuration(callDuration)}\nCustomer: ${caseData?.customer_name || 'N/A'}\n\nCall notes:\n${callNotesDuringCall || 'No notes were taken during this call'}\n\nProvide: summary, key points, action items, sentiment, compliance score (0-100), quality score (0-100).`,
         response_json_schema: { type: "object", properties: { summary: { type: "string" }, key_points: { type: "array", items: { type: "string" } }, action_items: { type: "array", items: { type: "string" } }, sentiment: { type: "string", enum: ["positive", "neutral", "negative"] }, compliance_score: { type: "number" }, quality_score: { type: "number" } }, required: ["summary", "key_points", "action_items", "sentiment", "compliance_score", "quality_score"] }
       });
@@ -472,7 +473,7 @@ export default function CasePage() {
                       if (!manualTranscript.trim()) return;
                       setProcessingTranscript(true);
                       try {
-                        const response = await base44.integrations.Core.InvokeLLM({ prompt: `Analyze this call transcript:\n${manualTranscript}\nCustomer: ${caseData?.customer_name || 'N/A'}\nProvide: summary, key points, action items, sentiment (positive/neutral/negative), compliance score (0-100), quality score (0-100).`, response_json_schema: { type: "object", properties: { summary:{type:"string"}, key_points:{type:"array",items:{type:"string"}}, action_items:{type:"array",items:{type:"string"}}, sentiment:{type:"string",enum:["positive","neutral","negative"]}, compliance_score:{type:"number"}, quality_score:{type:"number"} }, required: ["summary","key_points","action_items","sentiment","compliance_score","quality_score"] } });
+                        const response = await invokeAI({ prompt: `Analyze this call transcript:\n${manualTranscript}\nCustomer: ${caseData?.customer_name || 'N/A'}\nProvide: summary, key points, action items, sentiment (positive/neutral/negative), compliance score (0-100), quality score (0-100).`, response_json_schema: { type: "object", properties: { summary:{type:"string"}, key_points:{type:"array",items:{type:"string"}}, action_items:{type:"array",items:{type:"string"}}, sentiment:{type:"string",enum:["positive","neutral","negative"]}, compliance_score:{type:"number"}, quality_score:{type:"number"} }, required: ["summary","key_points","action_items","sentiment","compliance_score","quality_score"] } });
                         createTranscriptMutation.mutate({ call_id: 'manual-poc', case_id: caseId, transcript_text: manualTranscript, ai_summary: response.summary, key_points: response.key_points, action_items: response.action_items, sentiment: response.sentiment, compliance_score: response.compliance_score, quality_score: response.quality_score, created_date: new Date().toISOString() });
                         setAiSuggestion({ summary: `Analysis Complete - Quality: ${response.quality_score}/100`, key_points: response.key_points, action_items: response.action_items });
                         setManualTranscript('');
