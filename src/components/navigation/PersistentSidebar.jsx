@@ -11,6 +11,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import ChipHeader from '@/components/navigation/ChipHeader';
+import AleraLauncher from '@/components/navigation/AleraLauncher';
 import { useSpotlight } from '@/components/spotlight/SpotlightContext';
 
 export const SIDEBAR_WIDTHS = [52, 160, 220];
@@ -328,7 +329,7 @@ export default function PersistentSidebar({
             {/* Nav buttons -- fill height evenly */}
             <div
               className={`flex-1 ${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
-              style={{ gap: '5px', minHeight: 0 }}
+              style={{ gap: '5px', minHeight: 0, gridAutoRows: isFull ? 'minmax(clamp(34px, 6vh, 42px), 1fr)' : undefined }}
             >
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -340,7 +341,7 @@ export default function PersistentSidebar({
                     className="relative flex-1"
                     onMouseEnter={() => setHoveredItem(item.title)}
                     onMouseLeave={() => setHoveredItem(null)}
-                    style={{ minHeight: 0 }}
+                    style={{ minHeight: 'clamp(34px, 6vh, 42px)' }}
                   >
                     <Link to={item.url} style={{ display: 'block', height: '100%' }}>
                       <LitButton
@@ -351,7 +352,7 @@ export default function PersistentSidebar({
                           padding: isMin ? '0' : '0 10px',
                           justifyContent: isMin ? 'center' : 'flex-start',
                           gap: '8px',
-                          minHeight: '32px',
+                          minHeight: 'clamp(34px, 6vh, 42px)',
                         }}
                       >
                         <Icon
@@ -381,54 +382,15 @@ export default function PersistentSidebar({
               })}
             </div>
 
-            {/* DOC + CORPS brand buttons -- level 2: stacked full logos;
-                level 3 (two-col grid): side by side. Hidden at level 1 (icon rail too narrow). */}
+            {/* ALERA | one launcher — replaces the old DOC + CORPS brand row.
+                 Hover reveals a full-screen brightwash + sliding icon row. */}
             {!isMin && (
-            <div
-              className={`pt-2 border-t ${isFull ? 'grid grid-cols-2 items-center' : 'flex flex-col items-center'}`}
-              style={{ borderColor: PANEL_BORDER, gap: '14px' }}
-            >
-              {/* DOC */}
-              <div className={isFull ? '' : 'w-full'}>
-                <button
-                  onClick={onToggleDoc}
-                  className="w-full flex items-end justify-center bg-transparent border-0 p-0 cursor-pointer group"
-                  style={{ background: 'transparent' }}
-                  title="DOC — Directory of Coverages"
-                >
-                  <img
-                    src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
-                    alt="DOC"
-                    className="object-contain transition-transform duration-150 group-hover:scale-105 w-auto"
-                    style={{ height: isFull ? '30px' : '44px', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}
-                  />
-                </button>
+              <div
+                className="pt-2 border-t flex flex-col items-center"
+                style={{ borderColor: PANEL_BORDER, gap: '10px' }}
+              >
+                <AleraLauncher onToggleDoc={onToggleDoc} />
               </div>
-
-              {/* CORPS — text logo, transparent, phosphor-green coding font */}
-              <div className={isFull ? '' : 'w-full'}>
-                <button
-                  onClick={() => navigate('/Core')}
-                  className="w-full flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer group"
-                  style={{ background: 'transparent' }}
-                  title="CORPS"
-                >
-                  <span
-                    className="transition-transform duration-150 group-hover:scale-105 whitespace-nowrap"
-                    style={{
-                      fontFamily: "'VT323', ui-monospace, monospace",
-                      fontSize: isFull ? '30px' : '44px',
-                      lineHeight: 1,
-                      color: '#33FF33',
-                      letterSpacing: '0.02em',
-                      textShadow: '0 0 8px rgba(51,255,51,0.55), 0 0 18px rgba(51,255,51,0.3)',
-                    }}
-                  >
-                    CORPS//
-                  </span>
-                </button>
-              </div>
-            </div>
             )}
 
             {/* Divider + Quick actions */}
