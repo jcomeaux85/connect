@@ -18,7 +18,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-const DURATION = 1.1;
+const DURATION = 0.935;
 const SOFT_EASE = [0.25, 0.1, 0.25, 1];
 const EASE_CSS = "cubic-bezier(0.25, 0.1, 0.25, 1)";
 const BUFFER_PX = 30;
@@ -33,6 +33,8 @@ const GLOW_FULL =
 // ── App tiles (starting with DOC + CORPS; more logos to come) ──
 const DOC_ICON =
   "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png";
+
+const EXTERNAL_HREF = "https://ndrndr.com/alera";
 
 const APPS = [
   {
@@ -63,6 +65,127 @@ const APPS = [
         }}
       >
         CORPS//
+      </span>
+    ),
+  },
+  {
+    id: "authlink",
+    label: "Auth|Link",
+    href: EXTERNAL_HREF,
+    renderIcon: (size) => (
+      <span
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 800,
+          fontSize: size * 0.26,
+          color: "#ffffff",
+          letterSpacing: "0.02em",
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+        }}
+      >
+        Auth<span style={{ color: "#00d4ff" }}>|</span>Link
+      </span>
+    ),
+  },
+  {
+    id: "consilium",
+    label: "Consilium",
+    href: EXTERNAL_HREF,
+    renderIcon: (size) => (
+      <span
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 800,
+          fontSize: size * 0.22,
+          color: "#00E5FF",
+          letterSpacing: "0.08em",
+          textShadow: "0 0 10px rgba(0,229,255,0.5)",
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+        }}
+      >
+        CONSILIUM
+      </span>
+    ),
+  },
+  {
+    id: "learn",
+    label: "ALERA | learn",
+    href: EXTERNAL_HREF,
+    renderIcon: (size) => (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-end",
+          lineHeight: 1,
+          pointerEvents: "none",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 800,
+            fontSize: size * 0.3,
+            color: "#555555",
+            letterSpacing: "0.02em",
+            whiteSpace: "nowrap",
+          }}
+        >
+          LE<span style={{ color: "#40E0D0" }}>▼</span>RN
+        </span>
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: size * 0.1,
+            color: "#A9A9A9",
+            marginTop: "2px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          by <span style={{ color: "#40E0D0" }}>ALERAGROUP</span>
+        </span>
+      </div>
+    ),
+  },
+  {
+    id: "train",
+    label: "ALERA | train",
+    href: EXTERNAL_HREF,
+    renderIcon: (size) => (
+      <span
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 800,
+          fontSize: size * 0.3,
+          color: "#ffffff",
+          letterSpacing: "0.04em",
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+        }}
+      >
+        TR<span style={{ color: "#00d4ff" }}>▼</span>IN
+      </span>
+    ),
+  },
+  {
+    id: "hub",
+    label: "Alera hub",
+    href: EXTERNAL_HREF,
+    renderIcon: (size) => (
+      <span
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 800,
+          fontSize: size * 0.32,
+          letterSpacing: "0.01em",
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+        }}
+      >
+        <span style={{ color: "#0078D7" }}>Help</span>
+        <span style={{ color: "#B3B3B3" }}>Hub</span>
       </span>
     ),
   },
@@ -123,6 +246,7 @@ export default function AleraLauncher({ onToggleDoc }) {
     setHoveredIcon(null);
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
+    else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 
   const bandTop = (centerY ?? (typeof window !== "undefined" ? window.innerHeight / 2 : 400)) - BAND_HEIGHT / 2;
