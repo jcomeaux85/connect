@@ -1,17 +1,16 @@
-// AleraLauncher — "ALERA | one" glowing trigger + full-screen brightwash
-// icon slide-out. Replaces the old DOC/CORPS brand row in the sidebar.
+// AleraLauncher — "ALERA | one" trigger + vertical glass column slide-out.
 //
 // Interaction:
-//  • Hover the ALERA | one text → glow ramps + icons slide out + screen
-//    brightwashes, all over 1.1s with a soft start/landing ease.
-//  • Icons sit in an invisible full-width band at the trigger's vertical
-//    position, extended 30px above/below for forgiving hover.
+//  • Hover the ALERA | one text → a glassmorphism column slides out from
+//    under the sidebar's right edge, logos dropping in top-to-bottom in
+//    succession over ~1s with a soft start/landing ease.
+//  • The column spans nearly the full height of the sidebar (small
+//    head/foot insets) and sits flush against the sidebar's right edge.
 //  • Hovering one icon scales it up + greys/fades the others; de-hovering
-//    an icon restores all (while the mouse stays on the band).
-//  • De-hovering the band retracts everything.
+//    an icon restores all (while the mouse stays on the column).
+//  • De-hovering the column retracts everything.
 //
-// No container background behind the icon row — the brightwash alone is
-// the backdrop. Each icon casts a drop-shadow on the site behind it.
+// No brightwash / no full-screen overlay — just the glass column.
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -21,9 +20,10 @@ import { useNavigate } from "react-router-dom";
 const DURATION = 0.935;
 const SOFT_EASE = [0.25, 0.1, 0.25, 1];
 const EASE_CSS = "cubic-bezier(0.25, 0.1, 0.25, 1)";
-const BUFFER_PX = 30;
-const ICON_SIZE = 88;
-const BAND_HEIGHT = ICON_SIZE + BUFFER_PX * 2;
+const ICON_SIZE = 74;
+const COL_WIDTH = 116;
+const HEAD_INSET = 16; // px from viewport top — almost reaches sidebar head
+const FOOT_INSET = 16; // px from viewport bottom — almost reaches sidebar foot
 
 // Blue outline + cyan glow matching the HangingNav (Cases/Tasks/etc) style.
 const GLOW_REST = "0 0 1px rgba(255,255,255,0.3)";
@@ -195,7 +195,7 @@ export default function AleraLauncher({ onToggleDoc }) {
   const triggerRef = useRef(null);
   const closeTimer = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [centerY, setCenterY] = useState(null);
+  const [leftEdge, setLeftEdge] = useState(0);
   const [hoveredIcon, setHoveredIcon] = useState(null);
 
   const open = useCallback(() => {
@@ -206,7 +206,7 @@ export default function AleraLauncher({ onToggleDoc }) {
     const el = triggerRef.current;
     if (el) {
       const r = el.getBoundingClientRect();
-      setCenterY(r.top + r.height / 2);
+      setLeftEdge(r.right); // column flush against sidebar's right edge
     }
     setIsOpen(true);
   }, []);
@@ -249,8 +249,6 @@ export default function AleraLauncher({ onToggleDoc }) {
     else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 
-  const bandTop = (centerY ?? (typeof window !== "undefined" ? window.innerHeight / 2 : 400)) - BAND_HEIGHT / 2;
-
   return (
     <>
       {/* ── Trigger: ALERA | one (glows like the top nav text) ── */}
@@ -281,92 +279,81 @@ export default function AleraLauncher({ onToggleDoc }) {
       {createPortal(
         <AnimatePresence>
           {isOpen && (
-            <>
-              {/* ── Brightwash: ultra-bright, over-exposed, out-of-focus site ── */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: DURATION, ease: SOFT_EASE }}
-                style={{
-                  position: "fixed",
-                  inset: 0,
-                  zIndex: 80,
-                  pointerEvents: "none",
-                  background:
-                    "radial-gradient(ellipse at center, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.78) 45%, rgba(240,248,255,0.62) 100%)",
-                  backdropFilter: "blur(3px) brightness(1.85) saturate(0.4) contrast(0.95)",
-                  WebkitBackdropFilter: "blur(3px) brightness(1.85) saturate(0.4) contrast(0.95)",
-                }}
-              />
-
-              {/* ── Interactive band: invisible, full-width, 30px buffer ── */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.18 }}
-                onMouseEnter={cancelClose}
-                onMouseLeave={scheduleClose}
-                style={{
-                  position: "fixed",
-                  left: 0,
-                  width: "100%",
-                  top: `${bandTop}px`,
-                  height: `${BAND_HEIGHT}px`,
-                  zIndex: 90,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "clamp(40px, 8vw, 120px)",
-                  // No container background — the brightwash is the backdrop.
-                }}
-              >
-                {APPS.map((app, i) => {
-                  const isHovered = hoveredIcon === app.id;
-                  const isOther = hoveredIcon !== null && !isHovered;
-                  return (
-                    <motion.button
-                      key={app.id}
-                      type="button"
-                      initial={{ x: -80, opacity: 0, scale: 0.5 }}
-                      animate={{
-                        x: 0,
-                        opacity: isOther ? 0.3 : 1,
-                        scale: isHovered ? 1.15 : isOther ? 0.92 : 1,
-                        filter: isOther
-                          ? "grayscale(1) drop-shadow(0 10px 20px rgba(0,0,0,0.28))"
-                          : "grayscale(0) drop-shadow(0 10px 20px rgba(0,0,0,0.28))",
-                      }}
-                      exit={{ x: -80, opacity: 0, scale: 0.5 }}
-                      transition={{
-                        x: { duration: DURATION, ease: SOFT_EASE, delay: i * 0.06 },
-                        opacity: { duration: 0.28, ease: "easeOut" },
-                        scale: { duration: 0.28, ease: "easeOut" },
-                        filter: { duration: 0.28, ease: "easeOut" },
-                      }}
-                      onMouseEnter={() => setHoveredIcon(app.id)}
-                      onMouseLeave={() => setHoveredIcon(null)}
-                      onClick={() => handleSelect(app)}
-                      title={app.label}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        width: `${ICON_SIZE}px`,
-                        height: `${ICON_SIZE}px`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: 0,
-                      }}
-                    >
-                      {app.renderIcon(ICON_SIZE)}
-                    </motion.button>
-                  );
-                })}
-              </motion.div>
-            </>
+            /* ── Vertical glass column: slides out from under the sidebar ── */
+            <motion.div
+              initial={{ x: -COL_WIDTH - 12, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -COL_WIDTH - 12, opacity: 0 }}
+              transition={{ duration: DURATION, ease: SOFT_EASE }}
+              onMouseEnter={cancelClose}
+              onMouseLeave={scheduleClose}
+              style={{
+                position: "fixed",
+                left: `${leftEdge}px`,
+                top: `${HEAD_INSET}px`,
+                bottom: `${FOOT_INSET}px`,
+                width: `${COL_WIDTH}px`,
+                zIndex: 90,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-evenly",
+                gap: "6px",
+                padding: "14px 0",
+                borderRadius: "0 18px 18px 0",
+                // Glassmorphism — translucent dark glass that blurs the site behind it
+                background: "rgba(18, 20, 28, 0.38)",
+                backdropFilter: "blur(20px) saturate(140%) brightness(1.02)",
+                WebkitBackdropFilter: "blur(20px) saturate(140%) brightness(1.02)",
+                border: "1px solid rgba(255,255,255,0.10)",
+                borderLeft: "none",
+                boxShadow:
+                  "8px 0 30px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06)",
+              }}
+            >
+              {APPS.map((app, i) => {
+                const isHovered = hoveredIcon === app.id;
+                const isOther = hoveredIcon !== null && !isHovered;
+                return (
+                  <motion.button
+                    key={app.id}
+                    type="button"
+                    initial={{ opacity: 0, y: -18, scale: 0.5 }}
+                    animate={{
+                      opacity: isOther ? 0.3 : 1,
+                      y: 0,
+                      scale: isHovered ? 1.15 : isOther ? 0.92 : 1,
+                      filter: isOther ? "grayscale(1)" : "grayscale(0)",
+                    }}
+                    exit={{ opacity: 0, y: -18, scale: 0.5 }}
+                    transition={{
+                      opacity: { duration: 0.3, ease: "easeOut", delay: i * 0.07 },
+                      y: { duration: DURATION, ease: SOFT_EASE, delay: i * 0.07 },
+                      scale: { duration: 0.28, ease: "easeOut" },
+                      filter: { duration: 0.28, ease: "easeOut" },
+                    }}
+                    onMouseEnter={() => setHoveredIcon(app.id)}
+                    onMouseLeave={() => setHoveredIcon(null)}
+                    onClick={() => handleSelect(app)}
+                    title={app.label}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      width: `${ICON_SIZE}px`,
+                      height: `${ICON_SIZE}px`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 0,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {app.renderIcon(ICON_SIZE)}
+                  </motion.button>
+                );
+              })}
+            </motion.div>
           )}
         </AnimatePresence>,
         document.body
