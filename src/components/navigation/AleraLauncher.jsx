@@ -21,7 +21,8 @@ const DURATION = 0.935;
 const SOFT_EASE = [0.25, 0.1, 0.25, 1];
 const EASE_CSS = "cubic-bezier(0.25, 0.1, 0.25, 1)";
 const ICON_SIZE = 74;
-const COL_WIDTH = 116;
+const COL_WIDTH = 128;
+const SLIDE_OFFSET = 18; // gap between sidebar's right edge and the glass column
 const HEAD_INSET = 16; // px from viewport top — almost reaches sidebar head
 const FOOT_INSET = 16; // px from viewport bottom — almost reaches sidebar foot
 
@@ -198,6 +199,12 @@ export default function AleraLauncher({ onToggleDoc }) {
   const [leftEdge, setLeftEdge] = useState(0);
   const [hoveredIcon, setHoveredIcon] = useState(null);
 
+  // Tell the parent sidebar we're active so it stays pinned open while the
+  // glass column is out — prevents the column from floating parentless.
+  const setActive = useCallback((active) => {
+    window.dispatchEvent(new CustomEvent('alera-launcher-active', { detail: { active } }));
+  }, []);
+
   const open = useCallback(() => {
     if (closeTimer.current) {
       clearTimeout(closeTimer.current);
@@ -206,17 +213,19 @@ export default function AleraLauncher({ onToggleDoc }) {
     const el = triggerRef.current;
     if (el) {
       const r = el.getBoundingClientRect();
-      setLeftEdge(r.right); // column flush against sidebar's right edge
+      setLeftEdge(r.right); // column sits just past the sidebar's right edge
     }
     setIsOpen(true);
-  }, []);
+    setActive(true);
+  }, [setActive]);
 
   const scheduleClose = useCallback(() => {
     closeTimer.current = setTimeout(() => {
       setIsOpen(false);
       setHoveredIcon(null);
-    }, 160);
-  }, []);
+      setActive(false);
+    }, 200);
+  }, [setActive]);
 
   const cancelClose = useCallback(() => {
     if (closeTimer.current) {
@@ -232,6 +241,7 @@ export default function AleraLauncher({ onToggleDoc }) {
       if (e.key === "Escape") {
         setIsOpen(false);
         setHoveredIcon(null);
+        setActive(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -243,6 +253,7 @@ export default function AleraLauncher({ onToggleDoc }) {
   const handleSelect = (app) => {
     setIsOpen(false);
     setHoveredIcon(null);
+    setActive(false);
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
     else if (app.id === "authlink") navigate("/AuthLink");
@@ -255,6 +266,7 @@ export default function AleraLauncher({ onToggleDoc }) {
       <div
         ref={triggerRef}
         onMouseEnter={open}
+        onMouseLeave={scheduleClose}
         className="w-full flex items-center justify-center"
         style={{ padding: "6px 0", cursor: "pointer" }}
       >
@@ -289,7 +301,7 @@ export default function AleraLauncher({ onToggleDoc }) {
               onMouseLeave={scheduleClose}
               style={{
                 position: "fixed",
-                left: `${leftEdge}px`,
+                left: `${leftEdge + SLIDE_OFFSET}px`,
                 top: `${HEAD_INSET}px`,
                 bottom: `${FOOT_INSET}px`,
                 width: `${COL_WIDTH}px`,
@@ -298,8 +310,8 @@ export default function AleraLauncher({ onToggleDoc }) {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "space-evenly",
-                gap: "6px",
-                padding: "14px 0",
+                gap: "8px",
+                padding: "16px 8px",
                 borderRadius: "0 18px 18px 0",
                 // Glassmorphism — translucent dark glass that blurs the site behind it
                 background: "rgba(18, 20, 28, 0.38)",

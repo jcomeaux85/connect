@@ -155,20 +155,43 @@ export default function PersistentSidebar({
   const [isHovered, setIsHovered] = useState(false);
   const [isLocked, setIsLocked] = useState(() => localStorage.getItem('sidebarLocked') === '1');
   const [panelGlare, setPanelGlare] = useState({ mx: 50, my: 50, intensity: 0 });
+  const [aleraActive, setAleraActive] = useState(false);
   const hasInteracted = useRef(false);
   const hideTimer = useRef(null);
   const panelRef = useRef(null);
+  const mouseOnPanel = useRef(true);
 
   const handleMouseEnter = () => {
+    mouseOnPanel.current = true;
     hasInteracted.current = true;
     if (hideTimer.current) clearTimeout(hideTimer.current);
     setIsHovered(true);
   };
   const handleMouseLeave = () => {
-    if (isLocked) return;
+    mouseOnPanel.current = false;
+    if (isLocked || aleraActive) return; // keep sidebar open while Alera column is out
     setPanelGlare((g) => ({ ...g, intensity: 0 })); // light fades back to dark purple
     hideTimer.current = setTimeout(() => setIsHovered(false), 720);
   };
+
+  // Alera launcher broadcasts when its glass column is open; keep the sidebar
+  // pinned open for the duration so the column never floats parentless, and
+  // follow the normal retract once it closes.
+  useEffect(() => {
+    const onAlera = (e) => setAleraActive(!!e.detail?.active);
+    window.addEventListener('alera-launcher-active', onAlera);
+    return () => window.removeEventListener('alera-launcher-active', onAlera);
+  }, []);
+  useEffect(() => {
+    if (aleraActive) {
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+      hasInteracted.current = true;
+      setIsHovered(true);
+    } else if (!mouseOnPanel.current && !isLocked) {
+      setPanelGlare((g) => ({ ...g, intensity: 0 }));
+      hideTimer.current = setTimeout(() => setIsHovered(false), 320);
+    }
+  }, [aleraActive, isLocked]);
 
   // Clear any pending hide timer on unmount
   useEffect(() => {
@@ -207,7 +230,7 @@ export default function PersistentSidebar({
   }, []);
 
   const level = sidebarLevel ?? 1;
-  const isOpen = isHovered || isLocked;
+  const isOpen = isHovered || isLocked || aleraActive;
   const width = isOpen ? SIDEBAR_WIDTHS[level - 1] : 0;
   const isMin = level === 1;
   const isMid = level === 2;
@@ -260,7 +283,7 @@ export default function PersistentSidebar({
       />
 
       {/* Off-click catcher -- closes sidebar and swallows the click so it doesn't hit the page */}
-      {isHovered && !isLocked && (
+      {isHovered && !isLocked && !aleraActive && (
         <div
           className="fixed inset-0 z-[58]"
           onMouseDown={(e) => {
