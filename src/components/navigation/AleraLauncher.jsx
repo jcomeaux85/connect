@@ -293,7 +293,7 @@ export default function AleraLauncher({ onToggleDoc }) {
                 top: `${HEAD_INSET}px`,
                 bottom: `${FOOT_INSET}px`,
                 width: `${COL_WIDTH}px`,
-                zIndex: 90,
+                zIndex: 50,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
