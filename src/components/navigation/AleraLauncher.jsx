@@ -56,7 +56,7 @@ const APPS = [
       <span
         style={{
           fontFamily: "'VT323', ui-monospace, monospace",
-          fontSize: size * 0.6,
+          fontSize: size * 0.48,
           lineHeight: 1,
           color: "#33FF33",
           letterSpacing: "0.02em",
