@@ -71,7 +71,6 @@ const APPS = [
   {
     id: "authlink",
     label: "Auth|Link",
-    href: EXTERNAL_HREF,
     renderIcon: (size) => (
       <span
         style={{
@@ -246,6 +245,7 @@ export default function AleraLauncher({ onToggleDoc }) {
     setHoveredIcon(null);
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
+    else if (app.id === "authlink") navigate("/AuthLink");
     else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 

@@ -1,0 +1,104 @@
+{
+  "name": "AuthSubmission",
+  "type": "object",
+  "properties": {
+    "member_full_name": {
+      "type": "string",
+      "description": "Full name of the member being authorized"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date",
+      "description": "Member date of birth"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Member phone number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Member email address"
+    },
+    "policy_id": {
+      "type": "string",
+      "description": "Insurance policy ID"
+    },
+    "employer_group": {
+      "type": "string",
+      "description": "Employer group name"
+    },
+    "authorized_representative": {
+      "type": "string",
+      "description": "Name of the person being authorized to speak on behalf of the member"
+    },
+    "relationship": {
+      "type": "string",
+      "description": "Relationship between member and authorized representative"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "Full authority",
+        "Limited authority",
+        "Specific issue"
+      ],
+      "default": "Full authority",
+      "description": "Scope of authorization granted"
+    },
+    "authorization_expiration": {
+      "type": "string",
+      "format": "date",
+      "description": "When this authorization expires"
+    },
+    "verification_code": {
+      "type": "string",
+      "description": "Auto-generated 4-digit code the member must recite in their video"
+    },
+    "recitation_video_url": {
+      "type": "string",
+      "description": "URL to the member's uploaded recitation video"
+    },
+    "government_id_url": {
+      "type": "string",
+      "description": "URL to the member's uploaded government ID image (full image, discarded after approval)"
+    },
+    "face_crop_url": {
+      "type": "string",
+      "description": "URL to the cropped face image saved by the specialist"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "link_generated",
+        "submitted",
+        "approved",
+        "rejected"
+      ],
+      "default": "link_generated",
+      "description": "Current status of the authorization submission"
+    },
+    "specialist_email": {
+      "type": "string",
+      "description": "Email of the specialist who created the link / reviewed the submission"
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the member completed their submission"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the specialist approved or rejected"
+    },
+    "review_notes": {
+      "type": "string",
+      "description": "Specialist notes from the review"
+    }
+  },
+  "required": [
+    "member_full_name",
+    "policy_id",
+    "employer_group"
+  ]
+}
