@@ -1,6 +1,7 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import VideoRecorder from "@/components/authlink/VideoRecorder";
 import {
   Lock,
   Loader2,
@@ -25,7 +26,6 @@ export default function AuthLinkMember() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
-  const videoInputRef = useRef(null);
 
   // Load submission
   React.useEffect(() => {
@@ -39,19 +39,6 @@ export default function AuthLinkMember() {
       .catch(() => setError("Invalid or expired authorization link."))
       .finally(() => setLoading(false));
   }, [id]);
-
-  const handleUploadVideo = async (file) => {
-    setUploading(true);
-    setError("");
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setVideoUrl(file_url);
-    } catch (e) {
-      setError("Failed to upload video.");
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleUploadId = async (file) => {
     setUploading(true);
@@ -204,43 +191,12 @@ export default function AuthLinkMember() {
                 Please record a short video of yourself. In the next step, you'll be given a
                 4-digit code to recite on camera.
               </p>
-              {videoUrl ? (
-                <div className="mb-4">
-                  <video src={videoUrl} controls className="w-full rounded-xl" />
-                  <div className="flex items-center gap-2 mt-2 text-green-600">
-                    <Check size={16} />
-                    <span className="text-xs">Video uploaded</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="mb-4">
-                  <input
-                    ref={videoInputRef}
-                    type="file"
-                    accept="video/*"
-                    capture="user"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) handleUploadVideo(f);
-                    }}
-                  />
-                  <button
-                    onClick={() => videoInputRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full py-8 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center gap-2 text-gray-500 hover:border-blue-400 hover:text-blue-500 transition disabled:opacity-50"
-                  >
-                    {uploading ? (
-                      <Loader2 size={24} className="animate-spin" />
-                    ) : (
-                      <Video size={24} />
-                    )}
-                    <span className="text-xs">
-                      {uploading ? "Uploading..." : "Record or upload video"}
-                    </span>
-                  </button>
-                </div>
-              )}
+              <div className="mb-4">
+                <VideoRecorder
+                  existingUrl={videoUrl}
+                  onUploaded={(url) => setVideoUrl(url)}
+                />
+              </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setStep("intro")}
