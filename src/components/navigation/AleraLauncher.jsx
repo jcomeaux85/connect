@@ -253,6 +253,25 @@ export default function AleraLauncher({ onToggleDoc }) {
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [hoveredY, setHoveredY] = useState(null); // vertical center of hovered logo button
 
+  // Icon size adapts to viewport height so all logos always fit inside the
+  // glass column — no clipping off the bottom on short screens.
+  const [iconSize, setIconSize] = useState(() => {
+    if (typeof window === "undefined") return ICON_SIZE;
+    const avail = window.innerHeight - HEAD_INSET - FOOT_INSET - 32; // minus 16px top/bot padding
+    const gaps = (APPS.length - 1) * 8;
+    return Math.max(48, Math.min(ICON_SIZE, Math.floor((avail - gaps) / APPS.length)));
+  });
+
+  useEffect(() => {
+    const onResize = () => {
+      const avail = window.innerHeight - HEAD_INSET - FOOT_INSET - 32;
+      const gaps = (APPS.length - 1) * 8;
+      setIconSize(Math.max(48, Math.min(ICON_SIZE, Math.floor((avail - gaps) / APPS.length))));
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // Tell the parent sidebar we're active so it stays pinned open while the
   // glass column is out — prevents the column from floating parentless.
   const setActive = useCallback((active) => {
@@ -369,6 +388,7 @@ export default function AleraLauncher({ onToggleDoc }) {
                 justifyContent: "space-evenly",
                 gap: "8px",
                 padding: "16px 8px",
+                overflow: "hidden",
                 borderRadius: "0 18px 18px 0",
                 // Glassmorphism — translucent dark glass that blurs the site behind it
                 background: "rgba(18, 20, 28, 0.38)",
@@ -414,7 +434,7 @@ export default function AleraLauncher({ onToggleDoc }) {
                       border: "none",
                       cursor: "pointer",
                       width: `${COL_WIDTH - 16}px`,
-                      height: `${ICON_SIZE}px`,
+                      height: `${iconSize}px`,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -422,7 +442,7 @@ export default function AleraLauncher({ onToggleDoc }) {
                       flexShrink: 0,
                     }}
                   >
-                    {app.renderIcon(ICON_SIZE)}
+                    {app.renderIcon(iconSize)}
                   </motion.button>
                 );
               })}
