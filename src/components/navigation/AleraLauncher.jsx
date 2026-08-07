@@ -432,10 +432,26 @@ export default function AleraLauncher({ onToggleDoc }) {
         document.body
       )}
 
-      {/* ── Hover preview: image + description fades into the dashboard area ── */}
+      {/* ── Hover preview: image + description fades into the dashboard area ──
+          Positioning lives on a NON-animated wrapper so framer-motion's
+          transform (x/scale) can't clobber the vertical centering. */}
       {createPortal(
         <AnimatePresence>
-          {isOpen && hoveredIcon && PREVIEWS[hoveredIcon] && (
+          {isOpen && hoveredIcon && PREVIEWS[hoveredIcon] && (() => {
+            const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+            const PANEL_H = 360;
+            const center = hoveredY ?? vh / 2;
+            const clampedTop = Math.max(10, Math.min(center - PANEL_H / 2, vh - PANEL_H - 10));
+            return (
+            <div
+              style={{
+                position: "fixed",
+                left: `${leftEdge + COL_WIDTH + 18}px`,
+                top: `${clampedTop}px`,
+                zIndex: 49,
+                pointerEvents: "none",
+              }}
+            >
             <motion.div
               key="preview"
               initial={{ opacity: 0, x: -20, scale: 0.96 }}
@@ -443,12 +459,7 @@ export default function AleraLauncher({ onToggleDoc }) {
               exit={{ opacity: 0, x: -20, scale: 0.96 }}
               transition={{ duration: 0.45, ease: SOFT_EASE }}
               style={{
-                position: "fixed",
-                left: `${leftEdge + COL_WIDTH + 18}px`,
-                top: `${Math.max(200, Math.min(hoveredY ?? (typeof window !== "undefined" ? window.innerHeight / 2 : 400), (typeof window !== "undefined" ? window.innerHeight : 800) - 200))}px`,
-                transform: "translateY(-50%)",
                 width: "clamp(300px, 28vw, 400px)",
-                zIndex: 49,
                 borderRadius: "18px",
                 overflow: "hidden",
                 background: "rgba(18, 20, 28, 0.46)",
@@ -456,7 +467,6 @@ export default function AleraLauncher({ onToggleDoc }) {
                 WebkitBackdropFilter: "blur(18px) saturate(140%)",
                 border: "1px solid rgba(255,255,255,0.12)",
                 boxShadow: "0 16px 50px rgba(0,0,0,0.50)",
-                pointerEvents: "none",
               }}
             >
               {/* IMG — preview image */}
@@ -508,7 +518,9 @@ export default function AleraLauncher({ onToggleDoc }) {
                 {PREVIEWS[hoveredIcon].description}
               </p>
             </motion.div>
-          )}
+            </div>
+            );
+          })}
         </AnimatePresence>,
         document.body
       )}
