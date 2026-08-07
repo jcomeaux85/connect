@@ -445,7 +445,7 @@ export default function AleraLauncher({ onToggleDoc }) {
               style={{
                 position: "fixed",
                 left: `${leftEdge + COL_WIDTH + 18}px`,
-                top: `${hoveredY ?? 50}%`,
+                top: `${Math.max(200, Math.min(hoveredY ?? (typeof window !== "undefined" ? window.innerHeight / 2 : 400), (typeof window !== "undefined" ? window.innerHeight : 800) - 200))}px`,
                 transform: "translateY(-50%)",
                 width: "clamp(300px, 28vw, 400px)",
                 zIndex: 49,
