@@ -82,11 +82,15 @@ export default function ShiftBreakBar({ isDark }) {
     refetchInterval: 20000,
   });
 
-  // Only breaks for this queue's emails
+  // Only breaks for this queue's emails — PLUS the logged-in user's own
+  // breaks (their email isn't in the hardcoded QUEUE list, so without this
+  // a saved break is filtered out and never shows on the bar). We read
+  // user?.email directly (active is declared below, can't be referenced here).
+  const myEmail = user?.email || "you@queue.demo";
   const queueEmails = QUEUE.map((q) => q.email);
   const queueBreaks = useMemo(
-    () => breaks.filter((b) => queueEmails.includes(b.employee_email) && b.status !== "cancelled" && b.status !== "declined"),
-    [breaks]
+    () => breaks.filter((b) => (queueEmails.includes(b.employee_email) || b.employee_email === myEmail) && b.status !== "cancelled" && b.status !== "declined"),
+    [breaks, myEmail]
   );
 
   const createBreak = useMutation({
