@@ -12,7 +12,7 @@
 //
 // No brightwash / no full-screen overlay — just the glass column.
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -252,6 +252,20 @@ export default function AleraLauncher({ onToggleDoc }) {
   const [leftEdge, setLeftEdge] = useState(0);
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [hoveredY, setHoveredY] = useState(null); // vertical center of hovered logo button
+  const previewRef = useRef(null);
+  const [panelH, setPanelH] = useState(360); // measured real height of the preview pane
+
+  // Measure the actual preview pane height so we can clamp it to the screen
+  // edge instead of guessing (a wrong guess lets it spill off the bottom).
+  useLayoutEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    const measure = () => setPanelH(el.getBoundingClientRect().height);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [hoveredIcon, isOpen]);
 
   // Icon size adapts to viewport height so all logos always fit inside the
   // glass column — no clipping off the bottom on short screens.
@@ -459,11 +473,13 @@ export default function AleraLauncher({ onToggleDoc }) {
         <AnimatePresence>
           {isOpen && hoveredIcon && PREVIEWS[hoveredIcon] && (() => {
             const vh = typeof window !== "undefined" ? window.innerHeight : 800;
-            const PANEL_H = 360;
             const center = hoveredY ?? vh / 2;
-            const clampedTop = Math.max(10, Math.min(center - PANEL_H / 2, vh - PANEL_H - 10));
+            // Clamp so the pane stays fully on screen: center on the hovered
+            // icon when there's room, otherwise pin to the top or bottom edge.
+            const clampedTop = Math.max(10, Math.min(center - panelH / 2, vh - panelH - 10));
             return (
             <div
+              ref={previewRef}
               style={{
                 position: "fixed",
                 left: `${leftEdge + COL_WIDTH + 18}px`,
