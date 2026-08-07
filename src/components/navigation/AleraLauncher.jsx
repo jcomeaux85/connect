@@ -20,8 +20,8 @@ import { useNavigate } from "react-router-dom";
 const DURATION = 0.935;
 const SOFT_EASE = [0.25, 0.1, 0.25, 1];
 const EASE_CSS = "cubic-bezier(0.25, 0.1, 0.25, 1)";
-const ICON_SIZE = 74;
-const COL_WIDTH = 128;
+const ICON_SIZE = 92;
+const COL_WIDTH = 172;
 const SLIDE_OFFSET = 0; // flush against the sidebar's right edge — no gap
 const HEAD_INSET = 16; // px from viewport top — almost reaches sidebar head
 const FOOT_INSET = 16; // px from viewport bottom — almost reaches sidebar foot
@@ -251,6 +251,7 @@ export default function AleraLauncher({ onToggleDoc }) {
   const [isOpen, setIsOpen] = useState(false);
   const [leftEdge, setLeftEdge] = useState(0);
   const [hoveredIcon, setHoveredIcon] = useState(null);
+  const [hoveredY, setHoveredY] = useState(null); // vertical center of hovered logo button
 
   // Tell the parent sidebar we're active so it stays pinned open while the
   // glass column is out — prevents the column from floating parentless.
@@ -276,6 +277,7 @@ export default function AleraLauncher({ onToggleDoc }) {
     closeTimer.current = setTimeout(() => {
       setIsOpen(false);
       setHoveredIcon(null);
+      setHoveredY(null);
       setActive(false);
     }, 200);
   }, [setActive]);
@@ -294,6 +296,7 @@ export default function AleraLauncher({ onToggleDoc }) {
       if (e.key === "Escape") {
         setIsOpen(false);
         setHoveredIcon(null);
+        setHoveredY(null);
         setActive(false);
       }
     };
@@ -306,6 +309,7 @@ export default function AleraLauncher({ onToggleDoc }) {
   const handleSelect = (app) => {
     setIsOpen(false);
     setHoveredIcon(null);
+    setHoveredY(null);
     setActive(false);
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
@@ -397,8 +401,12 @@ export default function AleraLauncher({ onToggleDoc }) {
                       scale: { duration: 0.28, ease: "easeOut" },
                       filter: { duration: 0.28, ease: "easeOut" },
                     }}
-                    onMouseEnter={() => setHoveredIcon(app.id)}
-                    onMouseLeave={() => setHoveredIcon(null)}
+                    onMouseEnter={(e) => {
+                      const r = e.currentTarget.getBoundingClientRect();
+                      setHoveredIcon(app.id);
+                      setHoveredY(r.top + r.height / 2);
+                    }}
+                    onMouseLeave={() => { setHoveredIcon(null); setHoveredY(null); }}
                     onClick={() => handleSelect(app)}
                     title={app.label}
                     style={{
@@ -436,18 +444,18 @@ export default function AleraLauncher({ onToggleDoc }) {
               transition={{ duration: 0.45, ease: SOFT_EASE }}
               style={{
                 position: "fixed",
-                left: `${leftEdge + COL_WIDTH + 16}px`,
-                top: "50%",
+                left: `${leftEdge + COL_WIDTH + 18}px`,
+                top: `${hoveredY ?? 50}%`,
                 transform: "translateY(-50%)",
-                width: "clamp(240px, 22vw, 320px)",
+                width: "clamp(300px, 28vw, 400px)",
                 zIndex: 49,
                 borderRadius: "18px",
                 overflow: "hidden",
-                background: "rgba(18, 20, 28, 0.42)",
-                backdropFilter: "blur(16px) saturate(140%)",
-                WebkitBackdropFilter: "blur(16px) saturate(140%)",
+                background: "rgba(18, 20, 28, 0.46)",
+                backdropFilter: "blur(18px) saturate(140%)",
+                WebkitBackdropFilter: "blur(18px) saturate(140%)",
                 border: "1px solid rgba(255,255,255,0.12)",
-                boxShadow: "0 12px 40px rgba(0,0,0,0.45)",
+                boxShadow: "0 16px 50px rgba(0,0,0,0.50)",
                 pointerEvents: "none",
               }}
             >
@@ -455,7 +463,7 @@ export default function AleraLauncher({ onToggleDoc }) {
               <div
                 style={{
                   width: "100%",
-                  height: "clamp(140px, 13vw, 190px)",
+                  height: "clamp(190px, 18vw, 240px)",
                   backgroundImage: `url(${PREVIEWS[hoveredIcon].image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
@@ -473,11 +481,11 @@ export default function AleraLauncher({ onToggleDoc }) {
                 <span
                   style={{
                     position: "absolute",
-                    bottom: 10,
-                    left: 14,
+                    bottom: 12,
+                    left: 18,
                     fontFamily: "'Inter', sans-serif",
                     fontWeight: 800,
-                    fontSize: "clamp(16px, 1.6vw, 20px)",
+                    fontSize: "clamp(20px, 2vw, 26px)",
                     color: "#ffffff",
                     letterSpacing: "0.02em",
                     textShadow: "0 1px 8px rgba(0,0,0,0.6)",
@@ -490,10 +498,10 @@ export default function AleraLauncher({ onToggleDoc }) {
               <p
                 style={{
                   margin: 0,
-                  padding: "12px 14px 14px",
+                  padding: "16px 18px 18px",
                   fontFamily: "'Inter', sans-serif",
-                  fontSize: "clamp(11px, 0.9vw, 13px)",
-                  lineHeight: 1.5,
+                  fontSize: "clamp(13px, 1.05vw, 15px)",
+                  lineHeight: 1.55,
                   color: "rgba(255,255,255,0.82)",
                 }}
               >
