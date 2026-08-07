@@ -22,7 +22,7 @@ const SOFT_EASE = [0.25, 0.1, 0.25, 1];
 const EASE_CSS = "cubic-bezier(0.25, 0.1, 0.25, 1)";
 const ICON_SIZE = 74;
 const COL_WIDTH = 128;
-const SLIDE_OFFSET = 18; // gap between sidebar's right edge and the glass column
+const SLIDE_OFFSET = 0; // flush against the sidebar's right edge — no gap
 const HEAD_INSET = 16; // px from viewport top — almost reaches sidebar head
 const FOOT_INSET = 16; // px from viewport bottom — almost reaches sidebar foot
 
@@ -190,6 +190,59 @@ const APPS = [
     ),
   },
 ];
+
+// ── Hover previews: image + description shown in the dashboard area ──
+const PREVIEWS = {
+  doc: {
+    title: "DOC",
+    image:
+      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80",
+    description:
+      "Dynamic Operations Console — a real-time client knowledge base with employer profiles, carrier maps, and instant benefit-plan lookups at your fingertips.",
+  },
+  corps: {
+    title: "CORPS//",
+    image:
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80",
+    description:
+      "Centralized Operations & Resource Planning System — workforce scheduling, attendance, payroll, and break coordination for the entire call-center floor.",
+  },
+  authlink: {
+    title: "Auth|Link",
+    image:
+      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80",
+    description:
+      "Secure member identity verification — a 4-step wizard (data, video recital, ID capture, e-signature) with a specialist review console and automatic ID purging.",
+  },
+  consilium: {
+    title: "CONSILIUM",
+    image:
+      "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80",
+    description:
+      "Consilium — a collaborative consultation workspace for case strategy, team huddles, and cross-department decision tracking.",
+  },
+  learn: {
+    title: "ALERA | learn",
+    image:
+      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80",
+    description:
+      "ALERA | learn — on-demand training library with guided courses, certifications, and knowledge checks for new and tenured agents alike.",
+  },
+  train: {
+    title: "ALERA | train",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80",
+    description:
+      "ALERA | train — live coaching simulations, call-shadowing drills, and performance feedback loops to keep skills sharp.",
+  },
+  hub: {
+    title: "HelpHub",
+    image:
+      "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=600&q=80",
+    description:
+      "HelpHub — a self-serve support center with how-to articles, video walkthroughs, and direct escalation paths to the ALERA team.",
+  },
+};
 
 export default function AleraLauncher({ onToggleDoc }) {
   const navigate = useNavigate();
@@ -365,6 +418,87 @@ export default function AleraLauncher({ onToggleDoc }) {
                   </motion.button>
                 );
               })}
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+
+      {/* ── Hover preview: image + description fades into the dashboard area ── */}
+      {createPortal(
+        <AnimatePresence>
+          {isOpen && hoveredIcon && PREVIEWS[hoveredIcon] && (
+            <motion.div
+              key="preview"
+              initial={{ opacity: 0, x: -20, scale: 0.96 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -20, scale: 0.96 }}
+              transition={{ duration: 0.45, ease: SOFT_EASE }}
+              style={{
+                position: "fixed",
+                left: `${leftEdge + COL_WIDTH + 16}px`,
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: "clamp(240px, 22vw, 320px)",
+                zIndex: 49,
+                borderRadius: "18px",
+                overflow: "hidden",
+                background: "rgba(18, 20, 28, 0.42)",
+                backdropFilter: "blur(16px) saturate(140%)",
+                WebkitBackdropFilter: "blur(16px) saturate(140%)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                boxShadow: "0 12px 40px rgba(0,0,0,0.45)",
+                pointerEvents: "none",
+              }}
+            >
+              {/* IMG — preview image */}
+              <div
+                style={{
+                  width: "100%",
+                  height: "clamp(140px, 13vw, 190px)",
+                  backgroundImage: `url(${PREVIEWS[hoveredIcon].image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  position: "relative",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    background:
+                      "linear-gradient(to bottom, rgba(18,20,28,0.1), rgba(18,20,28,0.85))",
+                  }}
+                />
+                <span
+                  style={{
+                    position: "absolute",
+                    bottom: 10,
+                    left: 14,
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: 800,
+                    fontSize: "clamp(16px, 1.6vw, 20px)",
+                    color: "#ffffff",
+                    letterSpacing: "0.02em",
+                    textShadow: "0 1px 8px rgba(0,0,0,0.6)",
+                  }}
+                >
+                  {PREVIEWS[hoveredIcon].title}
+                </span>
+              </div>
+              {/* TXT — description */}
+              <p
+                style={{
+                  margin: 0,
+                  padding: "12px 14px 14px",
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: "clamp(11px, 0.9vw, 13px)",
+                  lineHeight: 1.5,
+                  color: "rgba(255,255,255,0.82)",
+                }}
+              >
+                {PREVIEWS[hoveredIcon].description}
+              </p>
             </motion.div>
           )}
         </AnimatePresence>,
