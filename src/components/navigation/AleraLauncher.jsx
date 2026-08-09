@@ -23,8 +23,8 @@ const EASE_CSS = "cubic-bezier(0.25, 0.1, 0.25, 1)";
 const ICON_SIZE = 92;
 const COL_WIDTH = 172;
 const SLIDE_OFFSET = 0; // flush against the sidebar's right edge — no gap
-const HEAD_INSET = 16; // px from viewport top — almost reaches sidebar head
-const FOOT_INSET = 16; // px from viewport bottom — almost reaches sidebar foot
+const HEAD_INSET = 16; // px from viewport top — almost reaching sidebar head
+const FOOT_INSET = 16; // px from viewport bottom — almost reaching sidebar foot
 
 // Blue outline + cyan glow matching the HangingNav (Cases/Tasks/etc) style.
 const GLOW_REST = "0 0 1px rgba(255,255,255,0.3)";
@@ -350,6 +350,15 @@ export default function AleraLauncher({ onToggleDoc }) {
     else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 
+  // Compute preview pane position when a logo is hovered.
+  const previewData = (() => {
+    if (!isOpen || !hoveredIcon || !PREVIEWS[hoveredIcon]) return null;
+    const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+    const center = hoveredY ?? vh / 2;
+    const clampedTop = Math.max(10, Math.min(center - panelH / 2, vh - panelH - 10));
+    return { clampedTop, ...PREVIEWS[hoveredIcon] };
+  })();
+
   return (
     <>
       {/* ── Trigger: ALERA | one (glows like the top nav text) ── */}
@@ -466,35 +475,23 @@ export default function AleraLauncher({ onToggleDoc }) {
         document.body
       )}
 
-      {/* ── Hover preview: image + description fades into the dashboard area ──
-          Positioning lives on a NON-animated wrapper so framer-motion's
-          transform (x/scale) can't clobber the vertical centering. */}
+      {/* ── Hover preview: image + description fades into the dashboard area ── */}
       {createPortal(
         <AnimatePresence>
-          {isOpen && hoveredIcon && PREVIEWS[hoveredIcon] && (() => {
-            const vh = typeof window !== "undefined" ? window.innerHeight : 800;
-            const center = hoveredY ?? vh / 2;
-            // Clamp so the pane stays fully on screen: center on the hovered
-            // icon when there's room, otherwise pin to the top or bottom edge.
-            const clampedTop = Math.max(10, Math.min(center - panelH / 2, vh - panelH - 10));
-            return (
-            <div
-              ref={previewRef}
-              style={{
-                position: "fixed",
-                left: `${leftEdge + COL_WIDTH + 18}px`,
-                top: `${clampedTop}px`,
-                zIndex: 49,
-                pointerEvents: "none",
-              }}
-            >
+          {previewData && (
             <motion.div
-              key="preview"
+              key="preview-pane"
+              ref={previewRef}
               initial={{ opacity: 0, x: -20, scale: 0.96 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: -20, scale: 0.96 }}
               transition={{ duration: 0.45, ease: SOFT_EASE }}
               style={{
+                position: "fixed",
+                left: `${leftEdge + COL_WIDTH + 18}px`,
+                top: `${previewData.clampedTop}px`,
+                zIndex: 49,
+                pointerEvents: "none",
                 width: "clamp(300px, 28vw, 400px)",
                 borderRadius: "18px",
                 overflow: "hidden",
@@ -510,7 +507,7 @@ export default function AleraLauncher({ onToggleDoc }) {
                 style={{
                   width: "100%",
                   height: "clamp(190px, 18vw, 240px)",
-                  backgroundImage: `url(${PREVIEWS[hoveredIcon].image})`,
+                  backgroundImage: `url(${previewData.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   position: "relative",
@@ -537,7 +534,7 @@ export default function AleraLauncher({ onToggleDoc }) {
                     textShadow: "0 1px 8px rgba(0,0,0,0.6)",
                   }}
                 >
-                  {PREVIEWS[hoveredIcon].title}
+                  {previewData.title}
                 </span>
               </div>
               {/* TXT — description */}
@@ -551,12 +548,10 @@ export default function AleraLauncher({ onToggleDoc }) {
                   color: "rgba(255,255,255,0.82)",
                 }}
               >
-                {PREVIEWS[hoveredIcon].description}
+                {previewData.description}
               </p>
             </motion.div>
-            </div>
-            );
-          })}
+          )}
         </AnimatePresence>,
         document.body
       )}
