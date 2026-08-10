@@ -16,6 +16,9 @@ import { useSpotlight } from '@/components/spotlight/SpotlightContext';
 
 export const SIDEBAR_WIDTHS = [52, 160, 220];
 
+// Vertical distance (px) over which proximity labels fade from full to invisible
+const PROXIMITY_FADE = 70;
+
 const navItems = [
   { title: 'Dashboard', url: createPageUrl('Dashboard'), icon: LayoutGrid },
   { title: 'Cases', url: createPageUrl('Cases'), icon: Folder },
@@ -105,41 +108,7 @@ function LitButton({ children, isActive, style, className, onClick, as: Tag = 'd
   );
 }
 
-// Tooltip that slides out to the right of a collapsed icon
-function HoverTooltip({ label, visible }) {
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0, x: -6, scaleX: 0.85 }}
-          animate={{ opacity: 1, x: 0, scaleX: 1 }}
-          exit={{ opacity: 0, x: -6, scaleX: 0.85 }}
-          transition={{ duration: 0.15, ease: 'easeOut' }}
-          style={{
-            position: 'absolute',
-            left: '100%',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            marginLeft: '6px',
-            zIndex: 55,
-            background: 'rgba(40,30,60,0.92)',
-            boxShadow: '3px 3px 10px rgba(0,0,0,0.4)',
-            color: '#fff',
-            padding: '3px 10px',
-            borderRadius: '8px',
-            fontSize: '11px',
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-            pointerEvents: 'none',
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          {label}
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
+
 
 export default function PersistentSidebar({
   sidebarLevel, onSidebarLevelChange,
@@ -151,7 +120,6 @@ export default function PersistentSidebar({
   const navigate = useNavigate();
   const { toggleTheme, isDark: themeDark } = useTheme();
   const { enabled: spotlightOn, toggle: toggleSpotlight } = useSpotlight();
-  const [hoveredItem, setHoveredItem] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isLocked, setIsLocked] = useState(() => localStorage.getItem('sidebarLocked') === '1');
   const [panelGlare, setPanelGlare] = useState({ mx: 50, my: 50, intensity: 0 });
@@ -169,6 +137,9 @@ export default function PersistentSidebar({
   };
   const handleMouseLeave = () => {
     mouseOnPanel.current = false;
+    // Fade out all proximity labels
+    const el = panelRef.current;
+    if (el) el.querySelectorAll('[data-proximity-label]').forEach((l) => l.style.opacity = '0');
     if (isLocked || aleraActive) return; // keep sidebar open while Alera column is out
     setPanelGlare((g) => ({ ...g, intensity: 0 })); // light fades back to dark purple
     hideTimer.current = setTimeout(() => setIsHovered(false), 720);
@@ -217,6 +188,24 @@ export default function PersistentSidebar({
     window.dispatchEvent(new CustomEvent('sidebar-lock-change', { detail: { width: lockedWidth } }));
   }, [isLocked, sidebarLevel]);
 
+  // Proximity labels: opacity driven by vertical distance from mouse to button center.
+  // Direct DOM manipulation (no re-renders) — labels fade in near the cursor and
+  // decay with distance, just like the panel glare.
+  const updateProximityLabels = useCallback((clientY) => {
+    const el = panelRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const mouseY = clientY - r.top;
+    el.querySelectorAll('[data-proximity-label]').forEach((label) => {
+      const btn = label.parentElement;
+      if (!btn) return;
+      const br = btn.getBoundingClientRect();
+      const btnCenterY = br.top - r.top + br.height / 2;
+      const dist = Math.abs(mouseY - btnCenterY);
+      label.style.opacity = Math.max(0, 1 - dist / PROXIMITY_FADE).toFixed(3);
+    });
+  }, []);
+
   // Panel-level glare (independent listener) -- full intensity when cursor is on the panel
   const handlePanelMouseMove = useCallback((e) => {
     const el = panelRef.current;
@@ -227,7 +216,8 @@ export default function PersistentSidebar({
       my: ((e.clientY - r.top) / r.height) * 100,
       intensity: 1,
     });
-  }, []);
+    updateProximityLabels(e.clientY);
+  }, [updateProximityLabels]);
 
   const level = sidebarLevel ?? 1;
   const isOpen = isHovered || isLocked || aleraActive;
@@ -277,6 +267,7 @@ export default function PersistentSidebar({
             mx: 18,
             intensity: Math.min(approachPct * 0.6, 0.6), // faint at distance, grows on approach
           }));
+          updateProximityLabels(e.clientY);
         }}
       />
 
@@ -355,13 +346,10 @@ export default function PersistentSidebar({
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.url;
-                const hovered = hoveredItem === item.title;
                 return (
                   <div
                     key={item.title}
                     className="relative flex-1"
-                    onMouseEnter={() => setHoveredItem(item.title)}
-                    onMouseLeave={() => setHoveredItem(null)}
                     style={{ minHeight: 'clamp(34px, 6vh, 42px)' }}
                   >
                     <Link to={item.url} style={{ display: 'block', height: '100%' }}>
@@ -397,7 +385,33 @@ export default function PersistentSidebar({
                         </AnimatePresence>
                       </LitButton>
                     </Link>
-                    {isMin && <HoverTooltip label={item.title} visible={hovered} />}
+                    {isMin && (
+                      <span
+                        data-proximity-label
+                        style={{
+                          position: 'absolute',
+                          left: '100%',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          marginLeft: '8px',
+                          opacity: 0,
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          color: isActive ? '#e9d5ff' : 'rgba(255,255,255,0.85)',
+                          pointerEvents: 'none',
+                          zIndex: 55,
+                          transition: 'opacity 0.1s ease',
+                          background: 'rgba(30,20,50,0.65)',
+                          backdropFilter: 'blur(6px)',
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          textShadow: '0 1px 3px rgba(0,0,0,0.4)',
+                        }}
+                      >
+                        {item.title}
+                      </span>
+                    )}
                   </div>
                 );
               })}
@@ -420,12 +434,9 @@ export default function PersistentSidebar({
               style={{ borderColor: PANEL_BORDER, gap: '5px' }}
             >
               {actions.map(({ label, icon: Icon, onClick, to, active, gear }) => {
-                const hovered = hoveredItem === `action-${label}`;
                 const btn = (
                   <div
                     className="relative flex items-center gap-1.5"
-                    onMouseEnter={() => setHoveredItem(`action-${label}`)}
-                    onMouseLeave={() => setHoveredItem(null)}
                   >
                     <LitButton
                       isActive={!!active}
@@ -461,7 +472,33 @@ export default function PersistentSidebar({
                         <Settings className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.65)' }} />
                       </button>
                     )}
-                    {isMin && <HoverTooltip label={label} visible={hovered} />}
+                    {isMin && (
+                      <span
+                        data-proximity-label
+                        style={{
+                          position: 'absolute',
+                          left: '100%',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          marginLeft: '8px',
+                          opacity: 0,
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          color: 'rgba(255,255,255,0.85)',
+                          pointerEvents: 'none',
+                          zIndex: 55,
+                          transition: 'opacity 0.1s ease',
+                          background: 'rgba(30,20,50,0.65)',
+                          backdropFilter: 'blur(6px)',
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          textShadow: '0 1px 3px rgba(0,0,0,0.4)',
+                        }}
+                      >
+                        {label}
+                      </span>
+                    )}
                   </div>
                 );
                 return to
