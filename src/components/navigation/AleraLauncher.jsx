@@ -196,7 +196,7 @@ const PREVIEWS = {
   doc: {
     title: "DOC",
     image:
-      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/aac9f0b4e_BC.png",
+      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/5eeb7752f_DOCresultstoolong.png",
     description:
       "Dynamic Operations Console — a real-time client knowledge base with employer profiles, carrier maps, and instant benefit-plan lookups at your fingertips.",
   },
