@@ -1,19 +1,20 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, CheckCircle2, Clock, AlertCircle, ClipboardCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, CheckCircle2, Clock, AlertCircle, ClipboardCheck, X, Lock, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '@/components/ThemeProvider';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // Specified Trainings — assigned training modules with deadlines.
-// Shows a list of trainings with deadline urgency indicators and completion status.
+// Users must OPEN and VIEW the training content before they can mark it complete.
+// Cannot just click "Mark Complete" without opening the detail first.
 
 const SEED_TRAININGS = [
   {
     id: 'seed-train-1',
     title: 'Q3 Compliance Training — HIPAA & Data Security',
     module_type: 'specified_training',
-    text_content: '<p>Mandatory quarterly compliance training covering HIPAA regulations, data security protocols, and member privacy requirements. All agents must complete this training by the deadline.</p>',
+    text_content: '<p>Mandatory quarterly compliance training covering HIPAA regulations, data security protocols, and member privacy requirements. All agents must complete this training by the deadline.</p><p><strong>Topics covered:</strong></p><ul><li>HIPAA Privacy Rule fundamentals</li><li>Protected Health Information (PHI) handling</li><li>Data breach reporting procedures</li><li>Member consent requirements</li><li>Secure communication protocols</li></ul>',
     tags: ['HIPAA', 'compliance', 'data_security'],
     deadline: '2026-08-20',
   },
@@ -21,7 +22,7 @@ const SEED_TRAININGS = [
     id: 'seed-train-2',
     title: 'New Carrier Onboarding — BlueCross BlueShield',
     module_type: 'specified_training',
-    text_content: '<p>Training for the new BCBS carrier integration. Covers plan structures, claim submission processes, and provider network details.</p>',
+    text_content: '<p>Training for the new BCBS carrier integration. Covers plan structures, claim submission processes, and provider network details.</p><p><strong>You will learn:</strong></p><ul><li>BCBS plan tiers and metal levels</li><li>Claim submission portal navigation</li><li>Provider network lookup procedures</li><li>Prior authorization requirements</li><li>Member ID card verification</li></ul>',
     tags: ['BCBS', 'carrier_onboarding', 'claims'],
     deadline: '2026-08-25',
   },
@@ -29,7 +30,7 @@ const SEED_TRAININGS = [
     id: 'seed-train-3',
     title: 'Annual Benefits Refresh — 2026 Plan Year Updates',
     module_type: 'specified_training',
-    text_content: '<p>Annual refresher covering all 2026 plan year changes including new HSA limits, updated FSA rules, and carrier network changes.</p>',
+    text_content: '<p>Annual refresher covering all 2026 plan year changes including new HSA limits, updated FSA rules, and carrier network changes.</p><p><strong>2026 Updates:</strong></p><ul><li>HSA contribution limits increased</li><li>FSA carryover provisions updated</li><li>New carrier network additions</li><li>Discontinued plan grandfathering</li><li>Updated compliance requirements</li></ul>',
     tags: ['2026_updates', 'HSA_limits', 'FSA_rules'],
     deadline: '2026-09-01',
   },
@@ -37,7 +38,7 @@ const SEED_TRAININGS = [
     id: 'seed-train-4',
     title: 'Customer Service Excellence — De-escalation Techniques',
     module_type: 'specified_training',
-    text_content: '<p>Advanced de-escalation training for handling difficult calls. Covers active listening, empathy statements, and conflict resolution strategies.</p>',
+    text_content: '<p>Advanced de-escalation training for handling difficult calls. Covers active listening, empathy statements, and conflict resolution strategies.</p><p><strong>Techniques covered:</strong></p><ul><li>Active listening protocols</li><li>Empathy statement frameworks</li><li>Conflict de-escalation strategies</li><li>Setting boundaries with upset callers</li><li>Knowing when to escalate to a supervisor</li></ul>',
     tags: ['de-escalation', 'customer_service', 'call_handling'],
     deadline: '2026-09-10',
   },
@@ -63,6 +64,8 @@ function getUrgency(days) {
 export default function SpecifiedTrainings() {
   const { colors, getButtonStyle, getInsetStyle } = useTheme();
   const queryClient = useQueryClient();
+  const [openedTraining, setOpenedTraining] = useState(null); // training detail modal
+  const [viewedTrainingIds, setViewedTrainingIds] = useState(new Set()); // trainings the user has opened
 
   const { data: trainings = [], isLoading } = useQuery({
     queryKey: ['specified-trainings'],
@@ -91,12 +94,23 @@ export default function SpecifiedTrainings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['training-completions'] });
+      setOpenedTraining(null);
     }
   });
 
   const completedIds = new Set(completions.map(c => c.module_id));
 
-  // Sort by deadline urgency (overdue first, then by date)
+  const handleOpenTraining = (training) => {
+    setOpenedTraining(training);
+    setViewedTrainingIds(prev => new Set([...prev, training.id]));
+  };
+
+  const handleComplete = (training) => {
+    // Only allow completion if the training has been opened/viewed
+    if (!viewedTrainingIds.has(training.id)) return;
+    completeMutation.mutate(training);
+  };
+
   const sorted = [...trainings].sort((a, b) => {
     const aDone = completedIds.has(a.id);
     const bDone = completedIds.has(b.id);
@@ -117,6 +131,7 @@ export default function SpecifiedTrainings() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {sorted.map((training, i) => {
               const isCompleted = completedIds.has(training.id);
+              const isViewed = viewedTrainingIds.has(training.id);
               const days = getDaysUntil(training.deadline);
               const urgency = getUrgency(days);
               const UrgencyIcon = urgency.icon;
@@ -127,15 +142,9 @@ export default function SpecifiedTrainings() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.06, duration: 0.3 }}
-                  style={{
-                    ...getButtonStyle(),
-                    borderRadius: '16px',
-                    padding: '20px',
-                    opacity: isCompleted ? 0.6 : 1,
-                  }}
+                  style={{ ...getButtonStyle(), borderRadius: '16px', padding: '20px', opacity: isCompleted ? 0.6 : 1 }}
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-                    {/* Status icon */}
                     <div style={{
                       flexShrink: 0, width: '40px', height: '40px', borderRadius: '12px',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -148,39 +157,29 @@ export default function SpecifiedTrainings() {
                       )}
                     </div>
 
-                    {/* Content */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <h3 style={{ fontSize: '15px', fontWeight: 700, color: colors.text, marginBottom: '4px' }}>
                         {training.title}
                       </h3>
-                      {training.text_content && (
-                        <p style={{
-                          fontSize: '13px', color: colors.textSecondary, lineHeight: 1.5, marginBottom: '10px',
-                        }}
-                          dangerouslySetInnerHTML={{ __html: training.text_content }}
-                        />
-                      )}
+                      <p style={{ fontSize: '12px', color: colors.textSecondary, lineHeight: 1.4, marginBottom: '8px' }}>
+                        {training.text_content?.replace(/<[^>]+>/g, '').slice(0, 120)}...
+                      </p>
 
                       {/* Tags */}
                       {(training.tags || []).length > 0 && (
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '10px' }}>
                           {training.tags.slice(0, 4).map(tag => (
-                            <span key={tag} style={{
-                              fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '4px',
-                              background: '#f59e0b10', color: '#f59e0b',
-                            }}>
+                            <span key={tag} style={{ fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '4px', background: '#f59e0b10', color: '#f59e0b' }}>
                               {tag}
                             </span>
                           ))}
                         </div>
                       )}
 
-                      {/* Deadline + action */}
+                      {/* Deadline + actions */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{
-                            fontSize: '12px', fontWeight: 600, color: urgency.color,
-                          }}>
+                          <span style={{ fontSize: '12px', fontWeight: 600, color: urgency.color }}>
                             {isCompleted ? 'Completed' : urgency.label}
                           </span>
                           {training.deadline && (
@@ -190,21 +189,34 @@ export default function SpecifiedTrainings() {
                           )}
                         </div>
 
-                        {!isCompleted && (
-                          <button
-                            onClick={() => completeMutation.mutate(training)}
-                            disabled={completeMutation.isPending}
-                            style={{
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          {!isCompleted && (
+                            <button onClick={() => handleOpenTraining(training)} style={{
                               display: 'flex', alignItems: 'center', gap: '6px',
-                              padding: '8px 16px', borderRadius: '8px', border: 'none',
-                              cursor: 'pointer', fontSize: '12px', fontWeight: 600,
-                              background: 'linear-gradient(135deg, #f59e0b, #fbbf24)', color: '#fff',
-                            }}
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            Mark Complete
-                          </button>
-                        )}
+                              padding: '8px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                              fontSize: '12px', fontWeight: 600, ...getButtonStyle(), color: colors.text,
+                            }}>
+                              {isViewed ? 'Review' : 'Open & Read'}
+                            </button>
+                          )}
+                          {!isCompleted && (
+                            <button
+                              onClick={() => handleComplete(training)}
+                              disabled={!isViewed || completeMutation.isPending}
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: '6px',
+                                padding: '8px 14px', borderRadius: '8px', border: 'none',
+                                cursor: isViewed && !completeMutation.isPending ? 'pointer' : 'not-allowed',
+                                fontSize: '12px', fontWeight: 600,
+                                background: isViewed ? 'linear-gradient(135deg, #f59e0b, #fbbf24)' : colors.bg,
+                                color: isViewed ? '#fff' : colors.textTertiary,
+                              }}
+                            >
+                              {isViewed ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                              {isViewed ? 'Mark Complete' : 'Open First'}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -221,6 +233,98 @@ export default function SpecifiedTrainings() {
           </div>
         )}
       </div>
+
+      {/* Training detail modal — must be opened before completion is allowed */}
+      <AnimatePresence>
+        {openedTraining && (
+          <TrainingDetailModal
+            training={openedTraining}
+            isCompleted={completedIds.has(openedTraining.id)}
+            onClose={() => setOpenedTraining(null)}
+            onComplete={() => handleComplete(openedTraining)}
+            isCompleting={completeMutation.isPending}
+            colors={colors}
+            getButtonStyle={getButtonStyle}
+            getInsetStyle={getInsetStyle}
+          />
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+// ── Training Detail Modal — shows full content, complete button at bottom ──
+function TrainingDetailModal({ training, isCompleted, onClose, onComplete, isCompleting, colors, getButtonStyle, getInsetStyle }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '20px' }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
+        onClick={e => e.stopPropagation()}
+        style={{ ...getButtonStyle(), borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '600px', maxHeight: '80vh', overflowY: 'auto' }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+          <div>
+            <h2 style={{ fontSize: '20px', fontWeight: 800, color: colors.text, marginBottom: '6px' }}>
+              {training.title}
+            </h2>
+            {training.deadline && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Calendar className="w-3.5 h-3.5" style={{ color: '#f59e0b' }} />
+                <span style={{ fontSize: '12px', fontWeight: 600, color: '#f59e0b' }}>
+                  Due: {new Date(training.deadline).toLocaleDateString()}
+                </span>
+              </div>
+            )}
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: colors.textSecondary }}>
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Tags */}
+        {(training.tags || []).length > 0 && (
+          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '16px' }}>
+            {training.tags.map(tag => (
+              <span key={tag} style={{ fontSize: '10px', fontWeight: 600, padding: '3px 8px', borderRadius: '4px', background: '#f59e0b10', color: '#f59e0b' }}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Full content */}
+        <div dangerouslySetInnerHTML={{ __html: training.text_content || '<p>No content available.</p>' }} style={{ fontSize: '14px', lineHeight: 1.7, color: colors.text, marginBottom: '24px' }} />
+
+        {/* Complete button */}
+        {!isCompleted ? (
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              onClick={onComplete}
+              disabled={isCompleting}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '12px 24px', borderRadius: '10px', border: 'none',
+                cursor: isCompleting ? 'wait' : 'pointer',
+                fontSize: '14px', fontWeight: 700,
+                background: 'linear-gradient(135deg, #f59e0b, #fbbf24)', color: '#fff',
+                boxShadow: '0 4px 12px rgba(245,158,11,0.35)',
+              }}
+            >
+              {isCompleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+              Mark Complete
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', padding: '12px', borderRadius: '10px', background: '#22c55e10' }}>
+            <CheckCircle2 className="w-5 h-5" style={{ color: '#22c55e' }} />
+            <span style={{ fontSize: '14px', fontWeight: 600, color: '#22c55e' }}>Training Completed</span>
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
   );
 }
