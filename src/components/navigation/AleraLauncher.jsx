@@ -347,6 +347,8 @@ export default function AleraLauncher({ onToggleDoc }) {
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
     else if (app.id === "authlink") navigate("/AuthLink");
+    else if (app.id === "train") navigate("/AleraTrain");
+    else if (app.id === "learn") navigate("/AleraTrain");
     else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 

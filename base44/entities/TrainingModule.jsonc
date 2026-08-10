@@ -1,0 +1,94 @@
+{
+  "name": "TrainingModule",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Module title shown in the curriculum list"
+    },
+    "module_type": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "audio_gated"
+      ],
+      "default": "standard",
+      "description": "standard = video + text + Mark Complete; audio_gated = audio with timestamped dropdown questions"
+    },
+    "module_number": {
+      "type": "number",
+      "description": "Order in the curriculum (1-based)"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "URL to video content (standard modules)"
+    },
+    "audio_url": {
+      "type": "string",
+      "description": "URL to audio content (audio_gated modules)"
+    },
+    "text_content": {
+      "type": "string",
+      "description": "Lesson text content (HTML or markdown)"
+    },
+    "header_image_url": {
+      "type": "string",
+      "description": "Module header image URL"
+    },
+    "background_image_url": {
+      "type": "string",
+      "description": "Module background image URL"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Topic tags for OMMNI matching (e.g. billing_dispute, FRG_terminology, COBRA_deadline)"
+    },
+    "min_dwell_seconds": {
+      "type": "number",
+      "default": 10,
+      "description": "Minimum text dwell time before Mark Complete is enabled (standard modules)"
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "question_num": {
+            "type": "number"
+          },
+          "timestamp": {
+            "type": "number"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correct_answer": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Audio gate questions (audio_gated modules). Each has a timestamp (seconds) that pauses audio."
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "module_type"
+  ]
+}

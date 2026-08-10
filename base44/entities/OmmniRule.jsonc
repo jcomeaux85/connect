@@ -1,0 +1,73 @@
+{
+  "name": "OmmniRule",
+  "type": "object",
+  "properties": {
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "keyword",
+        "semantic",
+        "regex"
+      ],
+      "description": "How to match incoming text against condition_value"
+    },
+    "condition_value": {
+      "type": "string",
+      "description": "Keyword (case-insensitive substring), regex pattern, or semantic concept phrase"
+    },
+    "notification_text": {
+      "type": "string",
+      "description": "Text shown in the notification banner when this rule fires"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "training"
+      ],
+      "default": "admin",
+      "description": "admin = manually created; training = auto-generated from module completion tags"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "TrainingModule ID if source_type=training, null if admin"
+    },
+    "source_label": {
+      "type": "string",
+      "description": "Display label for the source (e.g. 'Training: Benefits 101' or 'Admin rule')"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable/disable without code deploy"
+    },
+    "priority": {
+      "type": "number",
+      "default": 0,
+      "description": "Higher priority notifications stack on top"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Scoped to a specific user (training-sourced rules). Null = applies to all users."
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this rule auto-expires (training-sourced: 14 days from completion)"
+    },
+    "semantic_threshold": {
+      "type": "number",
+      "default": 0.75,
+      "description": "Cosine similarity threshold for semantic rules"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of the admin who created this rule"
+    }
+  },
+  "required": [
+    "trigger_type",
+    "condition_value",
+    "notification_text"
+  ]
+}

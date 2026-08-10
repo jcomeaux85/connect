@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Send, Loader2, Paperclip, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
@@ -6,6 +6,7 @@ import { base44 } from '@/api/base44Client';
 import { invokeAI } from '@/api/aiProvider';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import OmmniNotificationBanner from '@/components/ommni/OmmniNotificationBanner';
 
 // PDF attachments stored on your server — add as many as needed
 const SERVER_PDFS = [
@@ -22,6 +23,27 @@ export default function EmailComposerModal({ isOpen, onClose, toEmail, toName })
   const [aiLoading, setAiLoading] = useState(false);
   const [selectedPdfs, setSelectedPdfs] = useState([]);
   const [showPdfPicker, setShowPdfPicker] = useState(false);
+
+  // OMMNI — debounced scan of email body against active rules (800ms after typing pauses)
+  useEffect(() => {
+    if (!body.trim() || body.trim().length < 10) return;
+    const timer = setTimeout(async () => {
+      try {
+        const response = await base44.functions.invoke('ommni-match', {
+          text: body,
+          source_channel: 'email_compose',
+          context_snippet: body.substring(0, 200),
+        });
+        const matches = response.data?.matches || [];
+        if (matches.length > 0) {
+          window.dispatchEvent(new CustomEvent('ommni-notifications', { detail: { matches } }));
+        }
+      } catch (e) {
+        // Silent fail — OMMNI is non-blocking
+      }
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [body]);
 
   const handleAIWrite = async () => {
     setAiLoading(true);
@@ -142,6 +164,9 @@ Return JSON with "subject" and "body" fields only.`,
                 style={{ ...getInsetStyle(), color: colors.text }}
               />
             </div>
+
+            {/* OMMNI notification banner — shows above the email body */}
+            <OmmniNotificationBanner channelFilter="email_compose" maxVisible={3} />
 
             {/* Body */}
             <div>

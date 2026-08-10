@@ -1,0 +1,52 @@
+{
+  "name": "OmmniNotification",
+  "type": "object",
+  "properties": {
+    "rule_id": {
+      "type": "string",
+      "description": "Reference to OmmniRule that fired"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who received this notification"
+    },
+    "context_snippet": {
+      "type": "string",
+      "description": "Snippet of the text that triggered the match (max ~200 chars)"
+    },
+    "source_channel": {
+      "type": "string",
+      "enum": [
+        "call_transcript",
+        "email_compose",
+        "text_message"
+      ],
+      "description": "Where the triggering text came from"
+    },
+    "source_label": {
+      "type": "string",
+      "description": "Cached display label for the source rule (e.g. 'Training: Benefits 101' or 'Admin rule')"
+    },
+    "notification_text": {
+      "type": "string",
+      "description": "Cached notification text at time of firing"
+    },
+    "priority": {
+      "type": "number",
+      "default": 0
+    },
+    "triggered_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "dismissed": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "rule_id",
+    "user_email",
+    "source_channel"
+  ]
+}

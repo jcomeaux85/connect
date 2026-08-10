@@ -1,0 +1,35 @@
+{
+  "name": "TrainingCompletion",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who completed the module"
+    },
+    "module_id": {
+      "type": "string",
+      "description": "Reference to TrainingModule"
+    },
+    "module_title": {
+      "type": "string",
+      "description": "Cached module title for display"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the module was completed"
+    },
+    "module_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Cached module tags at time of completion \u2014 what OMMNI matches against"
+    }
+  },
+  "required": [
+    "user_email",
+    "module_id",
+    "completed_at"
+  ]
+}
