@@ -17,7 +17,7 @@ import Concensus from './pages/Concensus';
 import ConcensusProvider from '@/concensus/ConcensusProvider';
 import AuthLink from './pages/AuthLink';
 import AuthLinkMember from '@/components/authlink/AuthLinkMember';
-import AleraTrain from './pages/AleraTrain';
+import AleraLearn from './pages/AleraLearn';
 import OmmniAdmin from './pages/OmmniAdmin';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -76,7 +76,7 @@ const AuthenticatedApp = () => {
       <Route path="/Concensus" element={<LayoutWrapper currentPageName="Concensus"><Concensus /></LayoutWrapper>} />
       <Route path="/AuthLink" element={<LayoutWrapper currentPageName="AuthLink"><AuthLink /></LayoutWrapper>} />
       <Route path="/AuthLink/Member/:id" element={<AuthLinkMember />} />
-      <Route path="/AleraTrain" element={<LayoutWrapper currentPageName="AleraTrain"><AleraTrain /></LayoutWrapper>} />
+      <Route path="/AleraLearn" element={<LayoutWrapper currentPageName="AleraLearn"><AleraLearn /></LayoutWrapper>} />
       <Route path="/OmmniAdmin" element={<LayoutWrapper currentPageName="OmmniAdmin"><OmmniAdmin /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>

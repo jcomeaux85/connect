@@ -9,19 +9,15 @@
     "module_type": {
       "type": "string",
       "enum": [
-        "standard",
-        "audio_gated"
+        "audio_gated",
+        "specified_training"
       ],
-      "default": "standard",
-      "description": "standard = video + text + Mark Complete; audio_gated = audio with timestamped dropdown questions"
+      "default": "audio_gated",
+      "description": "audio_gated = audio + text with quiz after; specified_training = assigned training with deadline"
     },
     "module_number": {
       "type": "number",
       "description": "Order in the curriculum (1-based)"
-    },
-    "video_url": {
-      "type": "string",
-      "description": "URL to video content (standard modules)"
     },
     "audio_url": {
       "type": "string",
@@ -35,21 +31,12 @@
       "type": "string",
       "description": "Module header image URL"
     },
-    "background_image_url": {
-      "type": "string",
-      "description": "Module background image URL"
-    },
     "tags": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Topic tags for OMMNI matching (e.g. billing_dispute, FRG_terminology, COBRA_deadline)"
-    },
-    "min_dwell_seconds": {
-      "type": "number",
-      "default": 10,
-      "description": "Minimum text dwell time before Mark Complete is enabled (standard modules)"
+      "description": "Topic tags for OMMNI matching"
     },
     "questions": {
       "type": "array",
@@ -61,9 +48,6 @@
             "type": "string"
           },
           "question_num": {
-            "type": "number"
-          },
-          "timestamp": {
             "type": "number"
           },
           "prompt": {
@@ -80,7 +64,19 @@
           }
         }
       },
-      "description": "Audio gate questions (audio_gated modules). Each has a timestamp (seconds) that pauses audio."
+      "description": "Quiz questions shown AFTER the audio completes (not during)"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Deadline for completing this module (YYYY-MM-DD)"
+    },
+    "assigned_to": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users assigned to this training (specified_trainings only)"
     },
     "is_active": {
       "type": "boolean",

@@ -1,0 +1,41 @@
+{
+  "name": "FlashcardDeck",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Deck name shown on the selection card"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of the deck content"
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Flash cards in this deck (question + answer pairs)"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Deadline for completing this deck (YYYY-MM-DD)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
