@@ -196,14 +196,14 @@ const PREVIEWS = {
   doc: {
     title: "DOC",
     image:
-      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80",
+      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/aac9f0b4e_BC.png",
     description:
       "Dynamic Operations Console — a real-time client knowledge base with employer profiles, carrier maps, and instant benefit-plan lookups at your fingertips.",
   },
   corps: {
     title: "CORPS//",
     image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80",
+      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/d0826666c_Core.png",
     description:
       "Centralized Operations & Resource Planning System — workforce scheduling, attendance, payroll, and break coordination for the entire call-center floor.",
   },
@@ -217,21 +217,21 @@ const PREVIEWS = {
   consilium: {
     title: "CONSILIUM",
     image:
-      "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80",
+      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/fc1907fb7_consilium.png",
     description:
       "Consilium — a collaborative consultation workspace for case strategy, team huddles, and cross-department decision tracking.",
   },
   learn: {
     title: "ALERA | learn",
     image:
-      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80",
+      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/73eb59cb0_learm.png",
     description:
       "ALERA | learn — on-demand training library with guided courses, certifications, and knowledge checks for new and tenured agents alike.",
   },
   train: {
     title: "ALERA | train",
     image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80",
+      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/55fb3a4b8_flash.png",
     description:
       "ALERA | train — live coaching simulations, call-shadowing drills, and performance feedback loops to keep skills sharp.",
   },
