@@ -191,18 +191,22 @@ export default function PersistentSidebar({
   // Proximity labels: opacity driven by vertical distance from mouse to button center.
   // Direct DOM manipulation (no re-renders) — labels fade in near the cursor and
   // decay with distance, just like the panel glare.
-  const updateProximityLabels = useCallback((clientY) => {
+  const updateProximityLabels = useCallback((clientX, clientY) => {
     const el = panelRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
-    const mouseY = clientY - r.top;
     el.querySelectorAll('[data-proximity-label]').forEach((label) => {
       const btn = label.parentElement;
       if (!btn) return;
       const br = btn.getBoundingClientRect();
-      const btnCenterY = br.top - r.top + br.height / 2;
-      const dist = Math.abs(mouseY - btnCenterY);
-      label.style.opacity = Math.max(0, 1 - dist / PROXIMITY_FADE).toFixed(3);
+      const btnCenterY = br.top + br.height / 2;
+      const distY = Math.abs(clientY - btnCenterY);
+      const yFade = Math.max(0, 1 - distY / PROXIMITY_FADE);
+      // Horizontal gate: labels start appearing within 140px to the right of
+      // the sidebar (approaching from content area), full at the sidebar edge.
+      const xDist = Math.max(0, clientX - r.right);
+      const xFade = Math.max(0, 1 - xDist / 140);
+      label.style.opacity = (yFade * xFade).toFixed(3);
     });
   }, []);
 
@@ -216,7 +220,7 @@ export default function PersistentSidebar({
       my: ((e.clientY - r.top) / r.height) * 100,
       intensity: 1,
     });
-    updateProximityLabels(e.clientY);
+    updateProximityLabels(e.clientX, e.clientY);
   }, [updateProximityLabels]);
 
   const level = sidebarLevel ?? 1;
@@ -225,6 +229,15 @@ export default function PersistentSidebar({
   const isMin = level === 1;
   const isMid = level === 2;
   const isFull = level === 3;
+
+  // Window-level proximity tracking: in narrow mode, labels fade in as the
+  // mouse approaches from the content area — before it reaches the sidebar.
+  useEffect(() => {
+    if (!isMin || !isOpen) return;
+    const onMove = (e) => updateProximityLabels(e.clientX, e.clientY);
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, [isMin, isOpen, updateProximityLabels]);
 
   const handleLogout = () => base44.auth.logout();
   const actions = [
@@ -235,7 +248,7 @@ export default function PersistentSidebar({
   ];
 
   // Deep purple glass panel
-  const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.82) 0%, rgba(38,20,72,0.85) 60%, rgba(28,14,58,0.90) 100%)';
+  const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.38) 0%, rgba(38,20,72,0.42) 60%, rgba(28,14,58,0.48) 100%)';
   const PANEL_BORDER = 'rgba(255,255,255,0.13)';
 
   const btnStyle = (active) => ({
@@ -267,7 +280,7 @@ export default function PersistentSidebar({
             mx: 18,
             intensity: Math.min(approachPct * 0.6, 0.6), // faint at distance, grows on approach
           }));
-          updateProximityLabels(e.clientY);
+          updateProximityLabels(e.clientX, e.clientY);
         }}
       />
 
@@ -377,6 +390,7 @@ export default function PersistentSidebar({
                                 fontWeight: 600,
                                 whiteSpace: 'nowrap',
                                 color: isActive ? '#e9d5ff' : 'rgba(255,255,255,0.85)',
+                                textShadow: '0 1px 3px rgba(0,0,0,0.7)',
                               }}
                             >
                               {item.title}
@@ -402,11 +416,11 @@ export default function PersistentSidebar({
                           pointerEvents: 'none',
                           zIndex: 55,
                           transition: 'opacity 0.1s ease',
-                          background: 'rgba(30,20,50,0.65)',
-                          backdropFilter: 'blur(6px)',
+                          background: 'rgba(30,20,50,0.40)',
+                          backdropFilter: 'blur(8px)',
                           padding: '2px 8px',
                           borderRadius: '6px',
-                          textShadow: '0 1px 3px rgba(0,0,0,0.4)',
+                          textShadow: '0 1px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5)',
                         }}
                       >
                         {item.title}
@@ -455,7 +469,7 @@ export default function PersistentSidebar({
                         {!isMin && (
                           <motion.span
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            style={{ fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap', color: 'rgba(255,255,255,0.75)' }}
+                            style={{ fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap', color: 'rgba(255,255,255,0.75)', textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}
                           >
                             {label}
                           </motion.span>
@@ -489,11 +503,11 @@ export default function PersistentSidebar({
                           pointerEvents: 'none',
                           zIndex: 55,
                           transition: 'opacity 0.1s ease',
-                          background: 'rgba(30,20,50,0.65)',
-                          backdropFilter: 'blur(6px)',
+                          background: 'rgba(30,20,50,0.40)',
+                          backdropFilter: 'blur(8px)',
                           padding: '2px 8px',
                           borderRadius: '6px',
-                          textShadow: '0 1px 3px rgba(0,0,0,0.4)',
+                          textShadow: '0 1px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5)',
                         }}
                       >
                         {label}
@@ -588,10 +602,10 @@ export default function PersistentSidebar({
               <AnimatePresence>
                 {!isMin && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="overflow-hidden min-w-0">
-                    <p style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.9)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <p style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.9)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}>
                       {user?.full_name || 'User'}
                     </p>
-                    <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>
+                    <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px', textShadow: '0 1px 2px rgba(0,0,0,0.6)' }}>
                       {user?.role === 'admin' ? 'Admin' : 'Agent'}
                     </p>
                   </motion.div>
