@@ -103,37 +103,79 @@ export default function CustomerPage() {
     enabled: !!customerId,
   });
 
+  const customerPhones = [customer?.primary_phone, customer?.secondary_phone].filter(Boolean);
+  const caseIds = cases.map(c => c.id);
+
   const { data: calls = [] } = useQuery({
-    queryKey: ['customer-calls', customerId],
+    queryKey: ['customer-calls', customerId, customerPhones.join('|'), caseIds.join('|')],
     queryFn: async () => {
-      if (cases.length === 0) return [];
-      const caseIds = cases.map(c => c.id);
-      const allCalls = await base44.entities.Call.list('-created_date', 100);
-      return allCalls.filter(call => caseIds.includes(call.case_id));
+      const results = [];
+      const seen = new Set();
+      // Filter by the customer's actual phone numbers — this is the reliable link
+      for (const phone of customerPhones) {
+        const phoneResults = await base44.entities.Call.filter({ customer_phone: phone }, '-created_date', 200);
+        for (const call of phoneResults) {
+          if (!seen.has(call.id)) { seen.add(call.id); results.push(call); }
+        }
+      }
+      // Also include calls linked to this customer's cases (in case phone differs)
+      if (caseIds.length > 0) {
+        const allCalls = await base44.entities.Call.list('-created_date', 200);
+        for (const call of allCalls) {
+          if (caseIds.includes(call.case_id) && !seen.has(call.id)) {
+            seen.add(call.id);
+            results.push(call);
+          }
+        }
+      }
+      return results.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
-    enabled: cases.length > 0,
+    enabled: !!customer,
   });
 
   const { data: smsMessages = [] } = useQuery({
-    queryKey: ['customer-sms', customerId],
+    queryKey: ['customer-sms', customerId, customerPhones.join('|'), caseIds.join('|')],
     queryFn: async () => {
-      if (cases.length === 0) return [];
-      const caseIds = cases.map(c => c.id);
-      const allSMS = await base44.entities.SMS.list('-created_date', 100);
-      return allSMS.filter(sms => caseIds.includes(sms.case_id));
+      const results = [];
+      const seen = new Set();
+      for (const phone of customerPhones) {
+        const phoneResults = await base44.entities.SMS.filter({ customer_phone: phone }, '-created_date', 200);
+        for (const sms of phoneResults) {
+          if (!seen.has(sms.id)) { seen.add(sms.id); results.push(sms); }
+        }
+      }
+      if (caseIds.length > 0) {
+        const allSMS = await base44.entities.SMS.list('-created_date', 200);
+        for (const sms of allSMS) {
+          if (caseIds.includes(sms.case_id) && !seen.has(sms.id)) {
+            seen.add(sms.id);
+            results.push(sms);
+          }
+        }
+      }
+      return results.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
-    enabled: cases.length > 0,
+    enabled: !!customer,
   });
 
   const { data: notes = [] } = useQuery({
     queryKey: ['customer-notes', customerId],
     queryFn: async () => {
-      if (cases.length === 0) return [];
-      const caseIds = cases.map(c => c.id);
-      const allNotes = await base44.entities.Note.list('-created_date', 100);
+      if (caseIds.length === 0) return [];
+      const allNotes = await base44.entities.Note.list('-created_date', 200);
       return allNotes.filter(note => caseIds.includes(note.case_id));
     },
-    enabled: cases.length > 0,
+    enabled: caseIds.length > 0,
+  });
+
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['customer-tasks', customerId],
+    queryFn: async () => {
+      if (caseIds.length === 0) return [];
+      const allTasks = await base44.entities.Task.list('-created_date', 200);
+      return allTasks.filter(task => caseIds.includes(task.case_id));
+    },
+    enabled: caseIds.length > 0,
   });
 
   const timeline = React.useMemo(() => {
@@ -150,8 +192,11 @@ export default function CustomerPage() {
     notes.forEach(note => {
       events.push({ type: 'note', date: note.created_date, data: note, icon: FileText, color: '#6B7280' });
     });
+    tasks.forEach(task => {
+      events.push({ type: 'task', date: task.created_date, data: task, icon: Activity, color: '#8B5CF6' });
+    });
     return events.sort((a, b) => new Date(b.date) - new Date(a.date));
-  }, [cases, calls, smsMessages, notes]);
+  }, [cases, calls, smsMessages, notes, tasks]);
 
   const updateCustomerMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Customer.update(id, data),
@@ -443,6 +488,7 @@ export default function CustomerPage() {
             >
               <TabsTrigger value="overview" className="rounded-xl" style={{color: colors.textSecondary}}>Overview</TabsTrigger>
               <TabsTrigger value="cases" className="rounded-xl" style={{color: colors.textSecondary}}>Cases</TabsTrigger>
+              <TabsTrigger value="tasks" className="rounded-xl" style={{color: colors.textSecondary}}>Tasks</TabsTrigger>
               <TabsTrigger value="calls" className="rounded-xl" style={{color: colors.textSecondary}}>Calls</TabsTrigger>
               <TabsTrigger value="sms" className="rounded-xl" style={{color: colors.textSecondary}}>Messages</TabsTrigger>
               <TabsTrigger value="timeline" className="rounded-xl" style={{color: colors.textSecondary}}>Timeline</TabsTrigger>
@@ -1537,6 +1583,102 @@ export default function CustomerPage() {
             </Card>
           </TabsContent>
 
+          {/* Tasks Tab */}
+          <TabsContent value="tasks">
+            <Card
+              className="border-0 mt-4"
+              style={{
+                background: colors.cardBg,
+                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+              }}
+            >
+              <CardHeader>
+                <CardTitle style={{ color: colors.text }}>Tasks</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {tasks.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-sm" style={{ color: colors.textSecondary }}>No tasks yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {tasks.map((task, index) => (
+                      <motion.div
+                        key={task.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="p-4 rounded-2xl"
+                        style={{
+                          background: colors.bg,
+                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                        }}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h4 className="font-medium" style={{ color: colors.text }}>
+                              {task.title}
+                            </h4>
+                            {task.description && (
+                              <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
+                                {task.description}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex gap-2 flex-shrink-0">
+                            <Badge
+                              className="border-0 text-xs px-2 py-1"
+                              style={{
+                                background: task.priority === 'urgent' ? 'linear-gradient(145deg, #fee2e2, #fecaca)' :
+                                           task.priority === 'high' ? 'linear-gradient(145deg, #fed7aa, #fdba74)' :
+                                           task.priority === 'medium' ? 'linear-gradient(145deg, #e0f2fe, #bae6fd)' :
+                                           'linear-gradient(145deg, #f0f4f8, #d1d9e6)',
+                                color: task.priority === 'urgent' ? '#991b1b' :
+                                       task.priority === 'high' ? '#9a3412' :
+                                       task.priority === 'medium' ? '#075985' : '#6B7280'
+                              }}
+                            >
+                              {task.priority}
+                            </Badge>
+                            <Badge
+                              className="border-0 text-xs px-2 py-1"
+                              style={{
+                                background: task.status === 'completed' ? 'linear-gradient(145deg, #dcfce7, #bbf7d0)' :
+                                           task.status === 'in_progress' ? 'linear-gradient(145deg, #dbeafe, #bfdbfe)' :
+                                           task.status === 'cancelled' ? 'linear-gradient(145deg, #fee2e2, #fecaca)' :
+                                           'linear-gradient(145deg, #f0f4f8, #d1d9e6)',
+                                color: task.status === 'completed' ? '#166534' :
+                                       task.status === 'in_progress' ? '#1e40af' :
+                                       task.status === 'cancelled' ? '#991b1b' : '#6B7280'
+                              }}
+                            >
+                              {task.status}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs mt-2" style={{ color: colors.textTertiary }}>
+                          {task.due_date && (
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              Due {format(new Date(task.due_date), 'MMM d, yyyy')}
+                            </span>
+                          )}
+                          {task.assigned_to && (
+                            <span className="flex items-center gap-1">
+                              <User className="w-3 h-3" />
+                              Assigned
+                            </span>
+                          )}
+                          <span>{formatDistanceToNow(new Date(task.created_date), { addSuffix: true })}</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Calls Tab */}
           <TabsContent value="calls">
             <Card
@@ -1763,6 +1905,7 @@ export default function CustomerPage() {
                                   {event.type === 'call' && `${event.data.direction === 'inbound' ? 'Incoming' : 'Outgoing'} Call`}
                                   {event.type === 'sms' && `SMS ${event.data.direction === 'sent' ? 'Sent' : 'Received'}`}
                                   {event.type === 'note' && 'Note Added'}
+                                  {event.type === 'task' && `Task: ${event.data.title}`}
                                 </p>
                                 <p className="text-xs" style={{ color: colors.textTertiary }}>
                                   {format(new Date(event.date), 'MMM d, h:mm a')}
@@ -1809,6 +1952,17 @@ export default function CustomerPage() {
                               <p className="text-sm mt-2" style={{ color: colors.textSecondary }}>
                                 {event.data.content}
                               </p>
+                            )}
+
+                            {event.type === 'task' && (
+                              <div className="flex gap-2 mt-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {event.data.status}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {event.data.priority}
+                                </Badge>
+                              </div>
                             )}
                           </div>
                         </motion.div>
