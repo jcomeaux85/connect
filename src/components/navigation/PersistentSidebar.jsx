@@ -333,15 +333,15 @@ export default function PersistentSidebar({
             <ChipHeader />
           </div>
 
-          {/* Nav items -- flex column, fill all space */}
+          {/* Nav items -- natural height, scroll if overflow */}
           <div
             className="px-1.5 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-visible"
             style={{ scrollbarWidth: 'none', gap: '6px' }}
           >
-            {/* Nav buttons -- fill height evenly */}
+            {/* Nav buttons -- natural height, no stretch */}
             <div
-              className={`flex-1 ${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
-              style={{ gap: '5px', minHeight: 0, gridAutoRows: isFull ? 'minmax(clamp(34px, 6vh, 42px), 1fr)' : undefined }}
+              className={`${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
+              style={{ gap: '5px' }}
             >
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -349,8 +349,8 @@ export default function PersistentSidebar({
                 return (
                   <div
                     key={item.title}
-                    className="relative flex-1"
-                    style={{ minHeight: 'clamp(34px, 6vh, 42px)' }}
+                    className="relative"
+                    style={{ height: '38px' }}
                   >
                     <Link to={item.url} style={{ display: 'block', height: '100%' }}>
                       <LitButton
@@ -361,7 +361,7 @@ export default function PersistentSidebar({
                           padding: isMin ? '0' : '0 10px',
                           justifyContent: isMin ? 'center' : 'flex-start',
                           gap: '8px',
-                          minHeight: 'clamp(34px, 6vh, 42px)',
+                          height: '38px',
                         }}
                       >
                         <Icon
