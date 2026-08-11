@@ -235,7 +235,7 @@ export default function PersistentSidebar({
   ];
 
   // Deep purple glass panel
-  const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
+  const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.82) 0%, rgba(38,20,72,0.85) 60%, rgba(28,14,58,0.90) 100%)';
   const PANEL_BORDER = 'rgba(255,255,255,0.13)';
 
   const btnStyle = (active) => ({
