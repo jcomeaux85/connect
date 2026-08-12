@@ -83,10 +83,35 @@ const APPS = [
     label: "CORPS//",
     renderIcon: (size) => (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
-        <span style={{ fontFamily: "'VT323', ui-monospace, monospace", fontSize: size * 0.33, lineHeight: 1, color: "#33FF33", letterSpacing: "0.02em", textShadow: "0 0 10px rgba(51,255,51,0.6), 0 0 22px rgba(51,255,51,0.35)", whiteSpace: "nowrap" }}>
-          CORPS//
-        </span>
-        {aleraSub(size, "#33FF33", { font: "'VT323', ui-monospace, monospace", weight: 400 })}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: size * 0.88,
+            height: size * 0.44,
+            borderRadius: 7,
+            background: "linear-gradient(145deg, #2a2f3a 0%, #161a24 100%)",
+            boxShadow:
+              "5px 5px 12px rgba(0,0,0,0.50), -5px -5px 12px rgba(255,255,255,0.035), inset 1px 1px 1px rgba(255,255,255,0.09), inset -1px -1px 1px rgba(0,0,0,0.30)",
+            border: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 800,
+              fontSize: size * 0.225,
+              color: "#e2e8f0",
+              letterSpacing: "0.06em",
+              whiteSpace: "nowrap",
+              textShadow: "0 1px 2px rgba(0,0,0,0.6)",
+            }}
+          >
+            CORPS<span style={{ color: "#60a5fa" }}>//</span>
+          </span>
+        </div>
+        {aleraSub(size, "#60a5fa")}
       </div>
     ),
   },
