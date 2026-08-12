@@ -23,6 +23,7 @@ import React, { useState, useRef, useCallback, useEffect, useLayoutEffect } from
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import FitWordmark from "@/components/navigation/FitWordmark";
 
 const DURATION = 0.935;
 const SOFT_EASE = [0.25, 0.1, 0.25, 1];
@@ -521,7 +522,9 @@ export default function AleraLauncher({ onToggleDoc }) {
                       overflow: "hidden",
                     }}
                   >
-                    {app.renderIcon(logoW)}
+                    <FitWordmark maxWidth={logoW - 6}>
+                      {app.renderIcon(logoW)}
+                    </FitWordmark>
                   </motion.button>
                 );
               })}
