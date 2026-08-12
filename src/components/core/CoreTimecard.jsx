@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
-import { corpsData } from '@/api/corpsData';
-import { format, addDays, subDays, startOfWeek, endOfWeek } from 'date-fns';
+import { spine, buildCtx } from '@/services/spine';
+import { format, addDays, subDays, startOfWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight, Download, CheckCircle } from 'lucide-react';
 
 export default function CoreTimecard() {
@@ -13,31 +12,48 @@ export default function CoreTimecard() {
 
   const periodEnd = addDays(periodStart, 6);
   const periodLabel = `${format(periodStart, 'MMM d')} – ${format(periodEnd, 'MMM d, yyyy')}`;
+  const fromStr = format(periodStart, 'yyyy-MM-dd');
+  const toStr = format(periodEnd, 'yyyy-MM-dd');
 
   const { data: entries = [], isLoading } = useQuery({
-    queryKey: ['core-timecard', user?.email, format(periodStart, 'yyyy-MM-dd')],
-    queryFn: () => corpsData.CoreTimecardEntry.filter({ employee_email: user?.email }, 'work_date'),
+    queryKey: ['core-timecard', user?.email, fromStr],
+    queryFn: () => spine.timecard.getTimecardEntries(
+      buildCtx(user.email),
+      { employeeEmail: user.email, from: fromStr, to: toStr }
+    ),
+    enabled: !!user?.email,
+  });
+
+  const { data: summary } = useQuery({
+    queryKey: ['core-timecard-summary', user?.email, fromStr],
+    queryFn: () => spine.timecard.getTimecardSummary(
+      buildCtx(user.email),
+      { employeeEmail: user.email, from: fromStr, to: toStr }
+    ),
     enabled: !!user?.email,
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => corpsData.CoreTimecardEntry.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['core-timecard'] }),
+    mutationFn: ({ id, data }) => spine.timecard.updateTimecardEntry(buildCtx(user.email), id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['core-timecard'] });
+      queryClient.invalidateQueries({ queryKey: ['core-timecard-summary'] });
+    },
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => corpsData.CoreTimecardEntry.create(data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['core-timecard'] }),
+    mutationFn: (data) => spine.timecard.createTimecardEntry(buildCtx(user.email), data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['core-timecard'] });
+      queryClient.invalidateQueries({ queryKey: ['core-timecard-summary'] });
+    },
   });
 
-  const periodEntries = entries.filter(e => {
-    const d = new Date(e.work_date);
-    return d >= periodStart && d <= periodEnd;
-  });
+  const periodEntries = entries;
 
-  const regularHours = periodEntries.filter(e => e.entry_type !== 'overtime').reduce((s, e) => s + (e.hours || 0), 0);
-  const overtimeHours = periodEntries.filter(e => e.entry_type === 'overtime').reduce((s, e) => s + (e.hours || 0), 0);
-  const totalHours = regularHours + overtimeHours;
+  const regularHours = summary?.regularHours ?? 0;
+  const overtimeHours = summary?.overtimeHours ?? 0;
+  const totalHours = summary?.totalHours ?? 0;
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -52,14 +68,17 @@ export default function CoreTimecard() {
   const allDays = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(periodStart, i);
     const dateStr = format(date, 'yyyy-MM-dd');
-    const entry = periodEntries.find(e => e.work_date === dateStr);
+    const entry = periodEntries.find(e => e.workDate === dateStr);
     return { date, dateStr, entry };
   });
 
   const handleSubmitApproval = async () => {
-    for (const e of periodEntries.filter(e => e.status === 'pending')) {
-      await updateMutation.mutateAsync({ id: e.id, data: { status: 'submitted' } });
-    }
+    await spine.timecard.submitTimecardForApproval(
+      buildCtx(user.email),
+      { employeeEmail: user.email, periodStart: fromStr }
+    );
+    queryClient.invalidateQueries({ queryKey: ['core-timecard'] });
+    queryClient.invalidateQueries({ queryKey: ['core-timecard-summary'] });
   };
 
   return (
@@ -130,12 +149,12 @@ export default function CoreTimecard() {
               {entry ? (
                 <>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <span className="font-mono">{entry.clock_in} – {entry.clock_out}</span>
+                    <span className="font-mono">{entry.clockIn} – {entry.clockOut}</span>
                   </div>
                   <span className={`text-xs font-semibold px-3 py-1 rounded-full uppercase ${getStatusStyle(entry.status)}`}>
                     {entry.status}
                   </span>
-                  <span className="text-sm text-gray-400 capitalize">{entry.entry_type || 'Regular'}</span>
+                  <span className="text-sm text-gray-400 capitalize">{entry.entryType || 'Regular'}</span>
                 </>
               ) : (
                 <span className="text-sm text-gray-300">No entries</span>
