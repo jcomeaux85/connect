@@ -6,6 +6,8 @@ import { corpsData } from '@/api/corpsData';
 import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Clock, FileText, CreditCard, User, Play, Square, Cloud } from 'lucide-react';
+import PayrollAlerts from './PayrollAlerts';
+import ActionTimeline from './ActionTimeline';
 
 const quickActions = [
   { id: 'requests', label: 'Request Time Off', icon: FileText, color: 'text-teal-500' },
@@ -264,6 +266,14 @@ export default function CoreDashboard({ onNavigate }) {
               ))
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Proactive alerts + unified action timeline — the Active Spine */}
+      <div className="grid grid-cols-3 gap-4">
+        <PayrollAlerts entries={timecardEntries} shifts={shifts} />
+        <div className="col-span-2">
+          <ActionTimeline />
         </div>
       </div>
     </div>

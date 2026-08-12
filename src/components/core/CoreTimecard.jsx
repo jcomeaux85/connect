@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { spine, buildCtx } from '@/services/spine';
 import { format, addDays, subDays, startOfWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight, Download, CheckCircle } from 'lucide-react';
+import LivePayPreview from './LivePayPreview';
 
 export default function CoreTimecard() {
   const { data: user } = useUser();
@@ -137,8 +138,9 @@ export default function CoreTimecard() {
         </div>
       </div>
 
-      {/* Entries */}
-      <div className="space-y-3">
+      <div className="grid grid-cols-3 gap-5">
+        {/* Entries */}
+        <div className="col-span-2 space-y-3">
         {allDays.map(({ date, dateStr, entry }) => (
           <div key={dateStr} className="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-4">
             <div className="text-center w-12 flex-shrink-0">
@@ -166,6 +168,11 @@ export default function CoreTimecard() {
             </div>
           </div>
         ))}
+        </div>
+        {/* Live Pay Preview — projected gross/net updates as entries change */}
+        <div className="col-span-1">
+          <LivePayPreview entries={entries} userEmail={user?.email} />
+        </div>
       </div>
     </div>
   );
