@@ -11,6 +11,13 @@
 //  • De-hovering the column retracts everything.
 //
 // No brightwash / no full-screen overlay — just the glass column.
+//
+// Sizing: every logo tile is a uniform box `logoW × tileH`. `logoW` is the
+// single adaptive variable (shrinks only on short screens so all tiles
+// still fit the column height). Each wordmark's font size is a % of
+// `logoW`, tuned so it fits inside the box — nothing overflows left behind
+// the sidebar. The hover increase is a % scale (HOVER_SCALE), not a fixed
+// px bump, so growth stays proportional to the uniform width.
 
 import React, { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
@@ -20,8 +27,9 @@ import { useNavigate } from "react-router-dom";
 const DURATION = 0.935;
 const SOFT_EASE = [0.25, 0.1, 0.25, 1];
 const EASE_CSS = "cubic-bezier(0.25, 0.1, 0.25, 1)";
-const ICON_SIZE = 96;
-const COL_WIDTH = 184;
+const MAX_LOGO_W = 168;        // uniform tile width (px) — every logo fits this box
+const LOGO_H_RATIO = 0.5;      // tile height = logoW * LOGO_H_RATIO
+const HOVER_SCALE = 1.12;      // hover increase — % of width, not a fixed px
 const SLIDE_OFFSET = 0; // flush against the sidebar's right edge — no gap
 const HEAD_INSET = 16; // px from viewport top — almost reaching sidebar head
 const FOOT_INSET = 16; // px from viewport bottom — almost reaching sidebar foot
@@ -45,7 +53,7 @@ const APPS = [
       <img
         src={DOC_ICON}
         alt="DOC"
-        style={{ width: size, height: size, objectFit: "contain", pointerEvents: "none" }}
+        style={{ width: size * 0.42, height: size * 0.42, objectFit: "contain", pointerEvents: "none" }}
       />
     ),
   },
@@ -56,7 +64,7 @@ const APPS = [
       <span
         style={{
           fontFamily: "'VT323', ui-monospace, monospace",
-          fontSize: size * 0.51,
+          fontSize: size * 0.26,
           lineHeight: 1,
           color: "#33FF33",
           letterSpacing: "0.02em",
@@ -78,7 +86,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.3,
+          fontSize: size * 0.18,
           color: "#ffffff",
           letterSpacing: "0.02em",
           whiteSpace: "nowrap",
@@ -98,7 +106,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.3,
+          fontSize: size * 0.17,
           color: "#00E5FF",
           letterSpacing: "0.06em",
           textShadow: "0 0 10px rgba(0,229,255,0.5)",
@@ -119,7 +127,7 @@ const APPS = [
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "flex-end",
+          alignItems: "center",
           lineHeight: 1,
           pointerEvents: "none",
         }}
@@ -128,7 +136,7 @@ const APPS = [
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 800,
-            fontSize: size * 0.5,
+            fontSize: size * 0.32,
             color: "#555555",
             letterSpacing: "0.02em",
             whiteSpace: "nowrap",
@@ -139,7 +147,7 @@ const APPS = [
         <span
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: size * 0.1,
+            fontSize: size * 0.085,
             color: "#A9A9A9",
             marginTop: "2px",
             whiteSpace: "nowrap",
@@ -159,7 +167,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.5,
+          fontSize: size * 0.32,
           color: "#ffffff",
           letterSpacing: "0.04em",
           whiteSpace: "nowrap",
@@ -179,7 +187,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.4,
+          fontSize: size * 0.24,
           letterSpacing: "0.01em",
           whiteSpace: "nowrap",
           pointerEvents: "none",
@@ -199,7 +207,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.25,
+          fontSize: size * 0.15,
           color: "#ffffff",
           letterSpacing: "0.02em",
           whiteSpace: "nowrap",
@@ -295,24 +303,30 @@ export default function AleraLauncher({ onToggleDoc }) {
     return () => ro.disconnect();
   }, [hoveredIcon, isOpen]);
 
-  // Icon size adapts to viewport height so all logos always fit inside the
-  // glass column — no clipping off the bottom on short screens.
-  const [iconSize, setIconSize] = useState(() => {
-    if (typeof window === "undefined") return ICON_SIZE;
-    const avail = window.innerHeight - HEAD_INSET - FOOT_INSET - 32; // minus 16px top/bot padding
+  // Uniform logo width adapts to viewport height so all tiles always fit
+  // inside the glass column — width drives font size, so every logo scales
+  // proportionally and none spill behind the sidebar.
+  const [logoW, setLogoW] = useState(() => {
+    if (typeof window === "undefined") return MAX_LOGO_W;
+    const avail = window.innerHeight - HEAD_INSET - FOOT_INSET - 32;
     const gaps = (APPS.length - 1) * 8;
-    return Math.max(48, Math.min(ICON_SIZE, Math.floor((avail - gaps) / APPS.length)));
+    const byH = Math.floor((avail - gaps) / (APPS.length * LOGO_H_RATIO));
+    return Math.max(96, Math.min(MAX_LOGO_W, byH));
   });
 
   useEffect(() => {
     const onResize = () => {
       const avail = window.innerHeight - HEAD_INSET - FOOT_INSET - 32;
       const gaps = (APPS.length - 1) * 8;
-      setIconSize(Math.max(48, Math.min(ICON_SIZE, Math.floor((avail - gaps) / APPS.length))));
+      const byH = Math.floor((avail - gaps) / (APPS.length * LOGO_H_RATIO));
+      setLogoW(Math.max(96, Math.min(MAX_LOGO_W, byH)));
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  const colWidth = logoW + 32;   // tile + 16px padding each side
+  const tileH = Math.floor(logoW * LOGO_H_RATIO);
 
   // Tell the parent sidebar we're active so it stays pinned open while the
   // glass column is out — prevents the column from floating parentless.
@@ -420,9 +434,9 @@ export default function AleraLauncher({ onToggleDoc }) {
           {isOpen && (
             /* ── Vertical glass column: slides out from under the sidebar ── */
             <motion.div
-              initial={{ x: -COL_WIDTH - 12, opacity: 0 }}
+              initial={{ x: -colWidth - 12, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -COL_WIDTH - 12, opacity: 0 }}
+              exit={{ x: -colWidth - 12, opacity: 0 }}
               transition={{ duration: DURATION, ease: SOFT_EASE }}
               onMouseEnter={cancelClose}
               onMouseLeave={scheduleClose}
@@ -431,14 +445,14 @@ export default function AleraLauncher({ onToggleDoc }) {
                 left: `${leftEdge + SLIDE_OFFSET}px`,
                 top: `${HEAD_INSET}px`,
                 bottom: `${FOOT_INSET}px`,
-                width: `${COL_WIDTH}px`,
+                width: `${colWidth}px`,
                 zIndex: 50,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "space-evenly",
                 gap: "8px",
-                padding: "16px 8px",
+                padding: "16px",
                 overflow: "hidden",
                 borderRadius: "0 18px 18px 0",
                 // Glassmorphism — translucent dark glass that blurs the site behind it
@@ -462,7 +476,7 @@ export default function AleraLauncher({ onToggleDoc }) {
                     animate={{
                       opacity: isOther ? 0.3 : 1,
                       y: 0,
-                      scale: isHovered ? 1.15 : isOther ? 0.92 : 1,
+                      scale: isHovered ? HOVER_SCALE : isOther ? 0.92 : 1,
                       filter: isOther ? "grayscale(1)" : "grayscale(0)",
                     }}
                     exit={{ opacity: 0, y: -18, scale: 0.5 }}
@@ -484,16 +498,17 @@ export default function AleraLauncher({ onToggleDoc }) {
                       background: "transparent",
                       border: "none",
                       cursor: "pointer",
-                      width: `${COL_WIDTH - 16}px`,
-                      height: `${iconSize}px`,
+                      width: `${logoW}px`,
+                      height: `${tileH}px`,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       padding: 0,
                       flexShrink: 0,
+                      overflow: "hidden",
                     }}
                   >
-                    {app.renderIcon(iconSize)}
+                    {app.renderIcon(logoW)}
                   </motion.button>
                 );
               })}
@@ -516,7 +531,7 @@ export default function AleraLauncher({ onToggleDoc }) {
               transition={{ duration: 0.45, ease: SOFT_EASE }}
               style={{
                 position: "fixed",
-                left: `${leftEdge + COL_WIDTH + 18}px`,
+                left: `${leftEdge + colWidth + 18}px`,
                 top: `${previewData.clampedTop}px`,
                 zIndex: 49,
                 pointerEvents: "none",
