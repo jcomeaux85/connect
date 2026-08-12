@@ -144,13 +144,58 @@ export interface SpineTimecardService {
 }
 
 
+// ── Payroll DTOs ─────────────────────────────────────────────────────
+export interface Paystub {
+  id: string;
+  employeeEmail: string;
+  payPeriodStart: string;  // YYYY-MM-DD
+  payPeriodEnd: string;     // YYYY-MM-DD
+  payDate: string;          // YYYY-MM-DD
+  grossPay: number;
+  netPay: number;
+  hoursWorked: number;
+  deductions: Record<string, any> | null;
+  createdAt: string;        // ISO 8601
+  updatedAt: string;        // ISO 8601
+}
+
+export interface PaystubInput {
+  employeeEmail: string;
+  payPeriodStart: string;
+  payPeriodEnd: string;
+  payDate: string;
+  grossPay: number;
+  netPay: number;
+  hoursWorked?: number;
+  deductions?: Record<string, any> | null;
+}
+
+export interface PaystubPatch {
+  grossPay?: number;
+  netPay?: number;
+  hoursWorked?: number;
+  deductions?: Record<string, any> | null;
+}
+
+// ── SpinePayrollService ──────────────────────────────────────────────
+export interface SpinePayrollService {
+  /** HTTP: GET /payroll/paystubs?employeeEmail=… */
+  getPaystubs(
+    ctx: SpineContext,
+    query: { employeeEmail: string }
+  ): Promise<Paystub[]>;
+
+  /** HTTP: POST /payroll/paystubs */
+  createPaystub(ctx: SpineContext, input: PaystubInput): Promise<Paystub>;
+}
+
 // ── Spine (root) ─────────────────────────────────────────────────────
 // New domains attach here as their services land. Timecard is first;
 // Payroll, Schedule, HRIS, etc. follow the same pattern once Timecard
 // proves the adapter shape.
 export interface Spine {
   timecard: SpineTimecardService;
-  // payroll: SpinePayrollService;   // TODO after Timecard is validated
+  payroll: SpinePayrollService;
   // schedule: SpineScheduleService;
   // hris: SpineHrisService;
 }

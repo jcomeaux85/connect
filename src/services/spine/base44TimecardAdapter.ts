@@ -12,13 +12,13 @@
 
 import { base44 } from "@/api/base44Client";
 import type {
-  SpineContext,
   SpineTimecardService,
   TimecardEntry,
   TimecardEntryInput,
   TimecardEntryPatch,
   TimecardSummary,
 } from "./SpineInterface";
+import { assertCaller } from "./spineAuth";
 
 // ── Mapping ──────────────────────────────────────────────────────────
 function toDTO(raw: any): TimecardEntry {
@@ -48,17 +48,6 @@ function fromInput(input: TimecardEntryInput) {
     status: input.status ?? "pending",
     notes: input.notes ?? null,
   };
-}
-
-// ── Auth guard ───────────────────────────────────────────────────────
-// Phase 1: trust the caller email. This is the single chokepoint that the
-// AUTH_MILESTONE will harden — when it fires, this function validates
-// `ctx.token` instead and derives email from its claims.
-function assertCaller(ctx: SpineContext): string {
-  if (!ctx?.email) throw new Error("Spine: missing caller identity (ctx.email)");
-  // TODO(AUTH_MILESTONE): validate ctx.token (RS256 / JWKS) and derive email
-  // from claims; reject any caller-supplied email that doesn't match.
-  return ctx.email;
 }
 
 // ── Service ──────────────────────────────────────────────────────────

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useUser } from '@/components/hooks/useUser';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
-import { corpsData } from '@/api/corpsData';
+import { spine, buildCtx } from '@/services/spine';
 import { format } from 'date-fns';
 import { Download, Plus, Wallet, FileText, TrendingUp } from 'lucide-react';
 
@@ -14,26 +13,17 @@ export default function CorePay() {
 
   const { data: paystubs = [] } = useQuery({
     queryKey: ['core-pay', user?.email],
-    queryFn: () => corpsData.CorePaystub.filter({ employee_email: user?.email }, '-pay_date'),
-    enabled: !!user?.email,
-  });
-
-  const { data: employeeProfile } = useQuery({
-    queryKey: ['core-employee', user?.email],
-    queryFn: async () => {
-      const r = await corpsData.CoreEmployee.filter({ email: user?.email });
-      return r[0] || null;
-    },
+    queryFn: () => spine.payroll.getPaystubs(buildCtx(user.email), { employeeEmail: user.email }),
     enabled: !!user?.email,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => corpsData.CorePaystub.create(data),
+    mutationFn: (data) => spine.payroll.createPaystub(buildCtx(user.email), data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['core-pay'] }); setShowAdd(false); },
   });
 
-  const ytdGross = paystubs.reduce((s, p) => s + (p.gross_pay || 0), 0);
-  const ytdNet = paystubs.reduce((s, p) => s + (p.net_pay || 0), 0);
+  const ytdGross = paystubs.reduce((s, p) => s + (p.grossPay || 0), 0);
+  const ytdNet = paystubs.reduce((s, p) => s + (p.netPay || 0), 0);
 
   const summary = [
     { label: 'YTD GROSS', value: `$${ytdGross.toLocaleString()}`, icon: Wallet, color: 'text-teal-500', bg: 'bg-teal-50' },
@@ -83,13 +73,13 @@ export default function CorePay() {
             <div key={p.id} className="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-4">
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-800">
-                  Pay Period: {p.pay_period_start && format(new Date(p.pay_period_start), 'MMM d')} – {p.pay_period_end && format(new Date(p.pay_period_end), 'MMM d, yyyy')}
+                  Pay Period: {p.payPeriodStart && format(new Date(p.payPeriodStart), 'MMM d')} – {p.payPeriodEnd && format(new Date(p.payPeriodEnd), 'MMM d, yyyy')}
                 </h4>
-                <p className="text-sm text-gray-400 mt-0.5">Pay Date: {p.pay_date && format(new Date(p.pay_date), 'MMM d, yyyy')} · {p.hours_worked} hrs</p>
+                <p className="text-sm text-gray-400 mt-0.5">Pay Date: {p.payDate && format(new Date(p.payDate), 'MMM d, yyyy')} · {p.hoursWorked} hrs</p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-400">Gross / Net</p>
-                <p className="font-bold text-gray-900">${(p.gross_pay || 0).toLocaleString()} / ${(p.net_pay || 0).toLocaleString()}</p>
+                <p className="font-bold text-gray-900">${(p.grossPay || 0).toLocaleString()} / ${(p.netPay || 0).toLocaleString()}</p>
               </div>
               <button className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 ml-2">
                 <Download className="w-4 h-4 text-gray-500" />
@@ -122,7 +112,15 @@ export default function CorePay() {
             </div>
             <div className="flex gap-2 mt-5">
               <button onClick={() => setShowAdd(false)} className="flex-1 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600">Cancel</button>
-              <button onClick={() => createMutation.mutate({ ...form, employee_email: user?.email, gross_pay: parseFloat(form.gross_pay), net_pay: parseFloat(form.net_pay), hours_worked: parseFloat(form.hours_worked) })}
+              <button onClick={() => createMutation.mutate({
+                employeeEmail: user.email,
+                payPeriodStart: form.pay_period_start,
+                payPeriodEnd: form.pay_period_end,
+                payDate: form.pay_date,
+                grossPay: parseFloat(form.gross_pay),
+                netPay: parseFloat(form.net_pay),
+                hoursWorked: parseFloat(form.hours_worked),
+              })}
                 className="flex-1 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700">Save</button>
             </div>
           </div>

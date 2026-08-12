@@ -11,6 +11,7 @@
 
 import type { Spine, SpineContext } from "./SpineInterface";
 import { base44TimecardAdapter } from "./base44TimecardAdapter";
+import { base44PayrollAdapter } from "./base44PayrollAdapter";
 
 export type { Spine, SpineContext } from "./SpineInterface";
 export type {
@@ -21,6 +22,10 @@ export type {
   TimecardSummary,
   TimecardEntryType,
   TimecardStatus,
+  SpinePayrollService,
+  Paystub,
+  PaystubInput,
+  PaystubPatch,
 } from "./SpineInterface";
 
 const BACKEND = import.meta.env.VITE_SPINE_BACKEND || "base44";
@@ -31,7 +36,7 @@ const BACKEND = import.meta.env.VITE_SPINE_BACKEND || "base44";
 // REST-shaped so the remote adapter is a thin fetch wrapper.
 export const spine: Spine = {
   timecard: base44TimecardAdapter,
-  // payroll:  base44PayrollAdapter,   // lands next, after Timecard is validated
+  payroll: base44PayrollAdapter,
   // schedule: base44ScheduleAdapter,
   // hris:     base44HrisAdapter,
 };
