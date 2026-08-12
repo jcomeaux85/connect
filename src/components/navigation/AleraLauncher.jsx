@@ -83,35 +83,34 @@ const APPS = [
     label: "CORPS//",
     renderIcon: (size) => (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: size * 0.88,
-            height: size * 0.44,
-            borderRadius: 7,
-            background: "linear-gradient(145deg, #2a2f3a 0%, #161a24 100%)",
-            boxShadow:
-              "5px 5px 12px rgba(0,0,0,0.50), -5px -5px 12px rgba(255,255,255,0.035), inset 1px 1px 1px rgba(255,255,255,0.09), inset -1px -1px 1px rgba(0,0,0,0.30)",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
+        <div style={{ display: "flex", alignItems: "baseline", gap: size * 0.015 }}>
           <span
             style={{
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 800,
-              fontSize: size * 0.225,
-              color: "#e2e8f0",
-              letterSpacing: "0.06em",
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 700,
+              fontSize: size * 0.32,
+              color: "#f1f5f9",
+              letterSpacing: "0.10em",
               whiteSpace: "nowrap",
-              textShadow: "0 1px 2px rgba(0,0,0,0.6)",
+              textShadow: "0 1px 0 rgba(255,255,255,0.08), 0 2px 4px rgba(0,0,0,0.65)",
             }}
           >
-            CORPS<span style={{ color: "#60a5fa" }}>//</span>
+            CORPS
+          </span>
+          <span
+            style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 700,
+              fontSize: size * 0.32,
+              color: "#3b82f6",
+              letterSpacing: "0.02em",
+              textShadow: "0 0 10px rgba(59,130,246,0.55), 0 2px 4px rgba(0,0,0,0.5)",
+            }}
+          >
+            //
           </span>
         </div>
-        {aleraSub(size, "#60a5fa")}
+        {aleraSub(size, "#3b82f6", { font: "'Barlow Condensed', sans-serif", weight: 600 })}
       </div>
     ),
   },
@@ -120,7 +119,7 @@ const APPS = [
     label: "DOC",
     renderIcon: (size) => (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
-        <img src={DOC_ICON} alt="DOC" style={{ width: size * 0.42, height: size * 0.42, objectFit: "contain", pointerEvents: "none" }} />
+        <img src={DOC_ICON} alt="DOC" style={{ width: size * 0.34, height: size * 0.34, objectFit: "contain", pointerEvents: "none" }} />
         {aleraSub(size, "#ef4444")}
       </div>
     ),

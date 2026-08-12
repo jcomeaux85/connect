@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
 
 const CHIP_SRC = "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/3c7e51212_kling_20260530_IMAGE_please_mak_700_0.png";
 
@@ -36,8 +38,58 @@ function BlinkLight({ color, on }) {
   );
 }
 
+// Red alert light — slightly bigger than the others, pulses when notifying
+function AlertLight({ active }) {
+  const [pulse, setPulse] = useState(true);
+  const timer = useRef(null);
+
+  useEffect(() => {
+    if (!active) {
+      setPulse(false);
+      if (timer.current) clearTimeout(timer.current);
+      return;
+    }
+    const tick = () => {
+      setPulse((p) => !p);
+      timer.current = setTimeout(tick, 650);
+    };
+    timer.current = setTimeout(tick, 300);
+    return () => { if (timer.current) clearTimeout(timer.current); };
+  }, [active]);
+
+  return (
+    <div
+      style={{
+        width: 6,
+        height: 6,
+        borderRadius: '50%',
+        background: active && pulse ? '#ef4444' : 'rgba(239,68,68,0.14)',
+        boxShadow: active && pulse ? '0 0 6px 2px rgba(239,68,68,0.75)' : 'none',
+        transition: 'background 0.18s, box-shadow 0.18s',
+      }}
+    />
+  );
+}
+
 export default function ChipHeader() {
   const [lightsOn, setLightsOn] = useState(true);
+
+  // Unread notifications drive the red alert light
+  const { data: unread = [] } = useQuery({
+    queryKey: ['chip-unread-notifications'],
+    queryFn: async () => {
+      try {
+        const me = await base44.auth.me();
+        if (!me?.email) return [];
+        return base44.entities.Notification.filter({ user_email: me.email, is_read: false }, '-created_date', 20);
+      } catch {
+        return [];
+      }
+    },
+    refetchInterval: 15000,
+  });
+
+  const hasAlerts = unread.length > 0;
 
   return (
     <div
@@ -70,6 +122,19 @@ export default function ChipHeader() {
             display: 'block',
           }}
         />
+      </div>
+
+      {/* Red alert light — top-left corner, slightly bigger than the others */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '20px',
+          left: '5px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <AlertLight active={hasAlerts && lightsOn} />
       </div>
 
       {/* Three lights running down the top of the right edge, just off the chip */}
