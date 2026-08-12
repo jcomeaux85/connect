@@ -5,9 +5,10 @@ import { base44 } from '@/api/base44Client';
 import { corpsData } from '@/api/corpsData';
 import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Clock, FileText, CreditCard, User, Play, Square, Cloud } from 'lucide-react';
+import { Clock, FileText, CreditCard, User, Play, Square } from 'lucide-react';
 import PayrollAlerts from './PayrollAlerts';
 import ActionTimeline from './ActionTimeline';
+import EarningsClock from './EarningsClock';
 
 const quickActions = [
   { id: 'requests', label: 'Request Time Off', icon: FileText, color: 'text-teal-500' },
@@ -155,16 +156,18 @@ export default function CoreDashboard({ onNavigate }) {
                   ? 'bg-red-500 hover:bg-red-600'
                   : 'bg-purple-600 hover:bg-purple-700'
               }`}
-              style={{ background: isClockedIn ? undefined : 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
+              style={{ background: isClockedIn ? undefined : 'linear-gradient(135deg, #22C55E, #16A34A)' }}
             >
               {isClockedIn ? <Square className="w-5 h-5" /> : <Play className="w-5 h-5 fill-white" />}
               {isClockedIn ? 'Clock Out' : 'Clock In'}
             </button>
           </div>
-          <div className="mt-4 flex items-center gap-2 text-sm text-gray-400">
-            <Cloud className="w-4 h-4" />
-            <span>72°F · Local conditions</span>
-          </div>
+          <EarningsClock
+            isClockedIn={isClockedIn}
+            clockInTime={clockInTime}
+            entries={timecardEntries}
+            userEmail={user?.email}
+          />
         </div>
 
         {/* Quick Actions */}
@@ -223,8 +226,8 @@ export default function CoreDashboard({ onNavigate }) {
             <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: -20 }}>
               <defs>
                 <linearGradient id="hoursGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#22C55E" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#22C55E" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
@@ -233,7 +236,7 @@ export default function CoreDashboard({ onNavigate }) {
                 contentStyle={{ background: 'white', border: 'none', borderRadius: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontSize: 12 }}
                 formatter={(v) => [`${v} hrs`, 'Hours']}
               />
-              <Area type="monotone" dataKey="hours" stroke="#7c3aed" strokeWidth={2} fill="url(#hoursGrad)" dot={{ r: 4, fill: '#7c3aed' }} />
+              <Area type="monotone" dataKey="hours" stroke="#22C55E" strokeWidth={2} fill="url(#hoursGrad)" dot={{ r: 4, fill: '#22C55E' }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>

@@ -143,6 +143,50 @@ css
 /* gray-400 labels already read fine on dark — leave as-is */
 
 /* ─────────────────────────────────────────────────────────
+   CORPS// GREEN ACCENT — scoped to .corps-neu only.
+   The neumorphic grey base is untouched; only the accent (purple/violet
+   used elsewhere on the platform) is remapped to CORPS green so CORPS//
+   reads as the distinct "Spine" hub while sharing the platform base.
+   ───────────────────────────────────────────────────────── */
+.corps-neu {
+  --corps-accent: #22C55E;
+  --corps-accent-strong: #16A34A;
+  --corps-accent-bg: #DCFCE7;
+}
+
+.corps-neu .text-purple-500,
+.corps-neu .text-purple-600,
+.corps-neu .text-violet-500,
+.corps-neu .text-violet-600 {
+  color: var(--corps-accent-strong) !important;
+}
+
+.corps-neu .bg-purple-50,
+.corps-neu .bg-violet-50 {
+  background: var(--corps-accent-bg) !important;
+}
+
+.corps-neu .hover\:bg-purple-50:hover,
+.corps-neu .hover\:bg-violet-50:hover {
+  background: var(--corps-accent-bg) !important;
+}
+
+.corps-neu .hover\:border-purple-200:hover,
+.corps-neu .border-purple-200 {
+  border-color: var(--corps-accent) !important;
+}
+
+.corps-neu .bg-purple-600,
+.corps-neu .hover\:bg-purple-700:hover {
+  background: var(--corps-accent-strong) !important;
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(34,197,94,0.8); }
+  50% { opacity: 0.4; box-shadow: 0 0 10px rgba(34,197,94,1); }
+}
+
+/* ─────────────────────────────────────────────────────────
    SPOTLIGHT — concentration aid (brightness only, no layout change)
    Reuses the same easing/feel as the existing hover hue transition.
    OFF (no data-spotlight on body): zero visual change.

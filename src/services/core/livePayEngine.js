@@ -61,3 +61,21 @@ export function computeLivePay({ entries = [], employee = null, paystubs = [], r
     hourlyRate,
   };
 }
+
+// Per-second earnings rate for the real-time EarningsClock widget.
+// Returns gross and net per-second rates derived from the live pay preview.
+// Used by the "debt-clock"-style ticker so the widget can be lifted into a
+// B|c widget without re-fetching — it consumes a computeLivePay result.
+export function computeEarningsRate(livePay) {
+  const periodHours =
+    (livePay.regular || 0) + (livePay.overtime || 0) + (livePay.doubletime || 0);
+  // Effective net hourly rate: if the period has hours, net/hours; else fall
+  // back to a rough 78% of gross (typical effective rate) so the clock moves.
+  const netHourlyRate =
+    periodHours > 0 ? livePay.net / periodHours : livePay.hourlyRate * 0.78;
+  return {
+    grossPerSec: livePay.hourlyRate / 3600,
+    netPerSec: netHourlyRate / 3600,
+    netHourlyRate,
+  };
+}
