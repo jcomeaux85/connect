@@ -285,7 +285,7 @@ export default function AleraLauncher({ onToggleDoc }) {
   const triggerRef = useRef(null);
   const closeTimer = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [leftEdge, setLeftEdge] = useState(0);
+  const [sidebarRight, setSidebarRight] = useState(0);
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [hoveredY, setHoveredY] = useState(null); // vertical center of hovered logo button
   const previewRef = useRef(null);
@@ -334,15 +334,28 @@ export default function AleraLauncher({ onToggleDoc }) {
     window.dispatchEvent(new CustomEvent('alera-launcher-active', { detail: { active } }));
   }, []);
 
+  // Track the sidebar's right edge live so the column always sits flush
+  // against it — never stale, never behind it (even mid-animation).
+  useLayoutEffect(() => {
+    const el = triggerRef.current;
+    if (!el) return;
+    let sidebar = el.parentElement;
+    while (sidebar && sidebar.parentElement) {
+      if (getComputedStyle(sidebar).position === "fixed") break;
+      sidebar = sidebar.parentElement;
+    }
+    if (!sidebar) return;
+    const measure = () => setSidebarRight(sidebar.getBoundingClientRect().right);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(sidebar);
+    return () => ro.disconnect();
+  }, []);
+
   const open = useCallback(() => {
     if (closeTimer.current) {
       clearTimeout(closeTimer.current);
       closeTimer.current = null;
-    }
-    const el = triggerRef.current;
-    if (el) {
-      const r = el.getBoundingClientRect();
-      setLeftEdge(r.right); // column sits just past the sidebar's right edge
     }
     setIsOpen(true);
     setActive(true);
@@ -442,7 +455,7 @@ export default function AleraLauncher({ onToggleDoc }) {
               onMouseLeave={scheduleClose}
               style={{
                 position: "fixed",
-                left: `${leftEdge + SLIDE_OFFSET}px`,
+                left: `${sidebarRight + SLIDE_OFFSET}px`,
                 top: `${HEAD_INSET}px`,
                 bottom: `${FOOT_INSET}px`,
                 width: `${colWidth}px`,
@@ -531,7 +544,7 @@ export default function AleraLauncher({ onToggleDoc }) {
               transition={{ duration: 0.45, ease: SOFT_EASE }}
               style={{
                 position: "fixed",
-                left: `${leftEdge + colWidth + 18}px`,
+                left: `${sidebarRight + colWidth + 18}px`,
                 top: `${previewData.clampedTop}px`,
                 zIndex: 49,
                 pointerEvents: "none",
