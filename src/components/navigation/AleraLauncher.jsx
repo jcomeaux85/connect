@@ -46,36 +46,63 @@ const DOC_ICON =
 
 const EXTERNAL_HREF = "https://ndrndr.com/alera";
 
+// "by ALERAGROUP" subtext — styled to match each logo's accent color.
+const aleraSub = (size, accent, { font = "'Inter', sans-serif", weight = 600 } = {}) => (
+  <span
+    style={{
+      fontFamily: font,
+      fontWeight: weight,
+      fontSize: size * 0.07,
+      color: "rgba(255,255,255,0.32)",
+      letterSpacing: "0.10em",
+      whiteSpace: "nowrap",
+      marginTop: "4px",
+      lineHeight: 1,
+    }}
+  >
+    by <span style={{ color: accent, letterSpacing: "0.10em" }}>ALERAGROUP</span>
+  </span>
+);
+
 const APPS = [
   {
-    id: "doc",
-    label: "DOC",
+    id: "benconnect",
+    label: "BEN|connect",
+    href: "https://benconnect.ndrndr.com/Core",
     renderIcon: (size) => (
-      <img
-        src={DOC_ICON}
-        alt="DOC"
-        style={{ width: size * 0.42, height: size * 0.42, objectFit: "contain", pointerEvents: "none" }}
-      />
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size * 0.15, color: "#ffffff", letterSpacing: "0.02em", whiteSpace: "nowrap" }}>
+          BEN<span style={{ color: "#a855f7" }}>|</span>connect
+        </span>
+        {aleraSub(size, "#a855f7")}
+      </div>
     ),
   },
   {
     id: "corps",
     label: "CORPS//",
     renderIcon: (size) => (
-      <span
-        style={{
-          fontFamily: "'VT323', ui-monospace, monospace",
-          fontSize: size * 0.26,
-          lineHeight: 1,
-          color: "#33FF33",
-          letterSpacing: "0.02em",
-          textShadow: "0 0 10px rgba(51,255,51,0.6), 0 0 22px rgba(51,255,51,0.35)",
-          whiteSpace: "nowrap",
-          pointerEvents: "none",
-        }}
-      >
-        CORPS//
-      </span>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'VT323', ui-monospace, monospace", fontSize: size * 0.33, lineHeight: 1, color: "#33FF33", letterSpacing: "0.02em", textShadow: "0 0 10px rgba(51,255,51,0.6), 0 0 22px rgba(51,255,51,0.35)", whiteSpace: "nowrap" }}>
+          CORPS//
+        </span>
+        {aleraSub(size, "#33FF33", { font: "'VT323', ui-monospace, monospace", weight: 400 })}
+      </div>
+    ),
+  },
+  {
+    id: "doc",
+    label: "DOC",
+    renderIcon: (size) => (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: size * 0.04 }}>
+          <img src={DOC_ICON} alt="DOC" style={{ width: size * 0.30, height: size * 0.30, objectFit: "contain", pointerEvents: "none" }} />
+          <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size * 0.36, color: "#ef4444", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+            DOC
+          </span>
+        </div>
+        {aleraSub(size, "#ef4444")}
+      </div>
     ),
   },
   {
@@ -83,19 +110,25 @@ const APPS = [
     label: "Auth|Link",
     href: "https://authlink.ndrndr.com",
     renderIcon: (size) => (
-      <span
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 800,
-          fontSize: size * 0.18,
-          color: "#ffffff",
-          letterSpacing: "0.02em",
-          whiteSpace: "nowrap",
-          pointerEvents: "none",
-        }}
-      >
-        Auth<span style={{ color: "#00d4ff" }}>|</span>Link
-      </span>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size * 0.205, color: "#ffffff", letterSpacing: "0.02em", whiteSpace: "nowrap" }}>
+          Auth<span style={{ color: "#00d4ff" }}>|</span>Link
+        </span>
+        {aleraSub(size, "#00d4ff")}
+      </div>
+    ),
+  },
+  {
+    id: "hub",
+    label: "HelpHub",
+    href: "https://helphub.ndrndr.com",
+    renderIcon: (size) => (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size * 0.24, letterSpacing: "0.01em", whiteSpace: "nowrap" }}>
+          <span style={{ color: "#0078D7" }}>Help</span><span style={{ color: "#B3B3B3" }}>Hub</span>
+        </span>
+        {aleraSub(size, "#0078D7")}
+      </div>
     ),
   },
   {
@@ -103,20 +136,12 @@ const APPS = [
     label: "Consilium",
     href: "https://consilium.ndrndr.com",
     renderIcon: (size) => (
-      <span
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 800,
-          fontSize: size * 0.17,
-          color: "#00E5FF",
-          letterSpacing: "0.06em",
-          textShadow: "0 0 10px rgba(0,229,255,0.5)",
-          whiteSpace: "nowrap",
-          pointerEvents: "none",
-        }}
-      >
-        CONSILIUM
-      </span>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size * 0.17, color: "#00E5FF", letterSpacing: "0.06em", textShadow: "0 0 10px rgba(0,229,255,0.5)", whiteSpace: "nowrap" }}>
+          CONSILIUM
+        </span>
+        {aleraSub(size, "#00E5FF")}
+      </div>
     ),
   },
   {
@@ -124,99 +149,12 @@ const APPS = [
     label: "ALERA | learn",
     href: "https://learn.ndrndr.com",
     renderIcon: (size) => (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          lineHeight: 1,
-          pointerEvents: "none",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 800,
-            fontSize: size * 0.32,
-            color: "#555555",
-            letterSpacing: "0.02em",
-            whiteSpace: "nowrap",
-          }}
-        >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size * 0.32, color: "#555555", letterSpacing: "0.02em", whiteSpace: "nowrap" }}>
           LE<span style={{ color: "#40E0D0" }}>▼</span>RN
         </span>
-        <span
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: size * 0.085,
-            color: "#A9A9A9",
-            marginTop: "2px",
-            whiteSpace: "nowrap",
-          }}
-        >
-          by <span style={{ color: "#40E0D0" }}>ALERAGROUP</span>
-        </span>
+        {aleraSub(size, "#40E0D0")}
       </div>
-    ),
-  },
-  {
-    id: "train",
-    label: "ALERA | train",
-    href: EXTERNAL_HREF,
-    renderIcon: (size) => (
-      <span
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 800,
-          fontSize: size * 0.32,
-          color: "#ffffff",
-          letterSpacing: "0.04em",
-          whiteSpace: "nowrap",
-          pointerEvents: "none",
-        }}
-      >
-        TR<span style={{ color: "#00d4ff" }}>▼</span>IN
-      </span>
-    ),
-  },
-  {
-    id: "hub",
-    label: "Alera hub",
-    href: "https://helphub.ndrndr.com",
-    renderIcon: (size) => (
-      <span
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 800,
-          fontSize: size * 0.24,
-          letterSpacing: "0.01em",
-          whiteSpace: "nowrap",
-          pointerEvents: "none",
-        }}
-      >
-        <span style={{ color: "#0078D7" }}>Help</span>
-        <span style={{ color: "#B3B3B3" }}>Hub</span>
-      </span>
-    ),
-  },
-  {
-    id: "benconnect",
-    label: "BEN|connect",
-    href: "https://benconnect.ndrndr.com/Core",
-    renderIcon: (size) => (
-      <span
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 800,
-          fontSize: size * 0.15,
-          color: "#ffffff",
-          letterSpacing: "0.02em",
-          whiteSpace: "nowrap",
-          pointerEvents: "none",
-        }}
-      >
-        BEN<span style={{ color: "#00d4ff" }}>|</span>connect
-      </span>
     ),
   },
 ];
@@ -235,7 +173,7 @@ const PREVIEWS = {
     image:
       "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/d0826666c_Core.png",
     description:
-      "Centralized Operations & Resource Planning System — workforce scheduling, attendance, payroll, and break coordination for the entire call-center floor.",
+      "RME of ONE — Centralized Operations & Resource Planning System. Workforce scheduling, attendance, payroll, and break coordination for the entire call-center floor.",
   },
   authlink: {
     title: "Auth|Link",
@@ -257,13 +195,6 @@ const PREVIEWS = {
       "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/73eb59cb0_learm.png",
     description:
       "ALERA | learn — on-demand training library with guided courses, certifications, and knowledge checks for new and tenured agents alike.",
-  },
-  train: {
-    title: "ALERA | train",
-    image:
-      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/55fb3a4b8_flash.png",
-    description:
-      "ALERA | train — live coaching simulations, call-shadowing drills, and performance feedback loops to keep skills sharp.",
   },
   hub: {
     title: "HelpHub",
@@ -402,7 +333,6 @@ export default function AleraLauncher({ onToggleDoc }) {
     setActive(false);
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
-    else if (app.id === "train") navigate("/AleraLearn");
     else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 
