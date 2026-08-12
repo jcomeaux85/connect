@@ -72,6 +72,7 @@ const APPS = [
   {
     id: "authlink",
     label: "Auth|Link",
+    href: "https://authlink.ndrndr.com",
     renderIcon: (size) => (
       <span
         style={{
@@ -91,7 +92,7 @@ const APPS = [
   {
     id: "consilium",
     label: "Consilium",
-    href: EXTERNAL_HREF,
+    href: "https://consilium.ndrndr.com",
     renderIcon: (size) => (
       <span
         style={{
@@ -112,7 +113,7 @@ const APPS = [
   {
     id: "learn",
     label: "ALERA | learn",
-    href: EXTERNAL_HREF,
+    href: "https://learn.ndrndr.com",
     renderIcon: (size) => (
       <div
         style={{
@@ -172,7 +173,7 @@ const APPS = [
   {
     id: "hub",
     label: "Alera hub",
-    href: EXTERNAL_HREF,
+    href: "https://helphub.ndrndr.com",
     renderIcon: (size) => (
       <span
         style={{
@@ -186,6 +187,26 @@ const APPS = [
       >
         <span style={{ color: "#0078D7" }}>Help</span>
         <span style={{ color: "#B3B3B3" }}>Hub</span>
+      </span>
+    ),
+  },
+  {
+    id: "benconnect",
+    label: "BEN|connect",
+    href: "https://benconnect.ndrndr.com/Core",
+    renderIcon: (size) => (
+      <span
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 800,
+          fontSize: size * 0.2,
+          color: "#ffffff",
+          letterSpacing: "0.02em",
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+        }}
+      >
+        BEN<span style={{ color: "#00d4ff" }}>|</span>connect
       </span>
     ),
   },
@@ -241,6 +262,13 @@ const PREVIEWS = {
       "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=600&q=80",
     description:
       "HelpHub — a self-serve support center with how-to articles, video walkthroughs, and direct escalation paths to the ALERA team.",
+  },
+  benconnect: {
+    title: "BEN|connect",
+    image:
+      "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c2cee6c0b_image.png",
+    description:
+      "BEN|connect — a unified call center platform combining phone, SMS, email, benefits tracking, HR management, and AI-assisted research in one high-performance workspace.",
   },
 };
 
@@ -346,9 +374,7 @@ export default function AleraLauncher({ onToggleDoc }) {
     setActive(false);
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
-    else if (app.id === "authlink") navigate("/AuthLink");
     else if (app.id === "train") navigate("/AleraLearn");
-    else if (app.id === "learn") navigate("/AleraLearn");
     else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 
@@ -519,6 +545,7 @@ export default function AleraLauncher({ onToggleDoc }) {
                   style={{
                     position: "absolute",
                     inset: 0,
+                    opacity: 0,
                     background:
                       "linear-gradient(to bottom, rgba(18,20,28,0.1), rgba(18,20,28,0.85))",
                   }}
