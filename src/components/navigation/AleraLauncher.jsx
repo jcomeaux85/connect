@@ -20,8 +20,8 @@ import { useNavigate } from "react-router-dom";
 const DURATION = 0.935;
 const SOFT_EASE = [0.25, 0.1, 0.25, 1];
 const EASE_CSS = "cubic-bezier(0.25, 0.1, 0.25, 1)";
-const ICON_SIZE = 92;
-const COL_WIDTH = 172;
+const ICON_SIZE = 96;
+const COL_WIDTH = 184;
 const SLIDE_OFFSET = 0; // flush against the sidebar's right edge — no gap
 const HEAD_INSET = 16; // px from viewport top — almost reaching sidebar head
 const FOOT_INSET = 16; // px from viewport bottom — almost reaching sidebar foot
@@ -56,7 +56,7 @@ const APPS = [
       <span
         style={{
           fontFamily: "'VT323', ui-monospace, monospace",
-          fontSize: size * 0.48,
+          fontSize: size * 0.51,
           lineHeight: 1,
           color: "#33FF33",
           letterSpacing: "0.02em",
@@ -78,7 +78,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.26,
+          fontSize: size * 0.3,
           color: "#ffffff",
           letterSpacing: "0.02em",
           whiteSpace: "nowrap",
@@ -98,7 +98,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.19,
+          fontSize: size * 0.3,
           color: "#00E5FF",
           letterSpacing: "0.06em",
           textShadow: "0 0 10px rgba(0,229,255,0.5)",
@@ -128,7 +128,7 @@ const APPS = [
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 800,
-            fontSize: size * 0.3,
+            fontSize: size * 0.5,
             color: "#555555",
             letterSpacing: "0.02em",
             whiteSpace: "nowrap",
@@ -159,7 +159,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.3,
+          fontSize: size * 0.5,
           color: "#ffffff",
           letterSpacing: "0.04em",
           whiteSpace: "nowrap",
@@ -179,7 +179,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.26,
+          fontSize: size * 0.4,
           letterSpacing: "0.01em",
           whiteSpace: "nowrap",
           pointerEvents: "none",
@@ -199,7 +199,7 @@ const APPS = [
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 800,
-          fontSize: size * 0.2,
+          fontSize: size * 0.25,
           color: "#ffffff",
           letterSpacing: "0.02em",
           whiteSpace: "nowrap",
