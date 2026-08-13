@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Clock, FileText, CreditCard, User, Play, Square } from 'lucide-react';
 import PayrollAlerts from './PayrollAlerts';
-import ActionTimeline from './ActionTimeline';
+import BidirectionalActionTimeline from './BidirectionalActionTimeline';
 import EarningsClock from './EarningsClock';
 
 const quickActions = [
@@ -276,7 +276,7 @@ export default function CoreDashboard({ onNavigate }) {
       <div className="grid grid-cols-3 gap-4">
         <PayrollAlerts entries={timecardEntries} shifts={shifts} />
         <div className="col-span-2">
-          <ActionTimeline />
+          <BidirectionalActionTimeline />
         </div>
       </div>
     </div>

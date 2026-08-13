@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { SpotlightProvider } from '@/components/spotlight/SpotlightContext';
+import { IntentBusProvider } from '@/services/intentBus/IntentBusContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Core from './pages/Core';
 import DOC from './pages/DOC';
@@ -90,11 +91,13 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <SpotlightProvider>
+          <IntentBusProvider>
           <Router>
             <NavigationTracker />
             <AuthenticatedApp />
             <ConcensusProvider />
           </Router>
+          </IntentBusProvider>
           <Toaster />
           <VisualEditAgent />
         </SpotlightProvider>
