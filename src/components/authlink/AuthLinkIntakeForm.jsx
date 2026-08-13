@@ -82,7 +82,7 @@ export default function AuthLinkIntakeForm({ user, onGenerated }) {
   };
 
   return (
-    <div className="p-6" style={cardStyle}>
+    <div id="new-authorization" className="p-6 scroll-mt-4" style={cardStyle}>
       <h2 className="text-lg font-bold mb-4" style={{ color: colors.textPrimary }}>
         New authorization
       </h2>

@@ -6,7 +6,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import AuthLinkIntakeForm from "@/components/authlink/AuthLinkIntakeForm";
 import AuthLinkReviewQueue from "@/components/authlink/AuthLinkReviewQueue";
 import AuthLinkVerification from "@/components/authlink/AuthLinkVerification";
-import { Lock } from "lucide-react";
+import { Lock, Plus } from "lucide-react";
 
 export default function AuthLink() {
   const { data: user } = useUser();
@@ -27,6 +27,15 @@ export default function AuthLink() {
   const handleReviewed = () => {
     queryClient.invalidateQueries({ queryKey: ["auth-submissions"] });
     setSelectedSubmissionId(null);
+  };
+
+  const handleStartNew = () => {
+    const el = document.getElementById("new-authorization");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      const firstInput = el.querySelector("input, select, textarea");
+      if (firstInput) setTimeout(() => firstInput.focus(), 350);
+    }
   };
 
   const selected = submissions.find((s) => s.id === selectedSubmissionId);
@@ -69,6 +78,18 @@ export default function AuthLink() {
             </p>
           </div>
         </div>
+        <button
+          onClick={handleStartNew}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition hover:opacity-90"
+          style={{
+            background: colors.cardBg,
+            color: colors.textPrimary,
+            boxShadow: `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}`,
+          }}
+        >
+          <Plus size={16} style={{ color: "#7aaec5" }} />
+          Start New Authorization
+        </button>
       </div>
 
       {/* Two-column layout */}
