@@ -352,6 +352,7 @@ export default function AleraLauncher({ onToggleDoc }) {
     setActive(false);
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
+    else if (app.id === "authlink") navigate("/AuthLink");
     else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 
