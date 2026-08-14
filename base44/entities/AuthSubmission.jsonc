@@ -52,7 +52,7 @@
     },
     "verification_code": {
       "type": "string",
-      "description": "Auto-generated 4-digit code the member must recite in their video"
+      "description": "Auto-generated 5-digit access code the member must enter to open their session and recite in their video. Given to the member only by the specialist."
     },
     "recitation_video_url": {
       "type": "string",
@@ -72,7 +72,8 @@
         "link_generated",
         "submitted",
         "approved",
-        "rejected"
+        "rejected",
+        "cancelled"
       ],
       "default": "link_generated",
       "description": "Current status of the authorization submission"

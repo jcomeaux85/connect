@@ -10,18 +10,21 @@ import {
   CreditCard,
   Upload,
   ChevronRight,
+  KeyRound,
 } from "lucide-react";
 
-const STEPS = ["intro", "video", "id", "recite", "done"];
+const STEPS = ["gate", "intro", "video", "id", "recite", "done"];
 
 export default function AuthLinkMember() {
   const { id } = useParams();
   const [submission, setSubmission] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [step, setStep] = useState("intro");
+  const [step, setStep] = useState("gate");
   const [videoUrl, setVideoUrl] = useState("");
   const [idUrl, setIdUrl] = useState("");
   const [recitedCode, setRecitedCode] = useState("");
+  const [gateCode, setGateCode] = useState("");
+  const [gateError, setGateError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -35,10 +38,23 @@ export default function AuthLinkMember() {
         setSubmission(data);
         setVideoUrl(data.recitation_video_url || "");
         setIdUrl(data.government_id_url || "");
+        // If already submitted/approved/rejected/cancelled, skip gate
+        if (data.status && data.status !== "link_generated") {
+          setStep("done");
+        }
       })
       .catch(() => setError("Invalid or expired authorization link."))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleGateSubmit = () => {
+    setGateError("");
+    if (gateCode === submission?.verification_code) {
+      setStep("intro");
+    } else {
+      setGateError("Incorrect code. Please contact your specialist for your 5-digit access code.");
+    }
+  };
 
   const handleUploadId = async (file) => {
     setUploading(true);
@@ -112,7 +128,7 @@ export default function AuthLinkMember() {
     );
   }
 
-  // ── Step indicator ──
+  // ── Step indicator (hide on gate) ──
   const stepIndex = STEPS.indexOf(step);
   const progress = ((stepIndex + 1) / STEPS.length) * 100;
 
@@ -145,6 +161,41 @@ export default function AuthLinkMember() {
       {/* Content */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="max-w-md w-full">
+          {/* ── Code gate step ── */}
+          {step === "gate" && (
+            <div className="text-center">
+              <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                <KeyRound size={28} className="text-blue-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                Enter your access code
+              </h1>
+              <p className="text-sm text-gray-500 mb-6">
+                Your specialist gave you a 5-digit code to open this session. Enter it below to
+                begin.
+              </p>
+              <input
+                type="text"
+                value={gateCode}
+                onChange={(e) => setGateCode(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                onKeyDown={(e) => e.key === "Enter" && gateCode.length === 5 && handleGateSubmit()}
+                placeholder="• • • • •"
+                inputMode="numeric"
+                autoFocus
+                className="w-full px-4 py-4 rounded-xl border border-gray-300 text-center text-2xl font-bold tracking-[0.4em] text-gray-900 outline-none focus:border-blue-500 mb-4"
+              />
+              {gateError && <p className="text-xs text-red-500 mb-3">{gateError}</p>}
+              <button
+                onClick={handleGateSubmit}
+                disabled={gateCode.length !== 5}
+                className="w-full py-3 rounded-xl bg-blue-500 text-white font-semibold text-sm flex items-center justify-center gap-2 hover:bg-blue-600 transition disabled:opacity-40"
+              >
+                Unlock
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+
           {/* ── Intro step ── */}
           {step === "intro" && (
             <div className="text-center">
@@ -164,6 +215,7 @@ export default function AuthLinkMember() {
                 <ul className="text-xs text-blue-700 space-y-1">
                   <li>• A device with a camera (phone or computer)</li>
                   <li>• Your government-issued photo ID</li>
+                  <li>• Your 5-digit access code (to recite on camera)</li>
                   <li>• About 3 minutes of your time</li>
                 </ul>
               </div>
@@ -188,8 +240,8 @@ export default function AuthLinkMember() {
                 <h1 className="text-lg font-bold text-gray-900">Record your video</h1>
               </div>
               <p className="text-sm text-gray-500 mb-4">
-                Please record a short video of yourself. In the next step, you'll be given a
-                4-digit code to recite on camera.
+                Please record a short video of yourself. In the next step, you'll be shown your
+                5-digit code to recite on camera.
               </p>
               <div className="mb-4">
                 <VideoRecorder
@@ -289,7 +341,7 @@ export default function AuthLinkMember() {
                 <h1 className="text-lg font-bold text-gray-900">Recite your verification code</h1>
               </div>
               <p className="text-sm text-gray-500 mb-4">
-                Please record yourself saying this 4-digit code out loud in your video. This
+                Please record yourself saying this 5-digit code out loud in your video. This
                 proves you are the person in the video.
               </p>
               <div className="bg-gray-900 rounded-xl py-8 mb-4 text-center">
@@ -307,8 +359,8 @@ export default function AuthLinkMember() {
               <input
                 type="text"
                 value={recitedCode}
-                onChange={(e) => setRecitedCode(e.target.value.replace(/\D/g, "").slice(0, 4))}
-                placeholder="Enter 4-digit code"
+                onChange={(e) => setRecitedCode(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                placeholder="Enter 5-digit code"
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 text-center text-lg font-bold tracking-[0.3em] text-gray-900 outline-none focus:border-blue-500 mb-4"
               />
               {error && <p className="text-xs text-red-500 mb-3">{error}</p>}

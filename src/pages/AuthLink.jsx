@@ -16,7 +16,18 @@ export default function AuthLink() {
 
   const { data: submissions = [] } = useQuery({
     queryKey: ["auth-submissions"],
-    queryFn: () => base44.entities.AuthSubmission.list("-created_date", 100),
+    queryFn: async () => {
+      const all = await base44.entities.AuthSubmission.list("-created_date", 100);
+      // Auto-delete link_generated submissions older than 3 days
+      const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
+      const expired = all.filter(
+        (s) => s.status === "link_generated" && new Date(s.created_date).getTime() < threeDaysAgo
+      );
+      for (const s of expired) {
+        try { await base44.entities.AuthSubmission.delete(s.id); } catch (e) { /* ignore */ }
+      }
+      return all.filter((s) => !expired.find((e) => e.id === s.id));
+    },
     refetchInterval: 30000,
   });
 
