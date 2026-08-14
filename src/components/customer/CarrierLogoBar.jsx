@@ -25,7 +25,7 @@ export default function CarrierLogoBar({ company, colors }) {
   };
 
   const washedStyle = {
-    filter: "grayscale(0.6) opacity(0.45)",
+    filter: "grayscale(0.3) opacity(0.85)",
     transition: "filter 0.35s ease, transform 0.35s ease",
   };
 
