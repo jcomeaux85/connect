@@ -50,6 +50,10 @@
       "type": "string",
       "description": "URL to dental carrier logo"
     },
+    "carrier_dental_portal_url": {
+      "type": "string",
+      "description": "URL to dental carrier portal"
+    },
     "carrier_medical_name": {
       "type": "string",
       "description": "Medical insurance carrier name"
@@ -61,6 +65,10 @@
     "carrier_medical_logo_url": {
       "type": "string",
       "description": "URL to medical carrier logo"
+    },
+    "carrier_medical_portal_url": {
+      "type": "string",
+      "description": "URL to medical carrier portal"
     },
     "carrier_vision_name": {
       "type": "string",
@@ -74,6 +82,10 @@
       "type": "string",
       "description": "URL to vision carrier logo"
     },
+    "carrier_vision_portal_url": {
+      "type": "string",
+      "description": "URL to vision carrier portal"
+    },
     "carrier_life_name": {
       "type": "string",
       "description": "Life insurance carrier name"
@@ -86,6 +98,10 @@
       "type": "string",
       "description": "URL to life carrier logo"
     },
+    "carrier_life_portal_url": {
+      "type": "string",
+      "description": "URL to life carrier portal"
+    },
     "carrier_disability_name": {
       "type": "string",
       "description": "Disability insurance carrier name"
@@ -97,6 +113,10 @@
     "carrier_disability_logo_url": {
       "type": "string",
       "description": "URL to disability carrier logo"
+    },
+    "carrier_disability_portal_url": {
+      "type": "string",
+      "description": "URL to disability carrier portal"
     },
     "portal_link_1_url": {
       "type": "string",

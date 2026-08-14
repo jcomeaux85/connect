@@ -17,8 +17,10 @@ export default function CarrierLogoBar({ company, colors }) {
 
   if (carriers.length === 0) return null;
 
-  // Map carriers to portal links if available
+  // Map carriers to their per-carrier portal URL, falling back to legacy portal links
   const portalUrl = (carrier) => {
+    const portalField = `carrier_${carrier.key}_portal_url`;
+    if (company[portalField]) return company[portalField];
     if (carrier.key === "medical" && company.portal_link_1_url) return company.portal_link_1_url;
     if (carrier.key === "dental" && company.portal_link_2_url) return company.portal_link_2_url;
     return company.website || null;
