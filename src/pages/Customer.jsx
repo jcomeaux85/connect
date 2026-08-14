@@ -63,8 +63,7 @@ export default function CustomerPage() {
   const { data: customer, isLoading: customerLoading } = useQuery({
     queryKey: ['customer', customerId],
     queryFn: async () => {
-      const customers = await base44.entities.Customer.filter({ id: customerId });
-      return customers[0];
+      return await base44.entities.Customer.get(customerId);
     },
     enabled: !!customerId,
   });
@@ -73,8 +72,7 @@ export default function CustomerPage() {
     queryKey: ['customerEmployerEntity', customer?.company_id],
     queryFn: async () => {
       if (!customer?.company_id) return null;
-      const employers = await base44.entities.Employer.filter({ id: customer.company_id });
-      return employers[0];
+      return await base44.entities.Employer.get(customer.company_id);
     },
     enabled: !!customer?.company_id,
   });
@@ -83,8 +81,7 @@ export default function CustomerPage() {
     queryKey: ['customerClientCompanyEntity', customer?.client_id],
     queryFn: async () => {
       if (!customer?.client_id) return null;
-      const companies = await base44.entities.Company.filter({ id: customer.client_id });
-      return companies[0];
+      return await base44.entities.Company.get(customer.client_id);
     },
     enabled: !!customer?.client_id,
   });
