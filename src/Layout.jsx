@@ -11,6 +11,7 @@ import NotificationCenter from "@/components/notifications/NotificationCenter";
 import MessagingPanel from "@/components/messaging/MessagingPanel";
 import CallsPanel from "@/components/calls/CallsPanel";
 import DispositionForm from "@/components/calls/DispositionForm";
+import CallWrapUp from "@/components/calls/CallWrapUp";
 import AIAssistantOrb from "@/components/assistant/AIAssistantOrb";
 import PersistentSidebar, { SIDEBAR_WIDTHS } from "@/components/navigation/PersistentSidebar";
 import BackgroundCustomizer from "@/components/settings/BackgroundCustomizer";
@@ -118,6 +119,7 @@ function LayoutContent({ children, currentPageName }) {
   const [showCalls, setShowCalls] = useState(false);
   const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
   const [dispositionData, setDispositionData] = useState(null);
+  const [wrapUpData, setWrapUpData] = useState(null);
   const [showDOC, setShowDOC] = useState(false); // DOC slide-out panel
   const [sidebarLevel, setSidebarLevel] = useState(() => {
     const saved = localStorage.getItem('sidebarLevel');
@@ -250,6 +252,7 @@ function LayoutContent({ children, currentPageName }) {
     const handleToggleBackgroundCustomizer = () => setShowBackgroundCustomizer((p) => !p);
     const handleToggleDoc = () => setShowDOC((p) => !p);
     const handleShowDisposition = (e) => setDispositionData(e.detail || {});
+    const handleShowWrapUp = (e) => setWrapUpData(e.detail || {});
     const handleSidebarLock = (e) => setLockedSidebarWidth(e.detail?.width || 0);
 
     // Ctrl+Alt+Enter (or Ctrl+Alt+D) to toggle DOC
@@ -271,6 +274,7 @@ function LayoutContent({ children, currentPageName }) {
     window.addEventListener('toggle-phone', handleTogglePhone);
     window.addEventListener('toggle-doc', handleToggleDoc);
     window.addEventListener('show-disposition-form', handleShowDisposition);
+    window.addEventListener('show-wrapup-form', handleShowWrapUp);
     window.addEventListener('sidebar-lock-change', handleSidebarLock);
     window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
     window.addEventListener('keydown', handleKeyDown);
@@ -280,6 +284,7 @@ function LayoutContent({ children, currentPageName }) {
       window.removeEventListener('toggle-phone', handleTogglePhone);
       window.removeEventListener('toggle-doc', handleToggleDoc);
       window.removeEventListener('show-disposition-form', handleShowDisposition);
+      window.removeEventListener('show-wrapup-form', handleShowWrapUp);
       window.removeEventListener('sidebar-lock-change', handleSidebarLock);
       window.removeEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
       window.removeEventListener('keydown', handleKeyDown);
@@ -397,6 +402,7 @@ function LayoutContent({ children, currentPageName }) {
       <ErrorBoundary><BackgroundCustomizer isOpen={showBackgroundCustomizer} onClose={() => setShowBackgroundCustomizer(false)} /></ErrorBoundary>
       <ErrorBoundary><AIAssistantOrb /></ErrorBoundary>
       <ErrorBoundary><DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} /></ErrorBoundary>
+      <ErrorBoundary><CallWrapUp isOpen={!!wrapUpData} onClose={() => setWrapUpData(null)} callData={wrapUpData} user={user} /></ErrorBoundary>
       <ErrorBoundary><DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} /></ErrorBoundary>
       <ErrorBoundary><PersistentCallPanel /></ErrorBoundary>
 

@@ -118,22 +118,22 @@ export default function CasePage() {
   // ─── Queries ────────────────────────────────────────────────────────────────
   const { data: caseData, isLoading: caseLoading } = useQuery({
     queryKey: ['case', caseId],
-    queryFn: async () => { const r = await base44.entities.Case.filter({ id: caseId }); return r[0]; },
+    queryFn: async () => { return await base44.entities.Case.get(caseId); },
     enabled: !!caseId
   });
   const { data: customer } = useQuery({
     queryKey: ['case-customer', caseData?.customer_id],
-    queryFn: async () => { const r = await base44.entities.Customer.filter({ id: caseData.customer_id }); return r[0]; },
+    queryFn: async () => { return await base44.entities.Customer.get(caseData.customer_id); },
     enabled: !!caseData?.customer_id
   });
   const { data: employer } = useQuery({
     queryKey: ['customer-employer', customer?.company_id],
-    queryFn: async () => { const r = await base44.entities.Employer.filter({ id: customer.company_id }); return r[0]; },
+    queryFn: async () => { return await base44.entities.Employer.get(customer.company_id); },
     enabled: !!customer?.company_id
   });
   const { data: client } = useQuery({
     queryKey: ['customer-client', customer?.client_id],
-    queryFn: async () => { const r = await base44.entities.Company.filter({ id: customer.client_id }); return r[0]; },
+    queryFn: async () => { return await base44.entities.Company.get(customer.client_id); },
     enabled: !!customer?.client_id
   });
   const { data: customers = [] } = useQuery({ queryKey: ['customers-list'], queryFn: () => base44.entities.Customer.list('-updated_date', 100) });

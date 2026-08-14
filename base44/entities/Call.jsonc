@@ -6,6 +6,10 @@
       "type": "string",
       "description": "Reference to case"
     },
+    "customer_id": {
+      "type": "string",
+      "description": "Reference to customer profile (member)"
+    },
     "customer_phone": {
       "type": "string",
       "description": "Phone number called"
@@ -37,6 +41,14 @@
       "type": "string",
       "description": "Call notes"
     },
+    "call_category": {
+      "type": "string",
+      "description": "Panel 1 classification: medical, dental, vision, ben_admin, system_issue, etc."
+    },
+    "call_qualifier": {
+      "type": "string",
+      "description": "Panel 2 qualifier: how_to, what_is, billing, claims, enrollment, etc."
+    },
     "recording_url": {
       "type": "string",
       "description": "URL to call recording"
@@ -53,7 +65,6 @@
     }
   },
   "required": [
-    "case_id",
     "customer_phone",
     "direction"
   ]

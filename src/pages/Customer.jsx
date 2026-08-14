@@ -127,6 +127,11 @@ export default function CustomerPage() {
           }
         }
       }
+      // Also include calls linked directly to this customer via customer_id
+      const directCalls = await base44.entities.Call.filter({ customer_id: customerId }, '-created_date', 200);
+      for (const call of directCalls) {
+        if (!seen.has(call.id)) { seen.add(call.id); results.push(call); }
+      }
       return results.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
     enabled: !!customer,
@@ -1249,6 +1254,20 @@ export default function CustomerPage() {
                               {call.customer_phone}
                               {call.duration && ` · ${Math.floor(call.duration / 60)}m ${call.duration % 60}s`}
                             </a>
+                            {(call.call_category || call.call_qualifier) && (
+                              <div className="flex gap-1.5 mt-2 flex-wrap">
+                                {call.call_category && (
+                                  <Badge className="border-0 text-xs px-2 py-0.5" style={{ background: '#3B82F620', color: '#3B82F6' }}>
+                                    {call.call_category}
+                                  </Badge>
+                                )}
+                                {call.call_qualifier && (
+                                  <Badge className="border-0 text-xs px-2 py-0.5" style={{ background: '#8B5CF620', color: '#8B5CF6' }}>
+                                    {call.call_qualifier}
+                                  </Badge>
+                                )}
+                              </div>
+                            )}
                             {call.notes && (
                               <p className="text-sm p-2 rounded-xl mt-2" style={{
                                 ...getInsetStyle(),

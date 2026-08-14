@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Phone, PhoneOff, Mic, MicOff, StickyNote, PhoneIncoming, X } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff, StickyNote, PhoneIncoming, X, ClipboardCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/ThemeProvider';
 
@@ -240,6 +240,12 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
                         style={{ background: notesOpen ? '#fff' : 'rgba(255,255,255,0.14)', color: notesOpen ? '#059669' : '#fff' }}
                         title="Call notes">
                   <StickyNote className="w-3.5 h-3.5" /> Notes
+                </button>
+                <button onClick={() => window.dispatchEvent(new CustomEvent('show-wrapup-form', { detail: { ...(activeCall || {}), call_notes: notesRef.current, completion_time_seconds: elapsed } }))}
+                        className="px-3 h-9 rounded-full text-xs font-semibold text-white flex items-center gap-1.5 transition-all hover:brightness-110"
+                        style={{ background: 'rgba(139,92,246,0.5)', border: '1px solid rgba(139,92,246,0.6)' }}
+                        title="Open wrap-up screen during call">
+                  <ClipboardCheck className="w-3.5 h-3.5" /> Wrap-Up
                 </button>
                 <button onClick={handleEnd}
                         className="px-3 h-9 rounded-full text-xs font-semibold text-white flex items-center gap-1.5 hover:brightness-110"
