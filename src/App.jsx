@@ -13,7 +13,6 @@ import { IntentBusProvider } from '@/services/intentBus/IntentBusContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Core from './pages/Core';
 import DOC from './pages/DOC';
-import CallQueueDemo from './pages/CallQueueDemo';
 import Concensus from './pages/Concensus';
 import ConcensusProvider from '@/concensus/ConcensusProvider';
 import AuthLink from './pages/AuthLink';
@@ -73,7 +72,6 @@ const AuthenticatedApp = () => {
       ))}
       <Route path="/Core" element={<LayoutWrapper currentPageName="Core"><Core /></LayoutWrapper>} />
       <Route path="/DOC" element={<LayoutWrapper currentPageName="DOC"><DOC /></LayoutWrapper>} />
-      <Route path="/CallQueueDemo" element={<CallQueueDemo />} />
       <Route path="/Concensus" element={<LayoutWrapper currentPageName="Concensus"><Concensus /></LayoutWrapper>} />
       <Route path="/AuthLink" element={<LayoutWrapper currentPageName="AuthLink"><AuthLink /></LayoutWrapper>} />
       <Route path="/AuthLink/Member/:id" element={<AuthLinkMember />} />
