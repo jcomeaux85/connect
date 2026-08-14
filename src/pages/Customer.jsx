@@ -41,6 +41,8 @@ import { useTheme } from "@/components/ThemeProvider";
 import PDFViewer from "@/components/PDFViewer";
 import EmailComposerModal from "@/components/email/EmailComposerModal";
 import CustomerProviderMap from "@/components/customer/CustomerProviderMap";
+import CustomerHeader from "@/components/customer/CustomerHeader";
+import CarrierLogoBar from "@/components/customer/CarrierLogoBar";
 
 
 export default function CustomerPage() {
@@ -340,13 +342,14 @@ export default function CustomerPage() {
   }
 
   const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
-  const isVIP = customer.is_vip || false;
+  const isPersonOfInterest = customer.is_vip || false;
+  const goldRimStyle = isPersonOfInterest ? { border: '1px solid rgba(245, 158, 11, 0.25)' } : {};
 
   return (
     <div className="p-4 md:p-6 min-h-screen" style={{ background: colors.bg }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-4">
           <Link to={createPageUrl("Customers")}>
             <Button
               variant="ghost"
@@ -358,126 +361,25 @@ export default function CustomerPage() {
             </Button>
           </Link>
 
-          {/* Header with Company Logo Background */}
-          <div 
-            className="relative rounded-2xl overflow-hidden mb-6 p-8"
-            style={{
-              background: customerEmployerEntity?.company_logo_url 
-                ? `linear-gradient(to bottom, ${colors.bg}dd, ${colors.bg}f5), url(${customerEmployerEntity.company_logo_url})`
-                : colors.bg,
-              backgroundSize: 'contain',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
-            }}
-          >
-            {/* Customer Info - Centered */}
-            <div className="flex flex-col items-center text-center w-full relative z-10">
-              <div className="flex items-center justify-center gap-3 mb-2 flex-wrap">
-                <h1 className="text-3xl font-bold" style={{ color: colors.text }}>
-                  {fullName}
-                </h1>
-                {isVIP && (
-                  <Badge
-                    className="border-0 text-xs px-3 py-1 rounded-full"
-                    style={{
-                      backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68fa7c4cb70fe91d38015eba/381316158_image.png)',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      color: '#000000',
-                      fontWeight: '700',
-                      boxShadow: '0 0 15px rgba(245, 158, 11, 0.5), 4px 4px 8px rgba(180, 83, 9, 0.4)'
-                    }}
-                  >
-                    <Star className="w-3 h-3 mr-1 fill-yellow-900" />
-                    VIP
-                  </Badge>
-                )}
-                {customer.escalation_flag && (
-                  <Badge
-                    className="border-0 text-xs px-3 py-1 rounded-full animate-pulse"
-                    style={{
-                      background: 'linear-gradient(145deg, #fee2e2, #fecaca)',
-                      color: '#dc2626',
-                      boxShadow: '2px 2px 4px #a3b1c6, -2px -2px 4px #ffffff'
-                    }}
-                  >
-                    <AlertCircle className="w-3 h-3 mr-1" />
-                    ESCALATION
-                  </Badge>
-                )}
-              </div>
-              <p className="text-sm mb-3" style={{ color: colors.textSecondary }}>
-                {customer.job_title || 'No job title'} at {employers.find(e => e.id === customer.company_id)?.employer_name || 'Unknown Company'}
-              </p>
+          <CustomerHeader
+            customer={customer}
+            employerEntity={customerEmployerEntity}
+            employerName={employers.find(e => e.id === customer.company_id)?.employer_name}
+            isPersonOfInterest={isPersonOfInterest}
+            isEditing={isEditing}
+            onCall={handleCallClick}
+            onSMS={handleSMSClick}
+            onEmail={handleEmailClick}
+            onToggleEscalation={handleToggleEscalation}
+            onEdit={() => setIsEditing(true)}
+            colors={colors}
+            getButtonStyle={getButtonStyle}
+          />
 
-              <div className="flex gap-2 flex-wrap justify-center">
-                {customer.primary_phone && (
-                  <Button
-                    onClick={handleCallClick}
-                    disabled={createCaseMutation.isPending}
-                    className="rounded-2xl h-10 px-4 border-0 font-medium flex items-center gap-2"
-                    style={isVIP ? {
-                      ...getButtonStyle(),
-                      border: '5px solid #F59E0B',
-                      color: '#000000',
-                      fontWeight: '600'
-                    } : {
-                      ...getButtonStyle(),
-                      color: '#10b981'
-                    }}
-                  >
-                    <Phone className="w-4 h-4" />
-                    {isVIP ? <span>✨ Call VIP</span> : 'Call'}
-                  </Button>
-                )}
-                {customer.primary_phone && (
-                  <Button
-                    onClick={handleSMSClick}
-                    disabled={createCaseMutation.isPending}
-                    className="rounded-2xl h-10 px-4 border-0"
-                    style={{
-                      ...getButtonStyle(),
-                      color: '#3b82f6'
-                    }}
-                  >
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    SMS
-                  </Button>
-                )}
-                <Button
-                  onClick={handleEmailClick}
-                  className="rounded-2xl h-10 px-4 border-0"
-                  style={getButtonStyle()}
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Email
-                </Button>
-                <Button
-                  onClick={handleToggleEscalation}
-                  className="rounded-2xl h-10 px-4 border-0"
-                  style={{
-                    ...getButtonStyle(),
-                    background: customer.escalation_flag ? 'linear-gradient(145deg, #fee2e2, #fecaca)' : colors.bg,
-                    color: customer.escalation_flag ? '#dc2626' : colors.textSecondary
-                  }}
-                >
-                  <AlertCircle className="w-4 h-4 mr-2" />
-                  {customer.escalation_flag ? 'Remove Escalation' : 'Mark for Escalation'}
-                </Button>
-                {!isEditing && (
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    className="rounded-2xl h-10 px-4 border-0"
-                    style={getButtonStyle()}
-                  >
-                    <Edit3 className="w-4 h-4 mr-2" />
-                    Edit
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
+          <CarrierLogoBar
+            company={customerClientCompanyEntity}
+            colors={colors}
+          />
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
@@ -504,7 +406,8 @@ export default function CustomerPage() {
                   className="border-0"
                   style={{
                     background: colors.bg,
-                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`,
+                    ...goldRimStyle
                   }}
                 >
                   <CardHeader>
@@ -557,21 +460,22 @@ export default function CustomerPage() {
                         )}
                       </div>
 
-                      <div className="md:col-span-2">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={isEditing ? editedCustomer.is_vip : customer.is_vip}
-                            onChange={(e) => isEditing && setEditedCustomer({...editedCustomer, is_vip: e.target.checked})}
-                            disabled={!isEditing}
-                            className="w-5 h-5 rounded border-2 border-gray-300"
-                          />
-                          <span className="text-sm font-medium flex items-center gap-2" style={{ color: customer.is_vip ? '#F59E0B' : colors.textSecondary }}>
-                            <Star className={`w-4 h-4 ${customer.is_vip ? 'fill-yellow-500 text-yellow-500' : ''}`} />
-                            VIP / Person of Interest (shows gold call interface)
-                          </span>
-                        </label>
-                      </div>
+                      {isEditing && (
+                        <div className="md:col-span-2">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={editedCustomer.is_vip || false}
+                              onChange={(e) => setEditedCustomer({...editedCustomer, is_vip: e.target.checked})}
+                              className="w-5 h-5 rounded border-2 border-gray-300"
+                            />
+                            <span className="text-sm font-medium flex items-center gap-2" style={{ color: colors.textSecondary }}>
+                              <Star className="w-4 h-4" />
+                              Person of Interest
+                            </span>
+                          </label>
+                        </div>
+                      )}
 
                       <div>
                         <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
@@ -619,7 +523,8 @@ export default function CustomerPage() {
                   className="border-0"
                   style={{
                     background: colors.bg,
-                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`,
+                    ...goldRimStyle
                   }}
                 >
                   <CardHeader>
@@ -819,7 +724,8 @@ export default function CustomerPage() {
                   className="border-0"
                   style={{
                     background: colors.bg,
-                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`,
+                    ...goldRimStyle
                   }}
                 >
                   <CardHeader>
@@ -1028,7 +934,8 @@ export default function CustomerPage() {
                   className="border-0"
                   style={{
                     background: colors.bg,
-                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`,
+                    ...goldRimStyle
                   }}
                 >
                   <CardHeader>
@@ -1066,407 +973,6 @@ export default function CustomerPage() {
                   clientCompany={customerClientCompanyEntity}
                   employer={customerEmployerEntity}
                 />
-
-                {/* Employment Information */}
-                <Card
-                  className="border-0"
-                  style={{
-                    background: colors.cardBg,
-                    boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-                  }}
-                >
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
-                      <Briefcase className="w-5 h-5" />
-                      Employment Information
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid gap-4">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
-                          Employer
-                        </label>
-                        <div className="flex gap-2 flex-col">
-                          {isEditing ? (
-                            <select
-                              value={editedCustomer.company_id || ''}
-                              onChange={(e) => setEditedCustomer({...editedCustomer, company_id: e.target.value})}
-                              className="rounded-2xl border-0 h-10 px-3"
-                              style={{
-                                ...getInsetStyle(),
-                                color: colors.text
-                              }}
-                            >
-                              <option value="">Select Company...</option>
-                              {employers.map(emp => (
-                                <option key={emp.id} value={emp.id}>
-                                  {emp.employer_name}
-                                </option>
-                              ))}
-                            </select>
-                          ) : (
-                            <>
-                              <p className="font-medium" style={{ color: colors.text }}>
-                                {employers.find(e => e.id === customer.company_id)?.employer_name || 'N/A'}
-                              </p>
-                              {customerEmployerEntity?.benefit_guide_url && (
-                                <button
-                                  onClick={() => {
-                                    setPdfViewerUrl(customerEmployerEntity.benefit_guide_url);
-                                    setPdfViewerTitle(`${customerEmployerEntity.employer_name} - Benefit Guide`);
-                                    setShowPDFViewer(true);
-                                  }}
-                                  className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm justify-center"
-                                  style={{
-                                    ...getButtonStyle(),
-                                    color: '#3B82F6'
-                                  }}
-                                >
-                                  <FileText className="w-4 h-4" />
-                                  Benefit Guide
-                                </button>
-                              )}
-                              {customerEmployerEntity?.portal_link_1_url && (
-                                <a
-                                  href={customerEmployerEntity.portal_link_1_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm justify-center"
-                                  style={{
-                                    ...getButtonStyle(),
-                                    color: '#10B981'
-                                  }}
-                                >
-                                  {customerEmployerEntity.portal_link_1_label || 'Portal 1'}
-                                </a>
-                              )}
-                              {customerEmployerEntity?.portal_link_2_url && (
-                                <a
-                                  href={customerEmployerEntity.portal_link_2_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="rounded-2xl h-10 px-4 border-0 inline-flex items-center gap-2 font-medium text-sm justify-center"
-                                  style={{
-                                    ...getButtonStyle(),
-                                    color: '#8B5CF6'
-                                  }}
-                                >
-                                  {customerEmployerEntity.portal_link_2_label || 'Portal 2'}
-                                </a>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
-                          Client
-                        </label>
-                        {isEditing ? (
-                          <select
-                            value={editedCustomer.client_id || ''}
-                            onChange={(e) => setEditedCustomer({...editedCustomer, client_id: e.target.value})}
-                            className="w-full rounded-2xl border-0 h-10 px-3"
-                            style={{
-                              ...getInsetStyle(),
-                              color: colors.text
-                            }}
-                          >
-                            <option value="">Select Client...</option>
-                            {companies.map(comp => (
-                              <option key={comp.id} value={comp.id}>
-                                {comp.company_name}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <p className="font-medium" style={{ color: colors.text }}>
-                            {customerClientCompanyEntity?.company_name || 'N/A'}
-                          </p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
-                          Job Title
-                        </label>
-                        {isEditing ? (
-                          <Input
-                            value={editedCustomer.job_title || ''}
-                            onChange={(e) => setEditedCustomer({...editedCustomer, job_title: e.target.value})}
-                            className="rounded-2xl border-0 h-10"
-                            style={{
-                              ...getInsetStyle(),
-                              color: colors.text
-                            }}
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: colors.text }}>
-                            {customer.job_title || 'N/A'}
-                          </p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
-                          Employee ID
-                        </label>
-                        {isEditing ? (
-                          <Input
-                            value={editedCustomer.employee_id || ''}
-                            onChange={(e) => setEditedCustomer({...editedCustomer, employee_id: e.target.value})}
-                            className="rounded-2xl border-0 h-10"
-                            style={{
-                              ...getInsetStyle(),
-                              color: colors.text
-                            }}
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: colors.text }}>
-                            {customer.employee_id || 'N/A'}
-                          </p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
-                          Hire Date
-                        </label>
-                        {isEditing ? (
-                          <Input
-                            type="date"
-                            value={editedCustomer.hire_date || ''}
-                            onChange={(e) => setEditedCustomer({...editedCustomer, hire_date: e.target.value})}
-                            className="rounded-2xl border-0 h-10"
-                            style={{
-                              ...getInsetStyle(),
-                              color: colors.text
-                            }}
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: colors.text }}>
-                            {formatDateDisplay(customer.hire_date)}
-                          </p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
-                          Time Employed
-                        </label>
-                        <p className="font-medium" style={{ color: colors.text }}>
-                          {calculateTimeEmployed(customer.hire_date)}
-                        </p>
-                      </div>
-
-                      <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
-                          Member ID
-                        </label>
-                        {isEditing ? (
-                          <Input
-                            value={editedCustomer.member_id || ''}
-                            onChange={(e) => setEditedCustomer({...editedCustomer, member_id: e.target.value})}
-                            className="rounded-2xl border-0 h-10"
-                            style={{
-                              ...getInsetStyle(),
-                              color: colors.text
-                            }}
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: colors.text }}>
-                            {customer.member_id || 'N/A'}
-                          </p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
-                          Group Number
-                        </label>
-                        {isEditing ? (
-                          <Input
-                            value={editedCustomer.group_number || ''}
-                            onChange={(e) => setEditedCustomer({...editedCustomer, group_number: e.target.value})}
-                            className="rounded-2xl border-0 h-10"
-                            style={{
-                              ...getInsetStyle(),
-                              color: colors.text
-                            }}
-                          />
-                        ) : (
-                          <p className="font-medium" style={{ color: colors.text }}>
-                            {customer.group_number || 'N/A'}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Carrier Information */}
-                <Card
-                  className="border-0"
-                  style={{
-                    background: colors.cardBg,
-                    boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
-                  }}
-                >
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
-                      <Building2 className="w-5 h-5" />
-                      Carrier Phone Numbers
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {!customerClientCompanyEntity ? (
-                      <div className="text-center py-8">
-                        <p className="text-sm" style={{ color: colors.textSecondary }}>
-                          No company selected
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {customerClientCompanyEntity.carrier_dental_name && (
-                          <div
-                            className="p-3 rounded-2xl"
-                            style={{
-                              ...getInsetStyle(),
-                              background: colors.cardBg
-                            }}
-                          >
-                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
-                              Dental
-                            </p>
-                            <p className="font-bold mb-1" style={{ color: colors.text }}>
-                              {customerClientCompanyEntity.carrier_dental_name}
-                            </p>
-                            <a
-                              href={`tel:${customerClientCompanyEntity.carrier_dental_phone}`}
-                              className="text-sm font-medium hover:underline inline-flex items-center gap-1 transition-all"
-                              style={{ color: '#3B82F6' }}
-                            >
-                              <Phone className="w-3 h-3" />
-                              {customerClientCompanyEntity.carrier_dental_phone}
-                            </a>
-                          </div>
-                        )}
-
-                        {customerClientCompanyEntity.carrier_medical_name && (
-                          <div
-                            className="p-3 rounded-2xl"
-                            style={{
-                              ...getInsetStyle(),
-                              background: colors.cardBg
-                            }}
-                          >
-                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
-                              Medical
-                            </p>
-                            <p className="font-bold mb-1" style={{ color: colors.text }}>
-                              {customerClientCompanyEntity.carrier_medical_name}
-                            </p>
-                            <a
-                              href={`tel:${customerClientCompanyEntity.carrier_medical_phone}`}
-                              className="text-sm font-medium hover:underline inline-flex items-center gap-1 transition-all"
-                              style={{ color: '#3B82F6' }}
-                            >
-                              <Phone className="w-3 h-3" />
-                              {customerClientCompanyEntity.carrier_medical_phone}
-                            </a>
-                          </div>
-                        )}
-
-                        {customerClientCompanyEntity.carrier_vision_name && (
-                          <div
-                            className="p-3 rounded-2xl"
-                            style={{
-                              ...getInsetStyle(),
-                              background: colors.cardBg
-                            }}
-                          >
-                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
-                              Vision
-                            </p>
-                            <p className="font-bold mb-1" style={{ color: colors.text }}>
-                              {customerClientCompanyEntity.carrier_vision_name}
-                            </p>
-                            <a
-                              href={`tel:${customerClientCompanyEntity.carrier_vision_phone}`}
-                              className="text-sm font-medium hover:underline inline-flex items-center gap-1 transition-all"
-                              style={{ color: '#3B82F6' }}
-                            >
-                              <Phone className="w-3 h-3" />
-                              {customerClientCompanyEntity.carrier_vision_phone}
-                            </a>
-                          </div>
-                        )}
-
-                        {customerClientCompanyEntity.carrier_life_name && (
-                          <div
-                            className="p-3 rounded-2xl"
-                            style={{
-                              ...getInsetStyle(),
-                              background: colors.cardBg
-                            }}
-                          >
-                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
-                              Life
-                            </p>
-                            <p className="font-bold mb-1" style={{ color: colors.text }}>
-                              {customerClientCompanyEntity.carrier_life_name}
-                            </p>
-                            <a
-                              href={`tel:${customerClientCompanyEntity.carrier_life_phone}`}
-                              className="text-sm font-medium hover:underline inline-flex items-center gap-1 transition-all"
-                              style={{ color: '#3B82F6' }}
-                            >
-                              <Phone className="w-3 h-3" />
-                              {customerClientCompanyEntity.carrier_life_phone}
-                            </a>
-                          </div>
-                        )}
-
-                        {customerClientCompanyEntity.carrier_disability_name && (
-                          <div
-                            className="p-3 rounded-2xl"
-                            style={{
-                              ...getInsetStyle(),
-                              background: colors.cardBg
-                            }}
-                          >
-                            <p className="text-xs font-semibold mb-1" style={{ color: colors.textSecondary }}>
-                              Disability
-                            </p>
-                            <p className="font-bold mb-1" style={{ color: colors.text }}>
-                              {customerClientCompanyEntity.carrier_disability_name}
-                            </p>
-                            <a
-                              href={`tel:${customerClientCompanyEntity.carrier_disability_phone}`}
-                              className="text-sm font-medium hover:underline inline-flex items-center gap-1 transition-all"
-                              style={{ color: '#3B82F6' }}
-                            >
-                              <Phone className="w-3 h-3" />
-                              {customerClientCompanyEntity.carrier_disability_phone}
-                            </a>
-                          </div>
-                        )}
-
-                        {!customerClientCompanyEntity.carrier_dental_name && !customerClientCompanyEntity.carrier_medical_name &&
-                         !customerClientCompanyEntity.carrier_vision_name && !customerClientCompanyEntity.carrier_life_name &&
-                         !customerClientCompanyEntity.carrier_disability_name && (
-                          <div className="text-center py-8">
-                            <p className="text-sm" style={{ color: colors.textSecondary }}>
-                              No carrier information available
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
               </div>
             </div>
           </TabsContent>
