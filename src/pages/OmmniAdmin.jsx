@@ -250,13 +250,12 @@ function RuleCard({ rule, colors, getButtonStyle, getInsetStyle, onToggle, onDel
         <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
           <button
             onClick={onEdit}
-            disabled={isTraining}
             style={{
               width: '30px',
               height: '30px',
               borderRadius: '8px',
               border: 'none',
-              cursor: isTraining ? 'not-allowed' : 'pointer',
+              cursor: 'pointer',
               background: 'transparent',
               color: colors.textSecondary,
               display: 'flex',
