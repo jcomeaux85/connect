@@ -119,7 +119,7 @@ const APPS = [
     label: "DOC",
     renderIcon: (size) => (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
-        <img src={DOC_ICON} alt="DOC" style={{ width: size * 0.52, height: size * 0.52, objectFit: "contain", pointerEvents: "none" }} />
+        <img src={DOC_ICON} alt="DOC" style={{ width: size * 0.9, height: size * 0.5, objectFit: "contain", pointerEvents: "none" }} />
         {aleraSub(size, "#ef4444")}
       </div>
     ),
