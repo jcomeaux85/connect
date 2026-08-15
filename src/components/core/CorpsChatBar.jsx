@@ -37,7 +37,7 @@ export default function CorpsChatBar() {
     const el = inputRef.current;
     if (!el) return;
     el.style.height = 'auto';
-    el.style.height = Math.max(el.scrollHeight, 56) + 'px';
+    el.style.height = Math.max(el.scrollHeight, 24) + 'px';
   };
 
   useEffect(() => { autosize(); }, [prompt]);
@@ -112,11 +112,11 @@ export default function CorpsChatBar() {
           </div>
         )}
 
-        {/* Single prompt input — large, like ChatGPT/Gemini/Grok */}
-        <div className="px-6 py-5" style={{ background: '#ffffff' }}>
-          <div className="flex items-end gap-4">
-            <div className="flex-shrink-0 mb-2 flex items-center justify-center w-9 h-9 rounded-full" style={{ background: '#ecfdf5' }}>
-              <Sparkles className="w-5 h-5" style={{ color: '#28a745' }} />
+        {/* Single prompt input — thin bar, like ChatGPT/Gemini/Grok */}
+        <div className="px-6 py-3.5" style={{ background: '#ffffff' }}>
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full" style={{ background: '#ecfdf5' }}>
+              <Sparkles className="w-4 h-4" style={{ color: '#28a745' }} />
             </div>
             <div className="flex-1 relative">
               <textarea
@@ -133,17 +133,19 @@ export default function CorpsChatBar() {
                 placeholder=""
                 rows={1}
                 className="w-full bg-transparent border-none outline-none resize-none text-base font-medium leading-relaxed"
-                style={{ color: '#1a2e1a', caretColor: '#28a745', minHeight: '56px' }}
+                style={{ color: '#1a2e1a', caretColor: '#28a745', minHeight: '24px' }}
               />
-              {/* Placeholder overlay */}
+              {/* Placeholder overlay — single line, truncated */}
               {!prompt && (
                 <div
                   ref={overlayRef}
-                  className="absolute top-0 left-0 right-0 pointer-events-none text-base font-medium leading-relaxed"
+                  className="absolute top-0 left-0 right-0 pointer-events-none text-base font-medium leading-relaxed flex items-center"
                   style={{
                     color: '#9aa0a6',
-                    whiteSpace: 'pre-wrap',
+                    whiteSpace: 'nowrap',
                     overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    height: '24px',
                   }}
                 >
                   {ROTATING_PROMPTS[phIndex]}
@@ -153,7 +155,7 @@ export default function CorpsChatBar() {
             {expanded && (
               <button
                 onClick={handleClose}
-                className="p-2 rounded-lg transition-colors hover:bg-gray-100 flex-shrink-0 mb-1.5"
+                className="p-1.5 rounded-lg transition-colors hover:bg-gray-100 flex-shrink-0"
                 style={{ color: '#9ca3af' }}
                 title="Clear"
               >
@@ -164,7 +166,7 @@ export default function CorpsChatBar() {
             <button
               onClick={handleSubmit}
               disabled={loading || !prompt.trim()}
-              className="flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 mb-1 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
+              className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
               style={{
                 background: prompt.trim() ? '#28a745' : '#d1d5db',
                 color: '#ffffff',
@@ -172,7 +174,7 @@ export default function CorpsChatBar() {
               }}
               title="Ask MAJOR"
             >
-              <ArrowUp className="w-5 h-5" strokeWidth={2.5} />
+              <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
             </button>
           </div>
         </div>
