@@ -53,7 +53,7 @@ export default function CoreRequests() {
         <button
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-5 py-2.5 text-white rounded-full text-sm font-semibold shadow-md hover:scale-105 transition-transform"
-          style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
+          style={{ background: 'linear-gradient(135deg, #22C55E, #16A34A)' }}
         >
           <Plus className="w-4 h-4" />
           New Request
@@ -135,7 +135,7 @@ export default function CoreRequests() {
               onClick={() => createMutation.mutate({ employee_email: user?.email, request_type: form.request_type, start_date: form.start_date, end_date: form.end_date, notes: form.notes, status: 'pending' })}
               disabled={!form.start_date || !form.end_date}
               className="flex-1 py-3 text-white rounded-xl text-sm font-semibold disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
+              style={{ background: 'linear-gradient(135deg, #22C55E, #16A34A)' }}
             >
               Submit Request
             </button>

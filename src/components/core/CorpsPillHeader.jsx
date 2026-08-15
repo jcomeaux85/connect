@@ -14,13 +14,15 @@ const navItems = [
   { id: 'team', label: 'Team', icon: Users },
 ];
 
-// Fixed green glass — CORPS accent (sidebar never recolors with theme)
-const PANEL_BG = 'linear-gradient(160deg, rgba(16,64,40,0.97) 0%, rgba(12,50,32,0.99) 60%, rgba(8,40,24,1) 100%)';
+// Translucent green glass — CORPS accent with real backdrop blur
+const PANEL_BG = 'linear-gradient(160deg, rgba(22,80,50,0.55) 0%, rgba(16,60,38,0.62) 60%, rgba(10,45,28,0.7) 100%)';
 
 const container = {
   background: PANEL_BG,
-  border: '1px solid rgba(34,197,94,0.25)',
-  boxShadow: '4px 0 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)',
+  backdropFilter: 'blur(20px) saturate(160%)',
+  WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+  border: '1px solid rgba(134,239,172,0.22)',
+  boxShadow: '0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(0,0,0,0.2)',
 };
 // Inactive button — same as sidebar nav buttons
 const raised = {
