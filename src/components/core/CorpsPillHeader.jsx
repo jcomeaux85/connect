@@ -14,12 +14,12 @@ const navItems = [
   { id: 'team', label: 'Team', icon: Users },
 ];
 
-// Fixed purple glass — identical to the sidebar PANEL_BG in BOTH modes (sidebar never recolors with theme)
-const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)';
+// Fixed green glass — CORPS accent (sidebar never recolors with theme)
+const PANEL_BG = 'linear-gradient(160deg, rgba(16,64,40,0.97) 0%, rgba(12,50,32,0.99) 60%, rgba(8,40,24,1) 100%)';
 
 const container = {
   background: PANEL_BG,
-  border: '1px solid rgba(255,255,255,0.13)',
+  border: '1px solid rgba(34,197,94,0.25)',
   boxShadow: '4px 0 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)',
 };
 // Inactive button — same as sidebar nav buttons
@@ -28,11 +28,11 @@ const raised = {
   border: '1px solid rgba(255,255,255,0.10)',
   boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 4px rgba(0,0,0,0.25)',
 };
-// Active button — same as sidebar active state
+// Active button — CORPS green accent
 const pressed = {
-  background: 'linear-gradient(135deg, rgba(124,58,237,0.55) 0%, rgba(109,40,217,0.45) 100%)',
-  border: '1px solid rgba(167,139,250,0.4)',
-  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 1px rgba(167,139,250,0.35), 0 2px 8px rgba(0,0,0,0.3)',
+  background: 'linear-gradient(135deg, rgba(34,197,94,0.55) 0%, rgba(22,163,74,0.45) 100%)',
+  border: '1px solid rgba(134,239,172,0.4)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 1px rgba(134,239,172,0.35), 0 2px 8px rgba(0,0,0,0.3)',
 };
 // Search well — inset glass
 const pill = {
@@ -85,7 +85,7 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
             onBlur={() => setFocused(false)}
             placeholder="Search..."
             className="bg-transparent border-none outline-none text-sm w-full"
-            style={{ color: 'rgba(255,255,255,0.9)', caretColor: '#a78bfa' }}
+            style={{ color: 'rgba(255,255,255,0.9)', caretColor: '#22C55E' }}
           />
         </div>
 
@@ -103,9 +103,9 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
               >
                 <Icon
                   className="w-4 h-4 flex-shrink-0"
-                  style={{ color: isActive ? '#c4b5fd' : 'rgba(255,255,255,0.7)' }}
+                  style={{ color: isActive ? '#86efac' : 'rgba(255,255,255,0.7)' }}
                 />
-                <span className="truncate" style={{ color: isActive ? '#e9d5ff' : 'rgba(255,255,255,0.85)' }}>{label}</span>
+                <span className="truncate" style={{ color: isActive ? '#bbf7d0' : 'rgba(255,255,255,0.85)' }}>{label}</span>
               </button>
             );
           })}

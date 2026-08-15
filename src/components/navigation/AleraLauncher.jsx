@@ -102,15 +102,15 @@ const APPS = [
               fontFamily: "'Barlow Condensed', sans-serif",
               fontWeight: 700,
               fontSize: size * 0.32,
-              color: "#3b82f6",
+              color: "#22C55E",
               letterSpacing: "0.02em",
-              textShadow: "0 0 10px rgba(59,130,246,0.55), 0 2px 4px rgba(0,0,0,0.5)",
+              textShadow: "0 0 10px rgba(34,197,94,0.55), 0 2px 4px rgba(0,0,0,0.5)",
             }}
           >
             //
           </span>
         </div>
-        {aleraSub(size, "#3b82f6", { font: "'Barlow Condensed', sans-serif", weight: 600 })}
+        {aleraSub(size, "#22C55E", { font: "'Barlow Condensed', sans-serif", weight: 600 })}
       </div>
     ),
   },
