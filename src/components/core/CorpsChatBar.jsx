@@ -29,7 +29,7 @@ export default function CorpsChatBar() {
     setPrompt('');
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are the CORPS// assistant — a concise, helpful AI for payroll, timecards, scheduling, HR, and benefits operations. Answer clearly and briefly.\n\nUser: ${trimmed}`,
+        prompt: `You are MAJOR — the CORPS// assistant, a concise, helpful AI for payroll, timecards, scheduling, HR, and benefits operations. Answer clearly and briefly.\n\nUser: ${trimmed}`,
       });
       const out = typeof res === 'string' ? res : (res?.text || res?.response || JSON.stringify(res));
       setConversation(prev => [...prev, { role: 'assistant', text: out }]);
@@ -105,7 +105,7 @@ export default function CorpsChatBar() {
                 }
               }}
               onFocus={() => setExpanded(true)}
-              placeholder="Ask CORPS AI anything — payroll, timecards, schedules, benefits…"
+              placeholder="Ask MAJOR anything — payroll, timecards, schedules, benefits…"
               rows={1}
               className="flex-1 bg-transparent border-none outline-none resize-none text-sm font-medium leading-relaxed"
               style={{ color: '#1a2e1a', caretColor: '#28a745', minHeight: '24px' }}
@@ -133,7 +133,7 @@ export default function CorpsChatBar() {
               }}
             >
               <Send className="w-3.5 h-3.5" />
-              Chat with AI
+              Ask MAJOR
             </button>
           </div>
         </div>
