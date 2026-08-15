@@ -10,6 +10,14 @@
       "type": "string",
       "description": "URL to the company logo image"
     },
+    "header_bg_color": {
+      "type": "string",
+      "description": "Background color (hex) for the customer profile header container (the top bar with Call/SMS/Email buttons). Overrides the platform default when set."
+    },
+    "main_bg_image_url": {
+      "type": "string",
+      "description": "URL to a background image applied to the main body of the customer profile page for this employer's employees."
+    },
     "dot_color_primary": {
       "type": "string",
       "description": "Primary dot color for call timeline (hex, e.g. #ef4444)"

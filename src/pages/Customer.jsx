@@ -348,7 +348,19 @@ export default function CustomerPage() {
   const goldRimStyle = isPersonOfInterest ? { border: '1px solid rgba(245, 158, 11, 0.25)' } : {};
 
   return (
-    <div className="p-4 md:p-6 min-h-screen" style={{ background: colors.bg }}>
+    <div
+      className="p-4 md:p-6 min-h-screen"
+      style={
+        customerEmployerEntity?.main_bg_image_url
+          ? {
+              backgroundImage: `linear-gradient(${colors.bg}f2, ${colors.bg}f2), url(${customerEmployerEntity.main_bg_image_url})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundAttachment: 'fixed',
+            }
+          : { background: colors.bg }
+      }
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-4">
@@ -382,6 +394,13 @@ export default function CustomerPage() {
             company={customerClientCompanyEntity}
             colors={colors}
           />
+
+          {/* Provider Map — full width, collapsed bar that expands to full screen on click */}
+          <CustomerProviderMap
+            customer={customer}
+            clientCompany={customerClientCompanyEntity}
+            employer={customerEmployerEntity}
+          />
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
@@ -400,9 +419,9 @@ export default function CustomerPage() {
           </div>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Left Column - Customer Details */}
-              <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6">
+              {/* Customer Details */}
+              <div className="space-y-6">
                 {/* Personal Information */}
                 <Card
                   className="border-0"
@@ -965,16 +984,6 @@ export default function CustomerPage() {
                     )}
                   </CardContent>
                 </Card>
-              </div>
-
-              {/* Right Column - Employment and Carrier Info */}
-              <div className="space-y-6">
-                {/* Provider Map */}
-                <CustomerProviderMap
-                  customer={customer}
-                  clientCompany={customerClientCompanyEntity}
-                  employer={customerEmployerEntity}
-                />
               </div>
             </div>
           </TabsContent>

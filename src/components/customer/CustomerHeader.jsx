@@ -62,7 +62,7 @@ export default function CustomerHeader({
   const fullName = `${customer.first_name || ""} ${customer.last_name || ""}`.trim();
 
   const headerStyle = {
-    background: colors.bg,
+    background: employerEntity?.header_bg_color || colors.bg,
     boxShadow: `8px 8px 20px ${colors.shadowDark}, -8px -8px 20px ${colors.shadowLight}`,
     borderRadius: "18px",
     ...(isPersonOfInterest

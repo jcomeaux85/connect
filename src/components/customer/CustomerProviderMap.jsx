@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "@/components/ThemeProvider";
-import { MapPin, Maximize2, Minimize2, Download, Filter, Home, Stethoscope, Eye, Smile, Heart, X } from "lucide-react";
+import { MapPin, Maximize2, Download, Filter, Home, Stethoscope, Eye, Smile, Heart, X, ChevronUp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Fix leaflet default icon issue with bundlers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -99,21 +100,27 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
 
   const defaultCenter = homeCoords ? [homeCoords.lat, homeCoords.lng] : [39.5, -98.35];
   const defaultZoom = homeCoords ? 12 : 4;
-  const mapHeight = expanded ? "520px" : "280px";
+
+  // Close on Escape
+  useEffect(() => {
+    if (!expanded) return;
+    const onKey = (e) => { if (e.key === "Escape") setExpanded(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [expanded]);
 
   return (
-    <div
-      className="rounded-2xl border-0 overflow-hidden"
-      style={{
-        background: colors.bg,
-        boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`,
-        transition: "all 0.3s ease",
-        ...(expanded ? { position: "fixed", inset: 16, zIndex: 9999, borderRadius: 20 } : {}),
-      }}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${colors.border || "#e5e7eb"}` }}>
-        <div className="flex items-center gap-2">
+    <>
+      {/* ─── Collapsed bar — full width, click to expand ─── */}
+      <button
+        onClick={() => setExpanded(true)}
+        className="w-full flex items-center justify-between px-5 py-3 rounded-2xl border-0 transition-all hover:opacity-90"
+        style={{
+          background: colors.bg,
+          boxShadow: `6px 6px 14px ${colors.shadowDark}, -6px -6px 14px ${colors.shadowLight}`,
+        }}
+      >
+        <div className="flex items-center gap-2.5">
           <MapPin className="w-4 h-4" style={{ color: "#3b82f6" }} />
           <span className="font-semibold text-sm" style={{ color: colors.text }}>Provider Map</span>
           {geocoding && <span className="text-xs animate-pulse" style={{ color: colors.textSecondary }}>Locating…</span>}
@@ -122,97 +129,145 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
               <Home className="w-3 h-3 inline mr-1" />Plotted
             </span>
           )}
-        </div>
-        <div className="flex items-center gap-1.5">
-          <button onClick={() => setShowFilters((p) => !p)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: showFilters ? "#8b5cf6" : colors.textSecondary }}>
-            <Filter className="w-3.5 h-3.5" /> Filter
-          </button>
-          <button onClick={handleExport} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: "#10b981" }} title="Export PNG">
-            <Download className="w-3.5 h-3.5" />
-          </button>
-          <button onClick={() => setExpanded((p) => !p)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: colors.textSecondary }}>
-            {expanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-          </button>
-          {expanded && (
-            <button onClick={() => setExpanded(false)} className="flex items-center px-2.5 py-1.5 rounded-xl text-xs" style={{ ...getButtonStyle(), color: "#ef4444" }}>
-              <X className="w-3.5 h-3.5" />
-            </button>
+          {geocodeError && (
+            <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "#fee2e2", color: "#991b1b" }}>
+              Address not found
+            </span>
           )}
         </div>
-      </div>
-
-      {/* Filter pills */}
-      {showFilters && (
-        <div className="flex flex-wrap gap-2 px-4 py-2.5" style={{ borderBottom: `1px solid ${colors.border || "#e5e7eb"}` }}>
-          {FILTER_CATEGORIES.map(({ key, label, color, Icon }) => {
-            const active = activeFilters.has(key);
-            const carrier = employer?.[`map_${key}_carrier`];
-            const group = employer?.[`map_${key}_group`];
-            return (
-              <button key={key} onClick={() => toggleFilter(key)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all"
-                style={{ borderColor: active ? color : "transparent", background: active ? `${color}18` : (colors.cardBg || "#f9fafb"), color: active ? color : colors.textSecondary }}>
-                <Icon className="w-3 h-3" />
-                <span>{label}</span>
-                {carrier && <span className="opacity-70 font-normal">· {carrier}{group ? ` (${group})` : ""}</span>}
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: colors.textSecondary }}>
+          <span>Click to expand</span>
+          <Maximize2 className="w-3.5 h-3.5" />
         </div>
-      )}
+      </button>
 
-      {/* Map */}
-      <div id="customer-map-container" style={{ height: mapHeight, transition: "height 0.3s ease" }}>
-        {!address && !geocoding ? (
-          <div className="flex flex-col items-center justify-center h-full gap-2" style={{ background: colors.cardBg || "#f9fafb" }}>
-            <MapPin className="w-10 h-10" style={{ color: colors.textTertiary || "#9ca3af" }} />
-            <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>No address on file</p>
-            <p className="text-xs" style={{ color: colors.textSecondary }}>Add an address to plot on map</p>
-          </div>
-        ) : geocodeError ? (
-          <div className="flex flex-col items-center justify-center h-full gap-2" style={{ background: colors.cardBg || "#f9fafb" }}>
-            <MapPin className="w-10 h-10 text-red-400" />
-            <p className="text-sm font-medium text-red-500">Could not geocode address</p>
-            <p className="text-xs" style={{ color: colors.textSecondary }}>{address}</p>
-          </div>
-        ) : (
-          <MapContainer center={defaultCenter} zoom={defaultZoom} style={{ height: "100%", width: "100%" }} scrollWheelZoom={expanded}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {homeCoords && <MapFlyTo position={[homeCoords.lat, homeCoords.lng]} />}
-            {homeCoords && (
-              <Marker position={[homeCoords.lat, homeCoords.lng]} icon={HOME_ICON}>
-                <Popup>
-                  <div className="text-sm">
-                    <p className="font-bold text-blue-700 mb-1">🏠 {customer?.first_name} {customer?.last_name}</p>
-                    <p className="text-gray-600 text-xs">{address}</p>
+      {/* ─── Expanded overlay — full screen, click outside to close ─── */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+            style={{ background: "rgba(0,0,0,0.6)" }}
+            onClick={() => setExpanded(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-7xl flex flex-col rounded-3xl overflow-hidden"
+              style={{
+                background: colors.bg,
+                boxShadow: `20px 20px 60px rgba(0,0,0,0.4)`,
+                height: "85vh",
+              }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-3 flex-shrink-0" style={{ borderBottom: `1px solid ${colors.border || "#e5e7eb"}` }}>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" style={{ color: "#3b82f6" }} />
+                  <span className="font-semibold text-sm" style={{ color: colors.text }}>Provider Map</span>
+                  {geocoding && <span className="text-xs animate-pulse" style={{ color: colors.textSecondary }}>Locating…</span>}
+                  {homeCoords && !geocoding && (
+                    <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "#dbeafe", color: "#1e40af" }}>
+                      <Home className="w-3 h-3 inline mr-1" />Plotted
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button onClick={() => setShowFilters((p) => !p)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: showFilters ? "#8b5cf6" : colors.textSecondary }}>
+                    <Filter className="w-3.5 h-3.5" /> Filter
+                  </button>
+                  <button onClick={handleExport} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: "#10b981" }} title="Export PNG">
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={() => setExpanded(false)} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium" style={{ ...getButtonStyle(), color: "#ef4444" }}>
+                    <X className="w-3.5 h-3.5" />
+                    Hide
+                  </button>
+                </div>
+              </div>
+
+              {/* Filter pills */}
+              {showFilters && (
+                <div className="flex flex-wrap gap-2 px-5 py-2.5 flex-shrink-0" style={{ borderBottom: `1px solid ${colors.border || "#e5e7eb"}` }}>
+                  {FILTER_CATEGORIES.map(({ key, label, color, Icon }) => {
+                    const active = activeFilters.has(key);
+                    const carrier = employer?.[`map_${key}_carrier`];
+                    const group = employer?.[`map_${key}_group`];
+                    return (
+                      <button key={key} onClick={() => toggleFilter(key)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all"
+                        style={{ borderColor: active ? color : "transparent", background: active ? `${color}18` : (colors.cardBg || "#f9fafb"), color: active ? color : colors.textSecondary }}>
+                        <Icon className="w-3 h-3" />
+                        <span>{label}</span>
+                        {carrier && <span className="opacity-70 font-normal">· {carrier}{group ? ` (${group})` : ""}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Map — fills remaining space proportionally */}
+              <div id="customer-map-container" className="flex-1 min-h-0 relative">
+                {!address && !geocoding ? (
+                  <div className="flex flex-col items-center justify-center h-full gap-2" style={{ background: colors.cardBg || "#f9fafb" }}>
+                    <MapPin className="w-10 h-10" style={{ color: colors.textTertiary || "#9ca3af" }} />
+                    <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>No address on file</p>
+                    <p className="text-xs" style={{ color: colors.textSecondary }}>Add an address to plot on map</p>
                   </div>
-                </Popup>
-              </Marker>
-            )}
-          </MapContainer>
-        )}
-      </div>
+                ) : geocodeError ? (
+                  <div className="flex flex-col items-center justify-center h-full gap-2" style={{ background: colors.cardBg || "#f9fafb" }}>
+                    <MapPin className="w-10 h-10 text-red-400" />
+                    <p className="text-sm font-medium text-red-500">Could not geocode address</p>
+                    <p className="text-xs" style={{ color: colors.textSecondary }}>{address}</p>
+                  </div>
+                ) : (
+                  <MapContainer center={defaultCenter} zoom={defaultZoom} style={{ height: "100%", width: "100%" }} scrollWheelZoom={true}>
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    {homeCoords && <MapFlyTo position={[homeCoords.lat, homeCoords.lng]} />}
+                    {homeCoords && (
+                      <Marker position={[homeCoords.lat, homeCoords.lng]} icon={HOME_ICON}>
+                        <Popup>
+                          <div className="text-sm">
+                            <p className="font-bold text-blue-700 mb-1">🏠 {customer?.first_name} {customer?.last_name}</p>
+                            <p className="text-gray-600 text-xs">{address}</p>
+                          </div>
+                        </Popup>
+                      </Marker>
+                    )}
+                  </MapContainer>
+                )}
+              </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-3 px-4 py-2 text-xs" style={{ borderTop: `1px solid ${colors.border || "#e5e7eb"}`, color: colors.textSecondary }}>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-blue-700 border border-white shadow-sm" />
-          <span>Home</span>
-        </div>
-        {FILTER_CATEGORIES.filter((c) => activeFilters.has(c.key)).map(({ key, label, color }) => {
-          const carrier = employer?.[`map_${key}_carrier`];
-          const group = employer?.[`map_${key}_group`];
-          return (
-            <div key={key} className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ background: color }} />
-              <span>{label}{carrier ? `: ${carrier}` : ""}{group ? ` · ${group}` : ""}</span>
-            </div>
-          );
-        })}
-        <span className="ml-auto opacity-60">OpenStreetMap</span>
-      </div>
-    </div>
+              {/* Legend */}
+              <div className="flex flex-wrap items-center gap-3 px-5 py-2 text-xs flex-shrink-0" style={{ borderTop: `1px solid ${colors.border || "#e5e7eb"}`, color: colors.textSecondary }}>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-blue-700 border border-white shadow-sm" />
+                  <span>Home</span>
+                </div>
+                {FILTER_CATEGORIES.filter((c) => activeFilters.has(c.key)).map(({ key, label, color }) => {
+                  const carrier = employer?.[`map_${key}_carrier`];
+                  const group = employer?.[`map_${key}_group`];
+                  return (
+                    <div key={key} className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ background: color }} />
+                      <span>{label}{carrier ? `: ${carrier}` : ""}{group ? ` · ${group}` : ""}</span>
+                    </div>
+                  );
+                })}
+                <span className="ml-auto opacity-60">OpenStreetMap</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

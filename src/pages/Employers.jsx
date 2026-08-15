@@ -13,10 +13,15 @@ import {
   Users,
   Phone,
   FileText,
-  Map
+  Map,
+  Upload,
+  Lock,
+  Image as ImageIcon,
+  Palette
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/components/ThemeProvider";
+import { useUser } from "@/components/hooks/useUser";
 
 export default function EmployersPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,6 +29,9 @@ export default function EmployersPage() {
   const [editingEmployer, setEditingEmployer] = useState(null);
   const [formData, setFormData] = useState({
     employer_name: "",
+    company_logo_url: "",
+    header_bg_color: "",
+    main_bg_image_url: "",
     industry: "",
     employee_count: "",
     ceo_name: "",
@@ -48,6 +56,8 @@ export default function EmployersPage() {
 
   const { colors, getButtonStyle, getInsetStyle } = useTheme();
   const queryClient = useQueryClient();
+  const { data: user } = useUser();
+  const isAdmin = user?.role === 'admin';
 
   const { data: employers = [], isLoading } = useQuery({
     queryKey: ['employers'],
@@ -75,6 +85,9 @@ export default function EmployersPage() {
   const resetForm = () => {
     setFormData({
       employer_name: "",
+      company_logo_url: "",
+      header_bg_color: "",
+      main_bg_image_url: "",
       industry: "",
       employee_count: "",
       ceo_name: "",
@@ -97,6 +110,13 @@ export default function EmployersPage() {
       map_disability_carrier: "", map_disability_group: ""
       });
       setEditingEmployer(null);
+  };
+
+  const handleLogoUpload = async (e, field) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setFormData((prev) => ({ ...prev, [field]: file_url }));
   };
 
   const handleEdit = (employer) => {
@@ -134,21 +154,23 @@ export default function EmployersPage() {
               Employers
             </h1>
             <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
-              Manage employer companies
+              {isAdmin ? "Manage employer companies" : "View employer company profiles"}
             </p>
           </div>
-          
-          <button
-            onClick={() => {
-              resetForm();
-              setShowModal(true);
-            }}
-            className="rounded-2xl h-12 px-6 font-medium text-sm border-0 flex items-center gap-2"
-            style={getButtonStyle()}
-          >
-            <Plus className="w-4 h-4" />
-            New Employer
-          </button>
+
+          {isAdmin && (
+            <button
+              onClick={() => {
+                resetForm();
+                setShowModal(true);
+              }}
+              className="rounded-2xl h-12 px-6 font-medium text-sm border-0 flex items-center gap-2"
+              style={getButtonStyle()}
+            >
+              <Plus className="w-4 h-4" />
+              New Employer
+            </button>
+          )}
         </div>
 
         {/* Search */}
@@ -175,20 +197,25 @@ export default function EmployersPage() {
               transition={{ delay: index * 0.05 }}
             >
               <Card
-                className="border-0 cursor-pointer"
-                onClick={() => handleEdit(employer)}
+                className="border-0"
+                onClick={() => isAdmin && handleEdit(employer)}
                 style={{
                   background: colors.bg,
-                  boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`
+                  boxShadow: `10px 10px 20px ${colors.shadowDark}, -10px -10px 20px ${colors.shadowLight}`,
+                  cursor: isAdmin ? 'pointer' : 'default'
                 }}
               >
                 <CardHeader>
                   <div className="flex items-start gap-3">
                     <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden"
                       style={getInsetStyle()}
                     >
-                      <Building2 className="w-6 h-6" style={{ color: colors.iconColor }} />
+                      {employer.company_logo_url ? (
+                        <img src={employer.company_logo_url} alt={employer.employer_name} className="w-full h-full object-contain p-1" />
+                      ) : (
+                        <Building2 className="w-6 h-6" style={{ color: colors.iconColor }} />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-base mb-1 truncate" style={{ color: colors.text }}>
@@ -277,6 +304,104 @@ export default function EmployersPage() {
                         className="rounded-2xl border-0 h-12"
                         style={getInsetStyle()}
                       />
+                    </div>
+
+                    {/* ─── Branding & Theming (admin-only) ─── */}
+                    <div className="md:col-span-2">
+                      <div className="flex items-center gap-2 mb-4 pt-4" style={{ borderTop: `1px solid ${colors.border || "#e5e7eb"}` }}>
+                        <Palette className="w-4 h-4" style={{ color: "#8b5cf6" }} />
+                        <span className="text-base font-semibold" style={{ color: colors.text }}>Branding & Theming</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#ede9fe", color: "#6d28d9" }}>
+                          Applied to all employee profiles for this employer
+                        </span>
+                      </div>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        {/* Company Logo */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
+                            <ImageIcon className="w-3.5 h-3.5 inline mr-1" />Company Logo
+                          </label>
+                          <div className="flex items-center gap-3">
+                            <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden" style={getInsetStyle()}>
+                              {formData.company_logo_url ? (
+                                <img src={formData.company_logo_url} alt="Logo" className="w-full h-full object-contain p-1" />
+                              ) : (
+                                <Building2 className="w-5 h-5" style={{ color: colors.textTertiary }} />
+                              )}
+                            </div>
+                            <label className="flex-1 cursor-pointer">
+                              <span className="rounded-xl h-10 px-3 border-0 flex items-center gap-2 text-xs font-medium" style={{ ...getButtonStyle(), color: colors.textSecondary }}>
+                                <Upload className="w-3.5 h-3.5" /> Upload
+                              </span>
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e, 'company_logo_url')} />
+                            </label>
+                          </div>
+                          {formData.company_logo_url && (
+                            <Input
+                              value={formData.company_logo_url}
+                              onChange={(e) => setFormData({...formData, company_logo_url: e.target.value})}
+                              placeholder="Or paste logo URL"
+                              className="rounded-xl border-0 h-9 text-xs mt-2"
+                              style={getInsetStyle()}
+                            />
+                          )}
+                        </div>
+
+                        {/* Header Background Color */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
+                            Header BG Color
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="color"
+                              value={formData.header_bg_color || "#e8e8ee"}
+                              onChange={(e) => setFormData({...formData, header_bg_color: e.target.value})}
+                              className="w-12 h-12 rounded-xl border-0 cursor-pointer"
+                              style={{ background: 'transparent' }}
+                            />
+                            <Input
+                              value={formData.header_bg_color || ""}
+                              onChange={(e) => setFormData({...formData, header_bg_color: e.target.value})}
+                              placeholder="#e8e8ee"
+                              className="flex-1 rounded-xl border-0 h-12 text-sm"
+                              style={getInsetStyle()}
+                            />
+                          </div>
+                          <p className="text-xs mt-1" style={{ color: colors.textTertiary }}>Top container on profile</p>
+                        </div>
+
+                        {/* Main Background Image */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block" style={{ color: colors.textSecondary }}>
+                            Main BG Image
+                          </label>
+                          <div className="flex items-center gap-3">
+                            <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden" style={getInsetStyle()}>
+                              {formData.main_bg_image_url ? (
+                                <img src={formData.main_bg_image_url} alt="BG" className="w-full h-full object-cover" />
+                              ) : (
+                                <ImageIcon className="w-5 h-5" style={{ color: colors.textTertiary }} />
+                              )}
+                            </div>
+                            <label className="flex-1 cursor-pointer">
+                              <span className="rounded-xl h-10 px-3 border-0 flex items-center gap-2 text-xs font-medium" style={{ ...getButtonStyle(), color: colors.textSecondary }}>
+                                <Upload className="w-3.5 h-3.5" /> Upload
+                              </span>
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleLogoUpload(e, 'main_bg_image_url')} />
+                            </label>
+                          </div>
+                          {formData.main_bg_image_url && (
+                            <Input
+                              value={formData.main_bg_image_url}
+                              onChange={(e) => setFormData({...formData, main_bg_image_url: e.target.value})}
+                              placeholder="Or paste image URL"
+                              className="rounded-xl border-0 h-9 text-xs mt-2"
+                              style={getInsetStyle()}
+                            />
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <div>
