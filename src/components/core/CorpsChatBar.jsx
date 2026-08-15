@@ -21,7 +21,9 @@ export default function CorpsChatBar() {
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [phIndex] = useState(() => Math.floor(Math.random() * ROTATING_PROMPTS.length));
+  const [phHeight, setPhHeight] = useState(28);
   const inputRef = useRef(null);
+  const overlayRef = useRef(null);
   const respRef = useRef(null);
 
   useEffect(() => {
@@ -31,6 +33,20 @@ export default function CorpsChatBar() {
   useEffect(() => {
     if (respRef.current) respRef.current.scrollTop = respRef.current.scrollHeight;
   }, [conversation, loading]);
+
+  // Size the textarea to exactly fit the placeholder, then grow with input.
+  useEffect(() => {
+    if (overlayRef.current) setPhHeight(overlayRef.current.scrollHeight);
+  }, [phIndex]);
+
+  const autosize = () => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.max(el.scrollHeight, phHeight) + 'px';
+  };
+
+  useEffect(() => { autosize(); }, [prompt, phHeight]);
 
   const send = async (text) => {
     const trimmed = (text ?? prompt).trim();
@@ -110,7 +126,7 @@ export default function CorpsChatBar() {
               <textarea
                 ref={inputRef}
                 value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+                onChange={(e) => { setPrompt(e.target.value); autosize(); }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -121,11 +137,12 @@ export default function CorpsChatBar() {
                 placeholder=""
                 rows={1}
                 className="w-full bg-transparent border-none outline-none resize-none text-base font-medium leading-relaxed"
-                style={{ color: '#1a2e1a', caretColor: '#28a745', minHeight: '28px' }}
+                style={{ color: '#1a2e1a', caretColor: '#28a745', height: `${phHeight}px` }}
               />
-              {/* Rotating placeholder overlay — fades between prompts */}
+              {/* Hidden sizer + visible placeholder overlay */}
               {!prompt && (
                 <div
+                  ref={overlayRef}
                   className="absolute top-0 left-0 right-0 pointer-events-none text-base font-medium leading-relaxed"
                   style={{
                     color: '#9aa0a6',
