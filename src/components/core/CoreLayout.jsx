@@ -1,5 +1,6 @@
 import React from 'react';
 import CorpsPillHeader from './CorpsPillHeader';
+import CorpsChatBar from './CorpsChatBar';
 import { useTheme } from '@/components/ThemeProvider';
 
 export default function CoreLayout({ activeSection, onNavigate, children }) {
@@ -12,6 +13,9 @@ export default function CoreLayout({ activeSection, onNavigate, children }) {
     >
       {/* Neumorphic pill header — search + section nav (replaces the B|c hanging nav on CORPS) */}
       <CorpsPillHeader activeSection={activeSection} onNavigate={onNavigate} />
+
+      {/* AI command bar — chat with CORPS AI like an AI provider */}
+      <CorpsChatBar />
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">

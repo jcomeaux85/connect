@@ -14,33 +14,33 @@ const navItems = [
   { id: 'team', label: 'Team', icon: Users },
 ];
 
-// Translucent green glass — CORPS accent with real backdrop blur
-const PANEL_BG = 'linear-gradient(160deg, rgba(22,80,50,0.55) 0%, rgba(16,60,38,0.62) 60%, rgba(10,45,28,0.7) 100%)';
+// Bold green glass — CORPS accent, strong and confident
+const PANEL_BG = 'linear-gradient(160deg, rgba(22,120,70,0.92) 0%, rgba(16,90,55,0.95) 60%, rgba(8,60,38,0.97) 100%)';
 
 const container = {
   background: PANEL_BG,
-  backdropFilter: 'blur(20px) saturate(160%)',
-  WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-  border: '1px solid rgba(134,239,172,0.22)',
-  boxShadow: '0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(0,0,0,0.2)',
+  backdropFilter: 'blur(24px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+  border: '1px solid rgba(134,239,172,0.45)',
+  boxShadow: '0 10px 40px rgba(0,0,0,0.5), 0 0 24px rgba(34,197,94,0.25), inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.25)',
 };
-// Inactive button — same as sidebar nav buttons
+// Inactive button — subtle raised glass
 const raised = {
-  background: 'rgba(255,255,255,0.07)',
-  border: '1px solid rgba(255,255,255,0.10)',
-  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.10), 0 1px 4px rgba(0,0,0,0.25)',
+  background: 'rgba(255,255,255,0.10)',
+  border: '1px solid rgba(255,255,255,0.14)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.14), 0 1px 4px rgba(0,0,0,0.3)',
 };
-// Active button — CORPS green accent
+// Active button — bold CORPS green accent
 const pressed = {
-  background: 'linear-gradient(135deg, rgba(34,197,94,0.55) 0%, rgba(22,163,74,0.45) 100%)',
-  border: '1px solid rgba(134,239,172,0.4)',
-  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 1px rgba(134,239,172,0.35), 0 2px 8px rgba(0,0,0,0.3)',
+  background: 'linear-gradient(135deg, rgba(34,197,94,0.85) 0%, rgba(22,163,74,0.75) 100%)',
+  border: '1px solid rgba(187,247,208,0.6)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.28), 0 0 0 1px rgba(134,239,172,0.5), 0 2px 12px rgba(34,197,94,0.4)',
 };
 // Search well — inset glass
 const pill = {
-  background: 'rgba(255,255,255,0.07)',
-  border: '1px solid rgba(255,255,255,0.10)',
-  boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.3)',
+  background: 'rgba(0,0,0,0.25)',
+  border: '1px solid rgba(255,255,255,0.14)',
+  boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.4)',
 };
 
 export default function CorpsPillHeader({ activeSection, onNavigate }) {
@@ -59,12 +59,13 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
           className="bg-transparent border-0 p-0 pl-1 flex-shrink-0 cursor-pointer transition-transform duration-150 hover:scale-105"
           title="CORPS"
           style={{
-            fontFamily: "'VT323', ui-monospace, monospace",
-            fontSize: '30px',
-            lineHeight: 1,
-            color: '#ffffff',
-            letterSpacing: '0.02em',
-            textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+          fontFamily: "'VT323', ui-monospace, monospace",
+          fontSize: '34px',
+          fontWeight: 700,
+          lineHeight: 1,
+          color: '#dcfce7',
+          letterSpacing: '0.04em',
+          textShadow: '0 0 12px rgba(34,197,94,0.7), 0 1px 2px rgba(0,0,0,0.5)',
           }}
         >
           CORPS//
@@ -107,7 +108,7 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
                   className="w-4 h-4 flex-shrink-0"
                   style={{ color: isActive ? '#86efac' : 'rgba(255,255,255,0.7)' }}
                 />
-                <span className="truncate" style={{ color: isActive ? '#bbf7d0' : 'rgba(255,255,255,0.85)' }}>{label}</span>
+                <span className="truncate font-semibold" style={{ color: isActive ? '#ffffff' : 'rgba(255,255,255,0.92)' }}>{label}</span>
               </button>
             );
           })}
