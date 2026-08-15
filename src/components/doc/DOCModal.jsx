@@ -497,11 +497,11 @@ export default function DOCModal({ isOpen, onClose }) {
             <div
               className="flex items-center justify-between flex-shrink-0 px-4"
               style={{
-                background: 'linear-gradient(315deg, rgba(55,30,90,0.97) 0%, rgba(38,20,72,0.99) 60%, rgba(28,14,58,1) 100%)',
-                backdropFilter: 'blur(24px) saturate(200%)',
-                WebkitBackdropFilter: 'blur(24px) saturate(200%)',
-                borderBottom: `1px solid ${PANEL_BORDER}`,
-                boxShadow: '0 1px 0 rgba(255,255,255,0.07), 0 4px 20px rgba(0,0,0,0.35)',
+                background: 'rgba(18, 20, 28, 0.38)',
+                backdropFilter: 'blur(20px) saturate(140%) brightness(1.02)',
+                WebkitBackdropFilter: 'blur(20px) saturate(140%) brightness(1.02)',
+                borderBottom: '1px solid rgba(255,255,255,0.10)',
+                boxShadow: '0 1px 0 rgba(255,255,255,0.06)',
                 boxSizing: 'border-box',
                 height: 'var(--bc-topbar-h, 52px)',
               }}
@@ -510,7 +510,7 @@ export default function DOCModal({ isOpen, onClose }) {
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
                   alt="DOC"
-                  style={{ height: '24px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                  style={{ height: '32px', width: 'auto', objectFit: 'contain', display: 'block' }}
                 />
                 <span style={{ fontSize: '9px', fontFamily: 'IBM Plex Mono, monospace', color: 'rgba(255,255,255,0.5)', letterSpacing: '1px', textTransform: 'uppercase' }}>
                   Directory of Coverage

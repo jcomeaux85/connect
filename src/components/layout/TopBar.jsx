@@ -223,8 +223,10 @@ export default function TopBar({ user, unreadNotifications, unreadMessages, onTo
         onClick={onToggleDOC}
         title="DOC™ — Directory of Coverage"
         style={{
-          background: 'rgba(255, 255, 255, 1)',
-          border: '1px solid rgba(0,0,0,0.18)',
+          background: 'rgba(255, 255, 255, 0.07)',
+          backdropFilter: 'blur(24px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(200%)',
+          border: '1px solid rgba(255,255,255,0.10)',
           borderRadius: '8px',
           height: '32px',
           display: 'flex', alignItems: 'center', gap: '5px', padding: '0 18px',
