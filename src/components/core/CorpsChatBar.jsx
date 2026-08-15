@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, Send, X, Loader2 } from 'lucide-react';
+import { Sparkles, ArrowUp, X, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-// CORPS AI chat box — white container with the action button in the
-// bottom-right corner, like the reference AI-provider layout.
+// MAJOR — the CORPS// AI assistant.
+// Single prominent prompt box at the top, like ChatGPT / Gemini / Grok.
 export default function CorpsChatBar() {
   const [prompt, setPrompt] = useState('');
   const [conversation, setConversation] = useState(null);
@@ -41,7 +41,7 @@ export default function CorpsChatBar() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     send();
   };
 
@@ -54,17 +54,17 @@ export default function CorpsChatBar() {
   return (
     <div className="px-4 sm:px-6 pt-3 pb-1 flex-shrink-0">
       <div
-        className="rounded-2xl overflow-hidden flex flex-col"
+        className="rounded-2xl overflow-hidden flex flex-col transition-all duration-300"
         style={{
           background: '#ffffff',
           border: '1px solid #d1e7dd',
-          boxShadow: '0 6px 24px rgba(0,0,0,0.10)',
-          maxHeight: expanded ? '55vh' : 'none',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+          maxHeight: expanded ? '60vh' : 'none',
         }}
       >
         {/* Conversation area (only when expanded) */}
         {expanded && conversation && (
-          <div ref={respRef} className="overflow-y-auto px-5 py-4 space-y-3" style={{ background: '#f8faf8', flex: 1 }}>
+          <div ref={respRef} className="overflow-y-auto px-5 py-4 space-y-3" style={{ background: '#f8faf8', flex: 1, minHeight: '120px' }}>
             {conversation.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
@@ -83,17 +83,17 @@ export default function CorpsChatBar() {
               <div className="flex justify-start">
                 <div className="rounded-2xl px-4 py-2.5 flex items-center gap-2" style={{ background: '#ffffff', border: '1px solid #e5e7e5' }}>
                   <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#16a34a' }} />
-                  <span className="text-sm" style={{ color: '#6b7280' }}>Thinking…</span>
+                  <span className="text-sm" style={{ color: '#6b7280' }}>MAJOR is thinking…</span>
                 </div>
               </div>
             )}
           </div>
         )}
 
-        {/* Input area — white box with button in bottom-right */}
-        <div className="px-5 pt-4 pb-3" style={{ background: '#ffffff' }}>
-          <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 flex-shrink-0 mt-1" style={{ color: '#28a745' }} />
+        {/* Single prompt input — like ChatGPT/Gemini/Grok */}
+        <div className="px-5 pt-4 pb-4" style={{ background: '#ffffff' }}>
+          <div className="flex items-end gap-3">
+            <Sparkles className="w-5 h-5 flex-shrink-0 mb-2" style={{ color: '#28a745' }} />
             <textarea
               ref={inputRef}
               value={prompt}
@@ -107,33 +107,32 @@ export default function CorpsChatBar() {
               onFocus={() => setExpanded(true)}
               placeholder="Ask MAJOR anything — payroll, timecards, schedules, benefits…"
               rows={1}
-              className="flex-1 bg-transparent border-none outline-none resize-none text-sm font-medium leading-relaxed"
-              style={{ color: '#1a2e1a', caretColor: '#28a745', minHeight: '24px' }}
+              className="flex-1 bg-transparent border-none outline-none resize-none text-base font-medium leading-relaxed"
+              style={{ color: '#1a2e1a', caretColor: '#28a745', minHeight: '28px' }}
             />
             {expanded && (
               <button
                 onClick={handleClose}
-                className="p-1 rounded-lg transition-colors hover:bg-gray-100 flex-shrink-0 mt-0.5"
+                className="p-1.5 rounded-lg transition-colors hover:bg-gray-100 flex-shrink-0 mb-1"
                 style={{ color: '#9ca3af' }}
+                title="Clear"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
-          </div>
-          {/* Action row — button in bottom-right */}
-          <div className="flex justify-end mt-2">
+            {/* Send button — circular, like ChatGPT/Gemini */}
             <button
               onClick={handleSubmit}
               disabled={loading || !prompt.trim()}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+              className="flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0 mb-1 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
               style={{
-                background: '#28a745',
+                background: prompt.trim() ? '#28a745' : '#d1d5db',
                 color: '#ffffff',
-                boxShadow: '0 2px 8px rgba(40,167,69,0.4)',
+                boxShadow: prompt.trim() ? '0 2px 8px rgba(40,167,69,0.4)' : 'none',
               }}
+              title="Ask MAJOR"
             >
-              <Send className="w-3.5 h-3.5" />
-              Ask MAJOR
+              <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
             </button>
           </div>
         </div>
