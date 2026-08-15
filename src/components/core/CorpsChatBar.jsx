@@ -20,27 +20,13 @@ export default function CorpsChatBar() {
   const [conversation, setConversation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [phIndex, setPhIndex] = useState(0);
-  const [phFade, setPhFade] = useState(true);
+  const [phIndex] = useState(() => Math.floor(Math.random() * ROTATING_PROMPTS.length));
   const inputRef = useRef(null);
   const respRef = useRef(null);
 
   useEffect(() => {
     if (expanded && inputRef.current) inputRef.current.focus();
   }, [expanded]);
-
-  // Rotate the placeholder every 5s when the user isn't typing/focused.
-  useEffect(() => {
-    const id = setInterval(() => {
-      if (prompt || document.activeElement === inputRef.current) return;
-      setPhFade(false);
-      setTimeout(() => {
-        setPhIndex(i => (i + 1) % ROTATING_PROMPTS.length);
-        setPhFade(true);
-      }, 350);
-    }, 5000);
-    return () => clearInterval(id);
-  }, [prompt]);
 
   useEffect(() => {
     if (respRef.current) respRef.current.scrollTop = respRef.current.scrollHeight;
@@ -143,8 +129,6 @@ export default function CorpsChatBar() {
                   className="absolute top-0 left-0 right-0 pointer-events-none text-base font-medium leading-relaxed"
                   style={{
                     color: '#9aa0a6',
-                    opacity: phFade ? 1 : 0,
-                    transition: 'opacity 0.35s ease',
                     whiteSpace: 'pre-wrap',
                     overflow: 'hidden',
                   }}
