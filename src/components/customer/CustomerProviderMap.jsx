@@ -130,12 +130,11 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
-            opacity: 0.55,
           }}
         />
         {/* Left scrim for the label, right scrim for the hint */}
-        <div aria-hidden="true" className="absolute inset-y-0 left-0 w-1/3 pointer-events-none" style={{ background: `linear-gradient(to right, ${colors.bg}f2, transparent)` }} />
-        <div aria-hidden="true" className="absolute inset-y-0 right-0 w-1/3 pointer-events-none" style={{ background: `linear-gradient(to left, ${colors.bg}f2, transparent)` }} />
+        <div aria-hidden="true" className="absolute inset-y-0 left-0 w-24 pointer-events-none" style={{ background: `linear-gradient(to right, ${colors.bg}f2, transparent)` }} />
+        <div aria-hidden="true" className="absolute inset-y-0 right-0 w-24 pointer-events-none" style={{ background: `linear-gradient(to left, ${colors.bg}f2, transparent)` }} />
 
         <div className="relative flex items-center gap-2.5">
           <MapPin className="w-4 h-4" style={{ color: "#3b82f6" }} />
