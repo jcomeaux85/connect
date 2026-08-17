@@ -133,13 +133,13 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
           }}
         />
         {/* Left scrim for the label, right scrim for the hint */}
-        <div aria-hidden="true" className="absolute inset-y-0 left-0 w-24 pointer-events-none" style={{ background: `linear-gradient(to right, ${colors.bg}f2, transparent)` }} />
-        <div aria-hidden="true" className="absolute inset-y-0 right-0 w-24 pointer-events-none" style={{ background: `linear-gradient(to left, ${colors.bg}f2, transparent)` }} />
+        <div aria-hidden="true" className="absolute inset-y-0 left-0 w-40 pointer-events-none" style={{ background: `linear-gradient(to right, ${colors.bg}f4, transparent)` }} />
+        <div aria-hidden="true" className="absolute inset-y-0 right-0 w-40 pointer-events-none" style={{ background: `linear-gradient(to left, ${colors.bg}f4, transparent)` }} />
 
-        <div className="relative flex items-center gap-2.5">
-          <MapPin className="w-4 h-4" style={{ color: "#3b82f6" }} />
-          <span className="font-semibold text-sm" style={{ color: colors.text }}>Provider Map</span>
-          {geocoding && <span className="text-xs animate-pulse" style={{ color: colors.textSecondary }}>Locating…</span>}
+        <div className="relative flex items-center gap-2.5" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.65), 0 0 1px rgba(0,0,0,0.4)" }}>
+          <MapPin className="w-4 h-4" style={{ color: "#3b82f6", filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.6))" }} />
+          <span className="font-semibold text-sm" style={{ color: "#ffffff" }}>Provider Map</span>
+          {geocoding && <span className="text-xs animate-pulse" style={{ color: "#e5e7eb" }}>Locating…</span>}
           {homeCoords && !geocoding && (
             <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: "#dbeafe", color: "#1e40af" }}>
               <Home className="w-3 h-3 inline mr-1" />Plotted
@@ -151,9 +151,9 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
             </span>
           )}
         </div>
-        <div className="relative flex items-center gap-1.5 text-xs font-medium" style={{ color: colors.textSecondary }}>
+        <div className="relative flex items-center gap-1.5 text-xs font-medium" style={{ color: "#ffffff", textShadow: "0 1px 3px rgba(0,0,0,0.65), 0 0 1px rgba(0,0,0,0.4)" }}>
           <span>Click to expand</span>
-          <Maximize2 className="w-3.5 h-3.5" />
+          <Maximize2 className="w-3.5 h-3.5" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.6))" }} />
         </div>
       </button>
 
