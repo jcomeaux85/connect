@@ -126,7 +126,7 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: `url('https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/4f8fb559e_ON9os.jpg')`,
+            backgroundImage: `url('https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f8cd8f7e4_4QQ5p.jpg')`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center 65%",
