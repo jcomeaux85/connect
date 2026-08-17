@@ -1,7 +1,7 @@
 import React from "react";
 
 // Clean, containerless row of carrier logos — inspired by ndrndr.com/alera/doc.
-// Logos sit in a horizontal row, washed-out at rest, full pop on hover.
+// Logos sit in a horizontal row, 80% saturation at rest, full saturation on hover.
 // Each logo is a clickable link to the carrier's portal. No phone numbers,
 // no borders, no containers — just the brand marks.
 export default function CarrierLogoBar({ company, colors }) {
@@ -13,7 +13,10 @@ export default function CarrierLogoBar({ company, colors }) {
     { key: "vision",     name: company.carrier_vision_name,     logo: company.carrier_vision_logo_url },
     { key: "life",       name: company.carrier_life_name,       logo: company.carrier_life_logo_url },
     { key: "disability", name: company.carrier_disability_name, logo: company.carrier_disability_logo_url },
-  ].filter((c) => c.name);
+  ]
+    .filter((c) => c.name)
+    // Ditch the Prudential logo per direction
+    .filter((c) => !/prudential/i.test(c.name));
 
   if (carriers.length === 0) return null;
 
@@ -26,18 +29,17 @@ export default function CarrierLogoBar({ company, colors }) {
     return company.website || null;
   };
 
-  const washedStyle = {
-    filter: "grayscale(0.3) opacity(0.85)",
-    transition: "filter 0.35s ease, transform 0.35s ease",
+  const restStyle = {
+    filter: "saturate(0.8)",
+    transition: "filter 0.35s ease",
   };
 
-  const popStyle = {
-    filter: "grayscale(0) opacity(1)",
-    transform: "translateY(-2px)",
+  const hoverStyle = {
+    filter: "saturate(1)",
   };
 
   return (
-    <div className="flex items-center gap-8 mb-4 px-1 flex-wrap">
+    <div className="flex items-center gap-6 flex-wrap">
       {carriers.map((carrier) => {
         const url = portalUrl(carrier);
         const linkProps = url
@@ -50,21 +52,21 @@ export default function CarrierLogoBar({ company, colors }) {
           <Tag
             key={carrier.key}
             {...linkProps}
-            className="block flex flex-col items-center justify-center select-none"
-            style={washedStyle}
-            onMouseEnter={(e) => Object.assign(e.currentTarget.style, popStyle)}
-            onMouseLeave={(e) => Object.assign(e.currentTarget.style, washedStyle)}
+            className="flex items-center justify-center select-none"
+            style={restStyle}
+            onMouseEnter={(e) => Object.assign(e.currentTarget.style, hoverStyle)}
+            onMouseLeave={(e) => Object.assign(e.currentTarget.style, restStyle)}
             title={url ? `${carrier.name} — open portal` : carrier.name}
           >
             {carrier.logo ? (
               <img
                 src={carrier.logo}
                 alt={carrier.name}
-                style={{ height: "40px", width: "auto", objectFit: "contain" }}
+                style={{ height: "22px", width: "auto", objectFit: "contain" }}
               />
             ) : (
               <span
-                className="text-xl font-bold tracking-tight whitespace-nowrap"
+                className="text-sm font-bold tracking-tight whitespace-nowrap"
                 style={{ color: colors.text }}
               >
                 {carrier.name}

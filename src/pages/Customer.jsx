@@ -375,6 +375,14 @@ export default function CustomerPage() {
             </Button>
           </Link>
 
+          {/* Carrier logos — above the header, aligned right */}
+          <div className="flex justify-end mb-3">
+            <CarrierLogoBar
+              company={customerClientCompanyEntity}
+              colors={colors}
+            />
+          </div>
+
           <CustomerHeader
             customer={customer}
             employerEntity={customerEmployerEntity}
@@ -388,11 +396,6 @@ export default function CustomerPage() {
             onEdit={() => setIsEditing(true)}
             colors={colors}
             getButtonStyle={getButtonStyle}
-          />
-
-          <CarrierLogoBar
-            company={customerClientCompanyEntity}
-            colors={colors}
           />
 
           {/* Provider Map — full width, collapsed bar that expands to full screen on click */}
