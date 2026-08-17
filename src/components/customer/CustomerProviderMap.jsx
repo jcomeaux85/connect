@@ -114,13 +114,30 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
       {/* ─── Collapsed bar — full width, click to expand ─── */}
       <button
         onClick={() => setExpanded(true)}
-        className="w-full flex items-center justify-between px-5 py-3 rounded-2xl border-0 transition-all hover:opacity-90"
+        className="w-full flex items-center justify-between px-5 py-3 rounded-2xl border-0 transition-all hover:opacity-90 relative overflow-hidden"
         style={{
           background: colors.bg,
           boxShadow: `6px 6px 14px ${colors.shadowDark}, -6px -6px 14px ${colors.shadowLight}`,
         }}
       >
-        <div className="flex items-center gap-2.5">
+        {/* Isometric map background — centered horizontally, slightly below center vertically.
+            Side scrims keep both the left label and the right hint legible over the image. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `url('https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/4f8fb559e_ON9os.jpg')`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center 65%",
+            opacity: 0.55,
+          }}
+        />
+        {/* Left scrim for the label, right scrim for the hint */}
+        <div aria-hidden="true" className="absolute inset-y-0 left-0 w-1/3 pointer-events-none" style={{ background: `linear-gradient(to right, ${colors.bg}f2, transparent)` }} />
+        <div aria-hidden="true" className="absolute inset-y-0 right-0 w-1/3 pointer-events-none" style={{ background: `linear-gradient(to left, ${colors.bg}f2, transparent)` }} />
+
+        <div className="relative flex items-center gap-2.5">
           <MapPin className="w-4 h-4" style={{ color: "#3b82f6" }} />
           <span className="font-semibold text-sm" style={{ color: colors.text }}>Provider Map</span>
           {geocoding && <span className="text-xs animate-pulse" style={{ color: colors.textSecondary }}>Locating…</span>}
@@ -135,7 +152,7 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: colors.textSecondary }}>
+        <div className="relative flex items-center gap-1.5 text-xs font-medium" style={{ color: colors.textSecondary }}>
           <span>Click to expand</span>
           <Maximize2 className="w-3.5 h-3.5" />
         </div>
