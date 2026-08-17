@@ -129,7 +129,7 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
             backgroundImage: `url('https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f8cd8f7e4_4QQ5p.jpg')`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
-            backgroundPosition: "center 65%",
+            backgroundPosition: "center",
             opacity: 0.55,
           }}
         />
