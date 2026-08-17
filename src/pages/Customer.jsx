@@ -43,6 +43,7 @@ import EmailComposerModal from "@/components/email/EmailComposerModal";
 import CustomerProviderMap from "@/components/customer/CustomerProviderMap";
 import CustomerHeader from "@/components/customer/CustomerHeader";
 import CarrierLogoBar from "@/components/customer/CarrierLogoBar";
+import { LAZER_ASSETS, isLazerCompany } from "@/components/customer/lazerBranding";
 
 
 export default function CustomerPage() {
@@ -346,6 +347,14 @@ export default function CustomerPage() {
   const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
   const isPersonOfInterest = customer.is_vip || false;
   const goldRimStyle = isPersonOfInterest ? { border: '1px solid rgba(245, 158, 11, 0.25)' } : {};
+  const isLazerClient = isLazerCompany(customerClientCompanyEntity);
+  const lazerCardStyle = (pos) => ({
+    backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${LAZER_ASSETS.leather})`,
+    backgroundSize: "cover",
+    backgroundPosition: pos,
+    boxShadow: `12px 12px 24px rgba(0,0,0,0.6), -12px -12px 24px rgba(255,255,255,0.04)`,
+    ...goldRimStyle,
+  });
 
   return (
     <div
@@ -380,6 +389,8 @@ export default function CustomerPage() {
             <CarrierLogoBar
               company={customerClientCompanyEntity}
               colors={colors}
+              isLazerClient={isLazerClient}
+              lazerLogoUrl={LAZER_ASSETS.logo}
             />
           </div>
 
@@ -396,6 +407,8 @@ export default function CustomerPage() {
             onEdit={() => setIsEditing(true)}
             colors={colors}
             getButtonStyle={getButtonStyle}
+            isLazerClient={isLazerClient}
+            lazerAssets={isLazerClient ? LAZER_ASSETS : null}
           />
 
           {/* Provider Map — full width, collapsed bar that expands to full screen on click */}
@@ -427,12 +440,8 @@ export default function CustomerPage() {
               <div className="space-y-6">
                 {/* Personal Information */}
                 <Card
-                  className="border-0"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`,
-                    ...goldRimStyle
-                  }}
+                  className={isLazerClient ? "border-0 lazer-skin" : "border-0"}
+                  style={isLazerClient ? lazerCardStyle("top center") : { background: colors.bg, boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`, ...goldRimStyle }}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
@@ -544,12 +553,8 @@ export default function CustomerPage() {
 
                 {/* Contact Information */}
                 <Card
-                  className="border-0"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`,
-                    ...goldRimStyle
-                  }}
+                  className={isLazerClient ? "border-0 lazer-skin" : "border-0"}
+                  style={isLazerClient ? lazerCardStyle("center") : { background: colors.bg, boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`, ...goldRimStyle }}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
@@ -745,12 +750,8 @@ export default function CustomerPage() {
 
                 {/* Employment Information */}
                 <Card
-                  className="border-0"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`,
-                    ...goldRimStyle
-                  }}
+                  className={isLazerClient ? "border-0 lazer-skin" : "border-0"}
+                  style={isLazerClient ? lazerCardStyle("bottom center") : { background: colors.bg, boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`, ...goldRimStyle }}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
@@ -955,12 +956,8 @@ export default function CustomerPage() {
 
                 {/* Notes Section */}
                 <Card
-                  className="border-0"
-                  style={{
-                    background: colors.bg,
-                    boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`,
-                    ...goldRimStyle
-                  }}
+                  className={isLazerClient ? "border-0 lazer-skin" : "border-0"}
+                  style={isLazerClient ? lazerCardStyle("center") : { background: colors.bg, boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`, ...goldRimStyle }}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>

@@ -4,7 +4,7 @@ import React from "react";
 // Logos sit in a horizontal row, 80% saturation at rest, full saturation on hover.
 // Each logo is a clickable link to the carrier's portal. No phone numbers,
 // no borders, no containers — just the brand marks.
-export default function CarrierLogoBar({ company, colors }) {
+export default function CarrierLogoBar({ company, colors, isLazerClient = false, lazerLogoUrl = null }) {
   if (!company) return null;
 
   const carriers = [
@@ -42,6 +42,7 @@ export default function CarrierLogoBar({ company, colors }) {
     <div className="flex items-center gap-6 flex-wrap">
       {carriers.map((carrier) => {
         const url = portalUrl(carrier);
+        const logoSrc = carrier.logo || (isLazerClient ? lazerLogoUrl : null);
         const linkProps = url
           ? { href: url, target: "_blank", rel: "noopener noreferrer" }
           : { as: "div" };
@@ -58,11 +59,11 @@ export default function CarrierLogoBar({ company, colors }) {
             onMouseLeave={(e) => Object.assign(e.currentTarget.style, restStyle)}
             title={url ? `${carrier.name} — open portal` : carrier.name}
           >
-            {carrier.logo ? (
+            {logoSrc ? (
               <img
-                src={carrier.logo}
+                src={logoSrc}
                 alt={carrier.name}
-                style={{ height: "22px", width: "auto", objectFit: "contain" }}
+                style={{ height: "22px", width: "auto", maxWidth: "100%", objectFit: "contain" }}
               />
             ) : (
               <span

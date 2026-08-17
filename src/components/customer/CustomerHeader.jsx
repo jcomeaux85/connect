@@ -58,11 +58,17 @@ export default function CustomerHeader({
   onEdit,
   colors,
   getButtonStyle,
+  isLazerClient = false,
+  lazerAssets = null,
 }) {
   const fullName = `${customer.first_name || ""} ${customer.last_name || ""}`.trim();
 
   const headerStyle = {
-    background: employerEntity?.header_bg_color || colors.bg,
+    background: isLazerClient && lazerAssets
+      ? `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${lazerAssets.asphalt})`
+      : (employerEntity?.header_bg_color || colors.bg),
+    backgroundSize: isLazerClient && lazerAssets ? "cover" : undefined,
+    backgroundPosition: isLazerClient && lazerAssets ? "center" : undefined,
     boxShadow: `8px 8px 20px ${colors.shadowDark}, -8px -8px 20px ${colors.shadowLight}`,
     borderRadius: "18px",
     ...(isPersonOfInterest
@@ -80,7 +86,7 @@ export default function CustomerHeader({
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden mb-4 p-5 flex items-stretch gap-4"
+      className={`relative rounded-2xl overflow-hidden mb-4 p-5 flex items-stretch gap-4${isLazerClient && lazerAssets ? " lazer-header-skin" : ""}`}
       style={headerStyle}
     >
       {/* Left: Name (55% width) + job title + buttons */}
@@ -148,7 +154,18 @@ export default function CustomerHeader({
 
       {/* Right: Company logo at header height, right justified, alone */}
       <div className="flex-1 flex items-center justify-end" style={{ minWidth: 0 }}>
-        {employerEntity?.company_logo_url ? (
+        {isLazerClient && lazerAssets && !employerEntity?.company_logo_url ? (
+          <img
+            src={lazerAssets.logo}
+            alt="Lazer"
+            style={{
+              maxHeight: "100%",
+              maxWidth: "100%",
+              objectFit: "contain",
+              objectPosition: "right center",
+            }}
+          />
+        ) : employerEntity?.company_logo_url ? (
           <img
             src={employerEntity.company_logo_url}
             alt={employerName || "Company"}

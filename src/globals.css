@@ -205,3 +205,50 @@ body[data-spotlight="on"][data-spotlight-active] .spot-panel {
 body[data-spotlight="on"][data-spotlight-active] .spot-panel[data-spot-selected] {
   filter: brightness(1.06);
 }
+
+/* ─────────────────────────────────────────────────────────
+   LAZER CLIENT SKIN — dark texture backgrounds (asphalt header,
+   stitched-leather info cards) need light, shadowed text to stay
+   legible. !important overrides the inline color styles on text
+   elements so the skin works in both light and dark themes.
+   ───────────────────────────────────────────────────────── */
+
+/* Header (asphalt) — force the name + job title light */
+.lazer-header-skin h1,
+.lazer-header-skin p {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85), 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+/* Leather info cards — force all body text light + shadowed */
+.lazer-skin p,
+.lazer-skin label,
+.lazer-skin h1, .lazer-skin h2, .lazer-skin h3, .lazer-skin h4,
+.lazer-skin h5, .lazer-skin h6 {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 1px rgba(0, 0, 0, 0.5);
+}
+.lazer-skin label {
+  color: #cbd5e1 !important;
+}
+/* CardTitle renders as a div with these Tailwind classes */
+.lazer-skin .font-semibold.leading-none {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+/* Keep link colors, just add a shadow so they read over the texture */
+.lazer-skin a {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+/* Inputs sit over the leather — give them a dark translucent well */
+.lazer-skin input,
+.lazer-skin textarea,
+.lazer-skin select {
+  background: rgba(0, 0, 0, 0.35) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+.lazer-skin input::placeholder,
+.lazer-skin textarea::placeholder {
+  color: #94a3b8 !important;
+}
