@@ -349,7 +349,7 @@ export default function CustomerPage() {
   const goldRimStyle = isPersonOfInterest ? { border: '1px solid rgba(245, 158, 11, 0.25)' } : {};
   const isLazerClient = isLazerCompany(customerClientCompanyEntity);
   const lazerCardStyle = (pos) => ({
-    backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${LAZER_ASSETS.leather})`,
+    backgroundImage: `url(${LAZER_ASSETS.leather})`,
     backgroundSize: "cover",
     backgroundPosition: pos,
     boxShadow: `12px 12px 24px rgba(0,0,0,0.6), -12px -12px 24px rgba(255,255,255,0.04)`,
