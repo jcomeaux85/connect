@@ -79,10 +79,21 @@ export default function CustomerHeader({
       : {}),
   };
 
-  const btnStyle = {
-    ...getButtonStyle(),
-    ...(isPersonOfInterest ? { border: "1px solid rgba(245, 158, 11, 0.2)" } : {}),
-  };
+  const isLazer = isLazerClient && lazerAssets;
+  // On the dark asphalt header, the neumorphic light highlight reads as a white
+  // glare. Swap for a clean downward drop shadow so the buttons pop out instead.
+  const btnStyle = isLazer
+    ? {
+        background: "linear-gradient(145deg, #f4f6f9, #d6dade)",
+        boxShadow: "0 4px 7px rgba(0,0,0,0.55), 0 1.5px 3px rgba(0,0,0,0.4)",
+        border: "none",
+        color: "#1f2937",
+        ...(isPersonOfInterest ? { border: "1px solid rgba(245, 158, 11, 0.5)" } : {}),
+      }
+    : {
+        ...getButtonStyle(),
+        ...(isPersonOfInterest ? { border: "1px solid rgba(245, 158, 11, 0.2)" } : {}),
+      };
 
   return (
     <div
@@ -155,16 +166,27 @@ export default function CustomerHeader({
       {/* Right: Company logo at header height, right justified, alone */}
       <div className="flex-1 flex items-center justify-end" style={{ minWidth: 0 }}>
         {isLazerClient && lazerAssets && !employerEntity?.company_logo_url ? (
-          <img
-            src={lazerAssets.logo}
-            alt="Lazer"
+          <div
             style={{
-              maxHeight: "100%",
-              maxWidth: "100%",
-              objectFit: "contain",
-              objectPosition: "right center",
+              background: "rgba(255,255,255,0.92)",
+              borderRadius: "12px",
+              padding: "8px 14px",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
-          />
+          >
+            <img
+              src={lazerAssets.logo}
+              alt="Lazer"
+              style={{
+                maxHeight: 58,
+                maxWidth: 170,
+                objectFit: "contain",
+              }}
+            />
+          </div>
         ) : employerEntity?.company_logo_url ? (
           <img
             src={employerEntity.company_logo_url}
