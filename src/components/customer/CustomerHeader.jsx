@@ -83,13 +83,13 @@ export default function CustomerHeader({
   // Narrow chrome-textured buttons that pop out of the dark header.
   const btnStyle = isLazer
     ? {
-        backgroundImage: `url(${lazerAssets.chrome})`,
-        backgroundSize: "cover",
+        backgroundImage: `linear-gradient(rgba(255,255,255,0.38), rgba(255,255,255,0.38)), url(${lazerAssets.chrome})`,
+        backgroundSize: "cover, cover",
         backgroundPosition: "center",
         boxShadow: "0 3px 1px rgba(0,0,0,0.6), 0 1px 1px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5)",
         border: "1px solid rgba(255,255,255,0.25)",
         color: "#1a1a1a",
-        textShadow: "0 1px 0 rgba(255,255,255,0.4)",
+        textShadow: "0 1px 0 rgba(255,255,255,0.5)",
         ...(isPersonOfInterest ? { border: "1px solid rgba(245, 158, 11, 0.6)" } : {}),
       }
     : {
