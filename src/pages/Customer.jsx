@@ -360,7 +360,7 @@ export default function CustomerPage() {
       className="p-4 md:p-6 min-h-screen relative"
       style={
         isLazerClient
-          ? { background: "transparent" }
+          ? { background: "transparent", paddingTop: 0 }
           : customerEmployerEntity?.main_bg_image_url
           ? {
               backgroundImage: `linear-gradient(${colors.bg}f2, ${colors.bg}f2), url(${customerEmployerEntity.main_bg_image_url})`,
