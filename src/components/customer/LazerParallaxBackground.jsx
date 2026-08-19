@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 
 // Fixed full-viewport background for Lazer client profiles: the red Lazer mark
-// floating in a black void. The mark sits ~1/3 of the viewport, slightly below
-// center at rest with a gentle distance blur, then rises toward the top and
-// zooms + blurs further as the page scrolls.
+// floating in a WHITE void. The mark sits ~1/3 of the viewport, slightly below
+// center at rest, and only drifts up/down with scroll — no zoom, no size change,
+// only a barely-there constant blur.
 //
-// Scroll is tracked from the app's main scroll container (Layout's <main>),
-// not the window — the Customer page scrolls inside that element.
+// The supplied mark asset has a solid black background, which would show as a
+// black square on a white void. An inline SVG feColorMatrix keys the black out
+// (alpha = R+G+B - threshold) so only the red mark remains.
+//
+// Scroll is tracked from the app's main scroll container (Layout's <main>).
 export default function LazerParallaxBackground({ markUrl }) {
   const [progress, setProgress] = useState(0);
   const rafRef = useRef(null);
@@ -32,10 +35,10 @@ export default function LazerParallaxBackground({ markUrl }) {
     };
   }, []);
 
-  // Rest: 6vh below center. Full scroll: 6vh above center.
+  // Up/down parallax only: rest 6vh below center → full scroll 6vh above center.
   const ty = 6 - progress * 12;
-  const scale = 1 + progress * 0.55;
-  const blur = 6 + progress * 14;
+  // Barely-there constant blur — the image is already soft/distant.
+  const blur = 2;
 
   return (
     <div
@@ -44,11 +47,21 @@ export default function LazerParallaxBackground({ markUrl }) {
         position: "fixed",
         inset: 0,
         zIndex: 0,
-        background: "#050505",
+        background: "#ffffff",
         overflow: "hidden",
         pointerEvents: "none",
       }}
     >
+      {/* SVG chroma-key: black bg → transparent, red mark stays. */}
+      <svg style={{ position: "absolute", width: 0, height: 0 }}>
+        <filter id="lazer-mark-key">
+          <feColorMatrix
+            type="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  1 1 1 0 -0.15"
+          />
+        </filter>
+      </svg>
+
       <div
         style={{
           position: "absolute",
@@ -56,14 +69,14 @@ export default function LazerParallaxBackground({ markUrl }) {
           top: "50%",
           width: "34vw",
           height: "34vw",
-          transform: `translate(-50%, calc(-50% + ${ty}vh)) scale(${scale})`,
-          transition: "transform 0.12s ease-out, filter 0.12s ease-out",
+          transform: `translate(-50%, calc(-50% + ${ty}vh))`,
+          transition: "transform 0.12s ease-out",
           backgroundImage: `url(${markUrl})`,
           backgroundSize: "contain",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          filter: `blur(${blur}px)`,
-          opacity: 0.9,
+          filter: `url(#lazer-mark-key) blur(${blur}px)`,
+          opacity: 0.95,
         }}
       />
     </div>

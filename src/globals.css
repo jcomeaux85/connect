@@ -263,8 +263,8 @@ body[data-spotlight="on"][data-spotlight-active] .spot-panel[data-spot-selected]
   background: rgba(255, 255, 255, 0.82) !important;
   backdrop-filter: blur(26px) saturate(1.4);
   -webkit-backdrop-filter: blur(26px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.35) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18) !important;
 }
 
 .lazer-glass p,
