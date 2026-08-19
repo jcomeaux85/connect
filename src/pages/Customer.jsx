@@ -349,6 +349,8 @@ export default function CustomerPage() {
   const isPersonOfInterest = customer.is_vip || false;
   const goldRimStyle = isPersonOfInterest ? { border: '1px solid rgba(245, 158, 11, 0.25)' } : {};
   const isLazerClient = isLazerCompany(customerClientCompanyEntity);
+  // Company accent color drives the domed tab selector tint
+  const companyColor = customerEmployerEntity?.dot_color_primary || '#7c3aed';
   // Near-opaque white glass — distorts the parallax mark behind it through a
   // heavy backdrop blur + high white opacity. Text is forced dark via .lazer-glass.
   const lazerCardStyle = () => ({
@@ -424,15 +426,15 @@ export default function CustomerPage() {
         <Tabs defaultValue="overview" className="space-y-6">
           <div className="flex justify-center">
             <TabsList
-              className={`rounded-2xl border-0 p-1${isLazerClient ? " lazer-glass" : ""}`}
-              style={isLazerClient ? { ...goldRimStyle } : getInsetStyle()}
+              className={`domed-tab-list rounded-2xl border-0 p-1.5${isLazerClient ? " lazer-glass" : ""}`}
+              style={isLazerClient ? { ...goldRimStyle, "--tab-accent": companyColor } : { ...getInsetStyle(), "--tab-accent": companyColor }}
             >
-              <TabsTrigger value="overview" className="rounded-xl" style={{color: colors.textSecondary}}>Overview</TabsTrigger>
-              <TabsTrigger value="cases" className="rounded-xl" style={{color: colors.textSecondary}}>Cases</TabsTrigger>
-              <TabsTrigger value="tasks" className="rounded-xl" style={{color: colors.textSecondary}}>Tasks</TabsTrigger>
-              <TabsTrigger value="calls" className="rounded-xl" style={{color: colors.textSecondary}}>Calls</TabsTrigger>
-              <TabsTrigger value="sms" className="rounded-xl" style={{color: colors.textSecondary}}>Messages</TabsTrigger>
-              <TabsTrigger value="timeline" className="rounded-xl" style={{color: colors.textSecondary}}>Timeline</TabsTrigger>
+              <TabsTrigger value="overview" className="domed-tab-trigger rounded-xl px-4" style={{ color: colors.textSecondary }}>Overview</TabsTrigger>
+              <TabsTrigger value="cases" className="domed-tab-trigger rounded-xl px-4" style={{ color: colors.textSecondary }}>Cases</TabsTrigger>
+              <TabsTrigger value="tasks" className="domed-tab-trigger rounded-xl px-4" style={{ color: colors.textSecondary }}>Tasks</TabsTrigger>
+              <TabsTrigger value="calls" className="domed-tab-trigger rounded-xl px-4" style={{ color: colors.textSecondary }}>Calls</TabsTrigger>
+              <TabsTrigger value="sms" className="domed-tab-trigger rounded-xl px-4" style={{ color: colors.textSecondary }}>Messages</TabsTrigger>
+              <TabsTrigger value="timeline" className="domed-tab-trigger rounded-xl px-4" style={{ color: colors.textSecondary }}>Timeline</TabsTrigger>
             </TabsList>
           </div>
 
@@ -956,31 +958,32 @@ export default function CustomerPage() {
                   </CardContent>
                 </Card>
 
-                {/* Notes Section */}
+                {/* Notes Section — yellow paper texture */}
                 <Card
-                  className={isLazerClient ? "border-0 lazer-glass" : "border-0"}
-                  style={isLazerClient ? lazerCardStyle("center") : { background: colors.bg, boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`, ...goldRimStyle }}
+                  className="border-0 notes-paper"
+                  style={{ boxShadow: `8px 8px 1px ${colors.shadowDark}, -8px -8px 1px ${colors.shadowLight}` }}
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
+                    <CardTitle className="flex items-center gap-2" style={{ color: "#78350f" }}>
                       <FileText className="w-5 h-5" />
                       Notes
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="notes-paper-lines">
                     {isEditing ? (
                       <Textarea
                         value={editedCustomer.notes || ''}
                         onChange={(e) => setEditedCustomer({...editedCustomer, notes: e.target.value})}
                         placeholder="Add notes about this customer..."
-                        className="rounded-2xl border-0 min-h-32"
+                        className="rounded-2xl border-0 min-h-32 bg-transparent"
                         style={{
-                          ...getInsetStyle(),
-                          color: colors.text
+                          background: "transparent",
+                          boxShadow: "none",
+                          color: "#1f2937"
                         }}
                       />
                     ) : (
-                      <p style={{ color: colors.text }}>
+                      <p style={{ color: "#1f2937" }}>
                         {customer.notes || 'No notes'}
                       </p>
                     )}
