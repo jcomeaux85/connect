@@ -4,6 +4,10 @@ export const LAZER_ASSETS = {
   logo: "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/eaf07655b_lazer.png",
   asphalt: "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/f3f9fbe46_lazer.png",
   leather: "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/349fbaa08_ssR61b.png",
+  // Red-only mark (no words) — used as the parallax background logo
+  mark: "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/758251a30_client1.png",
+  // Polished chrome/silver texture for header action buttons
+  chrome: "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/16a76e6a0_generated_image.png",
 };
 
 export function isLazerCompany(company) {

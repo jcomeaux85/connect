@@ -252,3 +252,47 @@ body[data-spotlight="on"][data-spotlight-active] .spot-panel[data-spot-selected]
 .lazer-skin textarea::placeholder {
   color: #94a3b8 !important;
 }
+
+/* ─────────────────────────────────────────────────────────
+   LAZER GLASS — near-opaque white glassmorphism panels over
+   the parallax mark background. Heavy backdrop blur gives the
+   "distant object magnified poorly through frosted glass" look.
+   Text is forced dark so it reads on the white glass.
+   ───────────────────────────────────────────────────────── */
+.lazer-glass {
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(26px) saturate(1.4);
+  -webkit-backdrop-filter: blur(26px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28) !important;
+}
+
+.lazer-glass p,
+.lazer-glass label,
+.lazer-glass h1, .lazer-glass h2, .lazer-glass h3,
+.lazer-glass h4, .lazer-glass h5, .lazer-glass h6,
+.lazer-glass .font-medium, .lazer-glass .font-semibold {
+  color: #1a1a1a !important;
+  text-shadow: none !important;
+}
+.lazer-glass .text-sm { color: #4b5563 !important; }
+.lazer-glass .text-xs { color: #6b7280 !important; }
+.lazer-glass a { color: #2563eb !important; text-shadow: none !important; }
+
+/* Tab triggers inside the glass pill */
+.lazer-glass [role="tab"] { color: #4b5563 !important; }
+.lazer-glass [role="tab"][data-state="active"] { color: #111827 !important; }
+
+/* Inputs inside glass — light translucent wells */
+.lazer-glass input,
+.lazer-glass textarea,
+.lazer-glass select {
+  background: rgba(255, 255, 255, 0.55) !important;
+  color: #1a1a1a !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.08), inset -2px -2px 5px rgba(255,255,255,0.6) !important;
+}
+.lazer-glass input::placeholder,
+.lazer-glass textarea::placeholder {
+  color: #9ca3af !important;
+}

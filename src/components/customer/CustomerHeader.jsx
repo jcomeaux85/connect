@@ -80,15 +80,17 @@ export default function CustomerHeader({
   };
 
   const isLazer = isLazerClient && lazerAssets;
-  // On the dark asphalt header, the neumorphic light highlight reads as a white
-  // glare. Swap for a clean downward drop shadow so the buttons pop out instead.
+  // Narrow chrome-textured buttons that pop out of the dark header.
   const btnStyle = isLazer
     ? {
-        background: "linear-gradient(145deg, #f4f6f9, #d6dade)",
-        boxShadow: "0 4px 7px rgba(0,0,0,0.55), 0 1.5px 3px rgba(0,0,0,0.4)",
-        border: "none",
-        color: "#1f2937",
-        ...(isPersonOfInterest ? { border: "1px solid rgba(245, 158, 11, 0.5)" } : {}),
+        backgroundImage: `url(${lazerAssets.chrome})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        boxShadow: "0 3px 6px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5)",
+        border: "1px solid rgba(255,255,255,0.25)",
+        color: "#1a1a1a",
+        textShadow: "0 1px 0 rgba(255,255,255,0.4)",
+        ...(isPersonOfInterest ? { border: "1px solid rgba(245, 158, 11, 0.6)" } : {}),
       }
     : {
         ...getButtonStyle(),
@@ -111,34 +113,34 @@ export default function CustomerHeader({
           {customer.primary_phone && (
             <Button
               onClick={onCall}
-              className="rounded-xl h-9 px-3 border-0 text-sm flex items-center gap-1.5"
+              className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
               style={btnStyle}
             >
-              <Phone className="w-3.5 h-3.5" />
+              <Phone className="w-3 h-3" />
               Call
             </Button>
           )}
           {customer.primary_phone && (
             <Button
               onClick={onSMS}
-              className="rounded-xl h-9 px-3 border-0 text-sm flex items-center gap-1.5"
+              className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
               style={btnStyle}
             >
-              <MessageSquare className="w-3.5 h-3.5" />
+              <MessageSquare className="w-3 h-3" />
               SMS
             </Button>
           )}
           <Button
             onClick={onEmail}
-            className="rounded-xl h-9 px-3 border-0 text-sm flex items-center gap-1.5"
+            className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
             style={btnStyle}
           >
-            <Mail className="w-3.5 h-3.5" />
+            <Mail className="w-3 h-3" />
             Email
           </Button>
           <Button
             onClick={onToggleEscalation}
-            className="rounded-xl h-9 px-3 border-0 text-sm flex items-center gap-1.5"
+            className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
             style={{
               ...btnStyle,
               background: customer.escalation_flag
@@ -153,10 +155,10 @@ export default function CustomerHeader({
           {!isEditing && (
             <Button
               onClick={onEdit}
-              className="rounded-xl h-9 px-3 border-0 text-sm flex items-center gap-1.5"
+              className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
               style={btnStyle}
             >
-              <Edit3 className="w-3.5 h-3.5" />
+              <Edit3 className="w-3 h-3" />
               Edit
             </Button>
           )}
@@ -168,10 +170,11 @@ export default function CustomerHeader({
         {isLazerClient && lazerAssets && !employerEntity?.company_logo_url ? (
           <div
             style={{
-              background: "rgba(255,255,255,0.92)",
-              borderRadius: "12px",
-              padding: "8px 14px",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.4)",
+              background: "rgba(5,5,5,0.5)",
+              borderRadius: "14px",
+              padding: "10px 16px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+              border: "1px solid rgba(255,255,255,0.08)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -181,8 +184,8 @@ export default function CustomerHeader({
               src={lazerAssets.logo}
               alt="Lazer"
               style={{
-                maxHeight: 58,
-                maxWidth: 170,
+                maxHeight: 116,
+                maxWidth: 340,
                 objectFit: "contain",
               }}
             />
