@@ -72,12 +72,12 @@ export const ThemeProvider = ({ children }) => {
       
       buttonBg: '#E0E5EC',
       buttonText: '#374151',
-      buttonShadow: '6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff',
-      buttonShadowHover: '8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff',
-      buttonShadowPressed: 'inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff',
+      buttonShadow: '6px 6px 1px #a3b1c6, -6px -6px 1px #ffffff',
+      buttonShadowHover: '8px 8px 1px #a3b1c6, -8px -8px 1px #ffffff',
+      buttonShadowPressed: 'inset 4px 4px 1px #a3b1c6, inset -4px -4px 1px #ffffff',
       
       insetBg: '#E0E5EC',
-      insetShadow: 'inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff',
+      insetShadow: 'inset 3px 3px 1px #a3b1c6, inset -3px -3px 1px #ffffff',
       
       // Vibrant colors for both modes
       primary: '#3B82F6',
@@ -89,9 +89,9 @@ export const ThemeProvider = ({ children }) => {
       pink: '#EC4899',
       indigo: '#6366F1',
       
-      outerShadow: '8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff',
-      innerShadow: 'inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff',
-      cardShadow: '10px 10px 20px #a3b1c6, -10px -10px 20px #ffffff',
+      outerShadow: '8px 8px 1px #a3b1c6, -8px -8px 1px #ffffff',
+      innerShadow: 'inset 4px 4px 1px #a3b1c6, inset -4px -4px 1px #ffffff',
+      cardShadow: '10px 10px 1px #a3b1c6, -10px -10px 1px #ffffff',
     },
     dark: {
       bg: '#2a2e3a',
@@ -107,12 +107,12 @@ export const ThemeProvider = ({ children }) => {
       
       buttonBg: '#2a2e3a',
       buttonText: '#e5e7eb',
-      buttonShadow: '6px 6px 12px #1f232d, -6px -6px 12px #353945',
-      buttonShadowHover: '8px 8px 16px #1f232d, -8px -8px 16px #353945',
-      buttonShadowPressed: 'inset 4px 4px 8px #1f232d, inset -4px -4px 8px #353945',
+      buttonShadow: '6px 6px 1px #1f232d, -6px -6px 1px #353945',
+      buttonShadowHover: '8px 8px 1px #1f232d, -8px -8px 1px #353945',
+      buttonShadowPressed: 'inset 4px 4px 1px #1f232d, inset -4px -4px 1px #353945',
       
       insetBg: '#2a2e3a',
-      insetShadow: 'inset 3px 3px 6px #1f232d, inset -3px -3px 6px #353945',
+      insetShadow: 'inset 3px 3px 1px #1f232d, inset -3px -3px 1px #353945',
       
       // Vibrant colors for both modes
       primary: '#3B82F6',
@@ -124,9 +124,9 @@ export const ThemeProvider = ({ children }) => {
       pink: '#EC4899',
       indigo: '#6366F1',
       
-      outerShadow: '10px 10px 20px #1f232d, -10px -10px 20px #353945',
-      innerShadow: 'inset 4px 4px 8px #1f232d, inset -4px -4px 8px #353945',
-      cardShadow: '12px 12px 24px #1f232d, -12px -12px 24px #353945',
+      outerShadow: '10px 10px 1px #1f232d, -10px -10px 1px #353945',
+      innerShadow: 'inset 4px 4px 1px #1f232d, inset -4px -4px 1px #353945',
+      cardShadow: '12px 12px 1px #1f232d, -12px -12px 1px #353945',
     }
   };
 
@@ -136,12 +136,12 @@ export const ThemeProvider = ({ children }) => {
     if (pressed) {
       return {
         background: currentColors.cardBg,
-        boxShadow: `inset 6px 6px 12px ${currentColors.shadowDark}, inset -6px -6px 12px ${currentColors.shadowLight}`,
+        boxShadow: `inset 6px 6px 1px ${currentColors.shadowDark}, inset -6px -6px 1px ${currentColors.shadowLight}`,
       };
     }
     return {
       background: currentColors.cardBg,
-      boxShadow: `8px 8px 16px ${currentColors.shadowDark}, -8px -8px 16px ${currentColors.shadowLight}`,
+      boxShadow: `8px 8px 1px ${currentColors.shadowDark}, -8px -8px 1px ${currentColors.shadowLight}`,
     };
   };
 
@@ -149,12 +149,12 @@ export const ThemeProvider = ({ children }) => {
     if (pressed) {
       return {
         background: currentColors.cardBg,
-        boxShadow: `inset 3px 3px 6px ${currentColors.shadowDark}, inset -3px -3px 6px ${currentColors.shadowLight}`,
+        boxShadow: `inset 3px 3px 1px ${currentColors.shadowDark}, inset -3px -3px 1px ${currentColors.shadowLight}`,
       };
     }
     return {
       background: currentColors.cardBg,
-      boxShadow: `4px 4px 8px ${currentColors.shadowDark}, -4px -4px 8px ${currentColors.shadowLight}`,
+      boxShadow: `4px 4px 1px ${currentColors.shadowDark}, -4px -4px 1px ${currentColors.shadowLight}`,
     };
   };
 
@@ -285,8 +285,8 @@ export const ThemeProvider = ({ children }) => {
     return {
       background: getFaceColor(),
       boxShadow: brightness > 0 
-        ? `0 0 ${adjustedIntensity * 2}px rgba(255,255,255,${glowOpacity}), ${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`
-        : `${adjustedIntensity}px ${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px ${adjustedIntensity * 2}px ${currentColors.shadowLight}`,
+        ? `0 0 1px rgba(255,255,255,${glowOpacity}), ${adjustedIntensity}px ${adjustedIntensity}px 1px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px 1px ${currentColors.shadowLight}`
+        : `${adjustedIntensity}px ${adjustedIntensity}px 1px ${currentColors.shadowDark}, -${adjustedIntensity}px -${adjustedIntensity}px 1px ${currentColors.shadowLight}`,
       textColor: getAdjustedTextColor(),
       textShadow: getTextGlow(),
     };
