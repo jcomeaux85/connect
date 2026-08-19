@@ -104,8 +104,8 @@ export default function CustomerHeader({
     >
       {/* Left: Name (55% width) + job title + buttons */}
       <div className="flex flex-col justify-center" style={{ width: "55%", minWidth: 0 }}>
-        <AutoFitName text={fullName} baseSize={30} minSize={14} color={colors.text} />
-        <p className="text-xs mt-0.5 mb-3" style={{ color: colors.textSecondary }}>
+        <AutoFitName text={fullName} baseSize={55} minSize={22} color={colors.text} />
+        <p className="text-lg mt-1 mb-3" style={{ color: colors.textSecondary }}>
           {customer.job_title || "No job title"}
           {employerName ? ` at ${employerName}` : ""}
         </p>
@@ -113,7 +113,7 @@ export default function CustomerHeader({
           {customer.primary_phone && (
             <Button
               onClick={onCall}
-              className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
+              className="rounded-lg h-6 px-2.5 border-0 text-xs flex items-center gap-1"
               style={btnStyle}
             >
               <Phone className="w-3 h-3" />
@@ -123,7 +123,7 @@ export default function CustomerHeader({
           {customer.primary_phone && (
             <Button
               onClick={onSMS}
-              className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
+              className="rounded-lg h-6 px-2.5 border-0 text-xs flex items-center gap-1"
               style={btnStyle}
             >
               <MessageSquare className="w-3 h-3" />
@@ -132,7 +132,7 @@ export default function CustomerHeader({
           )}
           <Button
             onClick={onEmail}
-            className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
+            className="rounded-lg h-6 px-2.5 border-0 text-xs flex items-center gap-1"
             style={btnStyle}
           >
             <Mail className="w-3 h-3" />
@@ -140,7 +140,7 @@ export default function CustomerHeader({
           </Button>
           <Button
             onClick={onToggleEscalation}
-            className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
+            className="rounded-lg h-6 px-2.5 border-0 text-xs flex items-center gap-1"
             style={{
               ...btnStyle,
               background: customer.escalation_flag
@@ -155,7 +155,7 @@ export default function CustomerHeader({
           {!isEditing && (
             <Button
               onClick={onEdit}
-              className="rounded-lg h-8 px-2.5 border-0 text-xs flex items-center gap-1"
+              className="rounded-lg h-6 px-2.5 border-0 text-xs flex items-center gap-1"
               style={btnStyle}
             >
               <Edit3 className="w-3 h-3" />
@@ -170,7 +170,7 @@ export default function CustomerHeader({
         {isLazerClient && lazerAssets && !employerEntity?.company_logo_url ? (
           <div
             style={{
-              background: "rgba(5,5,5,0.5)",
+              background: colors.bg,
               borderRadius: "14px",
               padding: "10px 16px",
               boxShadow: "0 4px 1px rgba(0,0,0,0.5)",
