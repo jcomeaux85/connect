@@ -69,12 +69,12 @@ export default function CustomerHeader({
       : (employerEntity?.header_bg_color || colors.bg),
     backgroundSize: isLazerClient && lazerAssets ? "cover" : undefined,
     backgroundPosition: isLazerClient && lazerAssets ? "center" : undefined,
-    boxShadow: `8px 8px 20px ${colors.shadowDark}, -8px -8px 20px ${colors.shadowLight}`,
+    boxShadow: `8px 8px 1px ${colors.shadowDark}, -8px -8px 1px ${colors.shadowLight}`,
     borderRadius: "18px",
     ...(isPersonOfInterest
       ? {
           border: "1px solid rgba(245, 158, 11, 0.25)",
-          boxShadow: `0 0 12px rgba(245, 158, 11, 0.05), 8px 8px 20px ${colors.shadowDark}, -8px -8px 20px ${colors.shadowLight}`,
+          boxShadow: `0 0 1px rgba(245, 158, 11, 0.05), 8px 8px 1px ${colors.shadowDark}, -8px -8px 1px ${colors.shadowLight}`,
         }
       : {}),
   };
@@ -86,7 +86,7 @@ export default function CustomerHeader({
         backgroundImage: `url(${lazerAssets.chrome})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        boxShadow: "0 3px 6px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5)",
+        boxShadow: "0 3px 1px rgba(0,0,0,0.6), 0 1px 1px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5)",
         border: "1px solid rgba(255,255,255,0.25)",
         color: "#1a1a1a",
         textShadow: "0 1px 0 rgba(255,255,255,0.4)",
@@ -173,7 +173,7 @@ export default function CustomerHeader({
               background: "rgba(5,5,5,0.5)",
               borderRadius: "14px",
               padding: "10px 16px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+              boxShadow: "0 4px 1px rgba(0,0,0,0.5)",
               border: "1px solid rgba(255,255,255,0.08)",
               display: "flex",
               alignItems: "center",

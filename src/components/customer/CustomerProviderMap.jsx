@@ -117,7 +117,7 @@ export default function CustomerProviderMap({ customer, clientCompany, employer 
         className="w-full flex items-center justify-between px-5 py-3 rounded-2xl border-0 transition-all hover:opacity-90 relative overflow-hidden"
         style={{
           background: colors.bg,
-          boxShadow: `6px 6px 14px ${colors.shadowDark}, -6px -6px 14px ${colors.shadowLight}`,
+          boxShadow: `6px 6px 1px ${colors.shadowDark}, -6px -6px 1px ${colors.shadowLight}`,
         }}
       >
         {/* Isometric map background — centered horizontally, slightly below center vertically.

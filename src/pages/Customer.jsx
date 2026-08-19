@@ -443,7 +443,7 @@ export default function CustomerPage() {
                 {/* Personal Information */}
                 <Card
                   className={isLazerClient ? "border-0 lazer-glass" : "border-0"}
-                  style={isLazerClient ? lazerCardStyle("top center") : { background: colors.bg, boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`, ...goldRimStyle }}
+                  style={isLazerClient ? lazerCardStyle("top center") : { background: colors.bg, boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`, ...goldRimStyle }}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
@@ -556,7 +556,7 @@ export default function CustomerPage() {
                 {/* Contact Information */}
                 <Card
                   className={isLazerClient ? "border-0 lazer-glass" : "border-0"}
-                  style={isLazerClient ? lazerCardStyle("center") : { background: colors.bg, boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`, ...goldRimStyle }}
+                  style={isLazerClient ? lazerCardStyle("center") : { background: colors.bg, boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`, ...goldRimStyle }}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
@@ -753,7 +753,7 @@ export default function CustomerPage() {
                 {/* Employment Information */}
                 <Card
                   className={isLazerClient ? "border-0 lazer-glass" : "border-0"}
-                  style={isLazerClient ? lazerCardStyle("bottom center") : { background: colors.bg, boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`, ...goldRimStyle }}
+                  style={isLazerClient ? lazerCardStyle("bottom center") : { background: colors.bg, boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`, ...goldRimStyle }}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
@@ -959,7 +959,7 @@ export default function CustomerPage() {
                 {/* Notes Section */}
                 <Card
                   className={isLazerClient ? "border-0 lazer-glass" : "border-0"}
-                  style={isLazerClient ? lazerCardStyle("center") : { background: colors.bg, boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`, ...goldRimStyle }}
+                  style={isLazerClient ? lazerCardStyle("center") : { background: colors.bg, boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`, ...goldRimStyle }}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2" style={{ color: colors.text }}>
@@ -996,7 +996,7 @@ export default function CustomerPage() {
               className="border-0 mt-4"
               style={{
                 background: colors.cardBg,
-                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
@@ -1042,7 +1042,7 @@ export default function CustomerPage() {
                           className="p-4 rounded-2xl hover:shadow-lg transition-all"
                           style={{
                             background: colors.bg,
-                            boxShadow: `6px 6px 12px ${colors.shadowDark}, -6px -6px 12px ${colors.shadowLight}`
+                            boxShadow: `6px 6px 1px ${colors.shadowDark}, -6px -6px 1px ${colors.shadowLight}`
                           }}
                         >
                           <div className="flex justify-between items-start mb-2">
@@ -1108,7 +1108,7 @@ export default function CustomerPage() {
               className="border-0 mt-4"
               style={{
                 background: colors.cardBg,
-                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
@@ -1130,7 +1130,7 @@ export default function CustomerPage() {
                         className="p-4 rounded-2xl"
                         style={{
                           background: colors.bg,
-                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                          boxShadow: `4px 4px 1px ${colors.shadowDark}, -4px -4px 1px ${colors.shadowLight}`
                         }}
                       >
                         <div className="flex items-start justify-between mb-2">
@@ -1204,7 +1204,7 @@ export default function CustomerPage() {
               className="border-0 mt-4"
               style={{
                 background: colors.cardBg,
-                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
@@ -1226,7 +1226,7 @@ export default function CustomerPage() {
                         className="p-4 rounded-2xl"
                         style={{
                           background: colors.bg,
-                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                          boxShadow: `4px 4px 1px ${colors.shadowDark}, -4px -4px 1px ${colors.shadowLight}`
                         }}
                       >
                         <div className="flex items-start gap-3">
@@ -1306,7 +1306,7 @@ export default function CustomerPage() {
               className="border-0 mt-4"
               style={{
                 background: colors.cardBg,
-                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
@@ -1328,7 +1328,7 @@ export default function CustomerPage() {
                         className="p-4 rounded-2xl"
                         style={{
                           background: colors.bg,
-                          boxShadow: `4px 4px 8px ${colors.shadowDark}, -4px -4px 8px ${colors.shadowLight}`
+                          boxShadow: `4px 4px 1px ${colors.shadowDark}, -4px -4px 1px ${colors.shadowLight}`
                         }}
                       >
                         <div className="flex items-start gap-3">
@@ -1393,7 +1393,7 @@ export default function CustomerPage() {
               className="border-0 mt-4"
               style={{
                 background: colors.cardBg,
-                boxShadow: `12px 12px 24px ${colors.shadowDark}, -12px -12px 24px ${colors.shadowLight}`
+                boxShadow: `12px 12px 1px ${colors.shadowDark}, -12px -12px 1px ${colors.shadowLight}`
               }}
             >
               <CardHeader>
@@ -1517,7 +1517,7 @@ export default function CustomerPage() {
           className="fixed bottom-0 left-0 right-0 z-50 p-4"
           style={{
             background: colors.bg,
-            boxShadow: `0 -8px 24px ${colors.shadowDark}`
+            boxShadow: `0 -8px 1px ${colors.shadowDark}`
           }}
         >
           <div className="max-w-7xl mx-auto flex justify-end gap-3">
