@@ -70,7 +70,6 @@ export default function LazerParallaxBackground({ markUrl }) {
           width: "34vw",
           height: "34vw",
           transform: `translate(-50%, calc(-50% + ${ty}vh))`,
-          transition: "transform 0.12s ease-out",
           backgroundImage: `url(${markUrl})`,
           backgroundSize: "contain",
           backgroundPosition: "center",
