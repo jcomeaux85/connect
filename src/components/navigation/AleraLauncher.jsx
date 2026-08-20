@@ -176,6 +176,30 @@ const APPS = [
       </div>
     ),
   },
+  {
+    id: "equo",
+    label: "eQuo",
+    renderIcon: (size) => (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size * 0.34, color: "#ffffff", letterSpacing: "0.01em", whiteSpace: "nowrap" }}>
+          e<span style={{ color: "#8b6fd4" }}>Q</span>uo
+        </span>
+        {aleraSub(size, "#8b6fd4")}
+      </div>
+    ),
+  },
+  {
+    id: "loud",
+    label: "ALERA | loud",
+    renderIcon: (size) => (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size * 0.18, color: "#ffffff", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+          ALERA <span style={{ color: "#f97316" }}>|</span> loud
+        </span>
+        {aleraSub(size, "#f97316")}
+      </div>
+    ),
+  },
 ];
 
 // ── Hover previews: image + description shown in the dashboard area ──
@@ -228,6 +252,20 @@ const PREVIEWS = {
       "https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/c2cee6c0b_image.png",
     description:
       "BEN|connect — a unified call center platform combining phone, SMS, email, benefits tracking, HR management, and AI-assisted research in one high-performance workspace.",
+  },
+  equo: {
+    title: "eQuo",
+    image:
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&q=80",
+    description:
+      "eQuo — a weekly engagement suite: check-ins, mood tracking, shout-outs, and team sentiment dashboards. The 15Five replacement, evolved.",
+  },
+  loud: {
+    title: "ALERA | loud",
+    image:
+      "https://images.unsplash.com/photo-1556761175-5972dc059cd6?w=600&q=80",
+    description:
+      "ALERA | loud — user-generated surveys via email links and automatic post-call feedback collection. The Hively replacement, built in.",
   },
 };
 
@@ -353,6 +391,8 @@ export default function AleraLauncher({ onToggleDoc }) {
     if (app.id === "doc") onToggleDoc?.();
     else if (app.id === "corps") navigate("/Core");
     else if (app.id === "authlink") navigate("/AuthLink");
+    else if (app.id === "equo") navigate("/Equo");
+    else if (app.id === "loud") navigate("/Loud");
     else if (app.href) window.open(app.href, "_blank", "noopener,noreferrer");
   };
 

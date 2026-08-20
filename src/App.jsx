@@ -13,8 +13,10 @@ import { IntentBusProvider } from '@/services/intentBus/IntentBusContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Core from './pages/Core';
 import DOC from './pages/DOC';
-import Concensus from './pages/Concensus';
-import ConcensusProvider from '@/concensus/ConcensusProvider';
+import Equo from './pages/Equo';
+import Loud from './pages/Loud';
+import LoudSurvey from './pages/LoudSurvey';
+import EquoProvider from '@/equo/EquoProvider';
 import AuthLink from './pages/AuthLink';
 import AuthLinkMember from '@/components/authlink/AuthLinkMember';
 import AleraLearn from './pages/AleraLearn';
@@ -72,7 +74,9 @@ const AuthenticatedApp = () => {
       ))}
       <Route path="/Core" element={<LayoutWrapper currentPageName="Core"><Core /></LayoutWrapper>} />
       <Route path="/DOC" element={<LayoutWrapper currentPageName="DOC"><DOC /></LayoutWrapper>} />
-      <Route path="/Concensus" element={<LayoutWrapper currentPageName="Concensus"><Concensus /></LayoutWrapper>} />
+      <Route path="/Equo" element={<LayoutWrapper currentPageName="Equo"><Equo /></LayoutWrapper>} />
+      <Route path="/Loud" element={<LayoutWrapper currentPageName="Loud"><Loud /></LayoutWrapper>} />
+      <Route path="/LoudSurvey/:token" element={<LoudSurvey />} />
       <Route path="/AuthLink" element={<LayoutWrapper currentPageName="AuthLink"><AuthLink /></LayoutWrapper>} />
       <Route path="/AuthLink/Member/:id" element={<AuthLinkMember />} />
       <Route path="/AleraLearn" element={<LayoutWrapper currentPageName="AleraLearn"><AleraLearn /></LayoutWrapper>} />
@@ -93,7 +97,7 @@ function App() {
           <Router>
             <NavigationTracker />
             <AuthenticatedApp />
-            <ConcensusProvider />
+            <EquoProvider />
           </Router>
           </IntentBusProvider>
           <Toaster />

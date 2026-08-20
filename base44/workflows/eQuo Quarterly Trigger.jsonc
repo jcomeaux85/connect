@@ -1,0 +1,44 @@
+{
+  "name": "eQuo Quarterly Trigger",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 1 1,4,7,10 *",
+      "one_time_date": null,
+      "timezone": "America/Chicago",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "equo_quarterly_trigger",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "fire_quarterly": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "equo-quarterly-trigger"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Quarterly behavioral module",
+            "description": "Creates quarterly response slots"
+          }
+        }
+      }
+    ]
+  },
+  "description": "First day of each quarter: creates a quarterly behavioral response slot for each employee (stub \u2014 real question bank swapped in later)"
+}

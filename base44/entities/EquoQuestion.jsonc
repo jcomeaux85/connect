@@ -1,0 +1,51 @@
+{
+  "name": "EquoQuestion",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string",
+      "description": "The question text shown to team members"
+    },
+    "question_type": {
+      "type": "string",
+      "enum": [
+        "rating",
+        "free_text"
+      ],
+      "default": "rating",
+      "description": "rating = 1-10 slider + optional text; free_text = text only"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "scheduled",
+        "published"
+      ],
+      "default": "draft",
+      "description": "Lifecycle of the question"
+    },
+    "publish_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this question should be / was published into a survey (YYYY-MM-DD)"
+    },
+    "survey_id": {
+      "type": "string",
+      "description": "Reference to the EquoSurvey this question belongs to once published"
+    },
+    "order_index": {
+      "type": "number",
+      "default": 0,
+      "description": "Order of the question within its survey"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag"
+    }
+  },
+  "required": [
+    "text"
+  ]
+}

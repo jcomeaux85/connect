@@ -1,0 +1,39 @@
+{
+  "name": "EquoMood",
+  "type": "object",
+  "properties": {
+    "respondent_email": {
+      "type": "string",
+      "description": "Email of the team member"
+    },
+    "respondent_name": {
+      "type": "string",
+      "description": "Cached name of the respondent"
+    },
+    "week_of": {
+      "type": "string",
+      "format": "date",
+      "description": "The Monday (or survey date) of the week this mood check belongs to (YYYY-MM-DD)"
+    },
+    "mood_value": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "1-5 mood value (1=rough, 5=great)"
+    },
+    "note": {
+      "type": "string",
+      "description": "Optional one-line context note"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag \u2014 excluded from real sentiment trendlines"
+    }
+  },
+  "required": [
+    "respondent_email",
+    "week_of",
+    "mood_value"
+  ]
+}

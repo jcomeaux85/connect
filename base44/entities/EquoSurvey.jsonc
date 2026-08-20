@@ -1,0 +1,37 @@
+{
+  "name": "EquoSurvey",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Display title for the weekly survey"
+    },
+    "publish_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the survey was published (YYYY-MM-DD). Used to group questions into one weekly survey."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "closed"
+      ],
+      "default": "active",
+      "description": "Whether the survey is currently accepting responses"
+    },
+    "is_anonymous": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, respondents can choose to submit anonymously and admins see aggregate only"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag \u2014 excluded from real trendlines and dashboards"
+    }
+  },
+  "required": [
+    "publish_date"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "EquoQuarterlyResponse",
+  "type": "object",
+  "properties": {
+    "respondent_email": {
+      "type": "string",
+      "description": "Email of the team member"
+    },
+    "respondent_name": {
+      "type": "string",
+      "description": "Cached name of the respondent"
+    },
+    "quarter_key": {
+      "type": "string",
+      "description": "Quarter identifier, e.g. 2026-Q3"
+    },
+    "quarter_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date the quarterly module fired (YYYY-MM-DD)"
+    },
+    "answers": {
+      "type": "string",
+      "description": "JSON-serialized answers from the quarterly question bank (stub \u2014 real logic swapped in later)"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag"
+    }
+  },
+  "required": [
+    "respondent_email",
+    "quarter_key"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "EquoResponse",
+  "type": "object",
+  "properties": {
+    "survey_id": {
+      "type": "string",
+      "description": "Reference to the EquoSurvey"
+    },
+    "question_id": {
+      "type": "string",
+      "description": "Reference to the EquoQuestion"
+    },
+    "question_text": {
+      "type": "string",
+      "description": "Cached question text for display"
+    },
+    "respondent_email": {
+      "type": "string",
+      "description": "Email of the team member who answered (stored even when anonymous, but admin views hide it when is_anonymous is true)"
+    },
+    "respondent_name": {
+      "type": "string",
+      "description": "Cached name of the respondent"
+    },
+    "answer_text": {
+      "type": "string",
+      "description": "Free-text answer"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "1-10 rating (null for free_text-only questions)"
+    },
+    "is_flagged": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the respondent flagged this response for admin follow-up"
+    },
+    "is_anonymous": {
+      "type": "boolean",
+      "default": false,
+      "description": "Per-respondent anonymity choice \u2014 when true, admin dashboards show this response in aggregate only"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag \u2014 excluded from real trendlines"
+    }
+  },
+  "required": [
+    "survey_id",
+    "question_id",
+    "respondent_email"
+  ]
+}

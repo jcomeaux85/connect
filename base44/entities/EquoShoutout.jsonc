@@ -1,0 +1,41 @@
+{
+  "name": "EquoShoutout",
+  "type": "object",
+  "properties": {
+    "from_email": {
+      "type": "string",
+      "description": "Email of the person giving the shout-out"
+    },
+    "from_name": {
+      "type": "string",
+      "description": "Cached name of the giver"
+    },
+    "to_email": {
+      "type": "string",
+      "description": "Email of the recipient"
+    },
+    "to_name": {
+      "type": "string",
+      "description": "Cached name of the recipient"
+    },
+    "message": {
+      "type": "string",
+      "description": "The recognition message \u2014 one line, pure recognition, no rating"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": true,
+      "description": "Public shout-outs appear in the team feed; private ones are visible only to giver and recipient"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag"
+    }
+  },
+  "required": [
+    "from_email",
+    "to_email",
+    "message"
+  ]
+}

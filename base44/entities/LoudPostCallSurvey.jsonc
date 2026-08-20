@@ -1,0 +1,61 @@
+{
+  "name": "LoudPostCallSurvey",
+  "type": "object",
+  "properties": {
+    "survey_id": {
+      "type": "string",
+      "description": "Reference to the LoudSurvey to send after the call"
+    },
+    "survey_title": {
+      "type": "string",
+      "description": "Cached survey title"
+    },
+    "call_id": {
+      "type": "string",
+      "description": "Reference to the Call that triggered this post-call survey send"
+    },
+    "customer_phone": {
+      "type": "string",
+      "description": "Phone number to send the survey to"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Reference to the Customer"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Email to send the survey link to (if available)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "completed",
+        "expired",
+        "failed"
+      ],
+      "default": "pending",
+      "description": "Delivery + completion status"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the survey link was sent to the customer"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the customer submitted the survey"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag"
+    }
+  },
+  "required": [
+    "survey_id",
+    "customer_phone"
+  ]
+}

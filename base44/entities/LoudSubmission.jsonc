@@ -1,0 +1,64 @@
+{
+  "name": "LoudSubmission",
+  "type": "object",
+  "properties": {
+    "survey_id": {
+      "type": "string",
+      "description": "Reference to the LoudSurvey"
+    },
+    "survey_title": {
+      "type": "string",
+      "description": "Cached survey title for display"
+    },
+    "respondent_email": {
+      "type": "string",
+      "description": "Email of the respondent (from email-link surveys)"
+    },
+    "respondent_name": {
+      "type": "string",
+      "description": "Respondent name (if provided)"
+    },
+    "customer_phone": {
+      "type": "string",
+      "description": "Phone number of the customer (for post-call surveys)"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Reference to the Customer (for post-call surveys)"
+    },
+    "call_id": {
+      "type": "string",
+      "description": "Reference to the Call that triggered this post-call survey"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "email_link",
+        "post_call"
+      ],
+      "description": "How this submission was collected"
+    },
+    "answers": {
+      "type": "string",
+      "description": "JSON-serialized { question_id: answer_value } map"
+    },
+    "overall_rating": {
+      "type": "number",
+      "description": "If the survey includes a rating question, the top-level rating for dashboard rollup"
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the submission was received"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag"
+    }
+  },
+  "required": [
+    "survey_id",
+    "trigger_type"
+  ]
+}

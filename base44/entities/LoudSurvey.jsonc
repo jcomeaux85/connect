@@ -1,0 +1,84 @@
+{
+  "name": "LoudSurvey",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Survey title shown to respondents"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description / intro text shown at the top of the survey"
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "rating",
+              "text",
+              "choice"
+            ]
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "description": "Inline question definitions for this survey"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "email_link",
+        "post_call",
+        "standalone"
+      ],
+      "default": "email_link",
+      "description": "How this survey is delivered \u2014 email link, automatic post-call, or standalone shareable link"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "closed"
+      ],
+      "default": "draft",
+      "description": "Survey lifecycle"
+    },
+    "share_token": {
+      "type": "string",
+      "description": "Unique token used in the shareable email link URL"
+    },
+    "created_by_email": {
+      "type": "string",
+      "description": "Email of the admin who created this survey"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

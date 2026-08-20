@@ -1,0 +1,72 @@
+{
+  "name": "EquoAlert",
+  "type": "object",
+  "properties": {
+    "response_id": {
+      "type": "string",
+      "description": "Reference to the EquoResponse that triggered the alert (if applicable)"
+    },
+    "survey_id": {
+      "type": "string",
+      "description": "Reference to the EquoSurvey"
+    },
+    "question_text": {
+      "type": "string",
+      "description": "Cached question text"
+    },
+    "respondent_email": {
+      "type": "string",
+      "description": "Email of the team member"
+    },
+    "respondent_name": {
+      "type": "string",
+      "description": "Cached name of the respondent"
+    },
+    "answer_text": {
+      "type": "string",
+      "description": "The answer that triggered the alert"
+    },
+    "rating": {
+      "type": "number",
+      "description": "The rating that triggered the alert"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "flagged",
+        "low_rating",
+        "flagged_and_low",
+        "mood_streak"
+      ],
+      "description": "Why this alert was raised \u2014 flagged, low_rating, both, or sustained low mood streak"
+    },
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "survey",
+        "mood"
+      ],
+      "default": "survey",
+      "description": "Whether this alert came from the weekly survey or the mood check"
+    },
+    "is_resolved": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether an admin has resolved this alert"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert was resolved"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Demo/test data tag"
+    }
+  },
+  "required": [
+    "respondent_email",
+    "reason"
+  ]
+}
