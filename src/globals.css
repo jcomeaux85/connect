@@ -186,6 +186,26 @@
 }
 
 /* ─────────────────────────────────────────────────────────
+   CORPS CHAT BAR — container carries the neumorphic background;
+   textarea is fully transparent so there's no inner box.
+   ───────────────────────────────────────────────────────── */
+.corps-neu .corps-chat-container {
+  background: var(--neu-bg, #e8e8ee) !important;
+  box-shadow: 6px 6px 1px var(--neu-dark, #c5c5cf), -6px -6px 1px var(--neu-light, #ffffff) !important;
+  border: none !important;
+}
+.dark .corps-neu .corps-chat-container {
+  background: var(--neu-bg, #2a2e3a) !important;
+  box-shadow: 6px 6px 1px var(--neu-dark, #1f232d), -6px -6px 1px var(--neu-light, #353945) !important;
+}
+.dark .corps-neu textarea.corps-chat-textarea,
+.corps-neu textarea.corps-chat-textarea {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────
    SPOTLIGHT — concentration aid (brightness only, no layout change)
    Reuses the same easing/feel as the existing hover hue transition.
    OFF (no data-spotlight on body): zero visual change.

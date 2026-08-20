@@ -3,10 +3,12 @@ import { Sparkles, ArrowUp, X, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 // MAJOR — the CORPS// AI assistant.
-// Single prominent prompt box at the top, like ChatGPT / Gemini / Grok.
+// Container carries the neumorphic background (no inner white box).
+// Example prompt: dark grey, italic, full multi-line, ~5 reserved empty lines.
+// On focus: example clears, blinking cursor, typed text is black non-italic.
+// Uses a contentEditable div (not a textarea) so the .corps-neu textarea CSS
+// override can't inject an inner-box background.
 
-// Overly-specific rotating placeholder prompts — they matter none, but they
-// show off the depth of what MAJOR can dig into.
 const ROTATING_PROMPTS = [
   "Want to know how many of your full time employees that were hired on days with temps higher than 85 degrees contribute more than 50$ to their 401k per pay period, but never work overtime, have never called in on a Friday, and have the same 2 emails on file since their hire date?",
   "Show me every part-time employee who clocked in late on a Monday after a holiday, took a lunch break longer than 45 minutes, and whose manager approved overtime in the same week they filed a PTO request.",
@@ -15,32 +17,33 @@ const ROTATING_PROMPTS = [
   "How many hourly employees took exactly 2 sick days in Q2, have a PTO balance ending in a 5 or 0, were hired by a manager who no longer works here, and have a phone number with a 777 somewhere in it?",
 ];
 
+const LINE_HEIGHT = 24;
+const RESERVED_LINES = 5;
+const RESERVED_PX = RESERVED_LINES * LINE_HEIGHT;
+
 export default function CorpsChatBar() {
   const [prompt, setPrompt] = useState('');
   const [conversation, setConversation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [focused, setFocused] = useState(false);
   const [phIndex] = useState(() => Math.floor(Math.random() * ROTATING_PROMPTS.length));
-  const inputRef = useRef(null);
+  const [exampleHeight, setExampleHeight] = useState(0);
+  const editRef = useRef(null);
   const overlayRef = useRef(null);
   const respRef = useRef(null);
 
   useEffect(() => {
-    if (expanded && inputRef.current) inputRef.current.focus();
+    if (expanded && editRef.current) editRef.current.focus();
   }, [expanded]);
 
   useEffect(() => {
     if (respRef.current) respRef.current.scrollTop = respRef.current.scrollHeight;
   }, [conversation, loading]);
 
-  const autosize = () => {
-    const el = inputRef.current;
-    if (!el) return;
-    el.style.height = 'auto';
-    el.style.height = Math.max(el.scrollHeight, 24) + 'px';
-  };
-
-  useEffect(() => { autosize(); }, [prompt]);
+  useEffect(() => {
+    if (overlayRef.current) setExampleHeight(overlayRef.current.scrollHeight);
+  }, [phIndex, focused]);
 
   const send = async (text) => {
     const trimmed = (text ?? prompt).trim();
@@ -49,6 +52,7 @@ export default function CorpsChatBar() {
     setLoading(true);
     setConversation(prev => prev ? [...prev, { role: 'user', text: trimmed }] : [{ role: 'user', text: trimmed }]);
     setPrompt('');
+    if (editRef.current) editRef.current.textContent = '';
     try {
       const res = await base44.integrations.Core.InvokeLLM({
         prompt: `You are MAJOR — the CORPS// assistant, a concise, helpful AI for payroll, timecards, scheduling, HR, and benefits operations. Answer clearly and briefly.\n\nUser: ${trimmed}`,
@@ -71,31 +75,45 @@ export default function CorpsChatBar() {
     setExpanded(false);
     setConversation(null);
     setPrompt('');
+    if (editRef.current) editRef.current.textContent = '';
   };
+
+  const showExample = !prompt && !focused;
+  const containerMinHeight = showExample ? (exampleHeight + RESERVED_PX) : RESERVED_PX;
 
   return (
     <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0 flex justify-center">
+      {/* Self-contained style override — beats the .corps-neu textarea/input rules */}
+      <style>{`
+        .corps-chat-shell {
+          background: var(--neu-bg, #e8e8ee) !important;
+          box-shadow: 6px 6px 1px var(--neu-dark, #c5c5cf), -6px -6px 1px var(--neu-light, #ffffff) !important;
+          border: none !important;
+        }
+        .corps-chat-edit {
+          background: transparent !important;
+          box-shadow: none !important;
+          border: none !important;
+          outline: none !important;
+        }
+        .corps-chat-edit:empty:before {
+          content: '';
+        }
+      `}</style>
       <div
-        className="w-full max-w-3xl rounded-3xl overflow-hidden flex flex-col transition-all duration-300"
-        style={{
-          background: '#ffffff',
-          border: '1px solid #e5e7eb',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-          maxHeight: expanded ? '60vh' : 'none',
-        }}
+        className="corps-chat-shell w-full max-w-3xl rounded-3xl overflow-hidden flex flex-col transition-all duration-300"
+        style={{ maxHeight: expanded ? '60vh' : 'none' }}
       >
-        {/* Conversation area (only when expanded) */}
+        {/* Conversation area */}
         {expanded && conversation && (
-          <div ref={respRef} className="overflow-y-auto px-5 py-4 space-y-3" style={{ background: '#f8faf8', flex: 1, minHeight: '120px' }}>
+          <div ref={respRef} className="overflow-y-auto px-5 py-4 space-y-3" style={{ background: 'rgba(255,255,255,0.4)', flex: 1, minHeight: '120px' }}>
             {conversation.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className="max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap leading-relaxed"
-                  style={
-                    msg.role === 'user'
-                      ? { background: '#22c55e', color: '#ffffff' }
-                      : { background: '#ffffff', color: '#1a2e1a', border: '1px solid #e5e7e5' }
-                  }
+                  style={msg.role === 'user'
+                    ? { background: '#22c55e', color: '#ffffff' }
+                    : { background: '#ffffff', color: '#1a2e1a', border: '1px solid #e5e7e5' }}
                 >
                   {msg.text}
                 </div>
@@ -112,40 +130,48 @@ export default function CorpsChatBar() {
           </div>
         )}
 
-        {/* Single prompt input — thin bar, like ChatGPT/Gemini/Grok */}
-        <div className="px-6 py-3.5" style={{ background: '#ffffff' }}>
-          <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full" style={{ background: '#ecfdf5' }}>
+        {/* Prompt input — container IS the background, no inner box */}
+        <div className="px-6 py-4">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full mt-1" style={{ background: '#dcfce7' }}>
               <Sparkles className="w-4 h-4" style={{ color: '#28a745' }} />
             </div>
-            <div className="flex-1 relative">
-              <textarea
-                ref={inputRef}
-                value={prompt}
-                onChange={(e) => { setPrompt(e.target.value); autosize(); }}
+            <div className="flex-1 relative" style={{ minHeight: containerMinHeight }}>
+              {/* contentEditable div — not a textarea, so neumorphic CSS can't touch it */}
+              <div
+                ref={editRef}
+                contentEditable
+                suppressContentEditableWarning
+                onInput={(e) => setPrompt(e.currentTarget.textContent)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     handleSubmit(e);
                   }
                 }}
-                onFocus={() => setExpanded(true)}
-                placeholder=""
-                rows={1}
-                className="w-full bg-transparent border-none outline-none resize-none text-base font-medium leading-relaxed"
-                style={{ color: '#1a2e1a', caretColor: '#28a745', minHeight: '24px' }}
+                onFocus={() => { setFocused(true); setExpanded(true); }}
+                onBlur={() => setFocused(false)}
+                className="corps-chat-edit w-full text-base leading-relaxed break-words"
+                style={{
+                  color: '#000000',
+                  fontStyle: 'normal',
+                  fontWeight: 500,
+                  caretColor: '#28a745',
+                  minHeight: RESERVED_PX,
+                  wordBreak: 'break-word',
+                  whiteSpace: 'pre-wrap',
+                }}
               />
-              {/* Placeholder overlay — single line, truncated */}
-              {!prompt && (
+              {/* Example prompt overlay — dark grey, italic, full multi-line */}
+              {showExample && (
                 <div
                   ref={overlayRef}
-                  className="absolute top-0 left-0 right-0 pointer-events-none text-base font-medium leading-relaxed flex items-center"
+                  className="absolute top-0 left-0 right-0 pointer-events-none text-base leading-relaxed"
                   style={{
-                    color: '#9aa0a6',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    height: '24px',
+                    color: '#333333',
+                    fontStyle: 'italic',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
                   }}
                 >
                   {ROTATING_PROMPTS[phIndex]}
@@ -155,18 +181,17 @@ export default function CorpsChatBar() {
             {expanded && (
               <button
                 onClick={handleClose}
-                className="p-1.5 rounded-lg transition-colors hover:bg-gray-100 flex-shrink-0"
+                className="p-1.5 rounded-lg transition-colors flex-shrink-0 mt-1"
                 style={{ color: '#9ca3af' }}
                 title="Clear"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
-            {/* Send button — circular, like ChatGPT/Gemini */}
             <button
               onClick={handleSubmit}
               disabled={loading || !prompt.trim()}
-              className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
+              className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 mt-1"
               style={{
                 background: prompt.trim() ? '#28a745' : '#d1d5db',
                 color: '#ffffff',
