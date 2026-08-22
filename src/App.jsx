@@ -21,6 +21,7 @@ import AuthLink from './pages/AuthLink';
 import AuthLinkMember from '@/components/authlink/AuthLinkMember';
 import AleraLearn from './pages/AleraLearn';
 import OmmniAdmin from './pages/OmmniAdmin';
+import OmmniEngine from './pages/OmmniEngine';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -81,6 +82,7 @@ const AuthenticatedApp = () => {
       <Route path="/AuthLink/Member/:id" element={<AuthLinkMember />} />
       <Route path="/AleraLearn" element={<LayoutWrapper currentPageName="AleraLearn"><AleraLearn /></LayoutWrapper>} />
       <Route path="/OmmniAdmin" element={<LayoutWrapper currentPageName="OmmniAdmin"><OmmniAdmin /></LayoutWrapper>} />
+      <Route path="/OmmniEngine" element={<LayoutWrapper currentPageName="OmmniEngine"><OmmniEngine /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

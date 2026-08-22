@@ -7,7 +7,7 @@ import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
   MessageSquare, LogOut, Palette, Building2,
   Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play, Lightbulb, Settings,
-  MessageSquareHeart, Volume2
+  MessageSquareHeart, Volume2, Brain
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -31,6 +31,7 @@ const navItems = [
   { title: 'Timeline', url: createPageUrl('Timeline'), icon: Clock },
   { title: 'eQuo', url: createPageUrl('Equo'), icon: MessageSquareHeart },
   { title: 'ALERA | loud', url: createPageUrl('Loud'), icon: Volume2 },
+  { title: 'OMMNI', url: createPageUrl('OmmniEngine'), icon: Brain },
 ];
 
 // --- Pointer-driven lit button ---
