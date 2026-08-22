@@ -104,6 +104,16 @@ export default function CorpsChatBar() {
         className="corps-chat-shell w-full max-w-3xl rounded-3xl overflow-hidden flex flex-col transition-all duration-300"
         style={{ maxHeight: expanded ? '60vh' : 'none' }}
       >
+        {/* RME of ONE header banner — black backdrop so the dark graphic blends in */}
+        <div className="w-full" style={{ background: '#000000' }}>
+          <img
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/94900a7e3_RMEofONE_glitchBnew2.png"
+            alt="CORPS // RME of ONE — Unifying Risk Management Enterprise"
+            className="w-full h-auto block select-none"
+            draggable={false}
+          />
+        </div>
+
         {/* Conversation area */}
         {expanded && conversation && (
           <div ref={respRef} className="overflow-y-auto px-5 py-4 space-y-3" style={{ background: 'rgba(255,255,255,0.4)', flex: 1, minHeight: '120px' }}>
