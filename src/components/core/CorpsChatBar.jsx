@@ -105,9 +105,9 @@ export default function CorpsChatBar() {
         style={{ maxHeight: expanded ? '60vh' : 'none' }}
       >
         {/* RME of ONE header banner — black backdrop so the dark graphic blends in */}
-        <div className="w-full" style={{ background: '#000000' }}>
+        <div className="w-full" style={{ background: '#F0F0F0' }}>
           <img
-            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/94900a7e3_RMEofONE_glitchBnew2.png"
+            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/cd80b6962_RMEofONE_glitchBnew2b.png"
             alt="CORPS // RME of ONE — Unifying Risk Management Enterprise"
             className="w-full h-auto block select-none"
             draggable={false}
