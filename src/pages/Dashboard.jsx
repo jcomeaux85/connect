@@ -224,15 +224,12 @@ export default function Dashboard() {
       {/* Shift timeline — queue lunches + breaks */}
       <ShiftBreakBar isDark={isDark} />
 
-      {/* Call Volume + Queue — live call log */}
-      <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-1xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
-          <AgentCallTimeline incomingCalls={calls} />
-        </div>
-        <CallQueuePanel cases={cases} />
+      {/* Live call log — full width */}
+      <div className="rounded-1xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
+        <AgentCallTimeline incomingCalls={calls} />
       </div>
 
-      {/* Stats row — tilt + click to open panel */}
+      {/* Info panes — tilt + click to open panel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => {
           const StatIcon = s.icon;
@@ -259,6 +256,9 @@ export default function Dashboard() {
           );
         })}
       </div>
+
+      {/* Call Queue */}
+      <CallQueuePanel cases={cases} />
 
       {/* Agent Activity + AI Insights */}
       <AgentActivityPanel users={users} currentUser={user} calls={calls} />
