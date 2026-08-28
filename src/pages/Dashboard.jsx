@@ -224,6 +224,14 @@ export default function Dashboard() {
       {/* Shift timeline — queue lunches + breaks */}
       <ShiftBreakBar isDark={isDark} />
 
+      {/* Call Volume + Queue — live call log */}
+      <div className="grid lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 rounded-1xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
+          <AgentCallTimeline incomingCalls={calls} />
+        </div>
+        <CallQueuePanel cases={cases} />
+      </div>
+
       {/* Stats row — tilt + click to open panel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => {
@@ -250,14 +258,6 @@ export default function Dashboard() {
             </TiltCard>
           );
         })}
-      </div>
-
-      {/* Call Volume + Queue */}
-      <div className="grid lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-1xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
-          <AgentCallTimeline incomingCalls={calls} />
-        </div>
-        <CallQueuePanel cases={cases} />
       </div>
 
       {/* Agent Activity + AI Insights */}
