@@ -251,6 +251,16 @@ export default function PersistentSidebar({
     { label: 'Logout', icon: LogOut, onClick: handleLogout },
   ];
 
+  // Narrow-mode hover tooltip: rendered as a fixed overlay (sibling of the
+  // panel) so it escapes the sidebar's overflow clipping without creating a
+  // horizontal scrollbar inside the nav scroll container.
+  const [hoverTip, setHoverTip] = useState(null);
+  const showNavTip = (e, text) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    setHoverTip({ text, x: r.right + 8, y: r.top + r.height / 2 });
+  };
+  const hideNavTip = () => setHoverTip(null);
+
   // Deep purple glass panel
   const PANEL_BG = 'linear-gradient(160deg, rgba(55,30,90,0.38) 0%, rgba(38,20,72,0.42) 60%, rgba(28,14,58,0.48) 100%)';
   const PANEL_BORDER = 'rgba(255,255,255,0.13)';
@@ -270,12 +280,6 @@ export default function PersistentSidebar({
 
   return (
     <>
-      <style>{`
-        .nav-slide-wrap:hover .nav-slide-label {
-          opacity: 1 !important;
-          transform: translateY(-50%) translateX(0) !important;
-        }
-      `}</style>
       {/* Approach zone -- pre-warms the cursor light; brightness ramps as you near the panel */}
       <div
         className="fixed left-0 top-0 h-full z-[59]"
@@ -358,7 +362,7 @@ export default function PersistentSidebar({
 
           {/* Nav items -- natural height, scroll if overflow */}
           <div
-            className="px-1.5 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-visible"
+            className="px-1.5 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-hidden"
             style={{ scrollbarWidth: 'none', gap: '6px' }}
           >
             {/* Nav buttons -- natural height, no stretch */}
@@ -378,6 +382,8 @@ export default function PersistentSidebar({
                     key={item.title}
                     className="relative nav-slide-wrap"
                     style={isFull ? { minHeight: '38px' } : { flex: '1 1 auto', minHeight: '38px' }}
+                    onMouseEnter={(e) => isMin && showNavTip(e, item.title)}
+                    onMouseLeave={hideNavTip}
                   >
                     <Link to={item.url} style={{ display: 'block', height: '100%' }}>
                       <LitButton
@@ -413,36 +419,7 @@ export default function PersistentSidebar({
                         </AnimatePresence>
                       </LitButton>
                     </Link>
-                    {isMin && (
-                      <span
-                        data-proximity-label
-                        className="nav-slide-label"
-                        style={{
-                          position: 'absolute',
-                          left: '100%',
-                          top: '50%',
-                          transform: 'translateY(-50%) translateX(-8px)',
-                          marginLeft: '8px',
-                          opacity: 0,
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          whiteSpace: 'nowrap',
-                          color: isActive ? '#e9d5ff' : 'rgba(255,255,255,0.95)',
-                          pointerEvents: 'none',
-                          zIndex: 55,
-                          transition: 'opacity 0.18s ease, transform 0.18s ease',
-                          background: 'rgba(30,20,50,0.85)',
-                          backdropFilter: 'blur(10px)',
-                          padding: '4px 10px',
-                          borderRadius: '8px',
-                          border: '1px solid rgba(255,255,255,0.12)',
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-                          textShadow: '0 1px 4px rgba(0,0,0,0.8)',
-                        }}
-                      >
-                        {item.title}
-                      </span>
-                    )}
+
                   </div>
                 );
               })}
@@ -468,6 +445,8 @@ export default function PersistentSidebar({
                 const btn = (
                   <div
                     className="relative flex items-center gap-1.5 nav-slide-wrap"
+                    onMouseEnter={(e) => isMin && showNavTip(e, label)}
+                    onMouseLeave={hideNavTip}
                   >
                     <LitButton
                       isActive={!!active}
@@ -503,36 +482,7 @@ export default function PersistentSidebar({
                         <Settings className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.65)' }} />
                       </button>
                     )}
-                    {isMin && (
-                      <span
-                        data-proximity-label
-                        className="nav-slide-label"
-                        style={{
-                          position: 'absolute',
-                          left: '100%',
-                          top: '50%',
-                          transform: 'translateY(-50%) translateX(-8px)',
-                          marginLeft: '8px',
-                          opacity: 0,
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          whiteSpace: 'nowrap',
-                          color: 'rgba(255,255,255,0.95)',
-                          pointerEvents: 'none',
-                          zIndex: 55,
-                          transition: 'opacity 0.18s ease, transform 0.18s ease',
-                          background: 'rgba(30,20,50,0.85)',
-                          backdropFilter: 'blur(10px)',
-                          padding: '4px 10px',
-                          borderRadius: '8px',
-                          border: '1px solid rgba(255,255,255,0.12)',
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-                          textShadow: '0 1px 4px rgba(0,0,0,0.8)',
-                        }}
-                      >
-                        {label}
-                      </span>
-                    )}
+
                   </div>
                 );
                 return to
@@ -635,6 +585,34 @@ export default function PersistentSidebar({
           </div>
         </div>
       </motion.div>
+
+      {/* Narrow-mode hover tooltip -- fixed overlay, escapes sidebar clipping */}
+      {isMin && isOpen && hoverTip && (
+        <div
+          style={{
+            position: 'fixed',
+            left: `${hoverTip.x}px`,
+            top: `${hoverTip.y}px`,
+            transform: 'translateY(-50%)',
+            zIndex: 200,
+            pointerEvents: 'none',
+            fontSize: '12px',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+            color: 'rgba(255,255,255,0.95)',
+            background: 'rgba(30,20,50,0.88)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            padding: '4px 10px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255,255,255,0.14)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.55)',
+            textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+          }}
+        >
+          {hoverTip.text}
+        </div>
+      )}
     </>
   );
 }
