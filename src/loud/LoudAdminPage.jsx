@@ -2,7 +2,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Volume2 } from "lucide-react";
-import { loudTheme as t } from "./loudTheme";
+import { useLoudTheme } from "./loudTheme";
 import { loudApi } from "./loudApi";
 import LoudSurveyComposer from "./LoudSurveyComposer";
 import LoudDashboard from "./LoudDashboard";
@@ -10,6 +10,7 @@ import { useEquoUser } from "@/equo/useEquoUser";
 
 export default function LoudAdminPage() {
   const { user, isAdmin, isLoading } = useEquoUser();
+  const { theme: t } = useLoudTheme();
   const { data, isLoading: loadingData } = useQuery({
     queryKey: ["loud-admin"],
     enabled: !!isAdmin,

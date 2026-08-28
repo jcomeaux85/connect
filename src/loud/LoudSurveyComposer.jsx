@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2, Send, Copy, Check } from "lucide-react";
-import { loudTheme as t, raised, inset, pressable } from "./loudTheme";
+import { useLoudTheme } from "./loudTheme";
 import { loudApi } from "./loudApi";
 
 const DEFAULT_QUESTIONS = [
@@ -12,6 +12,7 @@ const DEFAULT_QUESTIONS = [
 ];
 
 export default function LoudSurveyComposer({ user }) {
+  const { theme: t, raised, inset, pressable } = useLoudTheme();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");

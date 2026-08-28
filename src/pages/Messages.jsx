@@ -4,10 +4,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, Send, Phone, Video, MoreHorizontal, Sparkles } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
+import { useTheme } from "@/components/ThemeProvider";
 
 const TABS = ['All', 'SMS', 'Email', 'Internal'];
 
 export default function Messages() {
+  const { colors, getButtonStyle, getInsetStyle, isDark } = useTheme();
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -110,17 +112,22 @@ export default function Messages() {
 
   const getInitials = (name) => (name || '?').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
+  const accent = '#7C3AED';
+  const selectedBg = isDark ? 'rgba(124,58,237,0.18)' : '#F5F3FF';
+  const themBubbleBg = isDark ? 'rgba(255,255,255,0.08)' : '#f1f1f4';
+
   return (
-    <div className="flex h-full bg-gray-50">
+    <div className="flex h-full" style={{ background: colors.bg }}>
       {/* Left panel */}
-      <div className="w-72 flex-shrink-0 bg-white border-r border-gray-100 flex flex-col">
-        <div className="p-4 border-b border-gray-100">
-          <h1 className="text-lg font-bold text-gray-900 mb-1">Messages</h1>
-          <p className="text-xs text-gray-400 mb-3">SMS, email, and internal messaging</p>
+      <div className="w-72 flex-shrink-0 flex flex-col" style={{ background: colors.cardBg, borderRight: `1px solid ${colors.border}` }}>
+        <div className="p-4" style={{ borderBottom: `1px solid ${colors.border}` }}>
+          <h1 className="text-lg font-bold mb-1" style={{ color: colors.text }}>Messages</h1>
+          <p className="text-xs mb-3" style={{ color: colors.textTertiary }}>SMS, email, and internal messaging</p>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: colors.textTertiary }} />
             <input
-              className="w-full pl-9 pr-3 h-8 rounded-xl bg-gray-50 border border-gray-200 text-xs text-gray-700 placeholder-gray-400 outline-none focus:border-violet-400"
+              className="w-full pl-9 pr-3 h-8 rounded-xl text-xs outline-none"
+              style={{ ...getInsetStyle(), color: colors.text }}
               placeholder="Search messages..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -129,13 +136,13 @@ export default function Messages() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 px-3 py-2 border-b border-gray-100">
+        <div className="flex items-center gap-1 px-3 py-2" style={{ borderBottom: `1px solid ${colors.border}` }}>
           {TABS.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="flex-1 h-7 rounded-lg text-xs font-semibold transition-all"
-              style={activeTab === tab ? { background: '#7C3AED', color: '#fff' } : { color: '#9CA3AF' }}
+              className="flex-1 h-7 rounded-lg text-xs font-semibold transition-all border-0"
+              style={activeTab === tab ? { background: accent, color: '#fff' } : { color: colors.textSecondary, background: 'transparent' }}
             >
               {tab}
             </button>
@@ -145,30 +152,33 @@ export default function Messages() {
         {/* Thread list */}
         <div className="flex-1 overflow-y-auto">
           {filteredThreads.length === 0 && (
-            <div className="text-center py-8 text-sm text-gray-400">No conversations</div>
+            <div className="text-center py-8 text-sm" style={{ color: colors.textTertiary }}>No conversations</div>
           )}
           {filteredThreads.map(t => (
             <button
               key={t.id}
               onClick={() => setSelectedThread(t.id)}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 text-left transition-colors"
-              style={selectedData?.id === t.id ? { background: '#F5F3FF' } : {}}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors"
+              style={{
+                borderBottom: `1px solid ${colors.border}`,
+                background: selectedData?.id === t.id ? selectedBg : 'transparent',
+              }}
             >
               <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: t.type === 'sms' ? 'linear-gradient(135deg,#10B981,#059669)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
                 {getInitials(t.name)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-gray-800 truncate">{t.name}</p>
-                  <p className="text-[10px] text-gray-400 flex-shrink-0 ml-1">{formatDistanceToNow(new Date(t.latest.created_date), { addSuffix: false })}</p>
+                  <p className="text-xs font-semibold truncate" style={{ color: colors.text }}>{t.name}</p>
+                  <p className="text-[10px] flex-shrink-0 ml-1" style={{ color: colors.textTertiary }}>{formatDistanceToNow(new Date(t.latest.created_date), { addSuffix: false })}</p>
                 </div>
                 <div className="flex items-center gap-1 mt-0.5">
-                  {t.type === 'sms' && <span className="text-[9px] text-gray-400">☑</span>}
-                  <p className="text-xs text-gray-400 truncate">{t.latest.content || t.latest.message || ''}</p>
+                  {t.type === 'sms' && <span className="text-[9px]" style={{ color: colors.textTertiary }}>☑</span>}
+                  <p className="text-xs truncate" style={{ color: colors.textSecondary }}>{t.latest.content || t.latest.message || ''}</p>
                 </div>
               </div>
               {t.unread > 0 && (
-                <span className="w-4 h-4 bg-violet-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="w-4 h-4 text-white text-[9px] font-bold rounded-full flex items-center justify-center flex-shrink-0" style={{ background: accent }}>
                   {t.unread}
                 </span>
               )}
@@ -178,30 +188,26 @@ export default function Messages() {
       </div>
 
       {/* Conversation view */}
-      <div className="flex-1 min-w-0 flex flex-col bg-white">
+      <div className="flex-1 min-w-0 flex flex-col" style={{ background: colors.bg }}>
         {selectedData ? (
           <>
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+            <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: `1px solid ${colors.border}` }}>
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: selectedData.type === 'sms' ? 'linear-gradient(135deg,#10B981,#059669)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)' }}>
                   {getInitials(selectedData.name)}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-gray-800">{selectedData.name}</p>
-                  <p className="text-xs text-gray-400">via {selectedData.type === 'sms' ? 'SMS' : 'Internal'} · AI Demo</p>
+                  <p className="text-sm font-bold" style={{ color: colors.text }}>{selectedData.name}</p>
+                  <p className="text-xs" style={{ color: colors.textTertiary }}>via {selectedData.type === 'sms' ? 'SMS' : 'Internal'} · AI Demo</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                  <Phone className="w-3.5 h-3.5 text-gray-500" />
-                </button>
-                <button className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                  <Video className="w-3.5 h-3.5 text-gray-500" />
-                </button>
-                <button className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                  <MoreHorizontal className="w-3.5 h-3.5 text-gray-500" />
-                </button>
+                {[Phone, Video, MoreHorizontal].map((Icon, i) => (
+                  <button key={i} className="w-8 h-8 rounded-lg flex items-center justify-center border-0" style={getButtonStyle()}>
+                    <Icon className="w-3.5 h-3.5" style={{ color: colors.textSecondary }} />
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -214,10 +220,10 @@ export default function Messages() {
                 return (
                   <motion.div key={m.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[65%]`}>
-                      <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${isMe ? 'bg-violet-600 text-white' : 'bg-gray-100 text-gray-800'}`}>
+                      <div className="px-4 py-2.5 rounded-2xl text-sm leading-relaxed" style={isMe ? { background: accent, color: '#fff' } : { background: themBubbleBg, color: colors.text }}>
                         {text}
                       </div>
-                      <p className={`text-[10px] text-gray-400 mt-1 ${isMe ? 'text-right' : 'text-left'}`}>{time}</p>
+                      <p className="text-[10px] mt-1" style={{ color: colors.textTertiary }}>{time}</p>
                     </div>
                   </motion.div>
                 );
@@ -226,27 +232,28 @@ export default function Messages() {
             </div>
 
             {/* Input */}
-            <div className="px-5 py-3 border-t border-gray-100">
-              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5">
-                <button className="text-gray-400 hover:text-violet-500 transition-colors">
+            <div className="px-5 py-3" style={{ borderTop: `1px solid ${colors.border}` }}>
+              <div className="flex items-center gap-2 rounded-xl px-4 py-2.5" style={getInsetStyle()}>
+                <button style={{ color: colors.textTertiary }}>
                   <Sparkles className="w-4 h-4" />
                 </button>
                 <input
-                  className="flex-1 text-sm bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                  className="flex-1 text-sm bg-transparent outline-none"
+                  style={{ color: colors.text }}
                   placeholder="Type a message... (Enter to send, AI will reply)"
                   value={newMessage}
                   onChange={e => setNewMessage(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
                 />
-                <button onClick={handleSend} className="text-violet-500 hover:text-violet-700 transition-colors">
+                <button onClick={handleSend} style={{ color: accent }}>
                   <Send className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-[10px] text-gray-400 text-center mt-1.5">AI Demo Mode — customer replies are simulated by AI</p>
+              <p className="text-[10px] text-center mt-1.5" style={{ color: colors.textTertiary }}>AI Demo Mode — customer replies are simulated by AI</p>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+          <div className="flex-1 flex items-center justify-center text-sm" style={{ color: colors.textTertiary }}>
             Select a conversation
           </div>
         )}

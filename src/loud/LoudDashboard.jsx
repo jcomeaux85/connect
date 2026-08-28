@@ -3,9 +3,9 @@
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Star, Users, Link as LinkIcon, Phone } from "lucide-react";
-import { loudTheme as t, raised, raisedSoft, inset } from "./loudTheme";
+import { useLoudTheme } from "./loudTheme";
 
-function SurveyResultRow({ survey, submissions }) {
+function SurveyResultRow({ survey, submissions, t, raised, inset }) {
   const [open, setOpen] = useState(false);
   const surveySubs = submissions.filter((s) => s.survey_id === survey.id);
   const rated = surveySubs.filter((s) => s.overall_rating != null);
@@ -80,6 +80,7 @@ function SurveyResultRow({ survey, submissions }) {
 }
 
 export default function LoudDashboard({ surveys, submissions }) {
+  const { theme: t, raised, raisedSoft, inset } = useLoudTheme();
   const sorted = useMemo(() =>
     [...surveys].sort((a, b) => (b.created_date || "").localeCompare(a.created_date || "")),
   [surveys]);
@@ -118,7 +119,7 @@ export default function LoudDashboard({ surveys, submissions }) {
         </div>
       ) : (
         sorted.map((survey) => (
-          <SurveyResultRow key={survey.id} survey={survey} submissions={submissions} />
+          <SurveyResultRow key={survey.id} survey={survey} submissions={submissions} t={t} raised={raised} inset={inset} />
         ))
       )}
     </div>
