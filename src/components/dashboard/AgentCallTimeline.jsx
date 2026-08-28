@@ -201,7 +201,28 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const agentBlocks = useMemo(() => {
     if (callsLoading) return {};
     const todayCalls = realCalls.filter(c => c.call_start_time?.startsWith(today));
-    const useDemo = todayCalls.length === 0;
+
+    // Match a real call to an agent by the creator's name/email (created_by_id
+    // → user lookup). Falls back to created_by if the platform exposes it.
+    const matchAgent = (c) => {
+      const creator = (c.created_by_id && userById[c.created_by_id]) || (c.created_by || '').toLowerCase();
+      if (!creator) return null;
+      return AGENTS.find(a => creator.includes(a.toLowerCase())) || null;
+    };
+
+    // Group real calls by agent
+    const realByAgent = {};
+    let totalRealMatched = 0;
+    todayCalls.forEach(c => {
+      const a = matchAgent(c);
+      if (!a) return;
+      totalRealMatched++;
+      (realByAgent[a] = realByAgent[a] || []).push(c);
+    });
+
+    // Demo fallback: if no real calls matched any of the 4 agents, show demo
+    // data for everyone (keeps the pitch timeline populated).
+    const useDemo = totalRealMatched === 0;
 
     const result = {};
     AGENTS.forEach((agent, agentIdx) => {
@@ -212,12 +233,10 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
             const [h, m] = c.time.split(':').map(Number);
             return { hour: h, minute: m, direction: c.direction, duration: c.duration, callId: null, caseId: null, employer: EMPLOYER_BY_NAME[c.employer] || null };
           })
-        : todayCalls
-            .filter(c => c.created_by?.toLowerCase().includes(agent.toLowerCase()))
-            .map(c => {
-              const d = new Date(c.call_start_time);
-              return { hour: d.getHours(), minute: d.getMinutes(), direction: c.direction, duration: c.duration || 180, callId: c.id, caseId: c.case_id, employer: c.employer_id ? employerColorMap[c.employer_id] : null };
-            });
+        : (realByAgent[agent] || []).map(c => {
+            const d = new Date(c.call_start_time);
+            return { hour: d.getHours(), minute: d.getMinutes(), direction: c.direction, duration: c.duration || 180, callId: c.id, caseId: c.case_id, employer: c.employer_id ? employerColorMap[c.employer_id] : null };
+          });
 
       result[agent] = rawList.map((c, i) => {
         const employer = c.employer || EMPLOYER_DEMO_COLORS[(counter++ + agentIdx) % EMPLOYER_DEMO_COLORS.length];
@@ -226,7 +245,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
       });
     });
     return result;
-  }, [realCalls, today, employerColorMap]);
+  }, [realCalls, today, employerColorMap, userById]);
 
   const totalCalls = Object.values(agentBlocks).reduce((s, a) => s + a.length, 0);
 
