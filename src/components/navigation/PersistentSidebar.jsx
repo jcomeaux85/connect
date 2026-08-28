@@ -270,6 +270,12 @@ export default function PersistentSidebar({
 
   return (
     <>
+      <style>{`
+        .nav-slide-wrap:hover .nav-slide-label {
+          opacity: 1 !important;
+          transform: translateY(-50%) translateX(0) !important;
+        }
+      `}</style>
       {/* Approach zone -- pre-warms the cursor light; brightness ramps as you near the panel */}
       <div
         className="fixed left-0 top-0 h-full z-[59]"
@@ -358,7 +364,11 @@ export default function PersistentSidebar({
             {/* Nav buttons -- natural height, no stretch */}
             <div
               className={`${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
-              style={{ gap: '5px' }}
+              style={{
+                gap: '5px',
+                flex: '1 1 auto',
+                ...(isFull ? { gridAutoRows: 'minmax(38px, 1fr)' } : {}),
+              }}
             >
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -366,8 +376,8 @@ export default function PersistentSidebar({
                 return (
                   <div
                     key={item.title}
-                    className="relative"
-                    style={{ height: '38px' }}
+                    className="relative nav-slide-wrap"
+                    style={isFull ? { minHeight: '38px' } : { flex: '1 1 auto', minHeight: '38px' }}
                   >
                     <Link to={item.url} style={{ display: 'block', height: '100%' }}>
                       <LitButton
@@ -378,7 +388,7 @@ export default function PersistentSidebar({
                           padding: isMin ? '0' : '0 10px',
                           justifyContent: isMin ? 'center' : 'flex-start',
                           gap: '8px',
-                          height: '38px',
+                          height: '100%',
                         }}
                       >
                         <Icon
@@ -406,25 +416,28 @@ export default function PersistentSidebar({
                     {isMin && (
                       <span
                         data-proximity-label
+                        className="nav-slide-label"
                         style={{
                           position: 'absolute',
                           left: '100%',
                           top: '50%',
-                          transform: 'translateY(-50%)',
+                          transform: 'translateY(-50%) translateX(-8px)',
                           marginLeft: '8px',
                           opacity: 0,
                           fontSize: '12px',
                           fontWeight: 600,
                           whiteSpace: 'nowrap',
-                          color: isActive ? '#e9d5ff' : 'rgba(255,255,255,0.85)',
+                          color: isActive ? '#e9d5ff' : 'rgba(255,255,255,0.95)',
                           pointerEvents: 'none',
                           zIndex: 55,
-                          transition: 'opacity 0.1s ease',
-                          background: 'rgba(30,20,50,0.40)',
-                          backdropFilter: 'blur(8px)',
-                          padding: '2px 8px',
-                          borderRadius: '6px',
-                          textShadow: '0 1px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5)',
+                          transition: 'opacity 0.18s ease, transform 0.18s ease',
+                          background: 'rgba(30,20,50,0.85)',
+                          backdropFilter: 'blur(10px)',
+                          padding: '4px 10px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.12)',
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                          textShadow: '0 1px 4px rgba(0,0,0,0.8)',
                         }}
                       >
                         {item.title}
@@ -454,7 +467,7 @@ export default function PersistentSidebar({
               {actions.map(({ label, icon: Icon, onClick, to, active, gear }) => {
                 const btn = (
                   <div
-                    className="relative flex items-center gap-1.5"
+                    className="relative flex items-center gap-1.5 nav-slide-wrap"
                   >
                     <LitButton
                       isActive={!!active}
@@ -493,25 +506,28 @@ export default function PersistentSidebar({
                     {isMin && (
                       <span
                         data-proximity-label
+                        className="nav-slide-label"
                         style={{
                           position: 'absolute',
                           left: '100%',
                           top: '50%',
-                          transform: 'translateY(-50%)',
+                          transform: 'translateY(-50%) translateX(-8px)',
                           marginLeft: '8px',
                           opacity: 0,
                           fontSize: '12px',
                           fontWeight: 600,
                           whiteSpace: 'nowrap',
-                          color: 'rgba(255,255,255,0.85)',
+                          color: 'rgba(255,255,255,0.95)',
                           pointerEvents: 'none',
                           zIndex: 55,
-                          transition: 'opacity 0.1s ease',
-                          background: 'rgba(30,20,50,0.40)',
-                          backdropFilter: 'blur(8px)',
-                          padding: '2px 8px',
-                          borderRadius: '6px',
-                          textShadow: '0 1px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5)',
+                          transition: 'opacity 0.18s ease, transform 0.18s ease',
+                          background: 'rgba(30,20,50,0.85)',
+                          backdropFilter: 'blur(10px)',
+                          padding: '4px 10px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.12)',
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                          textShadow: '0 1px 4px rgba(0,0,0,0.8)',
                         }}
                       >
                         {label}
