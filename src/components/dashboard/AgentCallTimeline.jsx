@@ -177,6 +177,18 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
     staleTime: 5 * 60 * 1000,
   });
 
+  const { data: users = [] } = useQuery({
+    queryKey: ['users-for-timeline'],
+    queryFn: () => base44.entities.User.list(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const userById = useMemo(() => {
+    const map = {};
+    users.forEach(u => { map[u.id] = (u.full_name || u.email || '').toLowerCase(); });
+    return map;
+  }, [users]);
+
   const employerColorMap = useMemo(() => {
     const map = {};
     employers.forEach(e => {
