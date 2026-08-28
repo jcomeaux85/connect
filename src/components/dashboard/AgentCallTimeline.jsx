@@ -259,7 +259,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const bandShade     = isDark ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.025)';
 
   return (
-<div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+<div style={{ width: '100%', height: 280, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Header: count (top-right) + IN/OUT labels */}
       <div style={{ display: 'flex', alignItems: 'center', paddingLeft: LABEL_W, marginBottom: 4, flexShrink: 0 }}>
         <span style={{ fontSize: 9, color: textSecondary, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>▲ IN</span>
