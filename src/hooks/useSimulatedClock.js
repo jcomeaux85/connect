@@ -16,13 +16,11 @@ export const CLOCK_SPAN      = CLOCK_END_MIN - CLOCK_START_MIN; // 600
 
 const TICK_MS = 1000; // tick every real second
 
-// Start at real time if inside business hours, else 10:00 AM so the
-// demo always has content (mid-morning — calls already on the board).
+// Always start at the actual current time so the displayed clock
+// matches reality. The now-line only renders within 8am–6pm.
 function getInitialNow() {
   const now = new Date();
-  const mins = now.getHours() * 60 + now.getMinutes();
-  if (mins >= CLOCK_START_MIN && mins < CLOCK_END_MIN) return mins;
-  return 10 * 60; // 10:00 AM
+  return now.getHours() * 60 + now.getMinutes();
 }
 
 let nowMins = getInitialNow();
