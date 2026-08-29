@@ -6,12 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import CallWaveform from '@/components/dashboard/CallWaveform';
 import CallRecordingModal from '@/components/dashboard/CallRecordingModal';
 import { useUser } from '@/components/hooks/useUser';
+import { useSimulatedClock, CLOCK_START_MIN, CLOCK_SPAN } from '@/hooks/useSimulatedClock';
+import { AGENTS, AGENT_CONFIG, DEMO_CALLS } from '@/data/callCenterDemo';
 
-const AGENTS = ['Ryan', 'Vanessa', 'Chris', 'Jarrad'];
-
-// DEMO AUDIO — drop one recording URL per agent here. Every call in that
-// agent's row will play this file when clicked in admin mode. Swap these
-// for real recordings whenever you've got them.
+// DEMO AUDIO — drop one recording URL per agent here.
 const DEMO_AUDIO_BY_AGENT = {
   Ryan: null,
   Vanessa: null,
@@ -32,87 +30,17 @@ const EMPLOYER_DEMO_COLORS = [
   { name: 'Brandywine',  primary: 'rgba(44, 162, 195, 1)', secondary: 'rgba(161, 160, 160, 1)' },
 ];
 
-// Each demo call: time, direction, duration (seconds), employer.
-// Dispersion: Lazer & PAM dominate; Tekni-Plex & Orbital ~1/4 as frequent;
-// PSP gets short voicemail-length calls (mostly early); others spotty.
-const DEMO_CALLS = {
-  Ryan: [
-    { time: '08:06', direction: 'inbound',  duration: 28,   employer: 'PSP'        },  // voicemail
-    { time: '08:14', direction: 'outbound', duration: 1980, employer: 'Lazer'      },  // long
-    { time: '08:34', direction: 'inbound',  duration: 22,   employer: 'PSP'        },  // voicemail
-    { time: '09:02', direction: 'inbound',  duration: 310,  employer: 'PAM'        },
-    { time: '09:40', direction: 'outbound', duration: 240,  employer: 'Lazer'      },
-    { time: '10:18', direction: 'inbound',  duration: 1860, employer: 'PAM'        },  // long
-    { time: '11:05', direction: 'outbound', duration: 200,  employer: 'Tekni-Plex' },
-    { time: '11:38', direction: 'inbound',  duration: 265,  employer: 'Lazer'      },
-    { time: '13:10', direction: 'outbound', duration: 280,  employer: 'PAM'        },
-    { time: '14:02', direction: 'inbound',  duration: 2100, employer: 'Lazer'      },  // long
-    { time: '15:00', direction: 'outbound', duration: 230,  employer: 'Orbital'    },
-    { time: '15:48', direction: 'inbound',  duration: 255,  employer: 'PAM'        },
-    { time: '16:36', direction: 'outbound', duration: 210,  employer: 'Lazer'      },
-    { time: '17:20', direction: 'inbound',  duration: 240,  employer: 'PAM'        },
-  ],
-  Vanessa: [
-    { time: '08:10', direction: 'inbound',  duration: 25,   employer: 'PSP'        },  // voicemail
-    { time: '08:22', direction: 'outbound', duration: 2100, employer: 'PAM'        },  // long
-    { time: '09:05', direction: 'inbound',  duration: 30,   employer: 'PSP'        },  // voicemail
-    { time: '09:32', direction: 'outbound', duration: 245,  employer: 'Lazer'      },
-    { time: '10:08', direction: 'inbound',  duration: 280,  employer: 'PAM'        },
-    { time: '10:46', direction: 'outbound', duration: 1740, employer: 'Lazer'      },  // long
-    { time: '11:30', direction: 'inbound',  duration: 215,  employer: 'Orbital'    },
-    { time: '13:04', direction: 'outbound', duration: 300,  employer: 'PAM'        },
-    { time: '13:46', direction: 'inbound',  duration: 1980, employer: 'Lazer'      },  // long
-    { time: '14:42', direction: 'outbound', duration: 185,  employer: 'Tekni-Plex' },
-    { time: '15:30', direction: 'inbound',  duration: 270,  employer: 'PAM'        },
-    { time: '16:24', direction: 'outbound', duration: 220,  employer: 'Lazer'      },
-    { time: '17:18', direction: 'inbound',  duration: 195,  employer: "Buddy's"    },
-  ],
-  Chris: [
-    { time: '08:04', direction: 'inbound',  duration: 24,   employer: 'PSP'        },  // voicemail
-    { time: '08:12', direction: 'outbound', duration: 26,   employer: 'PSP'        },  // voicemail
-    { time: '08:30', direction: 'inbound',  duration: 1860, employer: 'Lazer'      },  // long
-    { time: '09:14', direction: 'outbound', duration: 195,  employer: 'PAM'        },
-    { time: '09:50', direction: 'inbound',  duration: 260,  employer: 'Lazer'      },
-    { time: '10:30', direction: 'outbound', duration: 2160, employer: 'PAM'        },  // long
-    { time: '11:24', direction: 'inbound',  duration: 235,  employer: 'Orbital'    },
-    { time: '13:16', direction: 'outbound', duration: 290,  employer: 'Lazer'      },
-    { time: '14:00', direction: 'inbound',  duration: 1920, employer: 'PAM'        },  // long
-    { time: '14:54', direction: 'outbound', duration: 180,  employer: 'Tekni-Plex' },
-    { time: '15:40', direction: 'inbound',  duration: 245,  employer: 'Lazer'      },
-    { time: '16:30', direction: 'outbound', duration: 210,  employer: 'PAM'        },
-    { time: '17:14', direction: 'inbound',  duration: 160,  employer: 'Rock-it'    },
-  ],
-  Jarrad: [
-    { time: '08:08', direction: 'inbound',  duration: 27,   employer: 'PSP'        },  // voicemail
-    { time: '08:20', direction: 'outbound', duration: 2040, employer: 'Lazer'      },  // long
-    { time: '09:04', direction: 'inbound',  duration: 21,   employer: 'PSP'        },  // voicemail
-    { time: '09:30', direction: 'outbound', duration: 215,  employer: 'PAM'        },
-    { time: '10:06', direction: 'inbound',  duration: 270,  employer: 'Lazer'      },
-    { time: '10:44', direction: 'outbound', duration: 1620, employer: 'PAM'        },  // long
-    { time: '11:28', direction: 'inbound',  duration: 230,  employer: 'Tekni-Plex' },
-    { time: '13:08', direction: 'outbound', duration: 245,  employer: 'Lazer'      },
-    { time: '13:52', direction: 'inbound',  duration: 2280, employer: 'PAM'        },  // long
-    { time: '14:50', direction: 'outbound', duration: 200,  employer: 'Orbital'    },
-    { time: '15:38', direction: 'inbound',  duration: 265,  employer: 'Lazer'      },
-    { time: '16:28', direction: 'outbound', duration: 185,  employer: 'SwimUSA'    },
-    { time: '17:22', direction: 'inbound',  duration: 220,  employer: 'PAM'        },
-  ],
-};
-
 const EMPLOYER_BY_NAME = Object.fromEntries(EMPLOYER_DEMO_COLORS.map(e => [e.name, e]));
 
-// Deterministic pseudo-random 0..1 from a seed — keeps waveforms stable per call
 function seededRand(seed) {
   const x = Math.sin(seed * 99991.137) * 43758.5453;
   return x - Math.floor(x);
 }
 
-// Build a waveform bar-height array for a call (seeded so it never reflows)
 function buildWaveform(seed, barCount) {
   const bars = [];
   for (let i = 0; i < barCount; i++) {
     const r = seededRand(seed + i * 7.13);
-    // envelope: louder in the middle, quieter at edges — feels like speech
     const env = 0.45 + 0.55 * Math.sin((i / Math.max(barCount - 1, 1)) * Math.PI);
     bars.push(Math.max(0.18, r * env));
   }
@@ -127,28 +55,49 @@ function toPercent(hour, minute) {
   return ((hour - START_HOUR) * 60 + minute) / TOTAL_MINS * 100;
 }
 
-// Duration in seconds → % of timeline width. Minimum visible = 1.5%
 function durToPercent(seconds) {
   return Math.max((seconds / 60) / TOTAL_MINS * 100, 1.5);
 }
 
-const HOUR_LABELS = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => {
-  const h = START_HOUR + i;
-  return h === 12 ? '12p' : h < 12 ? `${h}a` : `${h - 12}p`;
-});
+// Convert "HH:MM" → minutes since midnight
+function timeToMins(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+// Check if a call time (minutes) falls inside any of the agent's break/lunch windows
+function isInBreak(callMins, breaks) {
+  return breaks.some(b => {
+    const s = timeToMins(b.start);
+    const e = timeToMins(b.end);
+    return callMins >= s && callMins < e;
+  });
+}
+
+// Break/lunch block position + width as percentages
+function breakPct(b) {
+  const s = timeToMins(b.start);
+  const e = timeToMins(b.end);
+  return {
+    left: ((s - CLOCK_START_MIN) / CLOCK_SPAN) * 100,
+    width: ((e - s) / CLOCK_SPAN) * 100,
+  };
+}
 
 const LABEL_W = 64;
-const TRACK_H = 14; // px height for each inbound/outbound bar
-const GAP = 3;      // px gap between tracks
-const ROW_H = TRACK_H * 2 + GAP + 16; // total row height with padding
+const GAP = 3;
 
 export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const { data: user } = useUser();
   const isAdmin = user?.role === 'admin';
-  const [tooltip, setTooltip] = React.useState(null);
-  const [recordingModal, setRecordingModal] = React.useState(null);
+  const [tooltip, setTooltip] = useState(null);
+  const [recordingModal, setRecordingModal] = useState(null);
+
+  // Shared simulated clock — progressive call population
+  const { nowMins } = useSimulatedClock();
+  const nowPct = ((nowMins - CLOCK_START_MIN) / CLOCK_SPAN) * 100;
 
   const handleCallClick = (c, agent) => {
     if (isAdmin) {
@@ -167,9 +116,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   };
 
   const today = new Date().toISOString().split('T')[0];
-
   const realCalls = Array.isArray(incomingCalls) ? incomingCalls : [];
-  const callsLoading = false;
 
   const { data: employers = [] } = useQuery({
     queryKey: ['employers-for-timeline'],
@@ -197,20 +144,18 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
     return map;
   }, [employers]);
 
-  // Build per-agent call blocks
+  // Build per-agent call blocks — progressive (only calls whose time has
+  // arrived on the simulated clock) and filtered by break/lunch windows
+  // (demo path only — agents don't take calls during breaks/lunch).
   const agentBlocks = useMemo(() => {
-    if (callsLoading) return {};
     const todayCalls = realCalls.filter(c => c.call_start_time?.startsWith(today));
 
-    // Match a real call to an agent by the creator's name/email (created_by_id
-    // → user lookup). Falls back to created_by if the platform exposes it.
     const matchAgent = (c) => {
       const creator = (c.created_by_id && userById[c.created_by_id]) || (c.created_by || '').toLowerCase();
       if (!creator) return null;
       return AGENTS.find(a => creator.includes(a.toLowerCase())) || null;
     };
 
-    // Group real calls by agent
     const realByAgent = {};
     let totalRealMatched = 0;
     todayCalls.forEach(c => {
@@ -220,9 +165,8 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
       (realByAgent[a] = realByAgent[a] || []).push(c);
     });
 
-    // Demo fallback: if no real calls matched any of the 4 agents, show demo
-    // data for everyone (keeps the pitch timeline populated).
     const useDemo = totalRealMatched === 0;
+    const agentBreaks = (agent) => AGENT_CONFIG[agent]?.breaks || [];
 
     const result = {};
     AGENTS.forEach((agent, agentIdx) => {
@@ -238,47 +182,58 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
             return { hour: d.getHours(), minute: d.getMinutes(), direction: c.direction, duration: c.duration || 180, callId: c.id, caseId: c.case_id, employer: c.employer_id ? employerColorMap[c.employer_id] : null };
           });
 
-      result[agent] = rawList.map((c, i) => {
+      // Progressive filter: only show calls whose time has arrived on the clock.
+      // Demo path: also skip calls that fall during a break/lunch window.
+      const visible = rawList.filter(c => {
+        const callMins = c.hour * 60 + c.minute;
+        if (callMins > nowMins) return false;           // hasn't arrived yet
+        if (useDemo && isInBreak(callMins, agentBreaks(agent))) return false;
+        return true;
+      });
+
+      result[agent] = visible.map((c, i) => {
         const employer = c.employer || EMPLOYER_DEMO_COLORS[(counter++ + agentIdx) % EMPLOYER_DEMO_COLORS.length];
         const seed = (agentIdx + 1) * 131 + i * 17 + c.hour * 3 + c.minute;
         return { ...c, employer, seed };
       });
     });
     return result;
-  }, [realCalls, today, employerColorMap, userById]);
+  }, [realCalls, today, employerColorMap, userById, nowMins]);
 
   const totalCalls = Object.values(agentBlocks).reduce((s, a) => s + a.length, 0);
 
   const textPrimary   = isDark ? '#f0f0f0' : '#111827';
   const textSecondary = isDark ? '#9ca3af' : '#6b7280';
-  const gridLine      = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
   const laneBg        = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
   const laneBorder    = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-  const centerLine    = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const gridLineMajor = isDark ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.16)';
-  const bandShade     = isDark ? 'rgba(255,255,255,0.025)' : 'rgba(0,0,0,0.025)';
 
   return (
-<div style={{ width: '100%', height: 280, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      {/* Header: count (top-right) + IN/OUT labels */}
+    <div style={{ width: '100%', height: 280, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      {/* Header: count + IN/OUT labels + simulated time */}
       <div style={{ display: 'flex', alignItems: 'center', paddingLeft: LABEL_W, marginBottom: 4, flexShrink: 0 }}>
         <span style={{ fontSize: 9, color: textSecondary, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>▲ IN</span>
         <span style={{ fontSize: 9, color: textSecondary, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginLeft: 8 }}>▼ OUT</span>
-        <span style={{ fontSize: 10, color: textSecondary, marginLeft: 'auto', fontWeight: 600 }}>{totalCalls} calls today</span>
+        <span style={{ fontSize: 10, color: textSecondary, marginLeft: 'auto', fontWeight: 600 }}>
+          {totalCalls} calls · {String(Math.floor(nowMins / 60) % 12 || 12).padStart(2,'0')}:{String(Math.floor(nowMins % 60)).padStart(2,'0')} {nowMins >= 720 ? 'PM' : 'AM'}
+        </span>
       </div>
 
-      {/* Agent rows — vertically centered between the count and the legend */}
+      {/* Agent rows */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
         {AGENTS.map(agent => {
           const blocks = agentBlocks[agent] || [];
           const inbound  = blocks.filter(c => c.direction === 'inbound');
           const outbound = blocks.filter(c => c.direction === 'outbound');
+          const cfg = AGENT_CONFIG[agent];
+          const agentColor = cfg?.color || '#94a3b8';
+          const breaks = cfg?.breaks || [];
 
           return (
             <div key={agent} style={{ display: 'flex', alignItems: 'center', flex: 1, minHeight: 0 }}>
-              {/* Label */}
-              <div style={{ width: LABEL_W, flexShrink: 0, fontSize: 14, fontWeight: 700, color: textPrimary, textAlign: 'right', paddingRight: 10 }}>
-                {agent}
+              {/* Label — colored dot + name */}
+              <div style={{ width: LABEL_W, flexShrink: 0, paddingRight: 4, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 3 }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: agentColor, boxShadow: `0 0 5px ${agentColor}aa`, flexShrink: 0 }} />
+                <span style={{ fontSize: 12, fontWeight: 700, color: textPrimary, textAlign: 'right', whiteSpace: 'nowrap' }}>{agent}</span>
               </div>
 
               {/* Lane */}
@@ -286,8 +241,52 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
                 onMouseLeave={() => setTooltip(null)}
                 style={{ flex: 1, minWidth: 0, height: '100%', position: 'relative', background: laneBg, borderRadius: 8, border: `1px solid ${laneBorder}`, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: GAP, padding: '4px 0' }}>
 
-                {/* Center divider */}
-                <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1, background: centerLine, pointerEvents: 'none', zIndex: 1 }} />
+                {/* Break / lunch blocks — agent color, full lane height, behind calls */}
+                {breaks.map((b, i) => {
+                  const { left, width } = breakPct(b);
+                  if (width <= 0) return null;
+                  const isLunch = b.type === 'lunch';
+                  return (
+                    <div key={`brk-${i}`} style={{
+                      position: 'absolute',
+                      left: `${left}%`,
+                      width: `${width}%`,
+                      top: 0, bottom: 0,
+                      background: isLunch ? `${agentColor}22` : `${agentColor}14`,
+                      borderLeft: `1.5px dashed ${agentColor}55`,
+                      borderRight: `1.5px dashed ${agentColor}55`,
+                      zIndex: 0,
+                      pointerEvents: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                      {isLunch && width > 4 && (
+                        <span style={{ fontSize: 7, fontWeight: 800, letterSpacing: '0.1em', color: `${agentColor}cc`, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                          LUNCH
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Center divider — agent's queue color */}
+                <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1.5, background: `${agentColor}66`, pointerEvents: 'none', zIndex: 1 }} />
+
+                {/* Now-line — green vertical marker at the simulated clock position */}
+                {nowPct > 0 && nowPct < 100 && (
+                  <div style={{
+                    position: 'absolute',
+                    left: `${nowPct}%`,
+                    top: 0, bottom: 0,
+                    width: 2,
+                    background: '#22c55e',
+                    boxShadow: '0 0 6px rgba(34,197,94,0.8)',
+                    transform: 'translateX(-50%)',
+                    zIndex: 4,
+                    pointerEvents: 'none',
+                  }} />
+                )}
 
                 {/* Inbound track (top half) */}
                 <div style={{ position: 'relative', flex: 1, minHeight: 0, zIndex: 2 }}>
@@ -367,7 +366,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
         })}
       </div>
 
-      {/* Legend (fixed bottom) — full width, evenly spaced */}
+      {/* Legend */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: 8, flexShrink: 0 }}>
         {EMPLOYER_DEMO_COLORS.map(e => (
           <div key={e.name} className="flex items-center gap-1" style={{ minWidth: 0 }}>
@@ -377,14 +376,12 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
         ))}
       </div>
 
-      {/* Recording Modal — admin single-click playback */}
       <CallRecordingModal
         isOpen={!!recordingModal}
         onClose={() => setRecordingModal(null)}
         call={recordingModal}
       />
 
-      {/* Tooltip */}
       {tooltip && (
         <div style={{
           position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',

@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Clock } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useSimulatedClock } from '@/hooks/useSimulatedClock';
+import { AGENTS, DEMO_CALLS, DEMO_QUEUE, QUEUE_POOL } from '@/data/callCenterDemo';
 
 const PRIORITY_COLORS = {
   urgent: '#EF4444',
@@ -9,21 +12,58 @@ const PRIORITY_COLORS = {
   low: '#10B981',
 };
 
-const DEMO_QUEUE = [
-  { id: 'd1', customer_name: 'Maria Gonzalez', call_reason: 'Claim Assistance', priority: 'urgent', created_date: new Date(Date.now() - 4 * 60000).toISOString() },
-  { id: 'd2', customer_name: 'James Thornton', call_reason: 'Benefits Inquiry', priority: 'high', created_date: new Date(Date.now() - 9 * 60000).toISOString() },
-  { id: 'd3', customer_name: 'Aisha Patel', call_reason: 'Provider Search', priority: 'medium', created_date: new Date(Date.now() - 14 * 60000).toISOString() },
-  { id: 'd4', customer_name: 'Robert Kim', call_reason: 'General Inquiry', priority: 'low', created_date: new Date(Date.now() - 21 * 60000).toISOString() },
-  { id: 'd5', customer_name: 'Sandra Lee', call_reason: 'Enrollment Help', priority: 'medium', created_date: new Date(Date.now() - 27 * 60000).toISOString() },
-  { id: 'd6', customer_name: 'David Chen', call_reason: 'Billing Issue', priority: 'high', created_date: new Date(Date.now() - 32 * 60000).toISOString() },
-  { id: 'd7', customer_name: 'Michelle Brown', call_reason: 'Document Request', priority: 'low', created_date: new Date(Date.now() - 38 * 60000).toISOString() },
-  { id: 'd8', customer_name: 'Carlos Rodriguez', call_reason: 'Authorization Request', priority: 'medium', created_date: new Date(Date.now() - 45 * 60000).toISOString() },
-];
+// Count inbound demo calls across all agents whose time has arrived
+function countArrivedInbound(nowMins) {
+  let count = 0;
+  AGENTS.forEach(agent => {
+    (DEMO_CALLS[agent] || []).forEach(c => {
+      const [h, m] = c.time.split(':').map(Number);
+      if (c.direction === 'inbound' && h * 60 + m <= nowMins) count++;
+    });
+  });
+  return count;
+}
 
 export default function CallQueuePanel({ cases = [] }) {
   const { isDark } = useTheme();
-  const realQueue = cases.filter(c => c.status !== 'closed' && c.status !== 'resolved').slice(0, 8);
-  const queue = realQueue.length > 0 ? realQueue : DEMO_QUEUE;
+  const { nowMins } = useSimulatedClock();
+
+  // Demo queue state — shifts as calls arrive on the timeline.
+  // Pitch mode: always use the demo queue so the shifting line is visible.
+  const [queue, setQueue] = useState(() => DEMO_QUEUE.map((q, i) => ({ ...q, id: `q${i}` })));
+  const prevArrived = useRef(0);
+  const prevNowMins = useRef(nowMins);
+  const poolIdx = useRef(0);
+
+  useEffect(() => {
+    // Detect cycle reset (clock looped back to 8am)
+    if (nowMins < prevNowMins.current) {
+      setQueue(DEMO_QUEUE.map((q, i) => ({ ...q, id: `q${i}` })));
+      prevArrived.current = 0;
+      poolIdx.current = 0;
+      prevNowMins.current = nowMins;
+      return;
+    }
+    prevNowMins.current = nowMins;
+
+    const arrived = countArrivedInbound(nowMins);
+    if (arrived > prevArrived.current) {
+      const shifts = arrived - prevArrived.current;
+      setQueue(prev => {
+        let newQ = [...prev];
+        for (let i = 0; i < shifts; i++) {
+          newQ.shift(); // top item routed → goes away
+          const poolItem = QUEUE_POOL[poolIdx.current % QUEUE_POOL.length];
+          poolIdx.current++;
+          newQ.push({ ...poolItem, id: `p${poolIdx.current}`, created_date: new Date().toISOString() });
+        }
+        return newQ;
+      });
+    }
+    prevArrived.current = arrived;
+  }, [nowMins]);
+
+  const displayQueue = queue;
 
   const cardBg = isDark ? '#555555' : '#ffffff';
   const cardBorder = isDark ? 'rgba(255,255,255,0.07)' : '#e5e7eb';
@@ -31,40 +71,50 @@ export default function CallQueuePanel({ cases = [] }) {
   const headerBorder = isDark ? 'rgba(124,58,237,0.25)' : '#ddd6fe';
   const textPrimary = isDark ? '#f0f0f0' : '#111827';
   const textSecondary = isDark ? '#9ca3af' : '#6b7280';
-  const rowBorder = isDark ? 'rgba(255,255,255,0.05)' : '#f9fafb';
 
   return (
     <div className="rounded-2xl p-4 h-full" style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderTop: '2px solid #a78bfa' }}>
       <div className="flex items-center justify-between mb-4 -mx-4 px-4 py-2 rounded-t-2xl" style={{ background: headerBg, borderBottom: `1px solid ${headerBorder}` }}>
         <h3 className="text-sm font-bold" style={{ color: textPrimary }}>Call Queue</h3>
-        {queue.length > 0 && (
+        {displayQueue.length > 0 && (
           <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#7C3AED', color: '#fff' }}>
-            {queue.length} waiting
+            {displayQueue.length} waiting
           </span>
         )}
       </div>
-      <div className="space-y-2">
-        {queue.length === 0 && (
+      <div className="space-y-0">
+        {displayQueue.length === 0 && (
           <p className="text-sm text-center py-4" style={{ color: textSecondary }}>Queue is empty</p>
         )}
-        {queue.map((c, i) => {
-          const waitSecs = Math.floor((Date.now() - new Date(c.created_date).getTime()) / 1000);
-          const waitMin = Math.floor(waitSecs / 60);
-          const waitSec = waitSecs % 60;
-          return (
-            <div key={c.id} className="flex items-center gap-3 py-2 last:border-0" style={{ borderBottom: `1px solid ${rowBorder}` }}>
-              <div className="w-1 h-10 rounded-full flex-shrink-0" style={{ background: PRIORITY_COLORS[c.priority] || '#9CA3AF' }} />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate" style={{ color: textPrimary }}>{c.customer_name || 'Unknown'}</p>
-                <p className="text-xs truncate" style={{ color: textSecondary }}>{c.call_reason || c.case_type || 'General Inquiry'}</p>
-              </div>
-              <div className="flex items-center gap-1 text-xs flex-shrink-0" style={{ color: textSecondary }}>
-                <Clock className="w-3 h-3" />
-                <span>{waitMin}:{String(waitSec).padStart(2,'0')}</span>
-              </div>
-            </div>
-          );
-        })}
+        <AnimatePresence initial={false}>
+          {displayQueue.map((c) => {
+            const waitSecs = Math.floor((Date.now() - new Date(c.created_date || Date.now()).getTime()) / 1000);
+            const waitMin = Math.floor(waitSecs / 60);
+            const waitSec = waitSecs % 60;
+            return (
+              <motion.div
+                key={c.id}
+                layout
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                className="flex items-center gap-3 py-2 overflow-hidden"
+                style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#f9fafb'}` }}
+              >
+                <div className="w-1 h-10 rounded-full flex-shrink-0" style={{ background: PRIORITY_COLORS[c.priority] || '#9CA3AF' }} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate" style={{ color: textPrimary }}>{c.customer_name || 'Unknown'}</p>
+                  <p className="text-xs truncate" style={{ color: textSecondary }}>{c.call_reason || c.case_type || 'General Inquiry'}</p>
+                </div>
+                <div className="flex items-center gap-1 text-xs flex-shrink-0" style={{ color: textSecondary }}>
+                  <Clock className="w-3 h-3" />
+                  <span>{waitMin}:{String(waitSec).padStart(2,'0')}</span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
       </div>
     </div>
   );
