@@ -219,7 +219,20 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
       </div>
 
       {/* Agent rows */}
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, position: 'relative' }}>
+        {/* Single now-line — one thin white line spanning all lanes */}
+        {nowPct > 0 && nowPct < 100 && (
+          <div style={{ position: 'absolute', left: LABEL_W, right: 0, top: 0, bottom: 0, pointerEvents: 'none', zIndex: 10 }}>
+            <div style={{
+              position: 'absolute',
+              left: `${nowPct}%`,
+              top: 0, bottom: 0,
+              width: 1,
+              background: '#ffffff',
+              transform: 'translateX(-50%)',
+            }} />
+          </div>
+        )}
         {AGENTS.map(agent => {
           const blocks = agentBlocks[agent] || [];
           const inbound  = blocks.filter(c => c.direction === 'inbound');
@@ -272,21 +285,6 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
 
                 {/* Center divider — agent's queue color */}
                 <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 1.5, background: `${agentColor}66`, pointerEvents: 'none', zIndex: 1 }} />
-
-                {/* Now-line — green vertical marker at the simulated clock position */}
-                {nowPct > 0 && nowPct < 100 && (
-                  <div style={{
-                    position: 'absolute',
-                    left: `${nowPct}%`,
-                    top: 0, bottom: 0,
-                    width: 2,
-                    background: '#22c55e',
-                    boxShadow: '0 0 6px rgba(34,197,94,0.8)',
-                    transform: 'translateX(-50%)',
-                    zIndex: 4,
-                    pointerEvents: 'none',
-                  }} />
-                )}
 
                 {/* Inbound track (top half) */}
                 <div style={{ position: 'relative', flex: 1, minHeight: 0, zIndex: 2 }}>
