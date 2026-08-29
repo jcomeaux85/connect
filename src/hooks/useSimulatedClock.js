@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 
 // ─────────────────────────────────────────────────────────────
 // Shared simulated clock — drives the call timeline AND the
-// call queue so they stay in sync. Loops 8am→6pm at 2 sim-min
-// per real second (full 10-hour day ≈ 5 minutes), repeating daily.
+// call queue so they stay in sync. Runs at REAL speed (1 real
+// second = 1 second of clock time), starting at the actual current
+// time. Loops 8am→6pm so the demo resets overnight.
 // Both AgentCallTimeline and CallQueuePanel subscribe to the
 // SAME singleton so a call "arriving" on the timeline instantly
 // shifts the queue.
@@ -13,8 +14,7 @@ export const CLOCK_START_MIN = 8 * 60;   // 480  (8:00 AM)
 export const CLOCK_END_MIN   = 18 * 60;  // 1080 (6:00 PM)
 export const CLOCK_SPAN      = CLOCK_END_MIN - CLOCK_START_MIN; // 600
 
-const TICK_MS = 200;
-const SIM_MIN_PER_REAL_SEC = 2; // 2 simulated minutes per real second
+const TICK_MS = 1000; // tick every real second
 
 // Start at real time if inside business hours, else 10:00 AM so the
 // demo always has content (mid-morning — calls already on the board).
@@ -33,7 +33,8 @@ let intervalId = null;
 function ensureRunning() {
   if (intervalId) return;
   intervalId = setInterval(() => {
-    nowMins += SIM_MIN_PER_REAL_SEC * (TICK_MS / 1000);
+    // Advance at real speed: 1 tick = 1 real second = 1/60 minute
+    nowMins += TICK_MS / 60000;
     if (nowMins >= CLOCK_END_MIN) {
       nowMins = CLOCK_START_MIN;
       cycle++;
