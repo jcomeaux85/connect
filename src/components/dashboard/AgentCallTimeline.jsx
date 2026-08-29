@@ -7,7 +7,7 @@ import CallWaveform from '@/components/dashboard/CallWaveform';
 import CallRecordingModal from '@/components/dashboard/CallRecordingModal';
 import { useUser } from '@/components/hooks/useUser';
 import { useSimulatedClock, CLOCK_START_MIN, CLOCK_SPAN } from '@/hooks/useSimulatedClock';
-import { AGENTS, AGENT_CONFIG, DEMO_CALLS } from '@/data/callCenterDemo';
+import { AGENTS, AGENT_CONFIG, DEMO_CALLS, generateAgentBreaks } from '@/data/callCenterDemo';
 
 // DEMO AUDIO — drop one recording URL per agent here.
 const DEMO_AUDIO_BY_AGENT = {
@@ -96,8 +96,16 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
   const [recordingModal, setRecordingModal] = useState(null);
 
   // Shared simulated clock — progressive call population
-  const { nowMins } = useSimulatedClock();
+  const { nowMins, cycle } = useSimulatedClock();
   const nowPct = ((nowMins - CLOCK_START_MIN) / CLOCK_SPAN) * 100;
+
+  // Randomized breaks per agent (seeded by cycle so they're stable within
+  // a day but change each cycle). Lunches stay fixed from AGENT_CONFIG.
+  const agentBreaksMap = useMemo(() => {
+    const map = {};
+    AGENTS.forEach(a => { map[a] = generateAgentBreaks(a, cycle); });
+    return map;
+  }, [cycle]);
 
   const handleCallClick = (c, agent) => {
     if (isAdmin) {
@@ -166,7 +174,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
     });
 
     const useDemo = totalRealMatched === 0;
-    const agentBreaks = (agent) => AGENT_CONFIG[agent]?.breaks || [];
+    const agentBreaks = (agent) => agentBreaksMap[agent] || [];
 
     const result = {};
     AGENTS.forEach((agent, agentIdx) => {
@@ -239,7 +247,7 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
           const outbound = blocks.filter(c => c.direction === 'outbound');
           const cfg = AGENT_CONFIG[agent];
           const agentColor = cfg?.color || '#94a3b8';
-          const breaks = cfg?.breaks || [];
+          const breaks = agentBreaksMap[agent] || [];
 
           return (
             <div key={agent} style={{ display: 'flex', alignItems: 'center', flex: 1, minHeight: 0 }}>
@@ -259,6 +267,9 @@ export default function AgentCallTimeline({ calls: incomingCalls = [] }) {
                   const { left, width } = breakPct(b);
                   if (width <= 0) return null;
                   const isLunch = b.type === 'lunch';
+                  // Progressive: breaks only appear when the now-line reaches them.
+                  // Lunches always show (fixed, never change).
+                  if (!isLunch && timeToMins(b.start) > nowMins) return null;
                   return (
                     <div key={`brk-${i}`} style={{
                       position: 'absolute',

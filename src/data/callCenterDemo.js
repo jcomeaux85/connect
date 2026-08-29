@@ -34,6 +34,53 @@ export const AGENT_CONFIG = {
   ]},
 };
 
+// Helper: "HH:MM" → minutes since midnight
+function _timeToMins(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+// Helper: minutes since midnight → "HH:MM"
+function _minsToTime(m) {
+  return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+}
+
+// Generate randomized 15-min break times for an agent, seeded by cycle.
+// Lunches stay fixed from AGENT_CONFIG. Two breaks are chosen: one in
+// the morning (before lunch) and one in the afternoon (after lunch),
+// aligned to 5-min increments so they look natural.
+export function generateAgentBreaks(agent, cycle) {
+  const cfg = AGENT_CONFIG[agent];
+  if (!cfg) return [];
+  const lunch = cfg.breaks.find(b => b.type === 'lunch');
+  if (!lunch) return cfg.breaks;
+  const lunchStart = _timeToMins(lunch.start);
+  const lunchEnd = _timeToMins(lunch.end);
+
+  const agentIdx = AGENTS.indexOf(agent);
+  const seed = agentIdx * 1000 + cycle * 17;
+  const rand = (n) => {
+    const x = Math.sin((seed + n) * 99991.137) * 43758.5453;
+    return x - Math.floor(x);
+  };
+
+  // Morning break: 15 min between 8:15 and (lunchStart - 30)
+  const mornStart = 8 * 60 + 15;
+  const mornEnd = lunchStart - 30;
+  const mornBreak = Math.floor((mornStart + rand(1) * Math.max(mornEnd - mornStart - 15, 0)) / 5) * 5;
+
+  // Afternoon break: 15 min between (lunchEnd + 15) and 17:45
+  const aftStart = lunchEnd + 15;
+  const aftEnd = 17 * 60 + 45;
+  const aftBreak = Math.floor((aftStart + rand(2) * Math.max(aftEnd - aftStart - 15, 0)) / 5) * 5;
+
+  return [
+    { start: _minsToTime(mornBreak), end: _minsToTime(mornBreak + 15), type: 'break' },
+    { start: lunch.start, end: lunch.end, type: 'lunch' },
+    { start: _minsToTime(aftBreak), end: _minsToTime(aftBreak + 15), type: 'break' },
+  ];
+}
+
 // Each demo call: time, direction, duration (seconds), employer.
 const DEMO_CALLS = {
   Ryan: [
