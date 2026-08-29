@@ -7,7 +7,8 @@ import {
   LayoutGrid, Folder, Users, TrendingUp, CheckSquare, Phone, Clock,
   MessageSquare, LogOut, Palette, Building2,
   Sun, Moon, ChevronsRight, ChevronsLeft, Pin, PinOff, Play, Lightbulb, Settings,
-  MessageSquareHeart, Volume2, Brain
+  MessageSquareHeart, Volume2, Brain,
+  LayoutDashboard, Calendar, FileText, DollarSign, User
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -32,6 +33,19 @@ const navItems = [
   { title: 'eQuo', url: createPageUrl('Equo'), icon: MessageSquareHeart },
   { title: 'ALERA | loud', url: createPageUrl('Loud'), icon: Volume2 },
   { title: 'OMMNI', url: createPageUrl('OmmniEngine'), icon: Brain },
+];
+
+// CORPS// section nav — shown as green buttons at the top of the sidebar
+// when on the Core route. Switches Core's internal activeSection via a
+// custom event; Core.jsx listens and updates its state.
+const corpsSections = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'timecard', label: 'My Timecard', icon: Clock },
+  { id: 'schedule', label: 'Schedule', icon: Calendar },
+  { id: 'requests', label: 'Requests', icon: FileText },
+  { id: 'pay', label: 'Pay', icon: DollarSign },
+  { id: 'my-info', label: 'My Info', icon: User },
+  { id: 'team', label: 'Team', icon: Users },
 ];
 
 // --- Pointer-driven lit button ---
@@ -128,6 +142,7 @@ export default function PersistentSidebar({
   const [isLocked, setIsLocked] = useState(() => localStorage.getItem('sidebarLocked') === '1');
   const [panelGlare, setPanelGlare] = useState({ mx: 50, my: 50, intensity: 0 });
   const [aleraActive, setAleraActive] = useState(false);
+  const [corpsSection, setCorpsSection] = useState(() => localStorage.getItem('core-last-section') || 'dashboard');
   const hasInteracted = useRef(false);
   const hideTimer = useRef(null);
   const panelRef = useRef(null);
@@ -172,6 +187,18 @@ export default function PersistentSidebar({
   useEffect(() => {
     return () => { if (hideTimer.current) clearTimeout(hideTimer.current); };
   }, []);
+
+  // Sync CORPS section highlight when Core changes its active section
+  useEffect(() => {
+    const onCorpsSection = (e) => setCorpsSection(e.detail?.section || 'dashboard');
+    window.addEventListener('corps-section-changed', onCorpsSection);
+    return () => window.removeEventListener('corps-section-changed', onCorpsSection);
+  }, []);
+
+  const isCoreRoute = location.pathname.startsWith('/Core');
+  const handleCorpsNav = (id) => {
+    window.dispatchEvent(new CustomEvent('corps-navigate-section', { detail: { section: id } }));
+  };
 
   const toggleLock = () => {
     setIsLocked((prev) => {
@@ -278,6 +305,20 @@ export default function PersistentSidebar({
     borderRadius: '10px',
   });
 
+  // Green CORPS section button variant
+  const corpsBtnStyle = (active) => ({
+    background: active
+      ? 'linear-gradient(135deg, rgba(34,197,94,0.55) 0%, rgba(22,163,74,0.45) 100%)'
+      : 'rgba(34,197,94,0.10)',
+    boxShadow: active
+      ? 'inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 1px rgba(134,239,172,0.45), 0 2px 8px rgba(0,0,0,0.3)'
+      : 'inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 4px rgba(0,0,0,0.2)',
+    border: active
+      ? '1px solid rgba(134,239,172,0.5)'
+      : '1px solid rgba(34,197,94,0.20)',
+    borderRadius: '10px',
+  });
+
   return (
     <>
       {/* Approach zone -- pre-warms the cursor light; brightness ramps as you near the panel */}
@@ -365,6 +406,63 @@ export default function PersistentSidebar({
             className="px-1.5 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-hidden"
             style={{ scrollbarWidth: 'none', gap: '6px' }}
           >
+            {/* CORPS// section buttons — green, only on the Core route */}
+            {isCoreRoute && (
+              <div
+                className={`${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
+                style={{ gap: '5px', paddingBottom: '6px', borderBottom: `1px solid ${PANEL_BORDER}` }}
+              >
+                {corpsSections.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = corpsSection === item.id;
+                  return (
+                    <div
+                      key={item.id}
+                      className="relative nav-slide-wrap"
+                      style={isFull ? { minHeight: '38px' } : { minHeight: '38px' }}
+                      onMouseEnter={(e) => isMin && showNavTip(e, item.label)}
+                      onMouseLeave={hideNavTip}
+                    >
+                      <LitButton
+                        isActive={isActive}
+                        className="w-full h-full flex items-center"
+                        onClick={() => handleCorpsNav(item.id)}
+                        style={{
+                          ...corpsBtnStyle(isActive),
+                          padding: isMin ? '0' : '0 10px',
+                          justifyContent: isMin ? 'center' : 'flex-start',
+                          gap: '8px',
+                          height: '100%',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Icon
+                          className="w-4 h-4 flex-shrink-0"
+                          style={{ color: isActive ? '#86efac' : 'rgba(134,239,172,0.75)' }}
+                        />
+                        <AnimatePresence>
+                          {!isMin && (
+                            <motion.span
+                              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                              style={{
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                                color: isActive ? '#dcfce7' : 'rgba(220,252,231,0.85)',
+                                textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+                              }}
+                            >
+                              {item.label}
+                            </motion.span>
+                          )}
+                        </AnimatePresence>
+                      </LitButton>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             {/* Nav buttons -- natural height, no stretch */}
             <div
               className={`${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}

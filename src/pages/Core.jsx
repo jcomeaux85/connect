@@ -17,7 +17,17 @@ export default function Core() {
   const handleNavigate = (section) => {
     setActiveSection(section);
     localStorage.setItem('core-last-section', section);
+    window.dispatchEvent(new CustomEvent('corps-section-changed', { detail: { section } }));
   };
+
+  // Listen for sidebar CORPS section navigation
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.detail?.section) handleNavigate(e.detail.section);
+    };
+    window.addEventListener('corps-navigate-section', handler);
+    return () => window.removeEventListener('corps-navigate-section', handler);
+  }, []);
 
   const renderSection = () => {
     switch (activeSection) {
