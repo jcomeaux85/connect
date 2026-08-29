@@ -12,22 +12,22 @@ export const AGENTS = ['Ryan', 'Vanessa', 'Chris', 'Jarrad'];
 // are off the floor at the same time — two 15-min breaks + one
 // 1-hour lunch each, spread across the 8am-6pm shift.
 export const AGENT_CONFIG = {
-  Ryan:    { color: '#E8621A', label: 'Orange', breaks: [
+  Ryan:    { color: '#ef4444', label: 'Red', breaks: [
     { start: '09:30', end: '09:45', type: 'break' },
     { start: '11:00', end: '12:00', type: 'lunch' },
     { start: '15:15', end: '15:30', type: 'break' },
   ]},
-  Vanessa: { color: '#1DA8E0', label: 'Sky', breaks: [
+  Vanessa: { color: '#eab308', label: 'Yellow', breaks: [
     { start: '09:45', end: '10:00', type: 'break' },
     { start: '12:00', end: '13:00', type: 'lunch' },
     { start: '15:30', end: '15:45', type: 'break' },
   ]},
-  Chris:   { color: '#50B464', label: 'Aloe', breaks: [
+  Chris:   { color: '#3b82f6', label: 'Blue', breaks: [
     { start: '10:00', end: '10:15', type: 'break' },
     { start: '13:00', end: '14:00', type: 'lunch' },
     { start: '15:45', end: '16:00', type: 'break' },
   ]},
-  Jarrad:  { color: '#a78bfa', label: 'You', breaks: [
+  Jarrad:  { color: '#22c55e', label: 'Green', breaks: [
     { start: '10:15', end: '10:30', type: 'break' },
     { start: '14:00', end: '15:00', type: 'lunch' },
     { start: '16:00', end: '16:15', type: 'break' },
