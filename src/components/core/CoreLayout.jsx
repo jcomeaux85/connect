@@ -2,9 +2,11 @@ import React from 'react';
 import CorpsPillHeader from './CorpsPillHeader';
 import CorpsChatBar from './CorpsChatBar';
 import { useTheme } from '@/components/ThemeProvider';
+import { useAutoFill } from '@/hooks/useAutoFill';
 
 export default function CoreLayout({ activeSection, onNavigate, children }) {
   const { isDark, colors } = useTheme();
+  const fillRef = useAutoFill({ enabled: true, zoomOnly: true });
 
   return (
     <div
@@ -17,9 +19,11 @@ export default function CoreLayout({ activeSection, onNavigate, children }) {
       {/* AI command bar — chat with CORPS AI like an AI provider */}
       <CorpsChatBar />
 
-      {/* Content */}
+      {/* Content — auto-fills: gently zooms to fill the viewport when content is short */}
       <div className="flex-1 overflow-y-auto">
-        {children}
+        <div ref={fillRef} style={{ minHeight: '100%' }}>
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,9 @@ import {
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '@/components/ThemeProvider';
 import { useQuery } from '@tanstack/react-query';
+import { useAutoFill } from '@/hooks/useAutoFill';
+import ForecastCards from '@/components/ommni/ForecastCards';
+import CorrelationStories from '@/components/ommni/CorrelationStories';
 
 const SOURCE_ICONS = {
   equo: HeartPulse,
@@ -31,12 +34,12 @@ const SUGGESTED_QUERIES = [
 
 export default function OmmniEngine() {
   const { colors, getButtonStyle, getInsetStyle } = useTheme();
+  const fillRef = useAutoFill({ enabled: true });
   const [query, setQuery] = useState('');
   const [queryResult, setQueryResult] = useState(null);
   const [querying, setQuerying] = useState(false);
   const [queryError, setQueryError] = useState(null);
 
-  // Overview data
   const { data: overview, isLoading: overviewLoading } = useQuery({
     queryKey: ['ommni-overview'],
     queryFn: async () => {
@@ -45,7 +48,6 @@ export default function OmmniEngine() {
     },
   });
 
-  // Anomalies data
   const { data: anomaliesData, isLoading: anomaliesLoading } = useQuery({
     queryKey: ['ommni-anomalies'],
     queryFn: async () => {
@@ -61,10 +63,7 @@ export default function OmmniEngine() {
     setQueryError(null);
     setQuery(question);
     try {
-      const res = await base44.functions.invoke('ommni-engine', {
-        action: 'query',
-        question,
-      });
+      const res = await base44.functions.invoke('ommni-engine', { action: 'query', question });
       setQueryResult(res.data);
     } catch (err) {
       setQueryError(err.message || 'Query failed');
@@ -78,7 +77,7 @@ export default function OmmniEngine() {
 
   return (
     <div className="min-h-screen pb-12" style={{ background: colors.bg }}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div ref={fillRef} className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8" style={{ minHeight: '100%' }}>
         {/* ── Header ── */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -103,18 +102,14 @@ export default function OmmniEngine() {
                 OMMNI
               </h1>
               <p style={{ fontSize: '12px', color: colors.textSecondary, marginTop: '2px' }}>
-                Org-wide aggregation & anomaly detection
+                Org-wide aggregation, prediction & correlation
               </p>
             </div>
           </div>
 
-          {/* Access tier badge */}
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '6px 12px',
-            borderRadius: '999px',
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '6px 12px', borderRadius: '999px',
             background: accessTier === 'admin' ? '#22c55e15' : accessTier === 'team_lead' ? '#f59e0b15' : '#6b728015',
             border: `1px solid ${accessTier === 'admin' ? '#22c55e30' : accessTier === 'team_lead' ? '#f59e0b30' : '#6b728030'}`,
           }}>
@@ -122,9 +117,7 @@ export default function OmmniEngine() {
               color: accessTier === 'admin' ? '#22c55e' : accessTier === 'team_lead' ? '#f59e0b' : '#6b7280'
             }} />
             <span style={{
-              fontSize: '11px',
-              fontWeight: 700,
-              textTransform: 'capitalize',
+              fontSize: '11px', fontWeight: 700, textTransform: 'capitalize',
               color: accessTier === 'admin' ? '#22c55e' : accessTier === 'team_lead' ? '#f59e0b' : '#6b7280',
             }}>
               {accessTier.replace('_', ' ')}
@@ -133,12 +126,7 @@ export default function OmmniEngine() {
         </div>
 
         {/* ── Query Box ── */}
-        <div style={{
-          ...getButtonStyle(),
-          borderRadius: '20px',
-          padding: '20px',
-          marginBottom: '20px',
-        }}>
+        <div style={{ ...getButtonStyle(), borderRadius: '20px', padding: '20px', marginBottom: '20px' }}>
           <p style={{ fontSize: '12px', fontWeight: 600, color: colors.textSecondary, marginBottom: '12px' }}>
             Ask OMMNI anything across the suite
           </p>
@@ -149,29 +137,17 @@ export default function OmmniEngine() {
               onKeyDown={e => e.key === 'Enter' && runQuery()}
               placeholder="e.g. Biggest pain points this quarter"
               style={{
-                flex: 1,
-                padding: '12px 16px',
-                borderRadius: '12px',
-                border: 'none',
-                fontSize: '14px',
-                color: colors.text,
-                ...getInsetStyle(),
+                flex: 1, padding: '12px 16px', borderRadius: '12px', border: 'none',
+                fontSize: '14px', color: colors.text, ...getInsetStyle(),
               }}
             />
             <button
               onClick={() => runQuery()}
               disabled={!query.trim() || querying}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                padding: '0 18px',
-                borderRadius: '12px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: 700,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                padding: '0 18px', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                fontSize: '13px', fontWeight: 700,
                 background: !query.trim() || querying ? colors.bg : 'linear-gradient(135deg, #0891b2, #06b6d4)',
                 color: !query.trim() || querying ? colors.textTertiary : '#fff',
                 boxShadow: !query.trim() || querying ? 'none' : '0 4px 12px rgba(8,145,178,0.3)',
@@ -183,7 +159,6 @@ export default function OmmniEngine() {
             </button>
           </div>
 
-          {/* Suggested queries */}
           <div className="flex flex-wrap gap-2 mt-3">
             {SUGGESTED_QUERIES.map(q => (
               <button
@@ -191,15 +166,9 @@ export default function OmmniEngine() {
                 onClick={() => runQuery(q)}
                 disabled={querying}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '999px',
-                  border: `1px solid ${colors.border}`,
-                  background: 'transparent',
-                  cursor: 'pointer',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  color: colors.textSecondary,
-                  transition: 'all 0.15s',
+                  padding: '6px 12px', borderRadius: '999px', border: `1px solid ${colors.border}`,
+                  background: 'transparent', cursor: 'pointer', fontSize: '11px', fontWeight: 600,
+                  color: colors.textSecondary, transition: 'all 0.15s',
                 }}
               >
                 {q}
@@ -212,17 +181,10 @@ export default function OmmniEngine() {
         <AnimatePresence>
           {querying && (
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               style={{
-                ...getButtonStyle(),
-                borderRadius: '16px',
-                padding: '24px',
-                marginBottom: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
+                ...getButtonStyle(), borderRadius: '16px', padding: '24px', marginBottom: '20px',
+                display: 'flex', alignItems: 'center', gap: '12px',
               }}
             >
               <Loader2 className="w-5 h-5 animate-spin" style={{ color: '#0891b2' }} />
@@ -233,13 +195,9 @@ export default function OmmniEngine() {
           )}
           {queryError && !querying && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               style={{
-                ...getInsetStyle(),
-                borderRadius: '16px',
-                padding: '16px 20px',
-                marginBottom: '20px',
+                ...getInsetStyle(), borderRadius: '16px', padding: '16px 20px', marginBottom: '20px',
                 border: '1px solid #ef444440',
               }}
             >
@@ -248,13 +206,9 @@ export default function OmmniEngine() {
           )}
           {queryResult && !querying && (
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               style={{
-                ...getButtonStyle(),
-                borderRadius: '16px',
-                padding: '24px',
-                marginBottom: '20px',
+                ...getButtonStyle(), borderRadius: '16px', padding: '24px', marginBottom: '20px',
                 borderLeft: '4px solid #06b6d4',
               }}
             >
@@ -265,10 +219,7 @@ export default function OmmniEngine() {
                 </span>
                 {queryResult.confidence && (
                   <span style={{
-                    fontSize: '10px',
-                    fontWeight: 600,
-                    padding: '2px 8px',
-                    borderRadius: '4px',
+                    fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '4px',
                     background: queryResult.confidence === 'high' ? '#22c55e15' : queryResult.confidence === 'medium' ? '#f59e0b15' : '#6b728015',
                     color: queryResult.confidence === 'high' ? '#22c55e' : queryResult.confidence === 'medium' ? '#f59e0b' : '#6b7280',
                   }}>
@@ -302,12 +253,8 @@ export default function OmmniEngine() {
                   <div className="flex flex-wrap gap-2">
                     {queryResult.citations.map((c, i) => (
                       <span key={i} style={{
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        padding: '4px 10px',
-                        borderRadius: '6px',
-                        background: '#0891b215',
-                        color: '#0891b2',
+                        fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '6px',
+                        background: '#0891b215', color: '#0891b2',
                       }}>
                         [{c.ref}] {c.source}
                       </span>
@@ -318,6 +265,18 @@ export default function OmmniEngine() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* ── Predictive Forecasts ── */}
+        <div className="mb-6">
+          <p className="section-header" style={{ color: colors.textTertiary }}>PREDICTIVE FORECASTS</p>
+          <ForecastCards />
+        </div>
+
+        {/* ── Correlation Stories ── */}
+        <div className="mb-6">
+          <p className="section-header" style={{ color: colors.textTertiary }}>CROSS-MODULE CORRELATION STORIES</p>
+          <CorrelationStories />
+        </div>
 
         {/* ── Data Sources ── */}
         <div className="mb-6">
@@ -331,29 +290,15 @@ export default function OmmniEngine() {
               {overview.data_sources.map(src => {
                 const Icon = SOURCE_ICONS[src.key] || Brain;
                 return (
-                  <div
-                    key={src.key}
-                    style={{
-                      ...getButtonStyle(),
-                      borderRadius: '14px',
-                      padding: '16px',
-                    }}
-                  >
+                  <div key={src.key} style={{ ...getButtonStyle(), borderRadius: '14px', padding: '16px' }}>
                     <div className="flex items-center gap-2 mb-3">
                       <div style={{
-                        width: '28px',
-                        height: '28px',
-                        borderRadius: '8px',
-                        background: '#0891b215',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        width: '28px', height: '28px', borderRadius: '8px', background: '#0891b215',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
                         <Icon className="w-4 h-4" style={{ color: '#0891b2' }} />
                       </div>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: colors.text }}>
-                        {src.label}
-                      </span>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: colors.text }}>{src.label}</span>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       {Object.entries(src.metrics).map(([k, v]) => (
@@ -375,17 +320,12 @@ export default function OmmniEngine() {
         </div>
 
         {/* ── Anomaly Feed ── */}
-        <div>
+        <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <p className="section-header" style={{ color: colors.textTertiary, marginBottom: 0 }}>
-              ANOMALY FEED
-            </p>
+            <p className="section-header" style={{ color: colors.textTertiary, marginBottom: 0 }}>ANOMALY FEED</p>
             {anomalies.length > 0 && (
               <span style={{
-                fontSize: '11px',
-                fontWeight: 700,
-                padding: '3px 10px',
-                borderRadius: '999px',
+                fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '999px',
                 background: anomalies.length > 5 ? '#ef444415' : '#f59e0b15',
                 color: anomalies.length > 5 ? '#ef4444' : '#f59e0b',
               }}>
@@ -399,16 +339,9 @@ export default function OmmniEngine() {
               <Loader2 className="w-6 h-6 animate-spin mx-auto" style={{ color: colors.textTertiary }} />
             </div>
           ) : anomalies.length === 0 ? (
-            <div style={{
-              ...getInsetStyle(),
-              borderRadius: '16px',
-              padding: '32px',
-              textAlign: 'center',
-            }}>
+            <div style={{ ...getInsetStyle(), borderRadius: '16px', padding: '32px', textAlign: 'center' }}>
               <TrendingUp className="w-8 h-8 mx-auto mb-3" style={{ color: '#22c55e' }} />
-              <p style={{ fontSize: '14px', fontWeight: 600, color: colors.text }}>
-                No anomalies detected
-              </p>
+              <p style={{ fontSize: '14px', fontWeight: 600, color: colors.text }}>No anomalies detected</p>
               <p style={{ fontSize: '12px', color: colors.textSecondary, marginTop: '4px' }}>
                 All modules are within normal ranges.
               </p>
@@ -417,12 +350,7 @@ export default function OmmniEngine() {
             <div className="flex flex-col gap-2.5">
               <AnimatePresence>
                 {anomalies.map((a, i) => (
-                  <AnomalyCard
-                    key={i}
-                    anomaly={a}
-                    colors={colors}
-                    getButtonStyle={getButtonStyle}
-                  />
+                  <AnomalyCard key={i} anomaly={a} colors={colors} getButtonStyle={getButtonStyle} />
                 ))}
               </AnimatePresence>
             </div>
@@ -430,13 +358,9 @@ export default function OmmniEngine() {
         </div>
 
         {/* ── How modules consume OMMNI ── */}
-        <div className="mt-8">
+        <div>
           <p className="section-header" style={{ color: colors.textTertiary }}>CALLABLE SERVICE — HOW MODULES USE OMMNI</p>
-          <div style={{
-            ...getInsetStyle(),
-            borderRadius: '14px',
-            padding: '16px',
-          }}>
+          <div style={{ ...getInsetStyle(), borderRadius: '14px', padding: '16px' }}>
             <div className="flex flex-col gap-3">
               {[
                 { mod: 'DOC', desc: 'Queries OMMNI mid-call for anomaly flags on the member/client being worked' },
@@ -447,12 +371,8 @@ export default function OmmniEngine() {
                 <div key={item.mod} className="flex items-start gap-3">
                   <Zap className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#0891b2' }} />
                   <div>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: colors.text }}>
-                      {item.mod}
-                    </span>
-                    <span style={{ fontSize: '12px', color: colors.textSecondary }}>
-                      {' — '}{item.desc}
-                    </span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: colors.text }}>{item.mod}</span>
+                    <span style={{ fontSize: '12px', color: colors.textSecondary }}>{' — '}{item.desc}</span>
                   </div>
                 </div>
               ))}
@@ -467,84 +387,43 @@ export default function OmmniEngine() {
 // ── Anomaly Card ──
 function AnomalyCard({ anomaly, colors, getButtonStyle }) {
   const sev = SEVERITY_STYLES[anomaly.severity] || SEVERITY_STYLES.medium;
-  const Icon = anomaly.severity === 'high' ? AlertTriangle : anomaly.severity === 'medium' ? TrendingDown : AlertTriangle;
+  const Icon = anomaly.severity === 'high' ? AlertTriangle : TrendingDown;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -20 }}
+      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.2 }}
-      style={{
-        ...getButtonStyle(),
-        borderRadius: '14px',
-        padding: '16px',
-        borderLeft: `4px solid ${sev.border}`,
-      }}
+      style={{ ...getButtonStyle(), borderRadius: '14px', padding: '16px', borderLeft: `4px solid ${sev.border}` }}
     >
       <div className="flex items-start gap-3">
         <div style={{
-          flexShrink: 0,
-          width: '32px',
-          height: '32px',
-          borderRadius: '10px',
-          background: sev.bg,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          flexShrink: 0, width: '32px', height: '32px', borderRadius: '10px', background: sev.bg,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <Icon className="w-4 h-4" style={{ color: sev.text }} />
         </div>
-
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span style={{
-              fontSize: '10px',
-              fontWeight: 700,
-              padding: '2px 8px',
-              borderRadius: '4px',
-              background: sev.bg,
-              color: sev.text,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}>
-              {sev.label}
-            </span>
+              fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '4px',
+              background: sev.bg, color: sev.text, textTransform: 'uppercase', letterSpacing: '0.05em',
+            }}>{sev.label}</span>
             <span style={{
-              fontSize: '10px',
-              fontWeight: 600,
-              padding: '2px 8px',
-              borderRadius: '4px',
-              background: '#0891b215',
-              color: '#0891b2',
-            }}>
-              {anomaly.source_module}
-            </span>
-            <span style={{
-              fontSize: '10px',
-              fontWeight: 600,
-              color: colors.textTertiary,
-              textTransform: 'capitalize',
-            }}>
+              fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '4px',
+              background: '#0891b215', color: '#0891b2',
+            }}>{anomaly.source_module}</span>
+            <span style={{ fontSize: '10px', fontWeight: 600, color: colors.textTertiary, textTransform: 'capitalize' }}>
               {anomaly.type.replace(/_/g, ' ')}
             </span>
           </div>
-
-          <p style={{
-            fontSize: '13px',
-            fontWeight: 600,
-            color: colors.text,
-            lineHeight: 1.4,
-          }}>
+          <p style={{ fontSize: '13px', fontWeight: 600, color: colors.text, lineHeight: 1.4 }}>
             {anomaly.description}
           </p>
-
           {anomaly.data_points?.length > 0 && (
             <div className="flex flex-wrap gap-3 mt-2">
               {anomaly.data_points.map((dp, i) => (
                 <span key={i} style={{ fontSize: '11px', color: colors.textSecondary }}>
-                  <strong style={{ color: colors.textTertiary }}>{dp.metric.replace(/_/g, ' ')}:</strong>{' '}
-                  {dp.value}
+                  <strong style={{ color: colors.textTertiary }}>{dp.metric.replace(/_/g, ' ')}:</strong> {dp.value}
                 </span>
               ))}
             </div>

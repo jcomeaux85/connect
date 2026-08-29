@@ -15,7 +15,8 @@
         "message",
         "announcement",
         "case_assigned",
-        "task_assigned"
+        "task_assigned",
+        "ommni_insight"
       ],
       "description": "Type of notification"
     },
