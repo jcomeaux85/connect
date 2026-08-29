@@ -62,15 +62,15 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
           CORPS//
         </button>
 
-        {/* Section nav buttons */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
+        {/* Section nav buttons — sized to content, scroll if needed, never truncate */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 overflow-x-auto scrollbar-hide">
           {navItems.map(({ id, label, icon: Icon }) => {
             const isActive = activeSection === id;
             return (
               <button
                 key={id}
                 onClick={() => onNavigate(id)}
-                className="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all flex-1 min-w-0 overflow-hidden"
+                className="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all flex-shrink-0"
                 style={isActive ? pressed : raised}
                 title={label}
               >
@@ -78,7 +78,7 @@ export default function CorpsPillHeader({ activeSection, onNavigate }) {
                   className="w-4 h-4 flex-shrink-0"
                   style={{ color: isActive ? '#86efac' : 'rgba(255,255,255,0.7)' }}
                 />
-                <span className="truncate" style={{ color: isActive ? '#dcfce7' : 'rgba(255,255,255,0.85)' }}>{label}</span>
+                <span style={{ color: isActive ? '#dcfce7' : 'rgba(255,255,255,0.85)' }}>{label}</span>
               </button>
             );
           })}
