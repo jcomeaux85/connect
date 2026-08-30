@@ -59,24 +59,24 @@ export const ThemeProvider = ({ children }) => {
 
   const colors = {
     light: {
-      bg: '#E0E5EC',
-      text: '#374151',
+      bg: '#E4E7ED',
+      text: '#2D3436',
       textSecondary: '#6B7280',
       textTertiary: '#9CA3AF',
       shadowDark: '#a3b1c6',
       shadowLight: '#ffffff',
-      cardBg: '#E0E5EC',
+      cardBg: '#E4E7ED',
       gradient: 'linear-gradient(145deg, #f0f4f8, #d1d9e6)',
       border: '#D1D9E6',
       iconColor: '#6B7280',
       
-      buttonBg: '#E0E5EC',
+      buttonBg: '#E4E7ED',
       buttonText: '#374151',
       buttonShadow: '6px 6px 1px #a3b1c6, -6px -6px 1px #ffffff',
       buttonShadowHover: '8px 8px 1px #a3b1c6, -8px -8px 1px #ffffff',
       buttonShadowPressed: 'inset 4px 4px 1px #a3b1c6, inset -4px -4px 1px #ffffff',
       
-      insetBg: '#E0E5EC',
+      insetBg: '#E4E7ED',
       insetShadow: 'inset 3px 3px 1px #a3b1c6, inset -3px -3px 1px #ffffff',
       
       // Vibrant colors for both modes
