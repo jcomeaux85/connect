@@ -98,8 +98,8 @@ export const ThemeProvider = ({ children }) => {
       text: '#e5e7eb',
       textSecondary: '#9ca3af',
       textTertiary: '#6b7280',
-      shadowDark: '#1f232d',
-      shadowLight: '#353945',
+      shadowDark: '#10131a',
+      shadowLight: '#454b5d',
       cardBg: '#2a2e3a',
       gradient: 'linear-gradient(145deg, #2c3041, #282c38)',
       border: '#3a3e4a',
@@ -107,12 +107,12 @@ export const ThemeProvider = ({ children }) => {
       
       buttonBg: '#2a2e3a',
       buttonText: '#e5e7eb',
-      buttonShadow: '6px 6px 1px #1f232d, -6px -6px 1px #353945',
-      buttonShadowHover: '8px 8px 1px #1f232d, -8px -8px 1px #353945',
-      buttonShadowPressed: 'inset 4px 4px 1px #1f232d, inset -4px -4px 1px #353945',
+      buttonShadow: '6px 6px 1px #10131a, -6px -6px 1px #454b5d',
+      buttonShadowHover: '8px 8px 1px #10131a, -8px -8px 1px #454b5d',
+      buttonShadowPressed: 'inset 4px 4px 1px #10131a, inset -4px -4px 1px #454b5d',
       
       insetBg: '#2a2e3a',
-      insetShadow: 'inset 3px 3px 1px #1f232d, inset -3px -3px 1px #353945',
+      insetShadow: 'inset 3px 3px 1px #10131a, inset -3px -3px 1px #454b5d',
       
       // Vibrant colors for both modes
       primary: '#3B82F6',
@@ -124,9 +124,9 @@ export const ThemeProvider = ({ children }) => {
       pink: '#EC4899',
       indigo: '#6366F1',
       
-      outerShadow: '10px 10px 1px #1f232d, -10px -10px 1px #353945',
-      innerShadow: 'inset 4px 4px 1px #1f232d, inset -4px -4px 1px #353945',
-      cardShadow: '12px 12px 1px #1f232d, -12px -12px 1px #353945',
+      outerShadow: '10px 10px 1px #10131a, -10px -10px 1px #454b5d',
+      innerShadow: 'inset 4px 4px 1px #10131a, inset -4px -4px 1px #454b5d',
+      cardShadow: '12px 12px 1px #10131a, -12px -12px 1px #454b5d',
     }
   };
 

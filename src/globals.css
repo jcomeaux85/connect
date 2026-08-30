@@ -64,8 +64,8 @@
 }
 .dark {
   --neu-bg: #2a2e3a;
-  --neu-dark: #1f232d;
-  --neu-light: #353945;
+  --neu-dark: #10131a;
+  --neu-light: #454b5d;
 }
 
 /* Raised cards: white rounded cards get a soft raised shadow */
@@ -124,7 +124,7 @@ button.bg-gray-50:active {
 }
 .dark .hover\:bg-gray-100:hover,
 .dark .hover\:bg-purple-50:hover {
-  background: #353945 !important;
+  background: #454b5d !important;
 }
 
 /* Text: lift the dark greys to light so they're legible on charcoal */
@@ -190,7 +190,7 @@ button.bg-gray-50:active {
 }
 .dark .corps-neu .corps-chat-container {
   background: var(--neu-bg, #2a2e3a) !important;
-  box-shadow: 6px 6px 1px var(--neu-dark, #1f232d), -6px -6px 1px var(--neu-light, #353945) !important;
+  box-shadow: 6px 6px 1px var(--neu-dark, #10131a), -6px -6px 1px var(--neu-light, #454b5d) !important;
 }
 .dark .corps-neu textarea.corps-chat-textarea,
 .corps-neu textarea.corps-chat-textarea {
