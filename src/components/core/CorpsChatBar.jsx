@@ -105,7 +105,7 @@ export default function CorpsChatBar() {
         }
       `}</style>
       <div
-        className="corps-chat-shell w-full max-w-6xl rounded-3xl overflow-hidden flex flex-col transition-all duration-300"
+        className="corps-chat-shell w-full max-w-3xl rounded-3xl overflow-hidden flex flex-col transition-all duration-300"
         style={{ maxHeight: expanded ? '60vh' : 'none' }}
       >
         {/* RME of ONE header banner — inverts in dark mode to stay legible */}
@@ -157,10 +157,10 @@ export default function CorpsChatBar() {
             >
               <div className="px-6 py-4">
                 <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full mt-1" style={{ background: '#dcfce7' }}>
+            <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full mt-1" style={{ background: '#dcfce7', boxShadow: '3px 3px 1px var(--neu-dark, #a3b1c6), -3px -3px 1px var(--neu-light, #ffffff)' }}>
               <Sparkles className="w-4 h-4" style={{ color: '#28a745' }} />
             </div>
-            <div className="flex-1 relative" style={{ minHeight: containerMinHeight }}>
+            <div className="flex-1 relative rounded-2xl" style={{ minHeight: containerMinHeight, padding: '12px 16px', boxShadow: 'inset 3px 3px 1px var(--neu-dark, #a3b1c6), inset -3px -3px 1px var(--neu-light, #ffffff)' }}>
               {/* contentEditable div — not a textarea, so neumorphic CSS can't touch it */}
               <div
                 ref={editRef}
@@ -196,6 +196,7 @@ export default function CorpsChatBar() {
                     fontStyle: 'italic',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
+                    padding: '12px 16px',
                   }}
                 >
                   {ROTATING_PROMPTS[phIndex]}
@@ -215,11 +216,11 @@ export default function CorpsChatBar() {
             <button
               onClick={handleSubmit}
               disabled={loading || !prompt.trim()}
-              className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 mt-1"
+              className="flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 mt-1"
               style={{
                 background: prompt.trim() ? '#28a745' : '#d1d5db',
                 color: '#ffffff',
-                boxShadow: prompt.trim() ? '0 2px 8px rgba(40,167,69,0.4)' : 'none',
+                boxShadow: '3px 3px 1px var(--neu-dark, #a3b1c6), -3px -3px 1px var(--neu-light, #ffffff)',
               }}
               title="Ask MAJOR"
             >
