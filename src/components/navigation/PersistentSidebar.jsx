@@ -406,6 +406,58 @@ export default function PersistentSidebar({
             className="px-1.5 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-hidden"
             style={{ scrollbarWidth: 'none', gap: '6px' }}
           >
+            {/* CORPS// — green main nav button, always at top (where Dashboard was) */}
+            <div
+              className="relative nav-slide-wrap"
+              style={{ minHeight: '38px' }}
+              onMouseEnter={(e) => isMin && showNavTip(e, 'CORPS//')}
+              onMouseLeave={hideNavTip}
+            >
+              <Link to={createPageUrl('Core')} style={{ display: 'block', height: '100%' }}>
+                <LitButton
+                  isActive={isCoreRoute}
+                  className="w-full h-full flex items-center"
+                  style={{
+                    ...corpsBtnStyle(isCoreRoute),
+                    padding: isMin ? '0' : '0 10px',
+                    justifyContent: isMin ? 'center' : 'flex-start',
+                    gap: '8px',
+                    height: '100%',
+                  }}
+                >
+                  <span
+                    className="flex-shrink-0 flex items-center justify-center"
+                    style={{
+                      fontWeight: 800,
+                      fontSize: '15px',
+                      color: isCoreRoute ? '#86efac' : 'rgba(134,239,172,0.85)',
+                      fontFamily: "'JetBrains Mono', monospace",
+                      letterSpacing: '-0.02em',
+                      minWidth: isMin ? 'auto' : '20px',
+                    }}
+                  >
+                    //
+                  </span>
+                  <AnimatePresence>
+                    {!isMin && (
+                      <motion.span
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: 700,
+                          whiteSpace: 'nowrap',
+                          color: isCoreRoute ? '#dcfce7' : 'rgba(220,252,231,0.9)',
+                          textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+                        }}
+                      >
+                        CORPS//
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </LitButton>
+              </Link>
+            </div>
+
             {/* CORPS// section buttons — green, only on the Core route */}
             {isCoreRoute && (
               <div
@@ -462,6 +514,51 @@ export default function PersistentSidebar({
                 })}
               </div>
             )}
+
+            {/* DOC — white doc-logo button, under CORPS// and the green section buttons */}
+            <div
+              className="relative nav-slide-wrap"
+              style={{ minHeight: '38px' }}
+              onMouseEnter={(e) => isMin && showNavTip(e, 'DOC')}
+              onMouseLeave={hideNavTip}
+            >
+              <LitButton
+                isActive={false}
+                className="w-full h-full flex items-center"
+                onClick={onToggleDoc}
+                style={{
+                  ...btnStyle(false),
+                  padding: isMin ? '0' : '0 10px',
+                  justifyContent: isMin ? 'center' : 'flex-start',
+                  gap: '8px',
+                  height: '100%',
+                  cursor: 'pointer',
+                }}
+              >
+                <img
+                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
+                  alt="DOC"
+                  className="flex-shrink-0"
+                  style={{ height: '16px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                />
+                <AnimatePresence>
+                  {!isMin && (
+                    <motion.span
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      style={{
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        whiteSpace: 'nowrap',
+                        color: 'rgba(255,255,255,0.85)',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+                      }}
+                    >
+                      DOC
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </LitButton>
+            </div>
 
             {/* Nav buttons -- natural height, no stretch */}
             <div

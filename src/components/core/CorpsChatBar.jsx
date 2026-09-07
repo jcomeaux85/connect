@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, ArrowUp, X, Loader2 } from 'lucide-react';
+import { Sparkles, ArrowUp, X, Loader2, ChevronUp, ChevronDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '@/components/ThemeProvider';
 
 // MAJOR — the CORPS// AI assistant.
 // Container carries the neumorphic background (no inner white box).
@@ -22,6 +24,8 @@ const RESERVED_LINES = 5;
 const RESERVED_PX = RESERVED_LINES * LINE_HEIGHT;
 
 export default function CorpsChatBar() {
+  const { isDark } = useTheme();
+  const [inputCollapsed, setInputCollapsed] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [conversation, setConversation] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -101,16 +105,17 @@ export default function CorpsChatBar() {
         }
       `}</style>
       <div
-        className="corps-chat-shell w-full max-w-3xl rounded-3xl overflow-hidden flex flex-col transition-all duration-300"
+        className="corps-chat-shell w-full max-w-6xl rounded-3xl overflow-hidden flex flex-col transition-all duration-300"
         style={{ maxHeight: expanded ? '60vh' : 'none' }}
       >
-        {/* RME of ONE header banner — black backdrop so the dark graphic blends in */}
+        {/* RME of ONE header banner — inverts in dark mode to stay legible */}
         <div className="w-full" style={{ background: '#F0F0F0' }}>
           <img
             src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/cd80b6962_RMEofONE_glitchBnew2b.png"
             alt="CORPS // RME of ONE — Unifying Risk Management Enterprise"
             className="w-full h-auto block select-none"
             draggable={false}
+            style={{ filter: isDark ? 'invert(1)' : 'none' }}
           />
         </div>
 
@@ -140,9 +145,18 @@ export default function CorpsChatBar() {
           </div>
         )}
 
-        {/* Prompt input — container IS the background, no inner box */}
-        <div className="px-6 py-4">
-          <div className="flex items-start gap-4">
+        {/* Prompt input — collapsible via the bottom arrow (accordion upward) */}
+        <AnimatePresence initial={false}>
+          {!inputCollapsed && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="overflow-hidden"
+            >
+              <div className="px-6 py-4">
+                <div className="flex items-start gap-4">
             <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full mt-1" style={{ background: '#dcfce7' }}>
               <Sparkles className="w-4 h-4" style={{ color: '#28a745' }} />
             </div>
@@ -211,8 +225,21 @@ export default function CorpsChatBar() {
             >
               <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
             </button>
-          </div>
-        </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Bottom arrow — toggles the prompt text area (accordion upward) */}
+        <button
+          onClick={() => setInputCollapsed((c) => !c)}
+          className="w-full flex items-center justify-center py-2 transition-colors"
+          style={{ color: '#9ca3af', background: 'transparent', border: 'none', cursor: 'pointer' }}
+          title={inputCollapsed ? 'Expand prompt' : 'Collapse prompt'}
+        >
+          {inputCollapsed ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </button>
       </div>
     </div>
   );

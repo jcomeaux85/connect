@@ -134,8 +134,7 @@ ${conversationHistory}
 
 User: ${userMessage}
 
-Provide a helpful, friendly response. Cite sources when applicable.`,
-        add_context_from_internet: true
+Provide a helpful, friendly response. Cite sources when applicable.`
       });
 
       setMessages(prev => [...prev, {
