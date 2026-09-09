@@ -319,6 +319,132 @@ export default function PersistentSidebar({
     borderRadius: '10px',
   });
 
+  // ── CORPS// logo block (extracted so it can be placed side-by-side with DOC
+  // on medium/largest sidebar levels, and stacked on narrow) ──
+  const corpsLogoBlock = (
+    <div
+      className="relative nav-slide-wrap"
+      style={{ minHeight: '38px' }}
+      onMouseEnter={(e) => isMin && showNavTip(e, 'CORPS//')}
+      onMouseLeave={hideNavTip}
+    >
+      <Link to={createPageUrl('Core')} style={{ display: 'flex', alignItems: 'center', height: '100%', textDecoration: 'none' }}>
+        <div
+          className="w-full h-full flex items-center justify-center"
+          style={{ padding: '5px 10px', height: '100%' }}
+        >
+          {isMin ? (
+            <span
+              style={{
+                fontWeight: 800,
+                fontSize: '24px',
+                lineHeight: 1,
+                color: isCoreRoute ? '#86efac' : 'rgba(134,239,172,0.85)',
+                fontFamily: "'JetBrains Mono', monospace",
+                letterSpacing: '-0.02em',
+                textShadow: '0 1px 4px rgba(0,0,0,0.6)',
+              }}
+            >
+              //
+            </span>
+          ) : (
+            <span
+              style={{
+                fontSize: '24px',
+                fontWeight: 800,
+                lineHeight: 1,
+                whiteSpace: 'nowrap',
+                color: isCoreRoute ? '#86efac' : 'rgba(134,239,172,0.85)',
+                fontFamily: "'JetBrains Mono', monospace",
+                letterSpacing: '-0.02em',
+                textShadow: '0 1px 4px rgba(0,0,0,0.6)',
+              }}
+            >
+              CORPS//
+            </span>
+          )}
+        </div>
+      </Link>
+    </div>
+  );
+
+  const docLogoBlock = (
+    <div
+      className="relative nav-slide-wrap"
+      style={{ minHeight: '38px' }}
+      onMouseEnter={(e) => isMin && showNavTip(e, 'DOC')}
+      onMouseLeave={hideNavTip}
+    >
+      <div
+        className="w-full h-full flex items-center justify-center cursor-pointer"
+        onClick={onToggleDoc}
+        style={{ padding: '5px 10px', height: '100%' }}
+      >
+        <img
+          src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
+          alt="DOC"
+          style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+        />
+      </div>
+    </div>
+  );
+
+  const corpsSectionBlock = isCoreRoute && (
+    <div
+      className={`${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
+      style={{ gap: '5px', paddingBottom: '6px', borderBottom: `1px solid ${PANEL_BORDER}` }}
+    >
+      {corpsSections.map((item) => {
+        const Icon = item.icon;
+        const isActive = corpsSection === item.id;
+        return (
+          <div
+            key={item.id}
+            className="relative nav-slide-wrap"
+            style={isFull ? { minHeight: '38px' } : { minHeight: '38px' }}
+            onMouseEnter={(e) => isMin && showNavTip(e, item.label)}
+            onMouseLeave={hideNavTip}
+          >
+            <LitButton
+              isActive={isActive}
+              className="w-full h-full flex items-center"
+              onClick={() => handleCorpsNav(item.id)}
+              style={{
+                ...corpsBtnStyle(isActive),
+                padding: isMin ? '0' : '0 10px',
+                justifyContent: isMin ? 'center' : 'flex-start',
+                gap: '8px',
+                height: '100%',
+                cursor: 'pointer',
+              }}
+            >
+              <Icon
+                className="w-4 h-4 flex-shrink-0"
+                style={{ color: isActive ? '#86efac' : 'rgba(134,239,172,0.75)' }}
+              />
+              <AnimatePresence>
+                {!isMin && (
+                  <motion.span
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      whiteSpace: 'nowrap',
+                      color: isActive ? '#dcfce7' : 'rgba(220,252,231,0.85)',
+                      textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+                    }}
+                  >
+                    {item.label}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </LitButton>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   return (
     <>
       {/* Approach zone -- pre-warms the cursor light; brightness ramps as you near the panel */}
@@ -406,134 +532,22 @@ export default function PersistentSidebar({
             className="px-1.5 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-hidden"
             style={{ scrollbarWidth: 'none', gap: '6px' }}
           >
-            {/* CORPS// — green logo link, always at top (no button framing) */}
-            <div
-              className="relative nav-slide-wrap"
-              style={{ minHeight: '38px' }}
-              onMouseEnter={(e) => isMin && showNavTip(e, 'CORPS//')}
-              onMouseLeave={hideNavTip}
-            >
-              <Link to={createPageUrl('Core')} style={{ display: 'flex', alignItems: 'center', height: '100%', textDecoration: 'none' }}>
-                <div
-                  className="w-full h-full flex items-center justify-center"
-                  style={{
-                    padding: '5px 10px',
-                    height: '100%',
-                  }}
-                >
-                  {isMin ? (
-                    <span
-                      style={{
-                        fontWeight: 800,
-                        fontSize: '24px',
-                        lineHeight: 1,
-                        color: isCoreRoute ? '#86efac' : 'rgba(134,239,172,0.85)',
-                        fontFamily: "'JetBrains Mono', monospace",
-                        letterSpacing: '-0.02em',
-                        textShadow: '0 1px 4px rgba(0,0,0,0.6)',
-                      }}
-                    >
-                      //
-                    </span>
-                  ) : (
-                    <span
-                      style={{
-                        fontSize: '24px',
-                        fontWeight: 800,
-                        lineHeight: 1,
-                        whiteSpace: 'nowrap',
-                        color: isCoreRoute ? '#86efac' : 'rgba(134,239,172,0.85)',
-                        fontFamily: "'JetBrains Mono', monospace",
-                        letterSpacing: '-0.02em',
-                        textShadow: '0 1px 4px rgba(0,0,0,0.6)',
-                      }}
-                    >
-                      CORPS//
-                    </span>
-                  )}
+            {/* CORPS// + DOC — side by side on medium/largest, stacked on narrow */}
+            {!isMin ? (
+              <>
+                <div className="flex" style={{ gap: '5px' }}>
+                  {corpsLogoBlock}
+                  {docLogoBlock}
                 </div>
-              </Link>
-            </div>
-
-            {/* CORPS// section buttons — green, only on the Core route */}
-            {isCoreRoute && (
-              <div
-                className={`${isFull ? 'grid grid-cols-2' : 'flex flex-col'}`}
-                style={{ gap: '5px', paddingBottom: '6px', borderBottom: `1px solid ${PANEL_BORDER}` }}
-              >
-                {corpsSections.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = corpsSection === item.id;
-                  return (
-                    <div
-                      key={item.id}
-                      className="relative nav-slide-wrap"
-                      style={isFull ? { minHeight: '38px' } : { minHeight: '38px' }}
-                      onMouseEnter={(e) => isMin && showNavTip(e, item.label)}
-                      onMouseLeave={hideNavTip}
-                    >
-                      <LitButton
-                        isActive={isActive}
-                        className="w-full h-full flex items-center"
-                        onClick={() => handleCorpsNav(item.id)}
-                        style={{
-                          ...corpsBtnStyle(isActive),
-                          padding: isMin ? '0' : '0 10px',
-                          justifyContent: isMin ? 'center' : 'flex-start',
-                          gap: '8px',
-                          height: '100%',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <Icon
-                          className="w-4 h-4 flex-shrink-0"
-                          style={{ color: isActive ? '#86efac' : 'rgba(134,239,172,0.75)' }}
-                        />
-                        <AnimatePresence>
-                          {!isMin && (
-                            <motion.span
-                              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                              style={{
-                                fontSize: '13px',
-                                fontWeight: 600,
-                                whiteSpace: 'nowrap',
-                                color: isActive ? '#dcfce7' : 'rgba(220,252,231,0.85)',
-                                textShadow: '0 1px 3px rgba(0,0,0,0.7)',
-                              }}
-                            >
-                              {item.label}
-                            </motion.span>
-                          )}
-                        </AnimatePresence>
-                      </LitButton>
-                    </div>
-                  );
-                })}
-              </div>
+                {corpsSectionBlock}
+              </>
+            ) : (
+              <>
+                {corpsLogoBlock}
+                {corpsSectionBlock}
+                {docLogoBlock}
+              </>
             )}
-
-            {/* DOC — white doc-logo, no button framing */}
-            <div
-              className="relative nav-slide-wrap"
-              style={{ minHeight: '38px' }}
-              onMouseEnter={(e) => isMin && showNavTip(e, 'DOC')}
-              onMouseLeave={hideNavTip}
-            >
-              <div
-                className="w-full h-full flex items-center justify-center cursor-pointer"
-                onClick={onToggleDoc}
-                style={{
-                  padding: '5px 10px',
-                  height: '100%',
-                }}
-              >
-                <img
-                  src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
-                  alt="DOC"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                />
-              </div>
-            </div>
 
             {/* Nav buttons -- natural height, no stretch */}
             <div
