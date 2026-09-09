@@ -415,10 +415,9 @@ export default function PersistentSidebar({
             >
               <Link to={createPageUrl('Core')} style={{ display: 'flex', alignItems: 'center', height: '100%', textDecoration: 'none' }}>
                 <div
-                  className="w-full h-full flex items-center"
+                  className="w-full h-full flex items-center justify-center"
                   style={{
-                    padding: isMin ? '5px' : '5px 10px',
-                    justifyContent: isMin ? 'center' : 'flex-start',
+                    padding: '5px 10px',
                     height: '100%',
                   }}
                 >
@@ -439,7 +438,7 @@ export default function PersistentSidebar({
                   ) : (
                     <span
                       style={{
-                        fontSize: '22px',
+                        fontSize: '24px',
                         fontWeight: 800,
                         lineHeight: 1,
                         whiteSpace: 'nowrap',
@@ -531,7 +530,7 @@ export default function PersistentSidebar({
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
                   alt="DOC"
-                  style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: '100%', objectFit: 'contain', display: 'block' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                 />
               </div>
             </div>
