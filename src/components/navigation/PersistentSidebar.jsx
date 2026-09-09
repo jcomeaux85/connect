@@ -417,9 +417,8 @@ export default function PersistentSidebar({
                 <div
                   className="w-full h-full flex items-center"
                   style={{
-                    padding: isMin ? '0' : '0 10px',
+                    padding: isMin ? '5px' : '5px 10px',
                     justifyContent: isMin ? 'center' : 'flex-start',
-                    gap: '8px',
                     height: '100%',
                   }}
                 >
@@ -427,7 +426,8 @@ export default function PersistentSidebar({
                     <span
                       style={{
                         fontWeight: 800,
-                        fontSize: '20px',
+                        fontSize: '24px',
+                        lineHeight: 1,
                         color: isCoreRoute ? '#86efac' : 'rgba(134,239,172,0.85)',
                         fontFamily: "'JetBrains Mono', monospace",
                         letterSpacing: '-0.02em',
@@ -439,8 +439,9 @@ export default function PersistentSidebar({
                   ) : (
                     <span
                       style={{
-                        fontSize: '17px',
+                        fontSize: '22px',
                         fontWeight: 800,
+                        lineHeight: 1,
                         whiteSpace: 'nowrap',
                         color: isCoreRoute ? '#86efac' : 'rgba(134,239,172,0.85)',
                         fontFamily: "'JetBrains Mono', monospace",
@@ -520,37 +521,18 @@ export default function PersistentSidebar({
               onMouseLeave={hideNavTip}
             >
               <div
-                className="w-full h-full flex items-center cursor-pointer"
+                className="w-full h-full flex items-center justify-center cursor-pointer"
                 onClick={onToggleDoc}
                 style={{
-                  padding: isMin ? '0' : '0 10px',
-                  justifyContent: isMin ? 'center' : 'flex-start',
-                  gap: '8px',
+                  padding: '5px 10px',
                   height: '100%',
                 }}
               >
                 <img
                   src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
                   alt="DOC"
-                  className="flex-shrink-0"
-                  style={{ height: '22px', width: 'auto', objectFit: 'contain', display: 'block' }}
+                  style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: '100%', objectFit: 'contain', display: 'block' }}
                 />
-                <AnimatePresence>
-                  {!isMin && (
-                    <motion.span
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                      style={{
-                        fontSize: '15px',
-                        fontWeight: 700,
-                        whiteSpace: 'nowrap',
-                        color: 'rgba(255,255,255,0.9)',
-                        textShadow: '0 1px 3px rgba(0,0,0,0.7)',
-                      }}
-                    >
-                      DOC
-                    </motion.span>
-                  )}
-                </AnimatePresence>
               </div>
             </div>
 
