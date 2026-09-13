@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, ArrowUp, X, Loader2, ChevronUp, ChevronDown } from 'lucide-react';
+import { ArrowUp, X, Loader2, ChevronUp, ChevronDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/ThemeProvider';
 
 // MAJOR — the CORPS// AI assistant.
-// Container carries the neumorphic background (no inner white box).
-// Example prompt: dark grey, italic, full multi-line, ~5 reserved empty lines.
-// On focus: example clears, blinking cursor, typed text is black non-italic.
-// Uses a contentEditable div (not a textarea) so the .corps-neu textarea CSS
-// override can't inject an inner-box background.
+// Containerless full-width CRT prompt surface: scanlines, glowing pixelated
+// green text (VT323), auto-grows as you type, background adapts to light/dark.
+// Example prompt overlay (dim phosphor) fills the surface when empty/unfocused.
 
 const ROTATING_PROMPTS = [
   "Want to know how many of your full time employees that were hired on days with temps higher than 85 degrees contribute more than 50$ to their 401k per pay period, but never work overtime, have never called in on a Friday, and have the same 2 emails on file since their hire date?",
@@ -18,10 +16,6 @@ const ROTATING_PROMPTS = [
   "List employees whose pay frequency changed twice in the last year, have a retirement contribution within $7 of $200, work in a department with an even headcount, and whose last clock-out was within 3 minutes of their shift end.",
   "How many hourly employees took exactly 2 sick days in Q2, have a PTO balance ending in a 5 or 0, were hired by a manager who no longer works here, and have a phone number with a 777 somewhere in it?",
 ];
-
-const LINE_HEIGHT = 24;
-const RESERVED_LINES = 5;
-const RESERVED_PX = RESERVED_LINES * LINE_HEIGHT;
 
 export default function CorpsChatBar() {
   const { isDark } = useTheme();
@@ -83,52 +77,51 @@ export default function CorpsChatBar() {
   };
 
   const showExample = !prompt && !focused;
-  const containerMinHeight = showExample ? (exampleHeight + RESERVED_PX) : RESERVED_PX;
+  const minHeight = showExample ? Math.max(exampleHeight, 120) : 120;
+
+  // Theme-adaptive CRT palette
+  const text = isDark ? '#00FF41' : '#0a6a14';
+  const textGlow = isDark
+    ? '0 0 8px rgba(0,255,65,0.55), 0 0 14px rgba(0,255,65,0.2)'
+    : '0 0 4px rgba(10,106,20,0.25)';
+  const dimText = isDark ? 'rgba(0,255,65,0.32)' : 'rgba(10,106,20,0.4)';
+  const assistantText = isDark ? '#86efac' : '#0a5a0a';
+  const borderTint = isDark ? 'rgba(0,255,65,0.25)' : 'rgba(10,106,20,0.2)';
+  const bubbleBg = isDark ? 'rgba(0,255,65,0.05)' : 'rgba(10,106,20,0.04)';
 
   return (
-    <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0 flex justify-center">
-      {/* Self-contained style override — beats the .corps-neu textarea/input rules */}
+    <div className="flex-shrink-0 w-full px-4 sm:px-6">
       <style>{`
-        .corps-chat-shell {
-          background: var(--neu-bg, #e8e8ee) !important;
-          box-shadow: 6px 6px 1px var(--neu-dark, #c5c5cf), -6px -6px 1px var(--neu-light, #ffffff) !important;
-          border: none !important;
+        .crt-surface { position: relative; font-family: 'VT323', ui-monospace, monospace; }
+        .crt-surface::before {
+          content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+          background: repeating-linear-gradient(0deg, rgba(0,0,0,0.28) 0 1px, transparent 1px 3px);
         }
-        .corps-chat-edit {
-          background: transparent !important;
-          box-shadow: none !important;
-          border: none !important;
-          outline: none !important;
+        .crt-surface-light::before {
+          background: repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0 1px, transparent 1px 3px);
         }
-        .corps-chat-edit:empty:before {
-          content: '';
-        }
+        .crt-edit { background: transparent !important; box-shadow: none !important; border: none !important; outline: none !important; }
+        .crt-edit:empty:before { content: ''; }
       `}</style>
       <div
-        className="corps-chat-shell w-full max-w-3xl rounded-3xl overflow-hidden flex flex-col transition-all duration-300"
-        style={{ maxHeight: expanded ? '60vh' : 'none' }}
+        className={`crt-surface ${isDark ? '' : 'crt-surface-light'} w-full overflow-hidden`}
+        style={{ background: isDark ? '#000500' : '#eef5ee', transition: 'background 0.3s ease' }}
       >
-        {/* RME of ONE header banner — inverts in dark mode to stay legible */}
-        <div className="w-full" style={{ background: '#F0F0F0' }}>
-          <img
-            src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/cd80b6962_RMEofONE_glitchBnew2b.png"
-            alt="CORPS // RME of ONE — Unifying Risk Management Enterprise"
-            className="w-full h-auto block select-none"
-            draggable={false}
-            style={{ filter: isDark ? 'invert(1)' : 'none' }}
-          />
-        </div>
-
-        {/* Conversation area */}
+        {/* Conversation area — sits on the CRT surface */}
         {expanded && conversation && (
-          <div ref={respRef} className="overflow-y-auto px-5 py-4 space-y-3" style={{ background: 'rgba(255,255,255,0.4)', flex: 1, minHeight: '120px' }}>
+          <div ref={respRef} className="relative z-[2] overflow-y-auto px-5 py-4 space-y-3" style={{ maxHeight: '40vh', minHeight: '120px' }}>
             {conversation.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className="max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap leading-relaxed"
-                  style={msg.role === 'user'
-                    ? { background: '#22c55e', color: '#ffffff' }
-                    : { background: '#ffffff', color: '#1a2e1a', border: '1px solid #e5e7e5' }}
+                  className="max-w-[85%] px-4 py-2 whitespace-pre-wrap leading-relaxed"
+                  style={{
+                    fontFamily: "'VT323', ui-monospace, monospace",
+                    fontSize: '20px',
+                    color: msg.role === 'user' ? text : assistantText,
+                    textShadow: msg.role === 'user' ? textGlow : 'none',
+                    border: `1px solid ${borderTint}`,
+                    background: bubbleBg,
+                  }}
                 >
                   {msg.text}
                 </div>
@@ -136,9 +129,17 @@ export default function CorpsChatBar() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="rounded-2xl px-4 py-2.5 flex items-center gap-2" style={{ background: '#ffffff', border: '1px solid #e5e7e5' }}>
-                  <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#16a34a' }} />
-                  <span className="text-sm" style={{ color: '#6b7280' }}>MAJOR is thinking…</span>
+                <div
+                  className="px-4 py-2 flex items-center gap-2"
+                  style={{
+                    fontFamily: "'VT323', ui-monospace, monospace",
+                    fontSize: '20px',
+                    color: assistantText,
+                    border: `1px solid ${borderTint}`,
+                  }}
+                >
+                  <Loader2 className="w-4 h-4 animate-spin" style={{ color: text }} />
+                  <span>MAJOR is thinking…</span>
                 </div>
               </div>
             )}
@@ -155,78 +156,77 @@ export default function CorpsChatBar() {
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="overflow-hidden"
             >
-              <div className="px-6 py-4">
-                <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full mt-1" style={{ background: '#dcfce7', boxShadow: '3px 3px 1px var(--neu-dark, #a3b1c6), -3px -3px 1px var(--neu-light, #ffffff)' }}>
-              <Sparkles className="w-4 h-4" style={{ color: '#28a745' }} />
-            </div>
-            <div className="flex-1 relative rounded-2xl" style={{ minHeight: containerMinHeight, padding: '12px 16px', boxShadow: 'inset 3px 3px 1px var(--neu-dark, #a3b1c6), inset -3px -3px 1px var(--neu-light, #ffffff)' }}>
-              {/* contentEditable div — not a textarea, so neumorphic CSS can't touch it */}
-              <div
-                ref={editRef}
-                contentEditable
-                suppressContentEditableWarning
-                onInput={(e) => setPrompt(e.currentTarget.textContent)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-                onFocus={() => { setFocused(true); setExpanded(true); }}
-                onBlur={() => setFocused(false)}
-                className="corps-chat-edit w-full text-base leading-relaxed break-words"
-                style={{
-                  color: '#000000',
-                  fontStyle: 'normal',
-                  fontWeight: 500,
-                  caretColor: '#28a745',
-                  minHeight: RESERVED_PX,
-                  wordBreak: 'break-word',
-                  whiteSpace: 'pre-wrap',
-                }}
-              />
-              {/* Example prompt overlay — dark grey, italic, full multi-line */}
-              {showExample && (
-                <div
-                  ref={overlayRef}
-                  className="absolute top-0 left-0 right-0 pointer-events-none text-base leading-relaxed"
+              <div className="relative z-[2] flex items-start gap-3 px-5 py-4">
+                <div className="relative flex-1 min-w-0">
+                  <div
+                    ref={editRef}
+                    contentEditable
+                    suppressContentEditableWarning
+                    onInput={(e) => setPrompt(e.currentTarget.textContent)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmit(e);
+                      }
+                    }}
+                    onFocus={() => { setFocused(true); setExpanded(true); }}
+                    onBlur={() => setFocused(false)}
+                    className="crt-edit w-full break-words"
+                    style={{
+                      color: text,
+                      textShadow: textGlow,
+                      fontFamily: "'VT323', ui-monospace, monospace",
+                      fontSize: '26px',
+                      lineHeight: 1.2,
+                      caretColor: '#00FF41',
+                      minHeight: minHeight,
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                    }}
+                  />
+                  {/* Example prompt overlay — dim phosphor green */}
+                  {showExample && (
+                    <div
+                      ref={overlayRef}
+                      className="absolute top-0 left-0 right-0 pointer-events-none"
+                      style={{
+                        color: dimText,
+                        fontFamily: "'VT323', ui-monospace, monospace",
+                        fontSize: '24px',
+                        lineHeight: 1.2,
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      {ROTATING_PROMPTS[phIndex]}
+                    </div>
+                  )}
+                </div>
+                {expanded && (
+                  <button
+                    onClick={handleClose}
+                    className="p-1.5 flex-shrink-0 mt-1 transition-colors"
+                    style={{ color: assistantText, background: 'transparent', border: 'none', cursor: 'pointer' }}
+                    title="Clear"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading || !prompt.trim()}
+                  className="flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 mt-1"
                   style={{
-                    color: '#333333',
-                    fontStyle: 'italic',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    padding: '12px 16px',
+                    background: prompt.trim() ? '#00FF41' : (isDark ? 'rgba(0,255,65,0.15)' : 'rgba(10,106,20,0.15)'),
+                    color: prompt.trim() ? '#001a00' : (isDark ? 'rgba(0,255,65,0.5)' : 'rgba(10,106,20,0.5)'),
+                    boxShadow: prompt.trim() ? '0 0 10px rgba(0,255,65,0.6)' : 'none',
+                    border: 'none',
+                    cursor: 'pointer',
                   }}
+                  title="Ask MAJOR"
                 >
-                  {ROTATING_PROMPTS[phIndex]}
-                </div>
-              )}
-            </div>
-            {expanded && (
-              <button
-                onClick={handleClose}
-                className="p-1.5 rounded-lg transition-colors flex-shrink-0 mt-1"
-                style={{ color: '#9ca3af' }}
-                title="Clear"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-            <button
-              onClick={handleSubmit}
-              disabled={loading || !prompt.trim()}
-              className="flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 mt-1"
-              style={{
-                background: prompt.trim() ? '#28a745' : '#d1d5db',
-                color: '#ffffff',
-                boxShadow: '3px 3px 1px var(--neu-dark, #a3b1c6), -3px -3px 1px var(--neu-light, #ffffff)',
-              }}
-              title="Ask MAJOR"
-            >
-              <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
-            </button>
-                </div>
+                  <ArrowUp className="w-5 h-5" strokeWidth={2.5} />
+                </button>
               </div>
             </motion.div>
           )}
@@ -235,8 +235,8 @@ export default function CorpsChatBar() {
         {/* Bottom arrow — toggles the prompt text area (accordion upward) */}
         <button
           onClick={() => setInputCollapsed((c) => !c)}
-          className="w-full flex items-center justify-center py-2 transition-colors"
-          style={{ color: '#9ca3af', background: 'transparent', border: 'none', cursor: 'pointer' }}
+          className="relative z-[2] w-full flex items-center justify-center py-2 transition-colors"
+          style={{ color: assistantText, background: 'transparent', border: 'none', cursor: 'pointer' }}
           title={inputCollapsed ? 'Expand prompt' : 'Collapse prompt'}
         >
           {inputCollapsed ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}

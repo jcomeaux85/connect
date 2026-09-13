@@ -1,18 +1,4 @@
 import React from 'react';
-import {
-  LayoutDashboard, Clock, Calendar, FileText,
-  DollarSign, User, Users
-} from 'lucide-react';
-
-const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'timecard', label: 'My Timecard', icon: Clock },
-  { id: 'schedule', label: 'Schedule', icon: Calendar },
-  { id: 'requests', label: 'Requests', icon: FileText },
-  { id: 'pay', label: 'Pay', icon: DollarSign },
-  { id: 'my-info', label: 'My Info', icon: User },
-  { id: 'team', label: 'Team', icon: Users },
-];
 
 // Deep forest green pill — matches the reference screenshot
 const container = {
@@ -20,51 +6,42 @@ const container = {
   border: '1px solid rgba(181,247,195,0.25)',
   boxShadow: '0 6px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)',
 };
-// Inactive nav pill
-const raised = {
-  background: 'rgba(255,255,255,0.08)',
-  border: '1px solid transparent',
-};
-// Active nav pill — glowing green border
-const pressed = {
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid #86efac',
-  boxShadow: '0 0 12px rgba(134,239,172,0.6), inset 0 0 8px rgba(134,239,172,0.15)',
-};
-// Search well
-const pill = {
-  background: 'rgba(0,0,0,0.25)',
-  border: '1px solid rgba(255,255,255,0.12)',
-};
 
+// CORPS // RME OF ONE branding rendered as live CRT green-phosphor text
+// (main line + subtitle), left-justified, full width, with scanline overlay.
 export default function CorpsPillHeader({ activeSection, onNavigate }) {
   return (
     <div className="px-4 sm:px-6 pt-4 pb-2 flex-shrink-0">
+      <style>{`
+        .corps-crt-brand { position: relative; font-family: 'VT323', ui-monospace, monospace; }
+        .corps-crt-brand::after {
+          content: ""; position: absolute; inset: 0; pointer-events: none;
+          background: repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0 1px, transparent 1px 3px);
+          mix-blend-mode: multiply; border-radius: inherit;
+        }
+        .corps-crt-main {
+          font-size: 30px; font-weight: 700; line-height: 1; letter-spacing: 0.03em;
+          color: #b5f7c3;
+          text-shadow: 0 0 10px rgba(134,239,172,0.6), 0 0 18px rgba(0,255,65,0.25), 0 1px 2px rgba(0,0,0,0.4);
+        }
+        .corps-crt-sub {
+          font-size: 15px; font-weight: 400; line-height: 1.15; letter-spacing: 0.08em;
+          color: #86efac; opacity: 0.85; margin-top: 3px;
+          text-shadow: 0 0 8px rgba(134,239,172,0.4), 0 1px 2px rgba(0,0,0,0.4);
+        }
+      `}</style>
       <div
         className="flex items-center gap-3 rounded-full px-4 sm:px-5 py-2.5"
         style={container}
       >
-        {/* Brand — bright green pixelated monospace */}
         <button
           onClick={() => onNavigate('dashboard')}
-          className="bg-transparent border-0 p-0 flex-shrink-0 cursor-pointer transition-transform duration-150 hover:scale-105"
-          title="CORPS"
-          style={{
-            fontFamily: "'VT323', ui-monospace, monospace",
-            fontSize: '32px',
-            fontWeight: 700,
-            lineHeight: 1,
-            color: '#b5f7c3',
-            letterSpacing: '0.03em',
-            textShadow: '0 0 10px rgba(134,239,172,0.6), 0 1px 2px rgba(0,0,0,0.4)',
-          }}
+          className="corps-crt-brand bg-transparent border-0 p-0 flex-1 min-w-0 text-left cursor-pointer transition-transform duration-150 hover:scale-[1.01]"
+          title="CORPS // RME OF ONE"
         >
-          CORPS//
+          <div className="corps-crt-main">CORPS // RME OF ONE</div>
+          <div className="corps-crt-sub">UNIFYING RISK MANAGEMENT ENTERPRISE_</div>
         </button>
-
-        {/* CORPS// section nav now lives in the sidebar as green buttons */}
-        <div className="flex-1" />
-
       </div>
     </div>
   );
