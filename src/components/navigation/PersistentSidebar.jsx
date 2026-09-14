@@ -324,7 +324,7 @@ export default function PersistentSidebar({
   const corpsLogoBlock = (
     <div
       className="relative nav-slide-wrap"
-      style={{ minHeight: '38px' }}
+      style={{ minHeight: '38px', ...(isMin ? {} : { flex: '1 1 auto', minWidth: 0 }) }}
       onMouseEnter={(e) => isMin && showNavTip(e, 'CORPS//')}
       onMouseLeave={hideNavTip}
     >
@@ -371,19 +371,19 @@ export default function PersistentSidebar({
   const docLogoBlock = (
     <div
       className="relative nav-slide-wrap"
-      style={{ minHeight: '38px' }}
+      style={{ minHeight: '38px', ...(isMin ? {} : { flex: '0 0 44px' }) }}
       onMouseEnter={(e) => isMin && showNavTip(e, 'DOC')}
       onMouseLeave={hideNavTip}
     >
       <div
         className="w-full h-full flex items-center justify-center cursor-pointer"
         onClick={onToggleDoc}
-        style={{ padding: '5px 10px', height: '100%' }}
+        style={{ padding: '4px', height: '100%' }}
       >
         <img
           src="https://media.base44.com/images/public/68fa7c4cb70fe91d38015eba/158bf0016_doc_teams_icon_192b.png"
           alt="DOC"
-          style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+          style={{ height: '30px', width: 'auto', maxWidth: '100%', objectFit: 'contain', display: 'block' }}
         />
       </div>
     </div>
@@ -583,7 +583,7 @@ export default function PersistentSidebar({
                       >
                         <Icon
                           className="w-4 h-4 flex-shrink-0"
-                          style={{ color: isActive ? '#c4b5fd' : 'rgba(255,255,255,0.7)' }}
+                          style={{ color: isActive ? '#86efac' : 'rgba(134,239,172,0.8)' }}
                         />
                         <AnimatePresence>
                           {!isMin && (
@@ -593,8 +593,8 @@ export default function PersistentSidebar({
                                 fontSize: '13px',
                                 fontWeight: 600,
                                 whiteSpace: 'nowrap',
-                                color: isActive ? '#e9d5ff' : 'rgba(255,255,255,0.85)',
-                                textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+                                color: isActive ? '#bbf7d0' : 'rgba(187,247,208,0.92)',
+                                textShadow: '0 0 6px rgba(134,239,172,0.35), 0 1px 3px rgba(0,0,0,0.7)',
                               }}
                             >
                               {item.title}
