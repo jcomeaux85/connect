@@ -6,6 +6,10 @@
 //   VITE_TELEPHONY_WS     = wss endpoint on your server (twilio mode) that relays
 //                           Twilio Voice webhook events as JSON: { type, call }
 //
+// Audio exists only when driver is twilio AND a WS URL is set.
+// Until then the floor is a queue: ring / answer / disposition still write
+// Call rows. Mute and speaker are inert. That is intentional, not a bug.
+//
 // Twilio wiring when ready (no client code changes needed beyond env):
 //   Twilio number Voice URL -> POST https://yourserver/telephony/voice (returns TwiML)
 //   Server pushes { type: 'ringing', call: { id, customer_phone, ... } } over the WS.
@@ -16,13 +20,14 @@ import { base44 } from "@/api/base44Client";
 const DRIVER = import.meta.env.VITE_TELEPHONY_DRIVER || "base44";
 const WS_URL = import.meta.env.VITE_TELEPHONY_WS || "";
 
+export const TELEPHONY_DRIVER = DRIVER;
+export const telephonyHasAudio = DRIVER === "twilio" && Boolean(WS_URL);
+
 const base44Driver = {
-  // Same shape Layout.jsx already polls: newest ringing calls first.
   getRingingCalls: () => base44.entities.IncomingCall.filter({ status: "ringing" }, "-created_date"),
   answer: (callId) => base44.entities.IncomingCall.update(callId, { status: "answered", answered_at: new Date().toISOString() }),
   decline: (callId) => base44.entities.IncomingCall.update(callId, { status: "declined" }),
   voicemail: (callId) => base44.entities.IncomingCall.update(callId, { status: "voicemail" }),
-  // No push channel in base44 mode; polling remains the mechanism.
   subscribe: () => () => {}
 };
 
