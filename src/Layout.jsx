@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 // Icons and dropdowns now handled by TopBar component
 import { base44 } from "@/api/base44Client";
 import { telephony } from "@/api/telephony";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useUser } from "@/components/hooks/useUser";
 
 import NotificationCenter from "@/components/notifications/NotificationCenter";
@@ -28,12 +28,12 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
 import { AnimatePresence, motion } from "framer-motion";
 
-// ─────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────
 // ScrollDot — minimal scroll indicator. Faint grey dot at rest,
 // glows brighter the FASTER you scroll, fades back when you stop.
 // Rides up/down mapped to scroll position. Defined inline so no
 // new file is needed. Drop inside a position:relative scroller.
-// ─────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────
 function ScrollDot({ scrollRef, color = "210, 230, 255", side = "right", size = 8, inset = 6 }) {
   const [pct, setPct] = useState(0);
   const [glow, setGlow] = useState(0);
@@ -114,6 +114,7 @@ function ScrollDot({ scrollRef, color = "210, 230, 255", side = "right", size = 
 
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
+  const queryClient = useQueryClient();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [showCalls, setShowCalls] = useState(false);
@@ -191,13 +192,49 @@ function LayoutContent({ children, currentPageName }) {
 
   const { data: user } = useUser();
 
-  // Incoming calls polling
+  // Incoming calls — adapter is the only door. Base44 driver polls;
+  // Twilio driver pushes over WS via telephony.subscribe.
   const { data: incomingCalls = [] } = useQuery({
     queryKey: ['incoming-calls'],
     queryFn: () => telephony.getRingingCalls(),
     enabled: !!user?.email,
     refetchInterval: 3000
   });
+
+  const refreshIncoming = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['incoming-calls'] });
+  }, [queryClient]);
+
+  const dropIncoming = useCallback((callId) => {
+    if (callId) {
+      queryClient.setQueryData(['incoming-calls'], (cur = []) => cur.filter((c) => c.id !== callId));
+    }
+    refreshIncoming();
+  }, [queryClient, refreshIncoming]);
+
+  useEffect(() => {
+    if (!user?.email) return undefined;
+    const unsub = telephony.subscribe(() => refreshIncoming());
+    return () => { if (typeof unsub === 'function') unsub(); };
+  }, [user?.email, refreshIncoming]);
+
+  const handleRingAnswer = useCallback(async (callId) => {
+    if (!callId) return;
+    await telephony.answer(callId);
+    dropIncoming(callId);
+  }, [dropIncoming]);
+
+  const handleRingDecline = useCallback(async (callId) => {
+    if (!callId) return;
+    await telephony.decline(callId);
+    dropIncoming(callId);
+  }, [dropIncoming]);
+
+  const handleRingVoicemail = useCallback(async (callId) => {
+    if (!callId) return;
+    await telephony.voicemail(callId);
+    dropIncoming(callId);
+  }, [dropIncoming]);
 
   const { data: incomingCallCustomers = {} } = useQuery({
     queryKey: ['incoming-call-customers', incomingCalls.map((c) => c.customer_id).join(',')],
@@ -335,11 +372,11 @@ function LayoutContent({ children, currentPageName }) {
           customer={incomingCalls[0]?.customer_id ? incomingCallCustomers[incomingCalls[0].customer_id] : null}
           onAnswer={async () => {
             const c = incomingCalls[0];
-            if (c) await telephony.answer(c.id);
+            if (c) await handleRingAnswer(c.id);
           }}
           onDecline={async () => {
             const c = incomingCalls[0];
-            if (c) await telephony.decline(c.id);
+            if (c) await handleRingDecline(c.id);
           }}
         />
 
@@ -413,9 +450,9 @@ function LayoutContent({ children, currentPageName }) {
           <IncomingCallPopup
           call={call}
           customer={call.customer_id ? incomingCallCustomers[call.customer_id] : null}
-          onAnswer={async () => {await telephony.answer(call.id);}}
-          onDecline={async () => {await telephony.decline(call.id);}}
-          onVoicemail={async () => {await telephony.voicemail(call.id);}} />
+          onAnswer={async () => {await handleRingAnswer(call.id);}}
+          onDecline={async () => {await handleRingDecline(call.id);}}
+          onVoicemail={async () => {await handleRingVoicemail(call.id);}} />
         
         </div>
       )}
