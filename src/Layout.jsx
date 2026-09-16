@@ -19,7 +19,6 @@ import DOCModal from "@/components/doc/DOCModal.jsx";
 import TopBar from "@/components/layout/TopBar";
 import HangingNav from "@/components/layout/HangingNav";
 import ActiveCallBar from "@/components/calls/ActiveCallBar";
-import PersistentCallPanel from "@/components/calls/PersistentCallPanel";
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
@@ -351,7 +350,6 @@ function LayoutContent({ children, currentPageName }) {
       <ErrorBoundary><DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} mustComplete={!!dispositionData?.mustComplete} /></ErrorBoundary>
       <ErrorBoundary><CallWrapUp isOpen={!!wrapUpData} onClose={() => setWrapUpData(null)} callData={wrapUpData} user={user} /></ErrorBoundary>
       <ErrorBoundary><DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} /></ErrorBoundary>
-      <ErrorBoundary><PersistentCallPanel /></ErrorBoundary>
 
       {incomingSMS.map((sms, index) =>
       <div key={sms.id} className="fixed right-6 z-[100]" style={{ top: `${24 + index * 280}px` }}>
