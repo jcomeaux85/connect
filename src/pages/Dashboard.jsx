@@ -12,6 +12,7 @@ import AgentActivityPanel from "@/components/dashboard/AgentActivityPanel";
 import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
 import StatSlidePanel from "@/components/dashboard/StatSlidePanel";
 import { useTheme } from "@/components/ThemeProvider";
+import { PITCH_MODE } from "@/lib/pitchMode";
 
 
 // Tilt card with glare
@@ -43,7 +44,6 @@ function TiltCard({ children, onClick, className, style }) {
     setTilt({ x: 0, y: 0 });
     setGlare(g => ({ ...g, op: 0 }));
     onClick && onClick();
-    // Unlock after panel closes (user will click away)
     setTimeout(() => setLocked(false), 300);
   }, [onClick]);
 
@@ -77,9 +77,8 @@ function TiltCard({ children, onClick, className, style }) {
 export default function Dashboard() {
   const { data: user } = useUser();
   const { isDark } = useTheme();
-  const [openPanel, setOpenPanel] = useState(null); // statType string
+  const [openPanel, setOpenPanel] = useState(null);
 
-  // --- Hero video window-frame scroll parallax ---
   const videoWrapRef = useRef(null);
   const [scrollSkew, setScrollSkew] = useState(0);
 
@@ -91,10 +90,9 @@ export default function Dashboard() {
         const el = videoWrapRef.current;
         if (el) {
           const rect = el.getBoundingClientRect();
-          // how far the window is from viewport center, normalized
           const center = rect.top + rect.height / 2;
           const offset = (center - window.innerHeight / 2) / window.innerHeight;
-          setScrollSkew(offset * 4); // skew strength in degrees; tune to taste
+          setScrollSkew(offset * 4);
         }
         raf = null;
       });
@@ -103,7 +101,6 @@ export default function Dashboard() {
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  // --- end parallax ---
 
   const pageBg = isDark ? '#1a1d27' : '#f3f4f6';
   const cardBg = isDark ? '#23263a' : '#ffffff';
@@ -154,17 +151,17 @@ export default function Dashboard() {
       panelData: activeCases,
     },
     {
-      label: 'In Queue', value: inQueueCases.length, sub: 'Avg wait 1:34',
+      label: 'In Queue', value: inQueueCases.length, sub: PITCH_MODE ? 'Avg wait 1:34' : 'new cases',
       change: '-8%', changePos: false, color: '#3B82F6', icon: PhoneIncoming,
       panelData: inQueueCases,
     },
     {
-      label: 'Resolved Today', value: resolvedTodayCases.length || 127, sub: '94% satisfaction',
+      label: 'Resolved Today', value: PITCH_MODE ? (resolvedTodayCases.length || 127) : resolvedTodayCases.length, sub: PITCH_MODE ? '94% satisfaction' : 'actual resolutions',
       change: '+23%', changePos: true, color: '#10B981', icon: CheckSquare,
       panelData: resolvedTodayCases,
     },
     {
-      label: 'Avg Handle Time', value: `${avgMin || 4}:${String(avgSec || 32).padStart(2, '0')}`,
+      label: 'Avg Handle Time', value: PITCH_MODE ? `${avgMin || 4}:${String(avgSec || 32).padStart(2, '0')}` : `${avgMin}:${String(avgSec).padStart(2, '0')}`,
       sub: 'Target: 5:00', change: '-15%', changePos: false, color: '#F59E0B', icon: Clock,
       panelData: todayCalls,
     },
@@ -176,22 +173,19 @@ export default function Dashboard() {
   return (
     <div className="min-h-full relative" style={{ background: pageBg, transition: 'background 0.3s' }}>
       <div className="p-6 space-y-4" style={{ minHeight: '100%' }}>
-      {/* Hero video — window frame with scroll parallax */}
       <div
         ref={videoWrapRef}
         className="w-full rounded-2xl"
         style={{
           position: 'relative',
-          padding: '10px',                 // the frame thickness / "wall"
+          padding: '10px',
           borderRadius: '18px',
-          // raised outer bevel: light top-left, dark bottom-right = frame sits proud of page
           background: isDark
             ? 'linear-gradient(145deg, #3a3f55, #181a24)'
             : 'linear-gradient(145deg, #ffffff, #d4d7e0)',
           boxShadow: isDark
             ? '6px 6px 16px rgba(0,0,0,0.5), -6px -6px 16px rgba(255,255,255,0.04)'
             : '6px 6px 16px rgba(0,0,0,0.18), -6px -6px 16px rgba(255,255,255,0.9)',
-          // the frame skews against scroll
           transform: `perspective(1200px) rotateX(${scrollSkew}deg)`,
           transformOrigin: 'center center',
           transition: 'transform 0.1s linear',
@@ -208,28 +202,23 @@ export default function Dashboard() {
             objectPosition: 'center',
             borderRadius: '10px',
             display: 'block',
-            // counter-skew so the VIDEO lags the frame = parallax depth
             transform: `perspective(1200px) rotateX(${-scrollSkew * 0.5}deg) scale(1.06)`,
             transition: 'transform 0.1s linear',
             willChange: 'transform',
           }}
         />
-        {/* inner shadow on the glass = video looks recessed behind the wall */}
         <div style={{
           position: 'absolute', inset: '10px', borderRadius: '10px', pointerEvents: 'none',
           boxShadow: 'inset 0 0 22px rgba(0,0,0,0.55), inset 0 2px 6px rgba(0,0,0,0.4)',
         }} />
       </div>
 
-      {/* Shift timeline — queue lunches + breaks */}
       <ShiftBreakBar isDark={isDark} />
 
-      {/* Live call log — full width */}
       <div className="rounded-1xl p-4" style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'background 0.3s' }}>
         <AgentCallTimeline incomingCalls={calls} />
       </div>
 
-      {/* Info panes — tilt + click to open panel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => {
           const StatIcon = s.icon;
@@ -257,14 +246,10 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Call Queue */}
       <CallQueuePanel cases={cases} />
-
-      {/* Agent Activity + AI Insights */}
       <AgentActivityPanel users={users} currentUser={user} calls={calls} />
       <AIInsightsPanel />
 
-      {/* Slide-out detail panel */}
       <StatSlidePanel
         open={!!openPanel}
         onClose={() => setOpenPanel(null)}
