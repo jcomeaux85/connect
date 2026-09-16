@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-// Icons and dropdowns now handled by TopBar component
 import { base44 } from "@/api/base44Client";
 import { telephony } from "@/api/telephony";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useUser } from "@/components/hooks/useUser";
+import { startCallSession, finishCallSession } from "@/api/callSession";
 
 import NotificationCenter from "@/components/notifications/NotificationCenter";
 import MessagingPanel from "@/components/messaging/MessagingPanel";
@@ -23,17 +23,10 @@ import PersistentCallPanel from "@/components/calls/PersistentCallPanel";
 
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
 
-import IncomingCallPopup from "@/components/notifications/IncomingCallPopup";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import IncomingSMSPopup from "@/components/messaging/IncomingSMSPopup";
 import { AnimatePresence, motion } from "framer-motion";
 
-// ───────────────────────────────────────────────────────────
-// ScrollDot — minimal scroll indicator. Faint grey dot at rest,
-// glows brighter the FASTER you scroll, fades back when you stop.
-// Rides up/down mapped to scroll position. Defined inline so no
-// new file is needed. Drop inside a position:relative scroller.
-// ───────────────────────────────────────────────────────────
 function ScrollDot({ scrollRef, color = "210, 230, 255", side = "right", size = 8, inset = 6 }) {
   const [pct, setPct] = useState(0);
   const [glow, setGlow] = useState(0);
@@ -44,7 +37,6 @@ function ScrollDot({ scrollRef, color = "210, 230, 255", side = "right", size = 
   useEffect(() => {
     const el = scrollRef?.current;
     if (!el) return;
-
     let raf = null;
     const onScroll = () => {
       if (raf) return;
@@ -52,25 +44,22 @@ function ScrollDot({ scrollRef, color = "210, 230, 255", side = "right", size = 
         const top = el.scrollTop;
         const max = Math.max(el.scrollHeight - el.clientHeight, 1);
         setPct(top / max);
-
         const now = performance.now();
         const dt = Math.max(now - lastT.current, 1);
         const dp = Math.abs(top - lastTop.current);
-        const speed = dp / dt;                 // px per ms
-        const g = Math.min(speed / 2.2, 1);    // 2.2 px/ms ≈ full glow; tune
+        const speed = dp / dt;
+        const g = Math.min(speed / 2.2, 1);
         setGlow((prev) => Math.max(prev, g));
         lastTop.current = top;
         lastT.current = now;
         raf = null;
       });
     };
-
     el.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => el.removeEventListener("scroll", onScroll);
   }, [scrollRef]);
 
-  // glow decays each frame so it fades back to the grey dot at rest
   useEffect(() => {
     const tick = () => {
       setGlow((g) => (g > 0.001 ? g * 0.9 : 0));
@@ -86,31 +75,16 @@ function ScrollDot({ scrollRef, color = "210, 230, 255", side = "right", size = 
   const ringAlpha = glow * 0.85;
 
   return (
-    <div
-      aria-hidden="true"
-      style={{
-        position: "absolute",
-        [side]: `${inset}px`,
-        top: `${pct * 100}%`,
-        transform: "translateY(-50%)",
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: "50%",
-        pointerEvents: "none",
-        zIndex: 30,
-        background: `rgba(${color}, ${activeOpacity})`,
-        boxShadow:
-          glow > 0.01
-            ? `0 0 ${blur}px rgba(${color}, ${ringAlpha}), 0 0 ${blur * 2}px rgba(${color}, ${ringAlpha * 0.5})`
-            : "none",
-        transition: "top 0.08s linear, box-shadow 0.12s ease, background 0.2s ease",
-        filter: glow < 0.02 ? "grayscale(1)" : "none",
-      }}
-    />
+    <div aria-hidden="true" style={{
+      position: "absolute", [side]: `${inset}px`, top: `${pct * 100}%`, transform: "translateY(-50%)",
+      width: `${size}px`, height: `${size}px`, borderRadius: "50%", pointerEvents: "none", zIndex: 30,
+      background: `rgba(${color}, ${activeOpacity})`,
+      boxShadow: glow > 0.01 ? `0 0 ${blur}px rgba(${color}, ${ringAlpha}), 0 0 ${blur * 2}px rgba(${color}, ${ringAlpha * 0.5})` : "none",
+      transition: "top 0.08s linear, box-shadow 0.12s ease, background 0.2s ease",
+      filter: glow < 0.02 ? "grayscale(1)" : "none",
+    }} />
   );
 }
-
-// Dock navigation removed — now using TopBar component
 
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
@@ -121,14 +95,12 @@ function LayoutContent({ children, currentPageName }) {
   const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
   const [dispositionData, setDispositionData] = useState(null);
   const [wrapUpData, setWrapUpData] = useState(null);
-  const [showDOC, setShowDOC] = useState(false); // DOC slide-out panel
+  const [showDOC, setShowDOC] = useState(false);
   const [sidebarLevel, setSidebarLevel] = useState(() => {
     const saved = localStorage.getItem('sidebarLevel');
     return saved ? parseInt(saved) : 1;
   });
   const [lockedSidebarWidth, setLockedSidebarWidth] = useState(() => {
-    // Read initial locked width synchronously so page content never starts
-    // hidden behind a pinned sidebar (the event can fire before this mounts).
     if (localStorage.getItem('sidebarLocked') === '1') {
       const saved = localStorage.getItem('sidebarLevel');
       const level = saved ? parseInt(saved) : 1;
@@ -137,23 +109,9 @@ function LayoutContent({ children, currentPageName }) {
     return 0;
   });
 
-  // ref for the main scroll container (drives ScrollDot)
   const mainScrollRef = useRef(null);
-  // ref for the outer background wrapper — measured live so DOC can mirror
-  // BC's *actual rendered* colors (including any custom background the user
-  // picks), not a guessed hardcoded value.
   const bgWrapperRef = useRef(null);
-
-  const { theme, toggleTheme, colors, getButtonStyle, getInsetStyle, isDark, backgroundSettings, getTransitionDuration } = useTheme();
-  // isDark already destructured above
-  // Neumorphic button with glare highlight on top edge
-  const navBtnStyle = (active = false) => ({
-    background: colors.bg,
-    boxShadow: active ?
-    `inset 3px 3px 6px ${colors.shadowDark}, inset -3px -3px 6px ${colors.shadowLight}` :
-    `3px 3px 7px ${colors.shadowDark}, -3px -3px 7px ${colors.shadowLight}, inset 0 1px 0 ${colors.shadowLight}`,
-    border: 'none'
-  });
+  const { theme, toggleTheme, colors, isDark, backgroundSettings, getTransitionDuration } = useTheme();
 
   const getBackgroundStyle = () => {
     if (!backgroundSettings?.value) return { background: colors.bg };
@@ -161,20 +119,11 @@ function LayoutContent({ children, currentPageName }) {
       return { background: `linear-gradient(${colors.bg}ee, ${colors.bg}ee), url(${backgroundSettings.value}) center/cover fixed` };
     }
     if (backgroundSettings.type === 'texture') {
-      return {
-        background: colors.bg,
-        backgroundImage: backgroundSettings.value,
-        backgroundSize: backgroundSettings.size || '20px 20px'
-      };
+      return { background: colors.bg, backgroundImage: backgroundSettings.value, backgroundSize: backgroundSettings.size || '20px 20px' };
     }
     return { background: colors.bg };
   };
 
-  // Broadcast BC's ACTUAL rendered page bg + theme's card bg as CSS vars so
-  // DOC (a separate iframe context) can reverse-mirror BC's real colors —
-  // page bg becomes DOC's element color, card bg becomes DOC's page color —
-  // instead of guessing at hex values that drift when the user customizes
-  // their background.
   useEffect(() => {
     const el = bgWrapperRef.current;
     if (!el) return;
@@ -186,14 +135,12 @@ function LayoutContent({ children, currentPageName }) {
       window.dispatchEvent(new Event('bc-colors-changed'));
     };
     publish();
-    const t = setTimeout(publish, 50); // catch late paint (gradients/images)
+    const t = setTimeout(publish, 50);
     return () => clearTimeout(t);
   }, [theme, backgroundSettings, colors.bg, colors.cardBg]);
 
   const { data: user } = useUser();
 
-  // Incoming calls — adapter is the only door. Base44 driver polls;
-  // Twilio driver pushes over WS via telephony.subscribe.
   const { data: incomingCalls = [] } = useQuery({
     queryKey: ['incoming-calls'],
     queryFn: () => telephony.getRingingCalls(),
@@ -218,21 +165,22 @@ function LayoutContent({ children, currentPageName }) {
     return () => { if (typeof unsub === 'function') unsub(); };
   }, [user?.email, refreshIncoming]);
 
-  const handleRingAnswer = useCallback(async (callId) => {
-    if (!callId) return;
-    await telephony.answer(callId);
-    dropIncoming(callId);
-  }, [dropIncoming]);
+  const handleRingAnswer = useCallback(async (incoming) => {
+    if (!incoming?.id) return null;
+    await telephony.answer(incoming.id);
+    let record = null;
+    try {
+      record = await startCallSession({ incomingCall: incoming, user });
+    } catch (err) {
+      console.error("startCallSession failed", err);
+    }
+    dropIncoming(incoming.id);
+    return record;
+  }, [dropIncoming, user]);
 
   const handleRingDecline = useCallback(async (callId) => {
     if (!callId) return;
     await telephony.decline(callId);
-    dropIncoming(callId);
-  }, [dropIncoming]);
-
-  const handleRingVoicemail = useCallback(async (callId) => {
-    if (!callId) return;
-    await telephony.voicemail(callId);
     dropIncoming(callId);
   }, [dropIncoming]);
 
@@ -288,25 +236,29 @@ function LayoutContent({ children, currentPageName }) {
     const handleTogglePhone = () => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);};
     const handleToggleBackgroundCustomizer = () => setShowBackgroundCustomizer((p) => !p);
     const handleToggleDoc = () => setShowDOC((p) => !p);
-    const handleShowDisposition = (e) => setDispositionData(e.detail || {});
+    const handleShowDisposition = (e) => {
+      const detail = e.detail || {};
+      if (detail.callId) {
+        finishCallSession(detail.callId, {
+          duration: detail.completion_time_seconds,
+          notes: detail.call_notes,
+        }).catch(() => {});
+      }
+      setDispositionData({ ...detail, mustComplete: true });
+    };
     const handleShowWrapUp = (e) => setWrapUpData(e.detail || {});
     const handleSidebarLock = (e) => setLockedSidebarWidth(e.detail?.width || 0);
-
-    // Ctrl+Alt+Enter (or Ctrl+Alt+D) to toggle DOC
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.altKey && (e.key === 'Enter' || e.key === 'd' || e.key === 'D')) {
         e.preventDefault();
         setShowDOC((p) => !p);
       }
-      // Ctrl+K → open DOC and focus search
       if (e.ctrlKey && !e.altKey && !e.shiftKey && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault();
         setShowDOC(true);
-        // Signal DOC to focus search (DOCModal listens on isOpen change)
         window.dispatchEvent(new CustomEvent('doc-focus-search'));
       }
     };
-
     window.addEventListener('toggle-messages', handleToggleMessages);
     window.addEventListener('toggle-phone', handleTogglePhone);
     window.addEventListener('toggle-doc', handleToggleDoc);
@@ -315,7 +267,6 @@ function LayoutContent({ children, currentPageName }) {
     window.addEventListener('sidebar-lock-change', handleSidebarLock);
     window.addEventListener('toggle-background-customizer', handleToggleBackgroundCustomizer);
     window.addEventListener('keydown', handleKeyDown);
-
     return () => {
       window.removeEventListener('toggle-messages', handleToggleMessages);
       window.removeEventListener('toggle-phone', handleTogglePhone);
@@ -328,21 +279,11 @@ function LayoutContent({ children, currentPageName }) {
     };
   }, []);
 
-  const unreadNotifications = notifications.length;
-  const unreadMessages = messages.length;
-
-  const handleSidebarLevelChange = (level) => {
-    setSidebarLevel(level);
-    localStorage.setItem('sidebarLevel', level.toString());
-  };
-
   return (
     <div ref={bgWrapperRef} className="flex h-screen overflow-hidden" style={{ ...getBackgroundStyle(), transition: `background ${getTransitionDuration(300)}` }}>
-
-      {/* Persistent Sidebar — always rendered, floats over content */}
       <PersistentSidebar
         sidebarLevel={sidebarLevel}
-        onSidebarLevelChange={handleSidebarLevelChange}
+        onSidebarLevelChange={(level) => { setSidebarLevel(level); localStorage.setItem('sidebarLevel', level.toString()); }}
         onToggleDoc={() => setShowDOC((p) => !p)}
         onToggleMessages={() => {setShowMessages((p) => !p);setShowNotifications(false);}}
         onTogglePhone={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
@@ -350,29 +291,16 @@ function LayoutContent({ children, currentPageName }) {
         onToggleTheme={toggleTheme}
         isDark={isDark}
         user={user} />
-      
 
-      {/* Main area: nav + content — shifts right when sidebar is locked open,
-          and shrinks from the right when DOC slides out so the site stays usable */}
-      <div
-        className="flex flex-col flex-1 overflow-hidden"
-        style={{
-          marginLeft: lockedSidebarWidth,
-          marginRight: showDOC ? 'clamp(30vw, 34vw, 40vw)' : 0,
-          transition: 'margin-left 0.25s ease-out, margin-right 0.3s ease-out',
-        }}
-      >
-
-        {/* Call Banner — push-down strip: ringing + connected. Sits above the
-            TopBar so its height reflows the entire column down (like DOC does
-            from the right). Ringing shows caller ID + Answer/Decline; connected
-            shows timer + Notes drawer whose text flows into the disposition. */}
+      <div className="flex flex-col flex-1 overflow-hidden" style={{ marginLeft: lockedSidebarWidth, marginRight: showDOC ? 'clamp(30vw, 34vw, 40vw)' : 0, transition: 'margin-left 0.25s ease-out, margin-right 0.3s ease-out' }}>
         <ActiveCallBar
           incomingCall={incomingCalls[0] || null}
           customer={incomingCalls[0]?.customer_id ? incomingCallCustomers[incomingCalls[0].customer_id] : null}
+          waitingCount={Math.max(incomingCalls.length - 1, 0)}
           onAnswer={async () => {
             const c = incomingCalls[0];
-            if (c) await handleRingAnswer(c.id);
+            if (!c) return null;
+            return handleRingAnswer(c);
           }}
           onDecline={async () => {
             const c = incomingCalls[0];
@@ -380,11 +308,10 @@ function LayoutContent({ children, currentPageName }) {
           }}
         />
 
-        {/* Top Bar — 8x8 style */}
         <TopBar
           user={user}
-          unreadNotifications={unreadNotifications}
-          unreadMessages={unreadMessages}
+          unreadNotifications={notifications.length}
+          unreadMessages={messages.length}
           onToggleNotifications={() => {setShowNotifications((p) => !p);setShowMessages(false);setShowCalls(false);}}
           onToggleMessages={() => {setShowMessages((p) => !p);setShowCalls(false);setShowNotifications(false);}}
           onToggleCalls={() => {setShowCalls((p) => !p);setShowMessages(false);setShowNotifications(false);}}
@@ -393,23 +320,13 @@ function LayoutContent({ children, currentPageName }) {
           showDOC={showDOC}
         />
 
-        {/* Hanging Nav — hidden on CORPS (it has its own pill header) */}
         {location.pathname !== '/Core' && <HangingNav />}
 
-        {/* Active Call Bar — minimal top strip */}
-
-        {/* Page content — scroll container. position:relative anchors the ScrollDot;
-            scrollbar hidden (ScrollDot is the indicator now) but scrolling still works. */}
-        <main
-          ref={mainScrollRef}
-          className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 relative no-scrollbar"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
+        <main ref={mainScrollRef} className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 relative no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <ScrollDot scrollRef={mainScrollRef} />
           {children}
         </main>
 
-        {/* Footer */}
         <footer className="flex-shrink-0 py-1.5 px-6 border-t text-center" style={{ borderColor: colors.border, background: colors.cardBg }}>
           <p className="text-[10px] font-semibold" style={{ color: colors.textTertiary }}>
             BEN<span className="text-gray-300">|</span>connect™ 2026
@@ -419,18 +336,11 @@ function LayoutContent({ children, currentPageName }) {
         </footer>
       </div>
 
-      {/* ─── Global Overlays (always mounted so calls/SMS always ring) ─── */}
-
       <AnimatePresence>
         {(showNotifications || showMessages) &&
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-40 backdrop-blur-sm"
-          style={{ background: `${colors.bg}20` }}
-          onClick={() => {setShowNotifications(false);setShowMessages(false);}} />
-
-        }
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-40 backdrop-blur-sm" style={{ background: `${colors.bg}20` }}
+          onClick={() => {setShowNotifications(false);setShowMessages(false);}} />}
       </AnimatePresence>
 
       <ErrorBoundary><NotificationCenter user={user} isOpen={showNotifications} onClose={() => setShowNotifications(false)} /></ErrorBoundary>
@@ -438,28 +348,13 @@ function LayoutContent({ children, currentPageName }) {
       {showCalls && <ErrorBoundary><CallsPanel user={user} isOpen={showCalls} onClose={() => setShowCalls(false)} /></ErrorBoundary>}
       <ErrorBoundary><BackgroundCustomizer isOpen={showBackgroundCustomizer} onClose={() => setShowBackgroundCustomizer(false)} /></ErrorBoundary>
       <ErrorBoundary><AIAssistantOrb /></ErrorBoundary>
-      <ErrorBoundary><DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} /></ErrorBoundary>
+      <ErrorBoundary><DispositionForm isOpen={!!dispositionData} onClose={() => setDispositionData(null)} callData={dispositionData} user={user} mustComplete={!!dispositionData?.mustComplete} /></ErrorBoundary>
       <ErrorBoundary><CallWrapUp isOpen={!!wrapUpData} onClose={() => setWrapUpData(null)} callData={wrapUpData} user={user} /></ErrorBoundary>
       <ErrorBoundary><DOCModal isOpen={showDOC} onClose={() => setShowDOC(false)} /></ErrorBoundary>
       <ErrorBoundary><PersistentCallPanel /></ErrorBoundary>
 
-      {/* Incoming Call Popups — primary ring shows in the top banner, so only
-          overflow rings (2nd+) stack on the right. */}
-      {incomingCalls.slice(1).map((call, index) =>
-      <div key={call.id} className="fixed right-6 z-[100]" style={{ top: `${24 + index * 320}px` }}>
-          <IncomingCallPopup
-          call={call}
-          customer={call.customer_id ? incomingCallCustomers[call.customer_id] : null}
-          onAnswer={async () => {await handleRingAnswer(call.id);}}
-          onDecline={async () => {await handleRingDecline(call.id);}}
-          onVoicemail={async () => {await handleRingVoicemail(call.id);}} />
-        
-        </div>
-      )}
-
-      {/* Incoming SMS Popups */}
       {incomingSMS.map((sms, index) =>
-      <div key={sms.id} className="fixed right-6 z-[100]" style={{ top: `${24 + Math.max(incomingCalls.length - 1, 0) * 320 + index * 280}px` }}>
+      <div key={sms.id} className="fixed right-6 z-[100]" style={{ top: `${24 + index * 280}px` }}>
           <IncomingSMSPopup
           sms={sms}
           customer={null}
@@ -468,11 +363,9 @@ function LayoutContent({ children, currentPageName }) {
           }}
           onDismiss={async () => { await base44.entities.SMS.update(sms.id, { dismissed: true }); }}
           onViewCase={() => {if (sms.case_id) window.location.href = createPageUrl(`Case?id=${sms.case_id}`);}} />
-        
         </div>
       )}
     </div>);
-
 }
 
 export default function Layout({ children, currentPageName }) {
@@ -480,5 +373,4 @@ export default function Layout({ children, currentPageName }) {
     <ThemeProvider>
       <LayoutContent children={children} currentPageName={currentPageName} />
     </ThemeProvider>);
-
 }
