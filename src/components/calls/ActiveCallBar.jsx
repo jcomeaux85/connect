@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Phone, PhoneOff, Mic, MicOff, StickyNote, PhoneIncoming, X, ClipboardCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/ThemeProvider';
+import { telephonyHasAudio } from '@/api/telephony';
 
 export const callBarEvents = {
   start: (callData) => window.dispatchEvent(new CustomEvent('active-call-start', { detail: callData })),
@@ -193,6 +194,13 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
                     +{waitingCount} waiting
                   </span>
                 )}
+                {!telephonyHasAudio && (
+                  <span className="text-white/70 text-[10px] font-semibold px-2 py-1 rounded-full flex-shrink-0"
+                        style={{ background: "rgba(0,0,0,0.28)", border: "1px solid rgba(255,255,255,0.2)" }}
+                        title="VITE_TELEPHONY_DRIVER=twilio and VITE_TELEPHONY_WS required for audio">
+                    Queue only · no audio
+                  </span>
+                )}
                 <button onClick={handleAnswer}
                         className="px-4 h-9 rounded-full text-xs font-semibold text-white flex items-center gap-1.5"
                         style={{ background: isVip ? '#D4A853' : '#10B981', color: isVip ? '#2a2110' : '#fff' }}>
@@ -212,10 +220,17 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
                   {activeCall?.phone && <p className="text-white/70 text-xs truncate">{activeCall.phone}</p>}
                 </div>
                 <span className="text-white font-mono text-sm tabular-nums bg-white/10 px-2.5 py-1 rounded-full">{fmt(elapsed)}</span>
-                <button onClick={() => setMuted((m) => !m)}
+                {!telephonyHasAudio && (
+                  <span className="text-white/70 text-[10px] font-semibold px-2 py-1 rounded-full flex-shrink-0"
+                        style={{ background: "rgba(0,0,0,0.28)", border: "1px solid rgba(255,255,255,0.2)" }}
+                        title="No media path until Twilio driver + WS are set">
+                    No audio
+                  </span>
+                )}
+                <button onClick={() => telephonyHasAudio && setMuted((m) => !m)}
                         className="w-9 h-9 rounded-full flex items-center justify-center"
-                        style={{ background: muted ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.18)' }}
-                        title={muted ? 'Unmute' : 'Mute'}>
+                        style={{ background: muted ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.18)', opacity: telephonyHasAudio ? 1 : 0.45, cursor: telephonyHasAudio ? 'pointer' : 'not-allowed' }}
+                        title={telephonyHasAudio ? (muted ? 'Unmute' : 'Mute') : 'No audio path yet'}>
                   {muted ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4 text-white" />}
                 </button>
                 <button onClick={() => setNotesOpen((n) => !n)}
