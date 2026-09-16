@@ -3,13 +3,11 @@ import { Phone, PhoneOff, Mic, MicOff, StickyNote, PhoneIncoming, X, ClipboardCh
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/ThemeProvider';
 
-// Global active-call control — dispatch these from anywhere (dialer, answer button)
 export const callBarEvents = {
   start: (callData) => window.dispatchEvent(new CustomEvent('active-call-start', { detail: callData })),
   end: () => window.dispatchEvent(new CustomEvent('active-call-end')),
 };
 
-// ── synthesized ring (no audio asset to ship). Dual-tone, gentle, looping. ──
 function useRingtone() {
   const ctxRef = useRef(null);
   const loopRef = useRef(null);
@@ -53,7 +51,6 @@ function useRingtone() {
     if (loopRef.current) { clearInterval(loopRef.current); loopRef.current = null; }
   }, []);
 
-  // resume audio on first user gesture so autoplay policy doesn't mute the ring
   useEffect(() => {
     const kick = () => ensure();
     window.addEventListener('pointerdown', kick, { once: true });
@@ -63,24 +60,8 @@ function useRingtone() {
   return { start, stop, ensure };
 }
 
-/**
- * ActiveCallBar — the push-down call banner.
- * Lives as a flex child at the TOP of the app column, so its height reflows
- * (pushes down) the entire site rather than overlaying it — same principle as
- * the DOC right-side compression, on the vertical axis.
- *
- * Lifecycle:
- *   RINGING (from `incomingCall` prop) → amber flashing edge + ringtone + caller ID + Answer/Decline
- *   CONNECTED (from active-call-start event) → timer, mute, Notes drawer, End
- *   ended → retracts; notes handed to the disposition form's call_notes
- *
- * @param incomingCall  a ringing IncomingCall entity (or null) — drives RINGING
- * @param customer      matched Customer record (optional, for VIP / name)
- * @param onAnswer      async () => update entity to answered
- * @param onDecline     async () => update entity to declined
- */
-export default function ActiveCallBar({ incomingCall = null, customer = null, onAnswer, onDecline }) {
-  const { colors, isDark } = useTheme();
+export default function ActiveCallBar({ incomingCall = null, customer = null, onAnswer, onDecline, waitingCount = 0 }) {
+  const { isDark } = useTheme();
   const ring = useRingtone();
 
   const [activeCall, setActiveCall] = useState(null);
@@ -95,14 +76,12 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
   const isActive = !!activeCall;
   const isVip = !!(customer?.is_vip || activeCall?.is_vip || activeCall?.isVip);
 
-  // connected-call timer
   useEffect(() => {
     if (!isActive) return;
     const t = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(t);
   }, [isActive]);
 
-  // active-call start/end wiring
   useEffect(() => {
     const onStart = (e) => { setActiveCall(e.detail || {}); setElapsed(0); setMuted(false); setNotes(''); setNotesOpen(false); };
     const onEnd = () => { setActiveCall(null); setElapsed(0); };
@@ -114,13 +93,11 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
     };
   }, []);
 
-  // ringtone follows the ringing state
   useEffect(() => {
     if (isRinging) ring.start(isVip); else ring.stop();
     return () => ring.stop();
   }, [isRinging, isVip, ring]);
 
-  // guard against losing a call on hard reload / close / external nav
   useEffect(() => {
     if (!isRinging && !isActive) return;
     const guard = (e) => { e.preventDefault(); e.returnValue = ''; };
@@ -138,14 +115,16 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
 
   const handleAnswer = async () => {
     ring.stop();
-    try { await onAnswer?.(); } catch (err) { console.error(err); }
-    // hand the caller context to the connected state (and the right-side panel)
+    let created = null;
+    try { created = await onAnswer?.(); } catch (err) { console.error(err); }
     callBarEvents.start({
       name: callerName,
       phone: incomingCall?.phone_number,
       is_vip: isVip,
       customer_id: incomingCall?.customer_id,
       case_id: incomingCall?.case_id,
+      callId: created?.id,
+      incoming_call_id: incomingCall?.id,
     });
   };
 
@@ -166,7 +145,6 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
   const notesH = isActive && notesOpen ? 168 : 0;
   const barH = show ? baseRowH + notesH : 0;
 
-  // palette
   const RING_BG = isDark ? 'linear-gradient(90deg,#2D1B5E,#3B2570)' : 'linear-gradient(90deg,#2D1B5E,#4326a0)';
   const LIVE_BG = 'linear-gradient(90deg,#059669 0%,#10B981 100%)';
   const bg = isRinging ? RING_BG : LIVE_BG;
@@ -182,7 +160,6 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
           transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
           style={{ background: bg, overflow: 'hidden', flexShrink: 0, zIndex: 45, position: 'relative' }}
         >
-          {/* ringing: flashing bottom edge */}
           {isRinging && (
             <motion.div
               aria-hidden
@@ -192,7 +169,6 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
             />
           )}
 
-          {/* ── main row ── */}
           <div className="flex items-center gap-3 px-4" style={{ height: baseRowH }}>
             {isRinging ? (
               <>
@@ -210,6 +186,13 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
                   </p>
                   {callerSub && <p className="text-white/60 text-xs truncate">{callerSub}</p>}
                 </div>
+                {waitingCount > 0 && (
+                  <span className="text-white/80 text-[10px] font-semibold px-2 py-1 rounded-full flex-shrink-0"
+                        style={{ background: "rgba(0,0,0,0.25)" }}
+                        title="Calls waiting behind this ring">
+                    +{waitingCount} waiting
+                  </span>
+                )}
                 <button onClick={handleAnswer}
                         className="px-4 h-9 rounded-full text-xs font-semibold text-white flex items-center gap-1.5"
                         style={{ background: isVip ? '#D4A853' : '#10B981', color: isVip ? '#2a2110' : '#fff' }}>
@@ -256,7 +239,6 @@ export default function ActiveCallBar({ incomingCall = null, customer = null, on
             )}
           </div>
 
-          {/* ── notes drawer (pushes the site down further) ── */}
           {isActive && notesOpen && (
             <div className="px-4 pb-3" style={{ height: notesH }}>
               <div className="flex items-center justify-between mb-1.5">
