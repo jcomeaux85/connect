@@ -29,7 +29,10 @@
         "friday_nudge": {
           "call": "invoke_backend_function",
           "with": {
-            "function_name": "equo-friday-reminder"
+            "function_name": "equo-friday-reminder",
+            "args": {
+              "invoke_token": "benconnect-workflow-push"
+            }
           },
           "then": "end",
           "x-base44": {

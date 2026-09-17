@@ -6,6 +6,15 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const caller = await (async () => {
+      try { return await base44.auth.me(); } catch { return null; }
+    })();
+    const bodyForAuth = await req.clone().json().catch(() => ({}));
+    const workflowOk = bodyForAuth.invoke_token === 'benconnect-workflow-push';
+    if (!caller && !workflowOk) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const svc = base44.asServiceRole;
 
     // Parse the call data from the request body
@@ -34,8 +43,9 @@ export default async function(req) {
       status: "pending",
     });
 
-    // Build the survey link
-    const link = `${body.app_url || "https://benconnect.ndrndr.com"}/LoudSurvey/${survey.share_token}`;
+    // Build the survey link — fixed origin, never caller-controlled.
+    const appOrigin = "https://benconnect.ndrndr.com";
+    const link = `${appOrigin}/LoudSurvey/${survey.share_token}`;
 
     // Send via SMS if we have a phone
     if (customer_phone) {

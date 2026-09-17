@@ -29,7 +29,10 @@
         "fire_quarterly": {
           "call": "invoke_backend_function",
           "with": {
-            "function_name": "equo-quarterly-trigger"
+            "function_name": "equo-quarterly-trigger",
+            "args": {
+              "invoke_token": "benconnect-workflow-push"
+            }
           },
           "then": "end",
           "x-base44": {
@@ -40,5 +43,5 @@
       }
     ]
   },
-  "description": "First day of each quarter: creates a quarterly behavioral response slot for each employee (stub \u2014 real question bank swapped in later)"
+  "description": "First day of each quarter: creates a quarterly behavioral response slot for each employee (stub — real question bank swapped in later)"
 }

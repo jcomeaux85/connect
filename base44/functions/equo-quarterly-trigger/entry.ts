@@ -22,6 +22,15 @@ function fetchQuarterlyQuestions() {
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const caller = await (async () => {
+      try { return await base44.auth.me(); } catch { return null; }
+    })();
+    const bodyForAuth = await req.clone().json().catch(() => ({}));
+    const workflowOk = bodyForAuth.invoke_token === 'benconnect-workflow-push';
+    if (!caller && !workflowOk) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const svc = base44.asServiceRole;
     const quarterKey = getQuarterKey();
     const today = new Date().toISOString().slice(0, 10);
