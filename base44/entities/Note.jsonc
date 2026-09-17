@@ -2,37 +2,17 @@
   "name": "Note",
   "type": "object",
   "properties": {
-    "case_id": {
-      "type": "string",
-      "description": "Reference to case"
-    },
-    "call_id": {
-      "type": "string",
-      "description": "Reference to call (optional)"
-    },
-    "content": {
-      "type": "string",
-      "description": "Note content"
-    },
-    "note_type": {
-      "type": "string",
-      "enum": [
-        "call_note",
-        "general",
-        "follow_up",
-        "important"
-      ],
-      "default": "general",
-      "description": "Type of note"
-    },
-    "is_pinned": {
-      "type": "boolean",
-      "default": false,
-      "description": "Whether note is pinned"
-    }
+    "case_id": { "type": "string", "description": "Reference to case" },
+    "call_id": { "type": "string", "description": "Reference to call (optional)" },
+    "content": { "type": "string", "description": "Note content" },
+    "note_type": { "type": "string", "enum": ["call_note", "general", "follow_up", "important"], "default": "general", "description": "Type of note" },
+    "is_pinned": { "type": "boolean", "default": false, "description": "Whether note is pinned" }
   },
-  "required": [
-    "case_id",
-    "content"
-  ]
+  "required": ["case_id", "content"],
+  "rls": {
+    "create": { "$or": [ { "user_condition": { "role": "admin" } }, { "user_condition": { "role": "user" } } ] },
+    "read": { "$or": [ { "user_condition": { "role": "admin" } }, { "user_condition": { "role": "user" } } ] },
+    "update": { "$or": [ { "user_condition": { "role": "admin" } }, { "user_condition": { "role": "user" } } ] },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
 }

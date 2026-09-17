@@ -2,70 +2,24 @@
   "name": "Call",
   "type": "object",
   "properties": {
-    "case_id": {
-      "type": "string",
-      "description": "Reference to case"
-    },
-    "customer_id": {
-      "type": "string",
-      "description": "Reference to customer profile (member)"
-    },
-    "customer_phone": {
-      "type": "string",
-      "description": "Phone number called"
-    },
-    "direction": {
-      "type": "string",
-      "enum": [
-        "inbound",
-        "outbound"
-      ],
-      "description": "Call direction"
-    },
-    "duration": {
-      "type": "number",
-      "description": "Call duration in seconds"
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "completed",
-        "missed",
-        "busy",
-        "no_answer",
-        "failed"
-      ],
-      "description": "Call outcome"
-    },
-    "notes": {
-      "type": "string",
-      "description": "Call notes"
-    },
-    "call_category": {
-      "type": "string",
-      "description": "Panel 1 classification: medical, dental, vision, ben_admin, system_issue, etc."
-    },
-    "call_qualifier": {
-      "type": "string",
-      "description": "Panel 2 qualifier: how_to, what_is, billing, claims, enrollment, etc."
-    },
-    "recording_url": {
-      "type": "string",
-      "description": "URL to call recording"
-    },
-    "call_start_time": {
-      "type": "string",
-      "format": "date-time",
-      "description": "When call started"
-    },
-    "call_end_time": {
-      "type": "string",
-      "format": "date-time",
-      "description": "When call ended"
-    }
+    "case_id": { "type": "string", "description": "Reference to case" },
+    "customer_id": { "type": "string", "description": "Reference to customer profile (member)" },
+    "customer_phone": { "type": "string", "description": "Phone number called" },
+    "direction": { "type": "string", "enum": ["inbound", "outbound"], "description": "Call direction" },
+    "duration": { "type": "number", "description": "Call duration in seconds" },
+    "status": { "type": "string", "enum": ["completed", "missed", "busy", "no_answer", "failed"], "description": "Call outcome" },
+    "notes": { "type": "string", "description": "Call notes" },
+    "call_category": { "type": "string", "description": "Panel 1 classification: medical, dental, vision, ben_admin, system_issue, etc." },
+    "call_qualifier": { "type": "string", "description": "Panel 2 qualifier: how_to, what_is, billing, claims, enrollment, etc." },
+    "recording_url": { "type": "string", "description": "URL to call recording" },
+    "call_start_time": { "type": "string", "format": "date-time", "description": "When call started" },
+    "call_end_time": { "type": "string", "format": "date-time", "description": "When call ended" }
   },
-  "required": [
-    "customer_phone",
-    "direction"
-  ]
+  "required": ["customer_phone", "direction"],
+  "rls": {
+    "create": { "$or": [ { "user_condition": { "role": "admin" } }, { "user_condition": { "role": "user" } } ] },
+    "read": { "$or": [ { "user_condition": { "role": "admin" } }, { "user_condition": { "role": "user" } } ] },
+    "update": { "$or": [ { "user_condition": { "role": "admin" } }, { "user_condition": { "role": "user" } } ] },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
 }
