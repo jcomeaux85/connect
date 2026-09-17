@@ -14,7 +14,8 @@
           "with": {
             "function_name": "ommni-engine",
             "args": {
-              "action": "push"
+              "action": "push",
+              "invoke_token": "benconnect-workflow-push"
             }
           },
           "then": "end",

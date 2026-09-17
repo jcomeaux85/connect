@@ -29,7 +29,10 @@
         "send_digest": {
           "call": "invoke_backend_function",
           "with": {
-            "function_name": "equo-manager-digest"
+            "function_name": "equo-manager-digest",
+            "args": {
+              "invoke_token": "benconnect-workflow-push"
+            }
           },
           "then": "end",
           "x-base44": {
