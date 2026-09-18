@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, AlertTriangle, Activity, PhoneCall, HeartCrac
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '@/components/ThemeProvider';
+import { SAMPLE_FORECASTS, shouldUseOmmniSample } from '@/ommni/samplePulse';
 
 const FORECAST_META = {
   burnout_risk: { icon: AlertTriangle, label: 'Burnout Risk', color: '#ef4444' },
@@ -25,7 +26,7 @@ function Sparkline({ data, color }) {
   return (
     <svg width={w} height={h} style={{ overflow: 'visible' }}>
       <polyline points={pts} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx={w} cy={h - ((data[data.length-1] - min) / range) * h} r={2.5} fill={color} />
+      <circle cx={w} cy={h - ((data[data.length - 1] - min) / range) * h} r={2.5} fill={color} />
     </svg>
   );
 }
@@ -36,8 +37,12 @@ export default function ForecastCards() {
   const { data, isLoading } = useQuery({
     queryKey: ['ommni-forecast'],
     queryFn: async () => {
-      const res = await base44.functions.invoke('ommni-engine', { action: 'forecast' });
-      return res.data;
+      try {
+        const res = await base44.functions.invoke('ommni-engine', { action: 'forecast' });
+        return res.data;
+      } catch {
+        return { forecasts: [] };
+      }
     },
   });
 
@@ -49,12 +54,11 @@ export default function ForecastCards() {
     );
   }
 
-  const forecasts = data?.forecasts || [];
+  const live = data?.forecasts || [];
+  const forecasts = shouldUseOmmniSample(live) ? SAMPLE_FORECASTS : live;
   if (forecasts.length === 0) {
     return (
-      <div style={{
-        ...getButtonStyle(), borderRadius: '16px', padding: '24px', textAlign: 'center',
-      }}>
+      <div style={{ ...getButtonStyle(), borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
         <TrendingUp className="w-7 h-7 mx-auto mb-2" style={{ color: '#22c55e' }} />
         <p style={{ fontSize: '13px', fontWeight: 600, color: colors.text }}>No forecasts flagged</p>
         <p style={{ fontSize: '11px', color: colors.textSecondary, marginTop: '2px' }}>
@@ -72,7 +76,7 @@ export default function ForecastCards() {
           const Icon = meta.icon;
           return (
             <motion.div
-              key={i}
+              key={`${f.type}-${f.entity?.name || i}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
@@ -121,7 +125,7 @@ export default function ForecastCards() {
               </div>
 
               <div className="flex flex-wrap gap-2 mt-2 pt-2" style={{ borderTop: `1px solid ${colors.border}` }}>
-                {f.factors.map((fac, j) => (
+                {(f.factors || []).map((fac, j) => (
                   <span key={j} style={{ fontSize: '10px', color: colors.textSecondary }}>
                     <strong style={{ color: colors.textTertiary }}>{fac.label}:</strong> {fac.value}
                   </span>
