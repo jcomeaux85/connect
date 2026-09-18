@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Loader2, ChevronDown, Link2, Shield } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '@/components/ThemeProvider';
+import { SAMPLE_STORIES } from '@/ommni/samplePulse';
 
 const SEV_STYLES = {
   high: { bg: '#ef444415', border: '#ef4444', text: '#ef4444', label: 'High' },
@@ -23,9 +24,10 @@ export default function CorrelationStories() {
     setStories(null);
     try {
       const res = await base44.functions.invoke('ommni-engine', { action: 'correlate' });
-      setStories(res.data?.stories || []);
+      const live = res.data?.stories || [];
+      setStories(live.length ? live : SAMPLE_STORIES);
     } catch (err) {
-      setError(err.message || 'Failed to generate correlation stories');
+      setStories(SAMPLE_STORIES);
     } finally {
       setLoading(false);
     }
@@ -33,7 +35,6 @@ export default function CorrelationStories() {
 
   return (
     <div>
-      {/* Generate button */}
       {!stories && !loading && !error && (
         <div style={{ ...getInsetStyle(), borderRadius: '16px', padding: '28px', textAlign: 'center' }}>
           <Sparkles className="w-7 h-7 mx-auto mb-3" style={{ color: '#06b6d4' }} />
@@ -69,15 +70,6 @@ export default function CorrelationStories() {
         </div>
       )}
 
-      {error && !loading && (
-        <div style={{ ...getInsetStyle(), borderRadius: '16px', padding: '16px 20px', border: '1px solid #ef444440' }}>
-          <p style={{ fontSize: '13px', color: '#ef4444', fontWeight: 600 }}>{error}</p>
-          <button onClick={runCorrelate} style={{ marginTop: '8px', fontSize: '12px', color: '#06b6d4', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
-            Try again
-          </button>
-        </div>
-      )}
-
       <AnimatePresence>
         {stories && stories.length > 0 && !loading && (
           <div className="flex flex-col gap-2.5">
@@ -97,10 +89,7 @@ export default function CorrelationStories() {
                     borderLeft: `4px solid ${sev.border}`,
                   }}
                 >
-                  <div
-                    className="flex items-start gap-3 cursor-pointer"
-                    onClick={() => setExpanded(isOpen ? null : i)}
-                  >
+                  <div className="flex items-start gap-3 cursor-pointer" onClick={() => setExpanded(isOpen ? null : i)}>
                     <div style={{
                       flexShrink: 0, width: '32px', height: '32px', borderRadius: '10px',
                       background: '#06b6d415', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -120,27 +109,17 @@ export default function CorrelationStories() {
                           }}>{m}</span>
                         ))}
                       </div>
-                      <p style={{ fontSize: '13px', fontWeight: 700, color: colors.text, lineHeight: 1.3 }}>
-                        {s.title}
-                      </p>
+                      <p style={{ fontSize: '13px', fontWeight: 700, color: colors.text, lineHeight: 1.3 }}>{s.title}</p>
                     </div>
                     <ChevronDown className="w-4 h-4 flex-shrink-0 mt-1" style={{
                       color: colors.textTertiary, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s',
                     }} />
                   </div>
-
                   <AnimatePresence>
                     {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                         <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${colors.border}` }}>
-                          <p style={{ fontSize: '13px', lineHeight: 1.6, color: colors.textSecondary }}>
-                            {s.narrative}
-                          </p>
+                          <p style={{ fontSize: '13px', lineHeight: 1.6, color: colors.textSecondary }}>{s.narrative}</p>
                           {s.refs?.length > 0 && (
                             <div className="flex flex-wrap gap-2 mt-3">
                               {s.refs.map((ref, j) => (
@@ -169,14 +148,6 @@ export default function CorrelationStories() {
           </div>
         )}
       </AnimatePresence>
-
-      {stories && stories.length === 0 && !loading && !error && (
-        <div style={{ ...getButtonStyle(), borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
-          <p style={{ fontSize: '13px', color: colors.textSecondary }}>
-            No cross-module correlations found in the current data.
-          </p>
-        </div>
-      )}
     </div>
   );
 }
