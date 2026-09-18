@@ -1,23 +1,28 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, TrendingDown, AlertTriangle, Activity, PhoneCall, HeartCrack } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, Activity, PhoneCall, HeartCrack, Timer, DollarSign } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '@/components/ThemeProvider';
-import { SAMPLE_FORECASTS, shouldUseOmmniSample } from '@/ommni/samplePulse';
+import { SAMPLE_FORECASTS, shouldUseOmmniSample, normalizeConfidence } from '@/ommni/samplePulse';
 import OmmniHive from '@/components/ommni/OmmniHive';
+import OmmniSight from '@/components/ommni/OmmniSight';
 
 const FORECAST_META = {
   burnout_risk: { icon: AlertTriangle, label: 'Burnout Risk', color: '#ef4444' },
   attrition_risk: { icon: HeartCrack, label: 'Attrition Likelihood', color: '#f59e0b' },
   csat_trajectory: { icon: TrendingDown, label: 'CSAT Trajectory', color: '#8b5cf6' },
   call_volume: { icon: PhoneCall, label: 'Call Volume Forecast', color: '#06b6d4' },
+  sla_risk: { icon: Timer, label: 'SLA / Coverage Risk', color: '#f97316' },
+  cost_drift: { icon: DollarSign, label: 'Cost Drift', color: '#14b8a6' },
 };
 
 function Sparkline({ data, color }) {
   if (!data || data.length < 2) return null;
-  const w = 100, h = 28;
-  const min = Math.min(...data), max = Math.max(...data);
+  const w = 100;
+  const h = 28;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
   const range = max - min || 1;
   const pts = data.map((v, i) => {
     const x = (i / (data.length - 1)) * w;
@@ -56,75 +61,81 @@ export default function ForecastCards() {
   }
 
   const live = data?.forecasts || [];
-  const forecasts = shouldUseOmmniSample(live) ? SAMPLE_FORECASTS : live;
-  if (forecasts.length === 0) {
-    return (
-      <div>
+  const usingSample = shouldUseOmmniSample(live);
+  const forecasts = usingSample ? SAMPLE_FORECASTS : live;
+
+  return (
+    <div>
+      {usingSample && (
+        <p style={{ fontSize: '10px', color: colors.textTertiary, marginBottom: 10 }}>
+          Hive sample on — live engine returned a weak or empty forecast set.
+        </p>
+      )}
+      {forecasts.length === 0 ? (
         <div style={{ ...getButtonStyle(), borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
           <TrendingUp className="w-7 h-7 mx-auto mb-2" style={{ color: '#22c55e' }} />
           <p style={{ fontSize: '13px', fontWeight: 600, color: colors.text }}>No forecasts flagged</p>
         </div>
-        <div className="mt-6"><OmmniHive /></div>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <AnimatePresence>
-          {forecasts.map((f, i) => {
-            const meta = FORECAST_META[f.type] || { icon: Activity, label: f.type, color: '#06b6d4' };
-            const Icon = meta.icon;
-            return (
-              <motion.div
-                key={`${f.type}-${f.entity?.name || i}`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                style={{ ...getButtonStyle(), borderRadius: '14px', padding: '16px', borderLeft: `4px solid ${meta.color}` }}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: `${meta.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon className="w-4 h-4" style={{ color: meta.color }} />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <AnimatePresence>
+            {forecasts.map((f, i) => {
+              const meta = FORECAST_META[f.type] || { icon: Activity, label: f.type, color: '#06b6d4' };
+              const Icon = meta.icon;
+              const conf = normalizeConfidence(f.confidence);
+              return (
+                <motion.div
+                  key={`${f.type}-${f.entity?.name || i}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  style={{ ...getButtonStyle(), borderRadius: '14px', padding: '16px', borderLeft: `4px solid ${meta.color}` }}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: `${meta.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon className="w-4 h-4" style={{ color: meta.color }} />
+                      </div>
+                      <div>
+                        <p style={{ fontSize: '12px', fontWeight: 700, color: colors.text }}>{meta.label}</p>
+                        <p style={{ fontSize: '10px', color: colors.textTertiary }}>{f.entity?.name || f.entity?.email || 'Org-wide'}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p style={{ fontSize: '12px', fontWeight: 700, color: colors.text }}>{meta.label}</p>
-                      <p style={{ fontSize: '10px', color: colors.textTertiary }}>{f.entity?.name || f.entity?.email || 'Org-wide'}</p>
-                    </div>
+                    {f.probability > 0 && (
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: '20px', fontWeight: 800, color: meta.color, lineHeight: 1 }}>{f.probability}%</p>
+                        <p style={{ fontSize: '9px', color: colors.textTertiary, textTransform: 'uppercase' }}>probability</p>
+                      </div>
+                    )}
                   </div>
-                  {f.probability > 0 && (
-                    <div style={{ textAlign: 'right' }}>
-                      <p style={{ fontSize: '20px', fontWeight: 800, color: meta.color, lineHeight: 1 }}>{f.probability}%</p>
-                      <p style={{ fontSize: '9px', color: colors.textTertiary, textTransform: 'uppercase' }}>probability</p>
+                  {f.trajectory && f.trajectory.length >= 2 && (
+                    <div className="mb-3" style={{ background: `${meta.color}08`, borderRadius: '8px', padding: '6px 8px' }}>
+                      <Sparkline data={f.trajectory} color={meta.color} />
                     </div>
                   )}
-                </div>
-                {f.trajectory && f.trajectory.length >= 2 && (
-                  <div className="mb-3" style={{ background: `${meta.color}08`, borderRadius: '8px', padding: '6px 8px' }}>
-                    <Sparkline data={f.trajectory} color={meta.color} />
+                  <div className="flex items-center justify-between mb-2">
+                    <span style={{ fontSize: '10px', color: colors.textTertiary, textTransform: 'uppercase' }}>Projected next</span>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: colors.text }}>{f.projected_next}</span>
                   </div>
-                )}
-                <div className="flex items-center justify-between mb-2">
-                  <span style={{ fontSize: '10px', color: colors.textTertiary, textTransform: 'uppercase' }}>Projected next</span>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: colors.text }}>{f.projected_next}</span>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-2 pt-2" style={{ borderTop: `1px solid ${colors.border}` }}>
-                  {(f.factors || []).map((fac, j) => (
-                    <span key={j} style={{ fontSize: '10px', color: colors.textSecondary }}>
-                      <strong style={{ color: colors.textTertiary }}>{fac.label}:</strong> {fac.value}
-                    </span>
-                  ))}
-                </div>
-                {f.confidence != null && (
-                  <p style={{ fontSize: '9px', color: colors.textTertiary, marginTop: '8px' }}>confidence: {Math.round(f.confidence * 100)}%</p>
-                )}
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
+                  <div className="flex flex-wrap gap-2 mt-2 pt-2" style={{ borderTop: `1px solid ${colors.border}` }}>
+                    {(f.factors || []).map((fac, j) => (
+                      <span key={j} style={{ fontSize: '10px', color: colors.textSecondary }}>
+                        <strong style={{ color: colors.textTertiary }}>{fac.label}:</strong> {fac.value}
+                      </span>
+                    ))}
+                  </div>
+                  {f.confidence != null && (
+                    <p style={{ fontSize: '9px', color: colors.textTertiary, marginTop: '8px' }}>
+                      confidence: {Math.round(conf * 100)}%
+                    </p>
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      )}
+      <div className="mt-8"><OmmniSight /></div>
       <div className="mt-8"><OmmniHive /></div>
     </div>
   );

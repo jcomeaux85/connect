@@ -13,21 +13,26 @@ const SEV_STYLES = {
 
 export default function CorrelationStories() {
   const { colors, getButtonStyle, getInsetStyle } = useTheme();
-  const [stories, setStories] = useState(null);
+  const [stories, setStories] = useState(SAMPLE_STORIES);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [expanded, setExpanded] = useState(null);
+  const [expanded, setExpanded] = useState(0);
+  const [source, setSource] = useState('sample');
 
   const runCorrelate = async () => {
     setLoading(true);
-    setError(null);
-    setStories(null);
     try {
       const res = await base44.functions.invoke('ommni-engine', { action: 'correlate' });
       const live = res.data?.stories || [];
-      setStories(live.length ? live : SAMPLE_STORIES);
-    } catch (err) {
+      if (live.length) {
+        setStories(live);
+        setSource('live');
+      } else {
+        setStories(SAMPLE_STORIES);
+        setSource('sample');
+      }
+    } catch {
       setStories(SAMPLE_STORIES);
+      setSource('sample');
     } finally {
       setLoading(false);
     }
@@ -35,34 +40,28 @@ export default function CorrelationStories() {
 
   return (
     <div>
-      {!stories && !loading && !error && (
-        <div style={{ ...getInsetStyle(), borderRadius: '16px', padding: '28px', textAlign: 'center' }}>
-          <Sparkles className="w-7 h-7 mx-auto mb-3" style={{ color: '#06b6d4' }} />
-          <p style={{ fontSize: '13px', fontWeight: 600, color: colors.text, marginBottom: '4px' }}>
-            Cross-module correlation stories
-          </p>
-          <p style={{ fontSize: '11px', color: colors.textSecondary, marginBottom: '16px' }}>
-            OMMNI connects dots across eQuo, ALERA|LOUD, CORPS//, and Call Center —
-            patterns no single module can see.
-          </p>
-          <button
-            onClick={runCorrelate}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '10px 20px', borderRadius: '12px', border: 'none', cursor: 'pointer',
-              fontSize: '13px', fontWeight: 700, color: '#fff',
-              background: 'linear-gradient(135deg, #0891b2, #06b6d4)',
-              boxShadow: '0 4px 12px rgba(8,145,178,0.3)',
-            }}
-          >
-            <Sparkles className="w-4 h-4" />
-            Generate stories
-          </button>
-        </div>
-      )}
+      <div className="flex items-center justify-between mb-3">
+        <p style={{ fontSize: '11px', color: colors.textTertiary }}>
+          {source === 'sample' ? 'Hive sample stories — patterns no single module can see.' : 'Live correlate.'}
+        </p>
+        <button
+          onClick={runCorrelate}
+          disabled={loading}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            padding: '7px 12px', borderRadius: '10px', border: 'none', cursor: 'pointer',
+            fontSize: '12px', fontWeight: 700, color: '#fff',
+            background: 'linear-gradient(135deg, #0891b2, #06b6d4)',
+            opacity: loading ? 0.7 : 1,
+          }}
+        >
+          {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+          {loading ? 'Connecting…' : 'Refresh stories'}
+        </button>
+      </div>
 
       {loading && (
-        <div style={{ ...getButtonStyle(), borderRadius: '16px', padding: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ ...getButtonStyle(), borderRadius: '16px', padding: '20px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 12 }}>
           <Loader2 className="w-5 h-5 animate-spin" style={{ color: '#06b6d4' }} />
           <span style={{ fontSize: '13px', color: colors.textSecondary }}>
             OMMNI is connecting the dots across all modules…
@@ -102,7 +101,7 @@ export default function CorrelationStories() {
                           fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '4px',
                           background: sev.bg, color: sev.text, textTransform: 'uppercase', letterSpacing: '0.05em',
                         }}>{sev.label}</span>
-                        {s.modules?.map(m => (
+                        {s.modules?.map((m) => (
                           <span key={m} style={{
                             fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '4px',
                             background: '#06b6d415', color: '#06b6d4',
