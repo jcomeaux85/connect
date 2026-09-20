@@ -26,20 +26,19 @@ export default async function(req: Request): Promise<Response> {
     const base44 = createClientFromRequest(req);
     let user = null;
     try { user = await base44.auth.me(); } catch {}
+    // One retry covers a transient auth.me() failure for a caller that sent a token.
+    if (!user && req.headers.get('authorization')) {
+      try { user = await base44.auth.me(); } catch {}
+    }
 
     const body = await req.json().catch(() => ({}));
     const { action } = body;
 
     // `push` is allowed without a user session (workflow-triggered).
-    // Resilient auth: if auth.me() failed transiently but the request carries
-    // an auth token, the caller is authenticated — proceed as admin rather
-    // than blocking the page load with a 401.
+    // Every other action requires a verified user. A bare Authorization header
+    // is not proof of identity, so it no longer grants admin tier.
     if (!user && action !== 'push') {
-      const authHeader = req.headers.get('authorization');
-      if (!authHeader) {
-        return Response.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-      // Authenticated caller, transient me() failure — fall through as admin.
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const accessTier = !user ? 'admin'
