@@ -8,6 +8,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Coffee, Clock } from "lucide-react";
 import QueueStatusLights from "@/components/dashboard/QueueStatusLights";
 import { useToast } from "@/components/ui/use-toast";
+import { PITCH_MODE } from "@/lib/pitchMode";
+import { queueKeyFor, PRESENCE_FRESH_MS } from "@/components/hooks/useQueuePresence";
 
 const BRAND_PURPLE = "#7c3aed";
 const ALERT_BLUE = "#3b82f6";
@@ -16,13 +18,22 @@ const TODAY = format(new Date(), "yyyy-MM-dd");
 const DAY_START = "08:00";
 const DAY_END = "18:00";
 
-// The four agents that make up this queue. Fixed daily lunches (Eastern).
-const QUEUE = [
+// Demo roster. Only used when VITE_PITCH_MODE is on and nobody is logged in.
+// Live rosters come from the user's break group plus queue presence, and
+// fixed lunches from CoreShift (lunch_start / lunch_end).
+const DEMO_QUEUE = [
   { name: "Ryan",    email: "ryan@queue.demo",    color: "#ef4444", lunchStart: "10:00", lunchEnd: "11:00" },
   { name: "Vanessa", email: "vanessa@queue.demo", color: "#eab308", lunchStart: "11:00", lunchEnd: "12:00" },
   { name: "Chris",   email: "chris@queue.demo",   color: "#3b82f6", lunchStart: "12:00", lunchEnd: "13:00" },
   { name: "Jarrad",  email: "jarrad@queue.demo",  color: "#22c55e", lunchStart: "13:00", lunchEnd: "14:00" },
 ];
+
+const QUEUE_COLORS = ["#ef4444", "#eab308", "#3b82f6", "#22c55e", "#f97316", "#14b8a6", "#ec4899"];
+function colorForEmail(email) {
+  let h = 0;
+  for (let i = 0; i < email.length; i++) h = (h * 31 + email.charCodeAt(i)) >>> 0;
+  return QUEUE_COLORS[h % QUEUE_COLORS.length];
+}
 
 function toMins(t) {
   if (!t) return 0;
@@ -87,10 +98,50 @@ export default function ShiftBreakBar({ isDark }) {
   // a saved break is filtered out and never shows on the bar). We read
   // user?.email directly (active is declared below, can't be referenced here).
   const myEmail = user?.email || "you@queue.demo";
-  const queueEmails = QUEUE.map((q) => q.email);
+  const queueKey = queueKeyFor(user);
+  const { data: presence = [] } = useQuery({
+    queryKey: ["queue-presence", queueKey],
+    queryFn: () => base44.entities.QueuePresence.filter({ break_group_id: queueKey }),
+    refetchInterval: 20000,
+  });
+  const { data: breakGroups = [] } = useQuery({
+    queryKey: ["queue-break-groups"],
+    queryFn: () => corpsData.BreakGroup.list(),
+  });
+  const { data: todayShifts = [] } = useQuery({
+    queryKey: ["queue-shifts-today"],
+    queryFn: () => corpsData.CoreShift.filter({ shift_date: TODAY }),
+    refetchInterval: 300000,
+  });
+
+  // The roster is the user's break group plus anyone logged into this queue.
+  // Logging in is what puts a person here; lunches come from CoreShift.
+  const roster = useMemo(() => {
+    const nowMs = Date.now();
+    const isFresh = (p) => p.status === "active" && p.last_seen && nowMs - new Date(p.last_seen).getTime() < PRESENCE_FRESH_MS;
+    if (PITCH_MODE && !presence.some(isFresh)) {
+      return DEMO_QUEUE.map((q) => ({ ...q, loggedIn: true }));
+    }
+    const group = user?.break_group_id ? breakGroups.find((g) => g.id === user.break_group_id) : null;
+    const emails = Array.from(new Set([...(group?.member_emails || []), ...presence.map((p) => p.employee_email), myEmail])).sort();
+    return emails.map((email) => {
+      const p = presence.find((x) => x.employee_email === email);
+      const shift = todayShifts.find((s) => s.employee_email === email);
+      return {
+        email,
+        name: email === myEmail ? (user?.full_name || "You") : (p?.employee_name || email.split("@")[0]),
+        color: email === myEmail ? BRAND_PURPLE : colorForEmail(email),
+        lunchStart: shift?.lunch_start || null,
+        lunchEnd: shift?.lunch_end || null,
+        loggedIn: email === myEmail || (p ? isFresh(p) : false),
+      };
+    });
+  }, [presence, breakGroups, todayShifts, user, myEmail, nowMins]);
+
+  const queueEmails = roster.map((q) => q.email);
   const queueBreaks = useMemo(
     () => breaks.filter((b) => (queueEmails.includes(b.employee_email) || b.employee_email === myEmail) && b.status !== "cancelled" && b.status !== "declined"),
-    [breaks, myEmail]
+    [breaks, myEmail, roster]
   );
 
   const createBreak = useMutation({
@@ -119,9 +170,9 @@ export default function ShiftBreakBar({ isDark }) {
     color: BRAND_PURPLE,
   };
   const colorOf = (email) =>
-    email === active.email ? BRAND_PURPLE : (QUEUE.find((q) => q.email === email)?.color || "#94a3b8");
+    email === active.email ? BRAND_PURPLE : (roster.find((q) => q.email === email)?.color || "#94a3b8");
   const nameOf = (email) =>
-    email === active.email ? active.name : (QUEUE.find((q) => q.email === email)?.name || "?");
+    email === active.email ? active.name : (roster.find((q) => q.email === email)?.name || "?");
 
   const myBreaks = queueBreaks.filter((b) => b.employee_email === active.email);
 
@@ -193,14 +244,14 @@ export default function ShiftBreakBar({ isDark }) {
 
   // Four status lights — one per queue agent. Fades when on break
   // (inside their lunch window or an active taken break).
-  const statusLights = QUEUE.map((q) => {
-    const inLunch = nowMins >= toMins(q.lunchStart) && nowMins < toMins(q.lunchEnd);
+  const statusLights = roster.map((q) => {
+    const inLunch = !!(q.lunchStart && q.lunchEnd) && nowMins >= toMins(q.lunchStart) && nowMins < toMins(q.lunchEnd);
     const onTaken = queueBreaks.some((b) =>
       b.employee_email === q.email && b.status === "taken" &&
       b.actual_start_time && b.actual_end_time &&
       nowMins >= toMins(b.actual_start_time) && nowMins < toMins(b.actual_end_time)
     );
-    return { color: q.color, label: q.name, state: (inLunch || onTaken) ? "break" : "on" };
+    return { color: q.color, label: q.name, state: !q.loggedIn ? "off" : (inLunch || onTaken) ? "break" : "on" };
   });
 
   // Time options for the picker (5-min steps within shift)
@@ -232,7 +283,7 @@ export default function ShiftBreakBar({ isDark }) {
           }} />
 
           {/* Fixed lunch segments — one per agent, in their color */}
-          {QUEUE.map((q) => (
+          {roster.filter((q) => q.lunchStart && q.lunchEnd).map((q) => (
             <div key={`lunch-${q.email}`} className="absolute pointer-events-none" style={{
               top: "18%", height: "64%",
               left: `${pct(q.lunchStart)}%`,
