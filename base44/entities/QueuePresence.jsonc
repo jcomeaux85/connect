@@ -1,0 +1,67 @@
+{
+  "name": "QueuePresence",
+  "properties": {
+    "break_group_id": {
+      "description": "Queue = the user's break group",
+      "type": "string"
+    },
+    "employee_email": {
+      "description": "Logged-in user's email",
+      "type": "string"
+    },
+    "employee_name": {
+      "type": "string"
+    },
+    "last_seen": {
+      "description": "Heartbeat, refreshed about every minute while the app is open",
+      "format": "date-time",
+      "type": "string"
+    },
+    "location": {
+      "description": "Where they are logged in from",
+      "type": "string"
+    },
+    "logged_in_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "status": {
+      "default": "active",
+      "enum": [
+        "active",
+        "off"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "employee_email"
+  ],
+  "rls": {
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}
