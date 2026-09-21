@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { telephony } from "@/api/telephony";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useUser } from "@/components/hooks/useUser";
+import { useQueuePresence } from "@/components/hooks/useQueuePresence";
 import { startCallSession, finishCallSession } from "@/api/callSession";
 
 import NotificationCenter from "@/components/notifications/NotificationCenter";
@@ -139,6 +140,7 @@ function LayoutContent({ children, currentPageName }) {
   }, [theme, backgroundSettings, colors.bg, colors.cardBg]);
 
   const { data: user } = useUser();
+  useQueuePresence();
 
   const { data: incomingCalls = [] } = useQuery({
     queryKey: ['incoming-calls'],
